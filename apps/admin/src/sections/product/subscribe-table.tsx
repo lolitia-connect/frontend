@@ -31,6 +31,22 @@ export default function SubscribeTable() {
   const ref = useRef<ProTableActions>(null);
   const { fetchSubscribes } = useSubscribe();
 
+  const getNodeGroupSpecialLabel = (nodeGroup?: API.NodeGroup) => {
+    switch (nodeGroup?.type) {
+      case "subscribe":
+        return t("form.nodeGroupSubscribeOnly");
+      case "app":
+        return t("form.nodeGroupAppOnly");
+      default:
+        return "";
+    }
+  };
+
+  const formatNodeGroupOptionLabel = (nodeGroup: API.NodeGroup) => {
+    const specialLabel = getNodeGroupSpecialLabel(nodeGroup);
+    return specialLabel ? `${nodeGroup.name} (${specialLabel})` : nodeGroup.name;
+  };
+
   // Fetch node groups for filtering (exclude expired groups)
   const { data: nodeGroupsData } = useQuery({
     queryKey: ["nodeGroups"],
@@ -284,11 +300,17 @@ export default function SubscribeTable() {
                 cell: ({ row }: { row: any }) => {
                   const nodeGroupId = row.original.node_group_id;
                   const nodeGroup = nodeGroupsData?.find((g) => g.id === nodeGroupId);
+                  const specialLabel = getNodeGroupSpecialLabel(nodeGroup);
 
                   return (
-                    <div>
+                    <div className="flex flex-wrap items-center gap-2">
                       {nodeGroup ? (
-                        <Badge variant="outline">{nodeGroup.name}</Badge>
+                        <>
+                          <Badge variant="outline">{nodeGroup.name}</Badge>
+                          {specialLabel && (
+                            <Badge variant="secondary">{specialLabel}</Badge>
+                          )}
+                        </>
                       ) : null}
                     </div>
                   );
@@ -379,7 +401,7 @@ export default function SubscribeTable() {
                 options: [
                   { label: t("all", "All"), value: "" },
                   ...(nodeGroupsData?.map((item) => ({
-                    label: item.name,
+                    label: formatNodeGroupOptionLabel(item),
                     value: String(item.id),
                   })) || []),
                 ],

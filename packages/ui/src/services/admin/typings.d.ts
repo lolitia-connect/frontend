@@ -2690,6 +2690,7 @@ declare namespace API {
   type NodeGroup = {
     id: number;
     name: string;
+    type: string;
     description: string;
     sort: number;
     for_calculation: boolean;
@@ -2834,6 +2835,7 @@ declare namespace API {
 
   type CreateNodeGroupRequest = {
     name: string;
+    type?: string;
     description?: string;
     sort?: number;
     for_calculation?: boolean;
@@ -2848,6 +2850,7 @@ declare namespace API {
   type UpdateNodeGroupRequest = {
     id: number;
     name?: string;
+    type?: string;
     description?: string;
     sort?: number;
     for_calculation?: boolean;

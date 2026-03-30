@@ -10,6 +10,13 @@ import {
 } from "@workspace/ui/components/dialog";
 import { Input } from "@workspace/ui/components/input";
 import { Label } from "@workspace/ui/components/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@workspace/ui/components/select";
 import { Textarea } from "@workspace/ui/components/textarea";
 import { Switch } from "@workspace/ui/components/switch";
 import { AlertCircle, Loader2 } from "lucide-react";
@@ -37,6 +44,7 @@ const NodeGroupForm = forwardRef<
 
   const [values, setValues] = useState({
     name: "",
+    type: "common",
     description: "",
     sort: 0,
     for_calculation: true,
@@ -54,6 +62,7 @@ const NodeGroupForm = forwardRef<
       if (initialValues) {
         setValues({
           name: initialValues.name || "",
+          type: initialValues.type || "common",
           description: initialValues.description || "",
           sort: initialValues.sort ?? 0,
           for_calculation: initialValues.for_calculation ?? true,
@@ -67,6 +76,7 @@ const NodeGroupForm = forwardRef<
       } else {
         setValues({
           name: "",
+          type: "common",
           description: "",
           sort: 0,
           for_calculation: true,
@@ -201,6 +211,7 @@ const NodeGroupForm = forwardRef<
       setConflictError("");
       setValues({
         name: "",
+        type: "common",
         description: "",
         sort: 0,
         for_calculation: true,
@@ -240,6 +251,28 @@ const NodeGroupForm = forwardRef<
               placeholder={t("namePlaceholder", "Enter name")}
               required
             />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="type">{t("type")}</Label>
+            <p className="text-sm text-muted-foreground">
+              {t("typeDescription")}
+            </p>
+            <Select
+              value={values.type}
+              onValueChange={(value) =>
+                setValues({ ...values, type: value })
+              }
+            >
+              <SelectTrigger id="type">
+                <SelectValue placeholder={t("typePlaceholder")} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="common">{t("typeCommon")}</SelectItem>
+                <SelectItem value="subscribe">{t("typeSubscribe")}</SelectItem>
+                <SelectItem value="app">{t("typeApp")}</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="space-y-2">

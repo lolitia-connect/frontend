@@ -46,6 +46,8 @@
     "nodeGroups": "节点组",
     "nodeGroupsDescription": "将此商品分配到多个节点分组。用户将可以从这些分组获取节点。",
     "nodeGroupsFirstSelectionDescription": "为此商品选择节点组。第一个选中的组将被设置为默认节点组。",
+    "nodeGroupSubscribeOnly": "订阅专用",
+    "nodeGroupAppOnly": "APP专用",
     "defaultNodeGroup": "默认节点组",
     "defaultNodeGroupDescription": "为此商品选择默认节点组。将自动包含在备用节点组中。",
     "selectDefaultNodeGroup": "选择默认节点组...",

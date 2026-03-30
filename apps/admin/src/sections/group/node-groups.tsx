@@ -31,6 +31,26 @@ export default function NodeGroups() {
   const [allNodeGroups, setAllNodeGroups] = useState<API.NodeGroup[]>([]);
   const ref = useRef<ProTableActions>(null);
 
+  const getNodeGroupTypeLabel = (type?: string) => {
+    switch (type) {
+      case "subscribe":
+        return {
+          text: t("typeSubscribeOnly"),
+          variant: "secondary" as const,
+        };
+      case "app":
+        return {
+          text: t("typeAppOnly"),
+          variant: "secondary" as const,
+        };
+      default:
+        return {
+          text: t("typeCommon"),
+          variant: "outline" as const,
+        };
+    }
+  };
+
   // 获取所有节点组数据（用于冲突检测）
   useEffect(() => {
     const fetchAllNodeGroups = async () => {
@@ -96,6 +116,15 @@ export default function NodeGroups() {
                 accessorKey: "description",
                 header: t("description", "Description"),
                 cell: ({ row }: { row: any }) => row.getValue("description") || "--",
+              },
+              {
+                id: "type",
+                accessorKey: "type",
+                header: t("type"),
+                cell: ({ row }: { row: any }) => {
+                  const typeInfo = getNodeGroupTypeLabel(row.original.type);
+                  return <Badge variant={typeInfo.variant}>{typeInfo.text}</Badge>;
+                },
               },
               {
                 id: "for_calculation",

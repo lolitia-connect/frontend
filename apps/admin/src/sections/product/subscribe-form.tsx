@@ -7,6 +7,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@workspace/ui/components/accordion";
+import { Badge } from "@workspace/ui/components/badge";
 import { Button } from "@workspace/ui/components/button";
 import { Card } from "@workspace/ui/components/card";
 import { Checkbox } from "@workspace/ui/components/checkbox";
@@ -339,6 +340,20 @@ export default function SubscribeForm<T extends Record<string, any>>({
   });
 
   const isGroupEnabled = groupConfigData?.enabled || false;
+  const getNodeGroupSpecialLabel = (nodeGroup?: API.NodeGroup) => {
+    switch (nodeGroup?.type) {
+      case "subscribe":
+        return t("form.nodeGroupSubscribeOnly");
+      case "app":
+        return t("form.nodeGroupAppOnly");
+      default:
+        return "";
+    }
+  };
+  const formatNodeGroupOptionLabel = (nodeGroup: API.NodeGroup) => {
+    const specialLabel = getNodeGroupSpecialLabel(nodeGroup);
+    return specialLabel ? `${nodeGroup.name} (${specialLabel})` : nodeGroup.name;
+  };
 
   const unit_time = form.watch("unit_time");
   const node_group_id = form.watch("node_group_id");
@@ -1224,7 +1239,17 @@ export default function SubscribeForm<T extends Record<string, any>>({
                                               htmlFor={`subscribe-node-group-${g.id}`}
                                               className="cursor-pointer font-medium"
                                             >
-                                              {g.name}
+                                              <span>{g.name}</span>
+                                              {g.type === "subscribe" && (
+                                                <Badge className="ml-2" variant="secondary">
+                                                  {t("form.nodeGroupSubscribeOnly")}
+                                                </Badge>
+                                              )}
+                                              {g.type === "app" && (
+                                                <Badge className="ml-2" variant="secondary">
+                                                  {t("form.nodeGroupAppOnly")}
+                                                </Badge>
+                                              )}
                                               <span className="ml-2 text-muted-foreground text-sm">
                                                 ({nodesInGroup.length} {t("form.nodes", "nodes")})
                                               </span>
@@ -1301,7 +1326,7 @@ export default function SubscribeForm<T extends Record<string, any>>({
                                           options={[
                                             { label: t("form.noDefaultNodeGroup", "No Default Node Group"), value: "" },
                                             ...(nodeGroupsData?.map((g) => ({
-                                              label: g.name,
+                                              label: formatNodeGroupOptionLabel(g),
                                               value: String(g.id),
                                             })) || []),
                                           ]}
@@ -1386,7 +1411,17 @@ export default function SubscribeForm<T extends Record<string, any>>({
                                                   htmlFor={`subscribe-backup-node-group-${g.id}`}
                                                   className="cursor-pointer font-medium"
                                                 >
-                                                  {g.name}
+                                                  <span>{g.name}</span>
+                                                  {g.type === "subscribe" && (
+                                                    <Badge className="ml-2" variant="secondary">
+                                                      {t("form.nodeGroupSubscribeOnly")}
+                                                    </Badge>
+                                                  )}
+                                                  {g.type === "app" && (
+                                                    <Badge className="ml-2" variant="secondary">
+                                                      {t("form.nodeGroupAppOnly")}
+                                                    </Badge>
+                                                  )}
                                                   <span className="ml-2 text-muted-foreground text-sm">
                                                     ({nodesInGroup.length} {t("form.nodes", "nodes")})
                                                   </span>

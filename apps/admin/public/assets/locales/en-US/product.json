@@ -46,6 +46,8 @@
     "nodeGroups": "Node Groups",
     "nodeGroupsDescription": "Assign this product to multiple node groups. Users will get nodes from these groups.",
     "nodeGroupsFirstSelectionDescription": "Select node groups for this product. The first selected group will be set as the default node group.",
+    "nodeGroupSubscribeOnly": "Subscribe Only",
+    "nodeGroupAppOnly": "APP Only",
     "defaultNodeGroup": "Default Node Group",
     "defaultNodeGroupDescription": "Select the default node group for this product. This will be automatically included in the backup node groups.",
     "selectDefaultNodeGroup": "Select a default node group...",

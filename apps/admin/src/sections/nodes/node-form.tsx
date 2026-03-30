@@ -76,6 +76,8 @@ const buildSchema = (t: TFunction) =>
       .max(65_535, t("errors.portRange", "Port must be between 1 and 65535")),
     tags: z.array(z.string()),
     node_group_ids: z.optional(z.array(z.string()).default([])),
+    node_type: z.optional(z.string()).default("landing"),
+    is_hidden: z.optional(z.boolean()).default(false),
   });
 
 export type NodeFormValues = z.infer<ReturnType<typeof buildSchema>>;
@@ -108,7 +110,7 @@ export default function NodeForm(props: {
     });
   };
 
-  const form = useForm<NodeFormValues>({
+  const form = useForm({
     resolver: zodResolver(Scheme),
     defaultValues: {
       name: "",
@@ -118,8 +120,10 @@ export default function NodeForm(props: {
       port: 0,
       tags: [],
       node_group_ids: [],
+      node_type: "landing",
+      is_hidden: false,
       ...initialValues,
-    },
+    } as NodeFormValues,
     mode: "onSubmit", // Only validate on form submission
   });
 
@@ -162,6 +166,8 @@ export default function NodeForm(props: {
         port: 0,
         tags: [],
         node_group_ids: [],
+        node_type: "landing",
+        is_hidden: false,
       };
 
       // Copy only the values we need from initialValues
@@ -171,6 +177,10 @@ export default function NodeForm(props: {
       if (initialValues.address) resetValues.address = initialValues.address;
       if (initialValues.port) resetValues.port = initialValues.port;
       if (initialValues.tags) resetValues.tags = initialValues.tags;
+      if (initialValues.node_type) resetValues.node_type = initialValues.node_type;
+      if (typeof initialValues.is_hidden === "boolean") {
+        resetValues.is_hidden = initialValues.is_hidden;
+      }
 
       // Convert node_group_ids from number[] to string[], ensure it's always an array
       if (initialValues.node_group_ids && Array.isArray(initialValues.node_group_ids)) {
@@ -273,6 +283,11 @@ export default function NodeForm(props: {
   }
 
   async function handleSubmit(values: NodeFormValues) {
+    // 手动验证 server_id
+    if (!values.server_id || values.server_id <= 0) {
+      toast.error(t("errors.serverRequired", "Please select a server"));
+      return false;
+    }
     const result = await onSubmit(values);
     if (result) {
       setOpen(false);
@@ -337,6 +352,27 @@ export default function NodeForm(props: {
                           label: `${p.protocol}${p.port ? ` (${p.port})` : ""}`,
                         }))}
                         placeholder={t("select_protocol", "Select protocol…")}
+                        value={field.value}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="node_type"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t("node_type", "Node Type")}</FormLabel>
+                    <FormControl>
+                      <Combobox<string, false>
+                        onChange={(v) => form.setValue("node_type", v as string)}
+                        options={[
+                          { value: "landing", label: t("node_type_landing", "Landing Node") },
+                          { value: "front", label: t("node_type_front", "Frontend Node") },
+                        ]}
+                        placeholder={t("select_node_type", "Select node type…")}
                         value={field.value}
                       />
                     </FormControl>
@@ -494,6 +530,32 @@ export default function NodeForm(props: {
                   )}
                 />
               )}
+              {/* Is Hidden field - hidden nodes are not visible to users */}
+              <FormField
+                control={form.control}
+                name="is_hidden"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value || false}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                    <div className="space-y-1 leading-none">
+                      <FormLabel>
+                        {t("is_hidden", "Hidden")}
+                      </FormLabel>
+                      <FormDescription>
+                        {t(
+                          "is_hidden_description",
+                          "Hidden nodes are not visible to users in subscribe"
+                        )}
+                      </FormDescription>
+                    </div>
+                  </FormItem>
+                )}
+              />
             </form>
           </Form>
         </ScrollArea>
@@ -508,11 +570,14 @@ export default function NodeForm(props: {
           </Button>
           <Button
             disabled={loading}
-            onClick={form.handleSubmit(handleSubmit, (errors) => {
-              const key = Object.keys(errors)[0] as keyof typeof errors;
-              if (key) toast.error(String(errors[key]?.message));
-              return false;
-            })}
+            onClick={() => {
+              const values = form.getValues();
+              if (!values.server_id) {
+                toast.error(t("errors.serverRequired", "Please select a server"));
+                return;
+              }
+              handleSubmit(values as NodeFormValues);
+            }}
           >
             {t("confirm", "Confirm")}
           </Button>

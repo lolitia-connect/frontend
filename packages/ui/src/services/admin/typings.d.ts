@@ -1445,6 +1445,8 @@ declare namespace API {
     server_id: number;
     protocol: string;
     enabled: boolean;
+    node_type?: string;
+    is_hidden?: boolean;
     sort?: number;
     node_group_id?: number;
     node_group_ids?: number[];

@@ -23,7 +23,7 @@ import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { useNode } from "@/stores/node";
 import { useServer } from "@/stores/server";
-import NodeForm from "./node-form";
+import NodeForm, { type NodeFormValues } from "./node-form";
 
 export default function Nodes() {
   const { t } = useTranslation("nodes");
@@ -53,6 +53,32 @@ export default function Nodes() {
   });
 
   const isGroupEnabled = groupConfigData?.enabled || false;
+
+  const buildNodePayload = (values: NodeFormValues, row?: API.Node) => {
+    const isFrontNode = values.node_type === "front";
+    const payload: Record<string, any> = {
+      ...(row || {}),
+      name: values.name,
+      address: values.address,
+      port: Number(values.port),
+      tags: isFrontNode ? [] : values.tags || [],
+      node_type: values.node_type,
+      is_hidden: values.is_hidden ?? false,
+      node_group_ids: isFrontNode
+        ? []
+        : values.node_group_ids?.map((id: string | number) => Number(id)) || [],
+    };
+
+    if (isFrontNode) {
+      delete payload.server_id;
+      delete payload.protocol;
+      return payload;
+    }
+
+    payload.server_id = Number(values.server_id);
+    payload.protocol = values.protocol;
+    return payload;
+  };
 
   // Dynamic columns based on group feature status
   const columns = useMemo(() => {
@@ -165,11 +191,7 @@ export default function Nodes() {
             onSubmit={async (values) => {
               setLoading(true);
               try {
-                const body: API.UpdateNodeRequest = {
-                  ...row,
-                  ...values,
-                  node_group_ids: values.node_group_ids?.map((id: string | number) => Number(id)) || [],
-                } as any;
+                const body = buildNodePayload(values, row) as API.UpdateNodeRequest;
                 await updateNode(body);
                 toast.success(t("updated", "Updated"));
                 ref.current?.refresh();
@@ -266,17 +288,7 @@ export default function Nodes() {
             onSubmit={async (values) => {
               setLoading(true);
               try {
-                const body: any = {
-                  name: values.name,
-                  server_id: Number(values.server_id!),
-                  protocol: values.protocol,
-                  address: values.address,
-                  port: Number(values.port!),
-                  tags: values.tags || [],
-                };
-                if (values.node_group_ids) {
-                  body.node_group_ids = values.node_group_ids.map((id: string | number) => Number(id));
-                }
+                const body = buildNodePayload(values) as API.CreateNodeRequest;
                 await createNode(body);
                 toast.success(t("created", "Created"));
                 ref.current?.refresh();

@@ -342,9 +342,12 @@ declare namespace API {
     tags?: string[];
     port: number;
     address: string;
-    server_id: number;
-    protocol: string;
-    enabled: boolean;
+    server_id?: number;
+    protocol?: string;
+    enabled?: boolean;
+    node_type?: string;
+    is_hidden?: boolean;
+    node_group_ids?: number[];
   };
 
   type CreateOrderRequest = {
@@ -2370,9 +2373,12 @@ declare namespace API {
     tags?: string[];
     port: number;
     address: string;
-    server_id: number;
-    protocol: string;
-    enabled: boolean;
+    server_id?: number;
+    protocol?: string;
+    enabled?: boolean;
+    node_type?: string;
+    is_hidden?: boolean;
+    node_group_ids?: number[];
   };
 
   type UpdateOrderStatusRequest = {

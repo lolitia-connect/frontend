@@ -1,0 +1,115 @@
+{
+  "meta": {
+    "title": "支付充值中心"
+  },
+  "news": {
+    "title": "滚动新闻",
+    "subtitle": "滚动展示支付动态、配置变更和充值提醒。"
+  },
+  "login": {
+    "badge": "独立支付前台",
+    "title": "登录充值中心",
+    "description": "认证直接调用现有后端登录接口，登录成功后即可选择充值方式和预设充值金额。",
+    "accountLabel": "账号 / 邮箱",
+    "accountPlaceholder": "请输入现有系统账号或邮箱",
+    "passwordLabel": "密码",
+    "passwordPlaceholder": "请输入密码",
+    "helper": "当前前端不保存独立用户体系，直接复用现有后端认证与支付接口。",
+    "loadingConfig": "加载配置中...",
+    "submit": "登录",
+    "submitting": "登录中...",
+    "success": "登录成功"
+  },
+  "dashboard": {
+    "badge": "Recharge Workspace",
+    "title": "支付充值中心",
+    "description": "选择启用中的支付方式和预设充值金额，先确认手续费，再创建充值订单。",
+    "refresh": "刷新",
+    "logout": "退出登录",
+    "amounts": "充值金额",
+    "selectAmountTitle": "预设充值金额",
+    "selectAmountHint": "充值金额来自当前前端项目的 .env 配置。",
+    "amountLabel": "Amount",
+    "methods": "支付方式",
+    "selectMethodTitle": "启用中的支付方式",
+    "selectionReady": "选择完成后点击确认，先查看手续费与合计金额。",
+    "loading": "正在加载支付数据...",
+    "submit": "确认充值",
+    "creating": "创建订单中...",
+    "currentOrder": "当前订单",
+    "currentOrderTitle": "支付状态",
+    "noCurrentOrder": "还没有待处理充值订单。创建新订单后，这里会显示最新支付状态。",
+    "reloadOrder": "刷新订单",
+    "paymentNow": "前往支付",
+    "paymentHint": "若已打开支付页，请完成支付后返回这里刷新订单状态。",
+    "scanToPay": "请扫码继续支付",
+    "unsupportedStripe": "当前独立支付前台未内嵌 Stripe 卡片支付，请继续在现有支付页完成。",
+    "records": "充值记录",
+    "recordsTitle": "最近充值订单",
+    "recordsHint": "记录来自现有订单列表接口，当前前端会过滤出充值类型订单。",
+    "empty": "暂无充值记录"
+  },
+  "dialog": {
+    "badge": "确认信息",
+    "title": "确认充值",
+    "description": "账单金额取自后端订单详情，确认后再拉起实际支付。",
+    "method": "支付方式",
+    "amount": "充值金额",
+    "fee": "手续费",
+    "total": "合计金额",
+    "cancel": "取消",
+    "confirm": "确认并支付",
+    "confirming": "处理中...",
+    "success": "订单已确认，正在拉起支付"
+  },
+  "order": {
+    "id": "ID",
+    "number": "订单号",
+    "tradeNo": "交易订单号",
+    "type": "交易类型",
+    "amount": "充值金额",
+    "time": "充值时间",
+    "method": "支付方式",
+    "status": "状态"
+  },
+  "type": {
+    "recharge": "充值",
+    "unknown": "未知类型"
+  },
+  "status": {
+    "1": "待支付",
+    "2": "已支付",
+    "3": "已取消",
+    "4": "已关闭",
+    "5": "已完成",
+    "unknown": "未知状态"
+  },
+  "errors": {
+    "missingCredentials": "请先输入账号和密码再继续登录。",
+    "missingCaptcha": "请先完成验证码验证。",
+    "loginFailed": "登录失败，请稍后重试。",
+    "missingSelection": "请先选择充值方式和充值金额。",
+    "orderFailed": "充值订单创建失败。"
+  },
+  "captcha": {
+    "loading": "加载中...",
+    "local": {
+      "label": "图形验证码",
+      "placeholder": "请输入图形验证码",
+      "refresh": "刷新验证码"
+    },
+    "turnstile": {
+      "title": "安全验证",
+      "action": "点击完成人机验证",
+      "verified": "验证已通过"
+    },
+    "slider": {
+      "title": "滑块验证",
+      "action": "点击完成滑块验证",
+      "verified": "验证已通过",
+      "retry": "请重试",
+      "hint": "拖动拼图块完成验证",
+      "refresh": "刷新验证"
+    }
+  }
+}

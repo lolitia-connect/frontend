@@ -1,0 +1,115 @@
+{
+  "meta": {
+    "title": "Payment Portal"
+  },
+  "news": {
+    "title": "Rolling News",
+    "subtitle": "Payment updates, configuration changes, and recharge reminders scroll here."
+  },
+  "login": {
+    "badge": "Independent Payment Portal",
+    "title": "Sign in to continue",
+    "description": "Authentication reuses the current backend login API. After signing in, you can select a recharge method and a preset amount.",
+    "accountLabel": "Account / Email",
+    "accountPlaceholder": "Enter your existing system account or email",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "helper": "This frontend does not maintain a separate user system. It reuses the current backend authentication and payment APIs.",
+    "loadingConfig": "Loading config...",
+    "submit": "Sign In",
+    "submitting": "Signing in...",
+    "success": "Login successful"
+  },
+  "dashboard": {
+    "badge": "Recharge Workspace",
+    "title": "Recharge Center",
+    "description": "Choose an enabled payment method and a preset recharge amount, review the fee summary, then create the recharge order.",
+    "refresh": "Refresh",
+    "logout": "Logout",
+    "amounts": "Recharge Amount",
+    "selectAmountTitle": "Preset Recharge Amounts",
+    "selectAmountHint": "Preset recharge amounts come from this frontend project's .env file.",
+    "amountLabel": "Amount",
+    "methods": "Payment Method",
+    "selectMethodTitle": "Enabled Payment Methods",
+    "selectionReady": "After selecting both items, confirm to review the fee breakdown before the order is created.",
+    "loading": "Loading payment data...",
+    "submit": "Confirm Recharge",
+    "creating": "Creating order...",
+    "currentOrder": "Current Order",
+    "currentOrderTitle": "Payment Status",
+    "noCurrentOrder": "There is no active recharge order yet. The latest order status will appear here after you create one.",
+    "reloadOrder": "Refresh Order",
+    "paymentNow": "Go To Payment",
+    "paymentHint": "If the payment page has already been opened, complete it there and come back here to refresh the order status.",
+    "scanToPay": "Scan to continue payment",
+    "unsupportedStripe": "Embedded Stripe card checkout is not implemented in this standalone portal yet. Continue from the existing payment page if needed.",
+    "records": "Recharge Records",
+    "recordsTitle": "Recent Recharge Orders",
+    "recordsHint": "Records are loaded from the existing order list API and filtered to recharge-type orders.",
+    "empty": "No recharge records yet"
+  },
+  "dialog": {
+    "badge": "Confirmation",
+    "title": "Confirm Recharge",
+    "description": "Billing values come from the backend order detail. Payment starts only after you confirm.",
+    "method": "Payment Method",
+    "amount": "Recharge Amount",
+    "fee": "Fee",
+    "total": "Total",
+    "cancel": "Cancel",
+    "confirm": "Confirm and Pay",
+    "confirming": "Processing...",
+    "success": "Order confirmed. Redirecting to payment"
+  },
+  "order": {
+    "id": "ID",
+    "number": "Order No",
+    "tradeNo": "Trade Order No",
+    "type": "Type",
+    "amount": "Amount",
+    "time": "Recharge Time",
+    "method": "Payment Method",
+    "status": "Status"
+  },
+  "type": {
+    "recharge": "Recharge",
+    "unknown": "Unknown Type"
+  },
+  "status": {
+    "1": "Pending",
+    "2": "Paid",
+    "3": "Cancelled",
+    "4": "Closed",
+    "5": "Completed",
+    "unknown": "Unknown Status"
+  },
+  "errors": {
+    "missingCredentials": "Enter both account and password before signing in.",
+    "missingCaptcha": "Complete the verification first.",
+    "loginFailed": "Login failed. Please try again later.",
+    "missingSelection": "Choose both a payment method and a recharge amount first.",
+    "orderFailed": "Failed to create the recharge order."
+  },
+  "captcha": {
+    "loading": "Loading...",
+    "local": {
+      "label": "Image captcha",
+      "placeholder": "Enter captcha code",
+      "refresh": "Refresh captcha"
+    },
+    "turnstile": {
+      "title": "Security Verification",
+      "action": "Click to verify",
+      "verified": "Verification complete"
+    },
+    "slider": {
+      "title": "Slider Verification",
+      "action": "Click to complete slider verification",
+      "verified": "Verification complete",
+      "retry": "Try again",
+      "hint": "Drag the puzzle piece into position",
+      "refresh": "Refresh verification"
+    }
+  }
+}

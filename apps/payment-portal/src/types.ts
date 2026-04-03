@@ -1,0 +1,43 @@
+export interface PaymentMethod {
+  id: number;
+  name: string;
+  platform: string;
+  description?: string;
+  icon?: string;
+  fee_mode: number;
+  fee_percent: number;
+  fee_amount: number;
+}
+
+export interface RechargeRecord {
+  id: number;
+  orderNo: string;
+  tradeNo: string;
+  type: number;
+  amount: number;
+  createdAt: number;
+  status: number;
+  paymentName?: string;
+}
+
+export interface CheckoutInfo {
+  type: string;
+  checkoutUrl?: string;
+}
+
+export interface ActiveOrder {
+  id: number;
+  orderNo: string;
+  tradeNo: string;
+  amount: number;
+  createdAt: number;
+  status: number;
+  paymentName: string;
+  checkout?: CheckoutInfo;
+}
+
+export interface PortalVerifyConfig {
+  turnstile_site_key: string;
+  captcha_type: string;
+  enable_user_login_captcha: boolean;
+}

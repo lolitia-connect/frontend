@@ -36,12 +36,17 @@
     "loading": "Loading payment data...",
     "submit": "Confirm Recharge",
     "creating": "Creating order...",
+    "pendingOrder": "Payment Pending",
+    "pendingHint": "There is already a pending payment order. The system will keep checking its status, so do not create another one.",
     "currentOrder": "Current Order",
     "currentOrderTitle": "Payment Status",
     "noCurrentOrder": "There is no active recharge order yet. The latest order status will appear here after you create one.",
     "reloadOrder": "Refresh Order",
     "paymentNow": "Go To Payment",
     "paymentHint": "If the payment page has already been opened, complete it there and come back here to refresh the order status.",
+    "paymentSuccess": "Payment completed. Balance and records have been refreshed.",
+    "paymentSuccessTitle": "Payment Completed",
+    "paymentSuccessHint": "This order has been paid successfully. The system will refresh your balance and recharge records.",
     "scanToPay": "Scan to continue payment",
     "unsupportedStripe": "Embedded Stripe card checkout is not implemented in this standalone portal yet. Continue from the existing payment page if needed.",
     "records": "Recharge Records",
@@ -89,7 +94,8 @@
     "missingCaptcha": "Complete the verification first.",
     "loginFailed": "Login failed. Please try again later.",
     "missingSelection": "Choose both a payment method and a recharge amount first.",
-    "orderFailed": "Failed to create the recharge order."
+    "orderFailed": "Failed to create the recharge order.",
+    "pendingOrder": "There is already a pending order. Complete the payment first."
   },
   "captcha": {
     "loading": "Loading...",

@@ -36,12 +36,17 @@
     "loading": "正在加载支付数据...",
     "submit": "确认充值",
     "creating": "创建订单中...",
+    "pendingOrder": "订单支付中",
+    "pendingHint": "当前已有待支付订单，系统会持续监听支付状态，请勿重复下单。",
     "currentOrder": "当前订单",
     "currentOrderTitle": "支付状态",
     "noCurrentOrder": "还没有待处理充值订单。创建新订单后，这里会显示最新支付状态。",
     "reloadOrder": "刷新订单",
     "paymentNow": "前往支付",
     "paymentHint": "若已打开支付页，请完成支付后返回这里刷新订单状态。",
+    "paymentSuccess": "支付成功，余额和订单记录已更新",
+    "paymentSuccessTitle": "支付已完成",
+    "paymentSuccessHint": "当前订单已支付成功，系统会同步刷新余额和充值记录。",
     "scanToPay": "请扫码继续支付",
     "unsupportedStripe": "当前独立支付前台未内嵌 Stripe 卡片支付，请继续在现有支付页完成。",
     "records": "充值记录",
@@ -89,7 +94,8 @@
     "missingCaptcha": "请先完成验证码验证。",
     "loginFailed": "登录失败，请稍后重试。",
     "missingSelection": "请先选择充值方式和充值金额。",
-    "orderFailed": "充值订单创建失败。"
+    "orderFailed": "充值订单创建失败。",
+    "pendingOrder": "当前已有待支付订单，请先完成支付。"
   },
   "captcha": {
     "loading": "加载中...",

@@ -24,6 +24,7 @@ interface RechargeScreenProps {
   records: RechargeRecord[];
   activeOrder: ActiveOrder | null;
   userBalance: number | null;
+  hasPendingOrder: boolean;
   selectedAmount: number;
   selectedMethodId: number | null;
   loadingData: boolean;
@@ -46,6 +47,7 @@ export function RechargeScreen({
   records,
   activeOrder,
   userBalance,
+  hasPendingOrder,
   selectedAmount,
   selectedMethodId,
   loadingData,
@@ -196,6 +198,7 @@ export function RechargeScreen({
                   <button
                     className="portal-primary-btn"
                     disabled={
+                      hasPendingOrder ||
                       loadingData ||
                       submitting ||
                       methods.length === 0 ||
@@ -204,7 +207,9 @@ export function RechargeScreen({
                     onClick={onOpenConfirm}
                     type="button"
                   >
-                    {submitting
+                    {hasPendingOrder
+                      ? t("dashboard.pendingOrder", "订单支付中")
+                      : submitting
                       ? t("dashboard.creating", "创建订单中...")
                       : t("dashboard.submit", "确认充值")}
                   </button>
@@ -213,6 +218,11 @@ export function RechargeScreen({
                 <p className="text-right text-sm text-slate-500">
                   {loadingData
                     ? t("dashboard.loading", "正在加载支付数据...")
+                    : hasPendingOrder
+                    ? t(
+                        "dashboard.pendingHint",
+                        "当前已有待支付订单，系统会持续监听支付状态，请勿重复下单。"
+                      )
                     : t(
                         "dashboard.selectionReady",
                         "选择完成后点击确认，先查看手续费与合计金额。"
@@ -251,6 +261,20 @@ export function RechargeScreen({
                     ) : null}
                   </div>
                 </div>
+
+                {[2, 5].includes(Number(activeOrder.status)) ? (
+                  <div className="mb-3 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+                    <p className="font-medium text-emerald-800">
+                      {t("dashboard.paymentSuccessTitle", "支付已完成")}
+                    </p>
+                    <p className="mt-1">
+                      {t(
+                        "dashboard.paymentSuccessHint",
+                        "当前订单已支付成功，系统会同步刷新余额和充值记录。"
+                      )}
+                    </p>
+                  </div>
+                ) : null}
 
                 <div className="grid gap-2.5 md:grid-cols-4">
                   <div className="rounded-xl border border-blue-100 bg-white px-4 py-2.5">

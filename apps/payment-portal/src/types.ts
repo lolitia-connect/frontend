@@ -29,9 +29,11 @@ export interface ActiveOrder {
   id: number;
   orderNo: string;
   tradeNo: string;
+  rechargeAmount: number;
   amount: number;
   createdAt: number;
   status: number;
+  paymentId: number;
   paymentName: string;
   checkout?: CheckoutInfo;
 }

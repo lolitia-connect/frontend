@@ -78,9 +78,11 @@ function mapActiveOrder(item: any, checkout?: CheckoutInfo): ActiveOrder {
     id: Number(item?.id || 0),
     orderNo: String(item?.order_no || ""),
     tradeNo: String(item?.trade_no || ""),
+    rechargeAmount: Number(item?.price || item?.amount || 0) / 100,
     amount: Number(item?.amount || 0) / 100,
     createdAt: Number(item?.created_at || 0),
     status: Number(item?.status || 0),
+    paymentId: Number(item?.payment?.id || 0),
     paymentName: item?.payment?.name
       ? String(item.payment.name)
       : String(item?.payment?.platform || ""),
@@ -138,8 +140,13 @@ export default function App() {
   const [submitPending, startSubmitTransition] = useTransition();
   const configLoadedRef = useRef(false);
   const portalBootstrappedRef = useRef(false);
+  const completedOrderNoticeRef = useRef("");
 
   const currentLanguage = i18n.resolvedLanguage || i18n.language || "en-US";
+  const isCurrentSelectionPendingOrder =
+    Number(activeOrder?.status) === 1 &&
+    activeOrder?.paymentId === selectedMethodId &&
+    Math.abs((activeOrder?.rechargeAmount || 0) - selectedAmount) < 0.0001;
 
   const captchaEnabled = verifyConfig.enable_user_login_captcha;
   const captchaType = verifyConfig.captcha_type;
@@ -180,26 +187,61 @@ export default function App() {
         return methods[0]?.id ?? null;
       });
 
-      const rechargeRecords = ((ordersResponse.data.data?.list || []) as any[])
+      const rechargeOrderItems = ((ordersResponse.data.data?.list || []) as any[])
         .filter((item) => Number(item?.type) === 4)
-        .map(mapRechargeRecord);
+        .sort(
+          (a, b) => Number(b?.created_at || 0) - Number(a?.created_at || 0)
+        );
+      const rechargeRecords = rechargeOrderItems.map(mapRechargeRecord);
 
       setRecords(rechargeRecords);
+
+      const pendingRechargeOrder = rechargeOrderItems.find(
+        (item) => Number(item?.status) === 1
+      );
+
+      if (pendingRechargeOrder?.order_no) {
+        const orderNo = String(pendingRechargeOrder.order_no);
+        const detailResponse = await queryOrderDetail({ order_no: orderNo });
+        const detail = detailResponse.data.data;
+        if (detail) {
+          let checkout: CheckoutInfo | undefined;
+          try {
+            const checkoutResponse = await purchaseCheckout({
+              orderNo,
+              returnUrl: window.location.href,
+            });
+            checkout = mapCheckoutInfo(checkoutResponse.data.data);
+          } catch (_error) {
+            checkout = undefined;
+          }
+
+          setActiveOrder(mapActiveOrder(detail, checkout));
+        }
+      }
     } finally {
       setLoadingPortal(false);
     }
   }, []);
 
   const refreshActiveOrder = useCallback(
-    async (orderNo: string, autoOpenPayment: boolean = false) => {
+    async (
+      orderNo: string,
+      options?: {
+        autoOpenPayment?: boolean;
+        requestCheckout?: boolean;
+      }
+    ) => {
       if (!orderNo) return;
+      const autoOpenPayment = Boolean(options?.autoOpenPayment);
+      const requestCheckout = Boolean(options?.requestCheckout);
 
       const detailResponse = await queryOrderDetail({ order_no: orderNo });
       const detail = detailResponse.data.data;
       if (!detail) return;
 
       let checkout: CheckoutInfo | undefined;
-      if (Number(detail.status) === 1) {
+      if (requestCheckout && Number(detail.status) === 1) {
         try {
           const checkoutResponse = await purchaseCheckout({
             orderNo,
@@ -211,7 +253,15 @@ export default function App() {
         }
       }
 
-      setActiveOrder(mapActiveOrder(detail, checkout));
+      setActiveOrder((current) =>
+        mapActiveOrder(
+          detail,
+          checkout ||
+            (Number(detail.status) === 1 && current?.orderNo === orderNo
+              ? current.checkout
+              : undefined)
+        )
+      );
 
       if (autoOpenPayment && checkout?.type === "url" && checkout.checkoutUrl) {
         window.open(checkout.checkoutUrl, "_blank", "noopener,noreferrer");
@@ -262,6 +312,27 @@ export default function App() {
     void refreshPortal();
   }, [authenticated, refreshPortal]);
 
+  useEffect(() => {
+    if (!activeOrder?.orderNo) return;
+    if (Number(activeOrder.status) !== 1) return;
+
+    const timer = window.setInterval(() => {
+      void refreshActiveOrder(activeOrder.orderNo);
+    }, 3000);
+
+    return () => window.clearInterval(timer);
+  }, [activeOrder?.orderNo, activeOrder?.status, refreshActiveOrder]);
+
+  useEffect(() => {
+    if (!activeOrder?.orderNo) return;
+    if (![2, 5].includes(Number(activeOrder.status))) return;
+    if (completedOrderNoticeRef.current === activeOrder.orderNo) return;
+
+    completedOrderNoticeRef.current = activeOrder.orderNo;
+    toast.success(t("dashboard.paymentSuccess", "支付成功，余额和订单记录已更新"));
+    void refreshPortal();
+  }, [activeOrder?.orderNo, activeOrder?.status, refreshPortal, t]);
+
   const changeLanguage = async (language: string) => {
     await i18n.changeLanguage(language);
   };
@@ -278,6 +349,7 @@ export default function App() {
     setConfirmOrderNo("");
     setConfirmBreakdown(null);
     setConfirmPaymentName("");
+    completedOrderNoticeRef.current = "";
   };
 
   const handleLogin = () => {
@@ -343,6 +415,11 @@ export default function App() {
   };
 
   const handleOpenConfirm = () => {
+    if (isCurrentSelectionPendingOrder) {
+      toast.error(t("errors.pendingOrder", "当前已有待支付订单，请先完成支付。"));
+      return;
+    }
+
     if (selectedMethodId == null || !selectedAmount) {
       toast.error(
         t("errors.missingSelection", "请先选择充值方式和充值金额。")
@@ -376,6 +453,7 @@ export default function App() {
             ? String(detail.payment.name)
             : String(detail?.payment?.platform || "")
         );
+        completedOrderNoticeRef.current = "";
         setActiveOrder(mapActiveOrder(detail));
         setConfirmOpen(true);
         await refreshPortal();
@@ -393,7 +471,10 @@ export default function App() {
         setConfirmOpen(false);
         toast.success(t("dialog.success", "订单已确认，正在拉起支付"));
         await refreshPortal();
-        await refreshActiveOrder(confirmOrderNo, true);
+        await refreshActiveOrder(confirmOrderNo, {
+          autoOpenPayment: true,
+          requestCheckout: true,
+        });
       } catch (_error) {
         /* request.ts handles the error toast */
       }
@@ -503,6 +584,7 @@ export default function App() {
         selectedMethodId={selectedMethodId}
         submitting={submitPending}
         userBalance={userBalance}
+        hasPendingOrder={isCurrentSelectionPendingOrder}
       />
 
       <ConfirmRechargeDialog

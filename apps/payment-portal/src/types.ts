@@ -23,6 +23,11 @@ export interface RechargeRecord {
 export interface CheckoutInfo {
   type: string;
   checkoutUrl?: string;
+  stripe?: {
+    method: string;
+    client_secret: string;
+    publishable_key: string;
+  };
 }
 
 export interface ActiveOrder {

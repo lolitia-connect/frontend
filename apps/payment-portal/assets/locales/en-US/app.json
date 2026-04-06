@@ -29,6 +29,9 @@
     "amounts": "Recharge Amount",
     "selectAmountTitle": "Preset Recharge Amounts",
     "selectAmountHint": "Preset recharge amounts come from this frontend project's .env file.",
+    "customAmountOption": "Custom Amount",
+    "customAmountHint": "The epay payment method supports a custom recharge amount, with a minimum of {{amount}}.",
+    "customAmountPlaceholder": "Enter a custom amount",
     "amountLabel": "Amount",
     "methods": "Payment Method",
     "selectMethodTitle": "Enabled Payment Methods",
@@ -67,6 +70,10 @@
     "confirming": "Processing...",
     "success": "Order confirmed. Redirecting to payment"
   },
+  "stripeDialog": {
+    "title": "Stripe Payment",
+    "description": "Complete the Stripe payment in this dialog. If you close it, you can reopen it from the payment status section."
+  },
   "order": {
     "id": "ID",
     "number": "Order No",
@@ -94,6 +101,7 @@
     "missingCaptcha": "Complete the verification first.",
     "loginFailed": "Login failed. Please try again later.",
     "missingSelection": "Choose both a payment method and a recharge amount first.",
+    "invalidCustomAmount": "The custom recharge amount cannot be below the minimum amount.",
     "orderFailed": "Failed to create the recharge order.",
     "pendingOrder": "There is already a pending order. Complete the payment first."
   },
@@ -117,5 +125,25 @@
       "hint": "Drag the puzzle piece into position",
       "refresh": "Refresh verification"
     }
+  },
+  "stripe": {
+    "loading": "Loading Stripe...",
+    "nameRequired": "Cardholder name is required",
+    "elementError": "Please fill in all card details",
+    "paymentFailed": "Payment failed",
+    "processing": "Processing payment...",
+    "successTitle": "Payment Successful",
+    "successMessage": "Thank you. Your payment has been completed successfully.",
+    "cardName": "Cardholder Name",
+    "namePlaceholder": "Full Name on Card",
+    "cardNumber": "Card Number",
+    "expiryDate": "Expiry Date",
+    "cvc": "CVC",
+    "processingButton": "Processing...",
+    "payButton": "Pay Now",
+    "secureNotice": "Payments are secure and encrypted",
+    "error": "An error occurred during payment",
+    "alipayHint": "Scan with Alipay to pay",
+    "wechatHint": "Scan with WeChat to pay"
   }
 }

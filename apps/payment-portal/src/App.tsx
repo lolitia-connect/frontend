@@ -14,6 +14,7 @@ import { LoginScreen } from "@/components/login-screen";
 import { LocalCaptcha } from "@/components/local-captcha";
 import { RechargeScreen } from "@/components/recharge-screen";
 import { SliderCaptcha } from "@/components/slider-captcha";
+import { StripeCheckoutDialog } from "@/components/stripe-checkout-dialog";
 import { portalConfig } from "@/config";
 import { clearAuthorization, getAuthorization, setAuthorization } from "@/lib/auth";
 import type { FeeBreakdown } from "@/lib/fees";
@@ -57,7 +58,7 @@ function mapRechargeRecord(item: any): RechargeRecord {
     orderNo: String(item?.order_no || ""),
     tradeNo: String(item?.trade_no || ""),
     type: Number(item?.type || 0),
-    amount: Number(item?.amount || 0) / 100,
+    amount: Number(item?.price || item?.amount || 0) / 100,
     createdAt: Number(item?.created_at || 0),
     status: Number(item?.status || 0),
     paymentName: item?.payment?.name ? String(item.payment.name) : "",
@@ -70,6 +71,13 @@ function mapCheckoutInfo(item: any): CheckoutInfo | undefined {
   return {
     type: String(item.type),
     checkoutUrl: item.checkout_url ? String(item.checkout_url) : undefined,
+    stripe: item?.stripe
+      ? {
+          method: String(item.stripe.method || ""),
+          client_secret: String(item.stripe.client_secret || ""),
+          publishable_key: String(item.stripe.publishable_key || ""),
+        }
+      : undefined,
   };
 }
 
@@ -128,6 +136,8 @@ export default function App() {
   const [selectedAmount, setSelectedAmount] = useState(
     portalConfig.rechargeAmounts[0] || 10
   );
+  const [customAmountEnabled, setCustomAmountEnabled] = useState(false);
+  const [customAmountInput, setCustomAmountInput] = useState("");
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [confirmOrderNo, setConfirmOrderNo] = useState("");
   const [confirmBreakdown, setConfirmBreakdown] = useState<FeeBreakdown | null>(
@@ -135,6 +145,7 @@ export default function App() {
   );
   const [confirmPaymentName, setConfirmPaymentName] = useState("");
   const [activeOrder, setActiveOrder] = useState<ActiveOrder | null>(null);
+  const [stripeDialogOpen, setStripeDialogOpen] = useState(false);
   const [loadingPortal, setLoadingPortal] = useState(false);
   const [loginPending, startLoginTransition] = useTransition();
   const [submitPending, startSubmitTransition] = useTransition();
@@ -143,6 +154,14 @@ export default function App() {
   const completedOrderNoticeRef = useRef("");
 
   const currentLanguage = i18n.resolvedLanguage || i18n.language || "en-US";
+  const minimumCustomAmount = portalConfig.minCustomAmount;
+  const selectedMethod = useMemo(
+    () => paymentMethods.find((method) => method.id === selectedMethodId) || null,
+    [paymentMethods, selectedMethodId]
+  );
+  const epayCustomAmountEnabled = selectedMethod?.platform
+    ?.toLowerCase()
+    .includes("epay");
   const isCurrentSelectionPendingOrder =
     Number(activeOrder?.status) === 1 &&
     activeOrder?.paymentId === selectedMethodId &&
@@ -266,6 +285,9 @@ export default function App() {
       if (autoOpenPayment && checkout?.type === "url" && checkout.checkoutUrl) {
         window.open(checkout.checkoutUrl, "_blank", "noopener,noreferrer");
       }
+      if (autoOpenPayment && checkout?.type === "stripe" && checkout.stripe) {
+        setStripeDialogOpen(true);
+      }
     },
     []
   );
@@ -329,9 +351,29 @@ export default function App() {
     if (completedOrderNoticeRef.current === activeOrder.orderNo) return;
 
     completedOrderNoticeRef.current = activeOrder.orderNo;
+    setStripeDialogOpen(false);
     toast.success(t("dashboard.paymentSuccess", "支付成功，余额和订单记录已更新"));
     void refreshPortal();
   }, [activeOrder?.orderNo, activeOrder?.status, refreshPortal, t]);
+
+  useEffect(() => {
+    if (!activeOrder?.orderNo || Number(activeOrder.status) !== 1) {
+      setStripeDialogOpen(false);
+    }
+  }, [activeOrder?.orderNo, activeOrder?.status]);
+
+  useEffect(() => {
+    if (epayCustomAmountEnabled) return;
+    if (!customAmountEnabled && portalConfig.rechargeAmounts.includes(selectedAmount)) {
+      return;
+    }
+
+    setCustomAmountEnabled(false);
+    setCustomAmountInput("");
+    if (!portalConfig.rechargeAmounts.includes(selectedAmount)) {
+      setSelectedAmount(portalConfig.rechargeAmounts[0] || 10);
+    }
+  }, [customAmountEnabled, epayCustomAmountEnabled, selectedAmount]);
 
   const changeLanguage = async (language: string) => {
     await i18n.changeLanguage(language);
@@ -344,7 +386,10 @@ export default function App() {
     setPaymentMethods([]);
     setRecords([]);
     setUserBalance(null);
+    setCustomAmountEnabled(false);
+    setCustomAmountInput("");
     setActiveOrder(null);
+    setStripeDialogOpen(false);
     setConfirmOpen(false);
     setConfirmOrderNo("");
     setConfirmBreakdown(null);
@@ -427,6 +472,22 @@ export default function App() {
       return;
     }
 
+    if (
+      epayCustomAmountEnabled &&
+      customAmountEnabled &&
+      selectedAmount < minimumCustomAmount
+    ) {
+      setCustomAmountInput(String(minimumCustomAmount));
+      setSelectedAmount(minimumCustomAmount);
+      toast.error(
+        t(
+          "errors.invalidCustomAmount",
+          "自定义充值金额不能低于最小金额。"
+        )
+      );
+      return;
+    }
+
     startSubmitTransition(async () => {
       try {
         const response = await recharge({
@@ -482,9 +543,59 @@ export default function App() {
   };
 
   const handleContinuePayment = () => {
+    if (activeOrder?.checkout?.type === "stripe" && activeOrder.checkout.stripe) {
+      setStripeDialogOpen(true);
+      return;
+    }
+
     const checkoutUrl = activeOrder?.checkout?.checkoutUrl;
     if (!checkoutUrl) return;
     window.open(checkoutUrl, "_blank", "noopener,noreferrer");
+  };
+
+  const handleAmountSelect = (value: string) => {
+    if (value === "custom") {
+      setCustomAmountEnabled(true);
+      const parsed = Number(customAmountInput || minimumCustomAmount);
+      const normalizedAmount =
+        Number.isFinite(parsed) && parsed >= minimumCustomAmount
+          ? parsed
+          : minimumCustomAmount;
+      setCustomAmountInput(String(normalizedAmount));
+      setSelectedAmount(
+        normalizedAmount
+      );
+      return;
+    }
+
+    setCustomAmountEnabled(false);
+    setSelectedAmount(Number(value));
+  };
+
+  const handleCustomAmountChange = (value: string) => {
+    if (value && !/^\d*(\.\d{0,2})?$/.test(value)) return;
+
+    if (!value) {
+      setCustomAmountInput("");
+      setSelectedAmount(0);
+      return;
+    }
+
+    const parsed = Number(value);
+    if (Number.isFinite(parsed) && parsed < minimumCustomAmount) {
+      setCustomAmountInput(String(minimumCustomAmount));
+      setSelectedAmount(minimumCustomAmount);
+      return;
+    }
+
+    setCustomAmountInput(value);
+
+    if (!Number.isFinite(parsed) || parsed <= 0) {
+      setSelectedAmount(0);
+      return;
+    }
+
+    setSelectedAmount(parsed);
   };
 
   useEffect(() => {
@@ -562,11 +673,16 @@ export default function App() {
       <RechargeScreen
         activeOrder={activeOrder}
         amounts={portalConfig.rechargeAmounts}
+        customAmountEnabled={customAmountEnabled}
+        customAmountInput={customAmountInput}
         currency={portalConfig.currency}
         currentLanguage={currentLanguage}
+        epayCustomAmountEnabled={Boolean(epayCustomAmountEnabled)}
         loadingData={loadingPortal}
+        minimumCustomAmount={minimumCustomAmount}
         methods={paymentMethods}
-        onAmountSelect={setSelectedAmount}
+        onAmountSelect={handleAmountSelect}
+        onCustomAmountChange={handleCustomAmountChange}
         onContinuePayment={handleContinuePayment}
         onLanguageChange={changeLanguage}
         onLogout={handleLogout}
@@ -601,6 +717,14 @@ export default function App() {
         onConfirm={handleCreateOrder}
         open={confirmOpen}
         paymentMethodName={confirmPaymentName}
+      />
+
+      <StripeCheckoutDialog
+        onOpenChange={setStripeDialogOpen}
+        open={stripeDialogOpen}
+        orderNo={activeOrder?.orderNo}
+        paymentMethodName={activeOrder?.paymentName}
+        stripe={activeOrder?.checkout?.stripe}
       />
     </>
   );

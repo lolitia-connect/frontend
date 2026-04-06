@@ -38,7 +38,9 @@ export const supportedLngs = ["en-US", "zh-CN"] as const;
 export const portalConfig = {
   currency: import.meta.env.VITE_PAYMENT_PORTAL_CURRENCY ,
   rechargeAmounts: parseAmounts(import.meta.env.VITE_PAYMENT_PORTAL_AMOUNTS),
-  fixedFee: parseNumber(import.meta.env.VITE_PAYMENT_PORTAL_FIXED_FEE, 0),
-  percentFee: parseNumber(import.meta.env.VITE_PAYMENT_PORTAL_PERCENT_FEE, 0),
+  minCustomAmount: Math.max(
+    parseNumber(import.meta.env.VITE_PAYMENT_PORTAL_MIN_CUSTOM_AMOUNT, 1),
+    1
+  ),
   newsItems: parseNews(import.meta.env.VITE_PAYMENT_PORTAL_NEWS),
 };

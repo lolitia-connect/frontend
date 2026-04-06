@@ -10,6 +10,8 @@
     "check": "biome check"
   },
   "dependencies": {
+    "@stripe/react-stripe-js": "^5.4.0",
+    "@stripe/stripe-js": "^8.5.2",
     "@tailwindcss/vite": "^4.0.6",
     "@workspace/ui": "workspace:*",
     "qrcode.react": "^4.2.0",

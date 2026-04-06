@@ -1,5 +1,6 @@
 import { QRCodeCanvas } from "qrcode.react";
 import { useTranslation } from "react-i18next";
+import { Input } from "@workspace/ui/components/input";
 import {
   Select,
   SelectContent,
@@ -20,16 +21,21 @@ interface RechargeScreenProps {
   currentLanguage: string;
   currency: string;
   amounts: number[];
+  minimumCustomAmount: number;
   methods: PaymentMethod[];
   records: RechargeRecord[];
   activeOrder: ActiveOrder | null;
   userBalance: number | null;
   hasPendingOrder: boolean;
   selectedAmount: number;
+  customAmountEnabled: boolean;
+  customAmountInput: string;
+  epayCustomAmountEnabled: boolean;
   selectedMethodId: number | null;
   loadingData: boolean;
   submitting: boolean;
-  onAmountSelect: (value: number) => void;
+  onAmountSelect: (value: string) => void;
+  onCustomAmountChange: (value: string) => void;
   onMethodSelect: (value: number) => void;
   onLanguageChange: (value: string) => void;
   onRefresh: () => void;
@@ -43,16 +49,21 @@ export function RechargeScreen({
   currentLanguage,
   currency,
   amounts,
+  minimumCustomAmount,
   methods,
   records,
   activeOrder,
   userBalance,
   hasPendingOrder,
   selectedAmount,
+  customAmountEnabled,
+  customAmountInput,
+  epayCustomAmountEnabled,
   selectedMethodId,
   loadingData,
   submitting,
   onAmountSelect,
+  onCustomAmountChange,
   onMethodSelect,
   onLanguageChange,
   onRefresh,
@@ -64,6 +75,9 @@ export function RechargeScreen({
   const { t } = useTranslation("app");
   const selectedMethod =
     methods.find((method) => method.id === selectedMethodId) || null;
+  const amountSelectValue = customAmountEnabled
+    ? "custom"
+    : String(selectedAmount);
 
   return (
     <div className="portal-dashboard min-h-screen">
@@ -78,13 +92,6 @@ export function RechargeScreen({
                 "dashboard.description",
                 "选择启用中的支付方式和预设充值金额，先确认手续费，再创建充值订单。"
               )}
-            </p>
-            <p className="text-sm font-medium text-white">
-              {t("dashboard.selection", "当前选择")}:
-              {" "}
-              {formatCurrency(selectedAmount, currentLanguage, currency)}
-              {" / "}
-              {selectedMethod?.name || "-"}
             </p>
             <p className="text-sm text-white/86">
               {t("dashboard.balance", "当前余额")}:{" "}
@@ -143,8 +150,8 @@ export function RechargeScreen({
                     {t("dashboard.amounts", "充值金额")}
                   </span>
                   <Select
-                    onValueChange={(value) => onAmountSelect(Number(value))}
-                    value={String(selectedAmount)}
+                    onValueChange={onAmountSelect}
+                    value={amountSelectValue}
                   >
                     <SelectTrigger className="h-12 w-full rounded-xl border-slate-200 bg-white px-4 text-left text-slate-700 shadow-none transition-colors focus:border-blue-500 focus:ring-4 focus:ring-blue-100">
                       <SelectValue
@@ -160,8 +167,41 @@ export function RechargeScreen({
                           {formatCurrency(amount, currentLanguage, currency)}
                         </SelectItem>
                       ))}
+                      {epayCustomAmountEnabled ? (
+                        <SelectItem value="custom">
+                          {t("dashboard.customAmountOption", "自定义金额")}
+                        </SelectItem>
+                      ) : null}
                     </SelectContent>
                   </Select>
+                  {epayCustomAmountEnabled ? (
+                    <p className="text-xs leading-5 text-slate-500">
+                      {t("dashboard.customAmountHint", {
+                        amount: formatCurrency(
+                          minimumCustomAmount,
+                          currentLanguage,
+                          currency
+                        ),
+                        defaultValue:
+                          "epay 支付方式支持输入自定义充值金额，最低金额为 {{amount}}。",
+                      })}
+                    </p>
+                  ) : null}
+                  {epayCustomAmountEnabled && customAmountEnabled ? (
+                    <Input
+                      className="h-12 rounded-xl border-slate-200 bg-white px-4 text-slate-700 shadow-none focus-visible:border-blue-500 focus-visible:ring-4 focus-visible:ring-blue-100"
+                      inputMode="decimal"
+                      min={String(minimumCustomAmount)}
+                      onChange={(event) => onCustomAmountChange(event.target.value)}
+                      placeholder={t(
+                        "dashboard.customAmountPlaceholder",
+                        "请输入自定义金额"
+                      )}
+                      step="0.01"
+                      type="number"
+                      value={customAmountInput}
+                    />
+                  ) : null}
                 </label>
               </div>
 
@@ -250,7 +290,9 @@ export function RechargeScreen({
                     >
                       {t("dashboard.reloadOrder", "刷新订单")}
                     </button>
-                    {activeOrder.checkout?.checkoutUrl ? (
+                    {activeOrder.checkout?.checkoutUrl ||
+                    (activeOrder.checkout?.type === "stripe" &&
+                      activeOrder.checkout.stripe) ? (
                       <button
                         className="portal-primary-btn"
                         onClick={onContinuePayment}
@@ -290,7 +332,11 @@ export function RechargeScreen({
                       {t("order.amount", "充值金额")}
                     </p>
                     <p className="mt-2 text-base font-medium text-slate-950">
-                      {formatCurrency(activeOrder.amount, currentLanguage, currency)}
+                      {formatCurrency(
+                        activeOrder.rechargeAmount,
+                        currentLanguage,
+                        currency
+                      )}
                     </p>
                   </div>
                   <div className="rounded-xl border border-blue-100 bg-white px-4 py-2.5">
@@ -326,14 +372,6 @@ export function RechargeScreen({
                   </div>
                 ) : null}
 
-                {activeOrder.checkout?.type === "stripe" ? (
-                  <div className="mt-4 rounded-2xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-700">
-                    {t(
-                      "dashboard.unsupportedStripe",
-                      "当前独立支付前台未内嵌 Stripe 卡片支付，请继续在现有支付页完成。"
-                    )}
-                  </div>
-                ) : null}
               </div>
             ) : null}
           </section>
@@ -365,6 +403,7 @@ export function RechargeScreen({
                       <th>{t("order.tradeNo", "交易订单号")}</th>
                       <th>{t("order.type", "交易类型")}</th>
                       <th>{t("order.amount", "充值金额")}</th>
+                      <th>{t("order.status", "状态")}</th>
                       <th>{t("order.time", "充值时间")}</th>
                     </tr>
                   </thead>
@@ -377,6 +416,7 @@ export function RechargeScreen({
                         <td>
                           {formatCurrency(record.amount, currentLanguage, currency)}
                         </td>
+                        <td>{getOrderStatusLabel(record.status, t)}</td>
                         <td>{formatTimestamp(record.createdAt, currentLanguage)}</td>
                       </tr>
                     ))}

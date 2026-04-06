@@ -29,6 +29,9 @@
     "amounts": "充值金额",
     "selectAmountTitle": "预设充值金额",
     "selectAmountHint": "充值金额来自当前前端项目的 .env 配置。",
+    "customAmountOption": "自定义金额",
+    "customAmountHint": "epay 支付方式支持输入自定义充值金额，最低金额为 {{amount}}。",
+    "customAmountPlaceholder": "请输入自定义金额",
     "amountLabel": "Amount",
     "methods": "支付方式",
     "selectMethodTitle": "启用中的支付方式",
@@ -67,6 +70,10 @@
     "confirming": "处理中...",
     "success": "订单已确认，正在拉起支付"
   },
+  "stripeDialog": {
+    "title": "Stripe 支付",
+    "description": "请在弹窗内完成 Stripe 支付。关闭弹窗后，仍可通过支付状态中的继续支付重新打开。"
+  },
   "order": {
     "id": "ID",
     "number": "订单号",
@@ -94,6 +101,7 @@
     "missingCaptcha": "请先完成验证码验证。",
     "loginFailed": "登录失败，请稍后重试。",
     "missingSelection": "请先选择充值方式和充值金额。",
+    "invalidCustomAmount": "自定义充值金额不能低于最小金额。",
     "orderFailed": "充值订单创建失败。",
     "pendingOrder": "当前已有待支付订单，请先完成支付。"
   },
@@ -117,5 +125,25 @@
       "hint": "拖动拼图块完成验证",
       "refresh": "刷新验证"
     }
+  },
+  "stripe": {
+    "loading": "正在加载 Stripe...",
+    "nameRequired": "请输入持卡人姓名",
+    "elementError": "请完整填写银行卡信息",
+    "paymentFailed": "支付失败",
+    "processing": "支付处理中...",
+    "successTitle": "支付成功",
+    "successMessage": "感谢支付，订单已经处理完成。",
+    "cardName": "持卡人姓名",
+    "namePlaceholder": "请输入银行卡上的姓名",
+    "cardNumber": "卡号",
+    "expiryDate": "有效期",
+    "cvc": "安全码",
+    "processingButton": "处理中...",
+    "payButton": "立即支付",
+    "secureNotice": "支付过程安全加密",
+    "error": "支付过程中发生错误",
+    "alipayHint": "请使用支付宝扫码支付",
+    "wechatHint": "请使用微信扫码支付"
   }
 }

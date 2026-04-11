@@ -34,7 +34,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 
 const deviceSchema = z.object({
-  id: z.number(),
+  id: z.string(),
   method: z.string(),
   enabled: z.boolean(),
   config: z
@@ -68,7 +68,7 @@ export default function DeviceForm() {
   const form = useForm<DeviceFormData>({
     resolver: zodResolver(deviceSchema),
     defaultValues: {
-      id: 0,
+      id: "",
       method: "device",
       enabled: false,
       config: {

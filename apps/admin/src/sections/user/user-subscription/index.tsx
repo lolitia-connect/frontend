@@ -7,6 +7,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@workspace/ui/components/dropdown-menu";
+import { copyText } from "@workspace/ui/utils/clipboard";
 import { ConfirmButton } from "@workspace/ui/composed/confirm-button";
 import {
   ProTable,
@@ -29,7 +30,11 @@ import { formatDate } from "@/utils/common";
 import { SubscriptionDetail } from "./subscription-detail";
 import { SubscriptionForm } from "./subscription-form";
 
-export default function UserSubscription({ userId }: { userId: number }) {
+export default function UserSubscription({
+  userId,
+}: {
+  userId: string | number;
+}) {
   const { t } = useTranslation("user");
   const [loading, setLoading] = useState(false);
   const ref = useRef<ProTableActions>(null);
@@ -46,7 +51,7 @@ export default function UserSubscription({ userId }: { userId: number }) {
             onSubmit={async (values) => {
               setLoading(true);
               await updateUserSubscribe({
-                user_id: Number(userId),
+                user_id: String(userId),
                 user_subscribe_id: row.id,
                 ...values,
               });
@@ -208,7 +213,7 @@ export default function UserSubscription({ userId }: { userId: number }) {
             onSubmit={async (values) => {
               setLoading(true);
               await createUserSubscribe({
-                user_id: Number(userId),
+                user_id: String(userId),
                 ...values,
               });
               toast.success(t("createSuccess", "Created successfully"));
@@ -223,7 +228,7 @@ export default function UserSubscription({ userId }: { userId: number }) {
       }}
       request={async (pagination) => {
         const { data } = await getUserSubscribe({
-          user_id: userId,
+          user_id: String(userId),
           ...pagination,
         });
         return {
@@ -241,7 +246,7 @@ function RowMoreActions({
   token,
   refresh,
 }: {
-  userId: number;
+  userId: string | number;
   row: API.UserSubscribe;
   token: string;
   refresh: () => void;
@@ -263,10 +268,12 @@ function RowMoreActions({
           <DropdownMenuItem
             onSelect={async (e) => {
               e.preventDefault();
-              await navigator.clipboard.writeText(
-                getUserSubscribeUrls(row.short, token)[0] || ""
-              );
-              toast.success(t("copySuccess", "Copied successfully"));
+              try {
+                await copyText(getUserSubscribeUrls(row.short, token)[0] || "");
+                toast.success(t("copySuccess", "Copied successfully"));
+              } catch {
+                toast.error(t("copyFailed", "Copy failed"));
+              }
             }}
           >
             {t("copySubscription", "Copy Subscription")}
@@ -300,7 +307,10 @@ function RowMoreActions({
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
             <Link
-              search={{ user_id: userId, user_subscribe_id: row.id }}
+              search={{
+                user_id: String(userId),
+                user_subscribe_id: row.id,
+              }}
               to="/dashboard/log/subscribe"
             >
               {t("subscriptionLogs", "Subscription Logs")}
@@ -308,7 +318,10 @@ function RowMoreActions({
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
             <Link
-              search={{ user_id: userId, user_subscribe_id: row.id }}
+              search={{
+                user_id: String(userId),
+                user_subscribe_id: row.id,
+              }}
               to="/dashboard/log/reset-subscribe"
             >
               {t("resetLogs", "Reset Logs")}
@@ -316,7 +329,10 @@ function RowMoreActions({
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
             <Link
-              search={{ user_id: userId, user_subscribe_id: row.id }}
+              search={{
+                user_id: String(userId),
+                user_subscribe_id: row.id,
+              }}
               to="/dashboard/log/subscribe-traffic"
             >
               {t("trafficStats", "Traffic Stats")}
@@ -324,7 +340,7 @@ function RowMoreActions({
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
             <Link
-              search={{ user_id: userId, subscribe_id: row.id }}
+              search={{ user_id: String(userId), subscribe_id: row.id }}
               to="/dashboard/log/traffic-details"
             >
               {t("trafficDetails", "Traffic Details")}

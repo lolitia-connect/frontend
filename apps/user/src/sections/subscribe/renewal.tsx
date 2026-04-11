@@ -24,7 +24,7 @@ import { SubscribeBilling } from "./billing";
 import { SubscribeDetail } from "./detail";
 
 interface RenewalProps {
-  id: number;
+  id: string;
   subscribe: API.Subscribe;
 }
 
@@ -33,9 +33,11 @@ export default function Renewal({ id, subscribe }: Readonly<RenewalProps>) {
   const { getUserInfo } = useGlobalStore();
   const navigate = useNavigate();
   const [open, setOpen] = useState<boolean>(false);
-  const [params, setParams] = useState<Partial<API.RenewalOrderRequest>>({
+  const [params, setParams] = useState<
+    Partial<API.RenewalOrderRequest> & { subscribe_id?: string }
+  >({
     quantity: 1,
-    payment: -1,
+    payment: "",
     coupon: "",
     user_subscribe_id: id,
   });
@@ -160,7 +162,7 @@ export default function Renewal({ id, subscribe }: Readonly<RenewalProps>) {
                 onChange={(value) => {
                   handleChange("payment", value);
                 }}
-                value={params.payment as number}
+                value={params.payment ?? ""}
               />
             </div>
             <Button

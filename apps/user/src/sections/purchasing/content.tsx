@@ -37,8 +37,8 @@ export default function Content({
   const navigate = useNavigate();
   const [params, setParams] = useState<API.PortalPurchaseRequest>({
     quantity: 1,
-    subscribe_id: 0,
-    payment: -1,
+    subscribe_id: "",
+    payment: "",
     coupon: "",
     auth_type: "email",
     identifier: "",
@@ -61,7 +61,7 @@ export default function Content({
     queryFn: async () => {
       const { data } = await prePurchaseOrder({
         ...params,
-        subscribe_id: subscription?.id as number,
+        subscribe_id: subscription?.id ?? "",
       } as API.PrePurchaseOrderRequest);
       return data.data;
     },
@@ -307,7 +307,7 @@ export default function Content({
               />
               <PaymentMethods
                 balance={false}
-                onChange={(value: number) => handleChange("payment", value)}
+                onChange={(value: string) => handleChange("payment", value)}
                 value={params.payment!}
               />
             </div>

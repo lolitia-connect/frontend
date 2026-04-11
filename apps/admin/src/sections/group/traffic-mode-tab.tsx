@@ -56,7 +56,10 @@ export default function TrafficModeTab() {
     }
   };
 
-  const handleTrafficUpdate = async (nodeGroupId: number, fields: { min_traffic_gb?: number; max_traffic_gb?: number }) => {
+  const handleTrafficUpdate = async (
+    nodeGroupId: string,
+    fields: { min_traffic_gb?: number; max_traffic_gb?: number }
+  ) => {
     try {
       await updateNodeGroup({
         id: nodeGroupId,

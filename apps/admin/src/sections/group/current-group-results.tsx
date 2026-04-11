@@ -69,7 +69,7 @@ export default function CurrentGroupResults() {
           setDetailsLoading(true);
           try {
             const { data: detailData } = await getGroupHistoryDetail({
-              id: latest.id,
+              id: String(latest.id),
             });
 
             if (detailData.data?.config_snapshot?.group_details) {
@@ -94,7 +94,7 @@ export default function CurrentGroupResults() {
     loadData();
   }, []);
 
-  const handleShowUserList = async (nodeGroupId: number, nodeGroupName: string) => {
+  const handleShowUserList = async (nodeGroupId: string, nodeGroupName: string) => {
     setSelectedNodeGroupName(nodeGroupName);
     setUserListOpen(true);
     setUserListLoading(true);
@@ -102,7 +102,7 @@ export default function CurrentGroupResults() {
     // 从历史详情记录中获取用户数据
     const detail = latestDetails.find((d: any) => {
       const detailNodeGroupId = d.NodeGroupId || d.node_group_id;
-      return detailNodeGroupId === nodeGroupId;
+      return String(detailNodeGroupId) === String(nodeGroupId);
     });
 
     if (detail) {
@@ -282,7 +282,9 @@ export default function CurrentGroupResults() {
                     <tbody>
                       {latestDetails.map((detail: any, index: number) => {
                         const nodeGroupId = detail.NodeGroupId || detail.node_group_id;
-                        const nodeGroup = nodeGroups?.find((ng) => ng.id === nodeGroupId);
+                        const nodeGroup = nodeGroups?.find(
+                          (ng) => String(ng.id) === String(nodeGroupId)
+                        );
                         const nodeGroupName = nodeGroup?.name || `${t("idPrefix", "#")}${nodeGroupId}`;
                         const userCount = detail.UserCount || detail.user_count || 0;
 

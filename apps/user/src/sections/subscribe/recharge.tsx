@@ -33,7 +33,7 @@ export default function Recharge(
 
   const [params, setParams] = useState<API.RechargeOrderRequest>({
     amount: 0,
-    payment: 1,
+    payment: "",
   });
 
   return (
@@ -75,13 +75,15 @@ export default function Recharge(
             </div>
             <PaymentMethods
               balance={false}
-              onChange={(value) => setParams({ ...params, payment: value })}
+              onChange={(value) =>
+                setParams((prev) => ({ ...prev, payment: value }))
+              }
               value={params.payment}
             />
           </div>
           <Button
             className="fixed bottom-0 left-0 w-full rounded-none md:relative md:mt-6"
-            disabled={loading || !params.amount}
+            disabled={loading || !params.amount || !params.payment}
             onClick={() => {
               startTransition(async () => {
                 try {

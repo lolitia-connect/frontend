@@ -54,7 +54,7 @@ export default function UserForm<T extends Record<string, any>>({
     telephone_area_code: z.string().optional(),
     telephone: z.string().optional(),
     password: z.string().optional(),
-    referer_id: z.number().optional(),
+    referer_id: z.string().optional(),
     refer_code: z.string().optional(),
     referral_percentage: z.number().optional(),
     only_first_purchase: z.boolean().optional(),

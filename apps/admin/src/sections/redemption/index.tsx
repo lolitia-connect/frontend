@@ -24,12 +24,12 @@ export default function Redemption() {
   const { t } = useTranslation("redemption");
   const [loading, setLoading] = useState(false);
   const [recordsOpen, setRecordsOpen] = useState(false);
-  const [selectedCodeId, setSelectedCodeId] = useState<number | null>(null);
+  const [selectedCodeId, setSelectedCodeId] = useState<string | null>(null);
   const { subscribes } = useSubscribe();
   const ref = useRef<ProTableActions>(null);
   return (
     <>
-    <ProTable<API.RedemptionCode, { subscribe_plan: number; unit_time: string; code: string }>
+    <ProTable<API.RedemptionCode, { subscribe_plan: string; unit_time: string; code: string }>
       action={ref}
       actions={{
         render: (row) => [
@@ -116,7 +116,7 @@ export default function Redemption() {
           header: t("subscribePlan", "Subscribe Plan"),
           cell: ({ row }) => {
             const plan = subscribes?.find(
-              (s) => s.id === row.getValue("subscribe_plan")
+              (s) => String(s.id) === String(row.getValue("subscribe_plan"))
             );
             return plan?.name || "--";
           },

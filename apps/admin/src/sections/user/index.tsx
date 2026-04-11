@@ -351,7 +351,7 @@ function ProfileSheet({
   userId,
   onUpdated,
 }: {
-  userId: number;
+  userId: string | number;
   onUpdated?: () => void;
 }) {
   const { t } = useTranslation("user");
@@ -360,7 +360,7 @@ function ProfileSheet({
     enabled: open,
     queryKey: ["user", userId],
     queryFn: async () => {
-      const { data } = await getUserDetail({ id: userId });
+      const { data } = await getUserDetail({ id: String(userId) });
       return data.data as API.User;
     },
   });
@@ -415,7 +415,7 @@ function ProfileSheet({
   );
 }
 
-function SubscriptionSheet({ userId }: { userId: number }) {
+function SubscriptionSheet({ userId }: { userId: string | number }) {
   const { t } = useTranslation("user");
   const [open, setOpen] = useState(false);
   return (
@@ -437,14 +437,14 @@ function SubscriptionSheet({ userId }: { userId: number }) {
   );
 }
 
-function PreviewNodesDialog({ userId }: { userId: number }) {
+function PreviewNodesDialog({ userId }: { userId: string | number }) {
   const { t } = useTranslation("user");
   const [open, setOpen] = useState(false);
   const { data: previewData, isLoading } = useQuery({
     enabled: open,
     queryKey: ["previewUserNodes", userId],
     queryFn: async () => {
-      const { data } = await previewUserNodes({ user_id: userId });
+      const { data } = await previewUserNodes({ user_id: String(userId) });
       return data.data;
     },
   });
@@ -478,9 +478,9 @@ function PreviewNodesDialog({ userId }: { userId: number }) {
                   <div key={group.id}>
                     <h4 className="text-sm font-semibold mb-2">
                       {group.name ||
-                        (group.id === -1
+                        (group.id === "-1"
                           ? t("subscriptionNodes", "Subscription Nodes")
-                          : group.id === 0
+                          : group.id === "0"
                             ? t("publicNodes", "Public Nodes")
                             : `${t("nodeGroup", "Node Group")} ${group.id}`)}
                     </h4>

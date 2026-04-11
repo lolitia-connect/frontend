@@ -13,8 +13,10 @@ interface SubscribeState {
   fetchSubscribes: () => Promise<void>;
 
   // Getters
-  getSubscribeName: (subscribeId?: number) => string;
-  getSubscribeById: (subscribeId: number) => API.SubscribeItem | undefined;
+  getSubscribeName: (subscribeId?: string | number) => string;
+  getSubscribeById: (
+    subscribeId: string | number
+  ) => API.SubscribeItem | undefined;
 }
 
 export const useSubscribeStore = create<SubscribeState>((set, get) => ({
@@ -43,14 +45,15 @@ export const useSubscribeStore = create<SubscribeState>((set, get) => ({
   },
 
   // Getters
-  getSubscribeName: (subscribeId?: number) => {
+  getSubscribeName: (subscribeId?: string | number) => {
     if (!subscribeId) return "--";
-    const subscribe = get().subscribes.find((s) => s.id === subscribeId);
+    const subscribe = get()
+      .subscribes.find((s) => String(s.id) === String(subscribeId));
     return subscribe?.name ?? `Subscribe ${subscribeId}`;
   },
 
-  getSubscribeById: (subscribeId: number) =>
-    get().subscribes.find((s) => s.id === subscribeId),
+  getSubscribeById: (subscribeId: string | number) =>
+    get().subscribes.find((s) => String(s.id) === String(subscribeId)),
 }));
 
 export const useSubscribe = () => {

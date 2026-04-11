@@ -26,8 +26,8 @@ export function SubscriptionDetail({
   subscriptionId,
 }: {
   trigger: ReactNode;
-  userId: number;
-  subscriptionId: number;
+  userId: string | number;
+  subscriptionId: string | number;
 }) {
   const { t } = useTranslation("user");
   const [open, setOpen] = useState(false);
@@ -117,8 +117,8 @@ export function SubscriptionDetail({
             ]}
             request={async (pagination) => {
               const { data } = await getUserSubscribeDevices({
-                user_id: userId,
-                subscribe_id: subscriptionId,
+                user_id: String(userId),
+                subscribe_id: String(subscriptionId),
                 ...pagination,
               });
               return {

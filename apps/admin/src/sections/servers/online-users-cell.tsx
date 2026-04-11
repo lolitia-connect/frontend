@@ -26,7 +26,7 @@ function UserSubscribeInfo({
   expiredText,
   unlimitedText,
 }: {
-  subscribeId: number;
+  subscribeId: string;
   open: boolean;
   type:
     | "account"
@@ -38,7 +38,7 @@ function UserSubscribeInfo({
   unlimitedText: string;
 }) {
   const { data } = useQuery({
-    enabled: subscribeId !== 0 && open,
+    enabled: Boolean(subscribeId) && open,
     queryKey: ["getUserSubscribeById", subscribeId],
     queryFn: async () => {
       const { data } = await getUserSubscribeById({ id: subscribeId });
@@ -149,7 +149,7 @@ export default function OnlineUsersCell({
                   <UserSubscribeInfo
                     expiredText={t("expired", "Expired")}
                     open={open}
-                    subscribeId={Number(row.original.subscribe_id)}
+                    subscribeId={String(row.original.subscribe_id)}
                     type="account"
                     unlimitedText={t("unlimited", "Unlimited")}
                   />
@@ -162,7 +162,7 @@ export default function OnlineUsersCell({
                   <UserSubscribeInfo
                     expiredText={t("expired", "Expired")}
                     open={open}
-                    subscribeId={Number(row.original.subscribe_id)}
+                    subscribeId={String(row.original.subscribe_id)}
                     type="subscribeName"
                     unlimitedText={t("unlimited", "Unlimited")}
                   />
@@ -175,7 +175,7 @@ export default function OnlineUsersCell({
                   <UserSubscribeInfo
                     expiredText={t("expired", "Expired")}
                     open={open}
-                    subscribeId={Number(row.original.subscribe_id)}
+                    subscribeId={String(row.original.subscribe_id)}
                     type="subscribeId"
                     unlimitedText={t("unlimited", "Unlimited")}
                   />
@@ -188,7 +188,7 @@ export default function OnlineUsersCell({
                   <UserSubscribeInfo
                     expiredText={t("expired", "Expired")}
                     open={open}
-                    subscribeId={Number(row.original.subscribe_id)}
+                    subscribeId={String(row.original.subscribe_id)}
                     type="trafficUsage"
                     unlimitedText={t("unlimited", "Unlimited")}
                   />
@@ -201,7 +201,7 @@ export default function OnlineUsersCell({
                   <UserSubscribeInfo
                     expiredText={t("expired", "Expired")}
                     open={open}
-                    subscribeId={Number(row.original.subscribe_id)}
+                    subscribeId={String(row.original.subscribe_id)}
                     type="expireTime"
                     unlimitedText={t("unlimited", "Unlimited")}
                   />

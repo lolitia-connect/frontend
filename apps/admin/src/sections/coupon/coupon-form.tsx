@@ -40,7 +40,7 @@ const formSchema = z.object({
   discount: z.number().optional(),
   start_time: z.number().optional(),
   expire_time: z.number().optional(),
-  subscribe: z.array(z.number()).nullish(),
+  subscribe: z.array(z.string()).nullish(),
   user_limit: z.number().optional(),
 });
 
@@ -257,7 +257,7 @@ export default function CouponForm<T extends Record<string, any>>({
                       {t("form.specifiedServer", "Specified Subscription")}
                     </FormLabel>
                     <FormControl>
-                      <Combobox<number, true>
+                      <Combobox<string, true>
                         multiple
                         onChange={(value) => {
                           form.setValue(field.name, value);

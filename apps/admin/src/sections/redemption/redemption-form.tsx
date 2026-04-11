@@ -27,11 +27,11 @@ import { z } from "zod";
 import { useSubscribe } from "@/stores/subscribe";
 
 const getFormSchema = (t: (key: string, defaultValue: string) => string) => z.object({
-  id: z.number().optional(),
+  id: z.string().optional(),
   code: z.string().optional(),
   batch_count: z.number().optional(),
   total_count: z.number().min(1, t("form.totalCountRequired", "Total count is required")),
-  subscribe_plan: z.number().min(1, t("form.subscribePlanRequired", "Subscribe plan is required")),
+  subscribe_plan: z.string().min(1, t("form.subscribePlanRequired", "Subscribe plan is required")),
   unit_time: z.string().min(1, t("form.unitTimeRequired", "Unit time is required")),
   quantity: z.number().min(1, t("form.quantityRequired", "Quantity is required")),
 });
@@ -160,7 +160,7 @@ export default function RedemptionForm<T extends Record<string, any>>({
                       {t("form.subscribePlan", "Subscribe Plan")}
                     </FormLabel>
                     <FormControl>
-                      <Combobox<number, false>
+                      <Combobox<string, false>
                         onChange={(value) => {
                           form.setValue(field.name, value);
                         }}

@@ -4,6 +4,7 @@ import { Button } from "@workspace/ui/components/button";
 import { cn } from "@workspace/ui/lib/utils";
 import { Check, Copy } from "lucide-react";
 import { useCallback, useState } from "react";
+import { copyText } from "../utils/clipboard";
 import ReactMarkdown, { type Components } from "react-markdown";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
@@ -26,8 +27,7 @@ function CodeBlock({ className, children, ...props }: CodeBlockProps) {
     : null;
 
   const handleCopy = useCallback((text: string) => {
-    navigator.clipboard
-      .writeText(text)
+    copyText(text)
       .then(() => {
         setCopied(true);
         setTimeout(() => setCopied(false), 3000);

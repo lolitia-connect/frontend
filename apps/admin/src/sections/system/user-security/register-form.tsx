@@ -37,7 +37,7 @@ import { useSubscribe } from "@/stores/subscribe";
 const registerSchema = z.object({
   stop_register: z.boolean().optional(),
   enable_trial: z.boolean().optional(),
-  trial_subscribe: z.number().optional(),
+  trial_subscribe: z.string().optional(),
   trial_time: z.number().optional(),
   trial_time_unit: z.string().optional(),
   enable_ip_register_limit: z.boolean().optional(),
@@ -358,7 +358,7 @@ export default function RegisterConfig() {
                                 render={({ field }) => (
                                   <Combobox
                                     className="w-32 rounded-r-none bg-secondary"
-                                    onChange={(value: number) => {
+                                    onChange={(value: string) => {
                                       if (value) {
                                         field.onChange(value);
                                       }

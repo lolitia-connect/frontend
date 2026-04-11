@@ -24,17 +24,18 @@ export function UserSubscribeDetail({
   enabled,
   hoverCard = false,
 }: {
-  id: number;
+  id: string | number;
   enabled: boolean;
   hoverCard?: boolean;
 }) {
   const { t } = useTranslation("user");
+  const resolvedId = id ? String(id) : "";
 
   const { data } = useQuery({
-    enabled: id !== 0 && enabled,
-    queryKey: ["getUserSubscribeById", id],
+    enabled: resolvedId !== "" && resolvedId !== "0" && enabled,
+    queryKey: ["getUserSubscribeById", resolvedId],
     queryFn: async () => {
-      const { data } = await getUserSubscribeById({ id });
+      const { data } = await getUserSubscribeById({ id: resolvedId });
       return data.data;
     },
   });
@@ -52,7 +53,7 @@ export function UserSubscribeDetail({
   //   },
   // });
 
-  if (!id) return "--";
+  if (!resolvedId || resolvedId === "0") return "--";
 
   const usedTraffic = data ? data.upload + data.download : 0;
   const totalTraffic = data?.traffic || 0;
@@ -213,19 +214,20 @@ export function UserSubscribeDetail({
   return subscribeContent;
 }
 
-export function UserDetail({ id }: { id: number }) {
+export function UserDetail({ id }: { id: string | number }) {
   const { t } = useTranslation("user");
+  const resolvedId = id ? String(id) : "";
 
   const { data } = useQuery({
-    enabled: id !== 0,
-    queryKey: ["getUserDetail", id],
+    enabled: resolvedId !== "" && resolvedId !== "0",
+    queryKey: ["getUserDetail", resolvedId],
     queryFn: async () => {
-      const { data } = await getUserDetail({ id });
+      const { data } = await getUserDetail({ id: resolvedId });
       return data.data;
     },
   });
 
-  if (!id) return "--";
+  if (!resolvedId || resolvedId === "0") return "--";
 
   const identifier =
     data?.auth_methods.find((m) => m.auth_type === "email")?.auth_identifier ||
@@ -235,7 +237,7 @@ export function UserDetail({ id }: { id: number }) {
     <HoverCard>
       <HoverCardTrigger asChild>
         <Button asChild className="p-0" variant="link">
-          <Link search={{ user_id: id }} to="/dashboard/user">
+          <Link search={{ user_id: resolvedId }} to="/dashboard/user">
             {identifier || t("loading", "Loading...")}
           </Link>
         </Button>

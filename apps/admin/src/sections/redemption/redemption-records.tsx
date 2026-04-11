@@ -18,7 +18,7 @@ import { useTranslation } from "react-i18next";
 import { formatDate } from "@/utils/common";
 
 interface RedemptionRecordsProps {
-  codeId: number | null;
+  codeId: string | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }

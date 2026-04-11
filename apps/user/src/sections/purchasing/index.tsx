@@ -23,7 +23,7 @@ export default function Purchasing() {
   });
 
   const subscription = data?.find(
-    (item: API.Subscribe) => item.id === Number(id)
+    (item: API.Subscribe) => item.id === id
   );
 
   return (

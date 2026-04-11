@@ -16,7 +16,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 interface TemplatePreviewProps {
-  applicationId: number;
+  applicationId: string;
   output_format?: string;
 }
 

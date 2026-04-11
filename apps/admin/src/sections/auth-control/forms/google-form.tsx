@@ -33,7 +33,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 
 const googleSchema = z.object({
-  id: z.number(),
+  id: z.string(),
   method: z.string().default("google").optional(),
   enabled: z.boolean().default(false).optional(),
   config: z
@@ -65,7 +65,7 @@ export default function GoogleForm() {
   const form = useForm<GoogleFormData>({
     resolver: zodResolver(googleSchema),
     defaultValues: {
-      id: 0,
+      id: "",
       method: "google",
       enabled: false,
       config: {

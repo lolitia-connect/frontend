@@ -19,7 +19,7 @@ import { useGlobalStore } from "@/stores/global";
 import PaymentMethods from "./payment-methods";
 
 interface ResetTrafficProps {
-  id: number;
+  id: string;
   replacement?: number;
 }
 export default function ResetTraffic({
@@ -31,7 +31,7 @@ export default function ResetTraffic({
   const navigate = useNavigate();
   const [open, setOpen] = useState<boolean>(false);
   const [params, setParams] = useState<API.ResetTrafficOrderRequest>({
-    payment: -1,
+    payment: "",
     user_subscribe_id: id,
   });
   const [loading, startTransition] = useTransition();
@@ -40,7 +40,6 @@ export default function ResetTraffic({
     if (id) {
       setParams((prev) => ({
         ...prev,
-        quantity: 1,
         user_subscribe_id: id,
       }));
     }
@@ -72,17 +71,17 @@ export default function ResetTraffic({
             </div>
             <PaymentMethods
               onChange={(value) => {
-                setParams({
-                  ...params,
+                setParams((prev) => ({
+                  ...prev,
                   payment: value,
-                });
+                }));
               }}
               value={params.payment}
             />
           </div>
           <Button
             className="fixed bottom-0 left-0 w-full rounded-none md:relative md:mt-6"
-            disabled={loading}
+            disabled={loading || !params.payment}
             onClick={async () => {
               startTransition(async () => {
                 try {

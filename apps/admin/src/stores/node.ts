@@ -20,9 +20,12 @@ interface NodeState {
   fetchTags: () => Promise<void>;
 
   // Getters
-  getNodeById: (nodeId: number) => API.Node | undefined;
-  isProtocolUsedInNodes: (serverId: number, protocolType: string) => boolean;
-  isServerReferencedByNodes: (serverId: number) => boolean;
+  getNodeById: (nodeId: string | number) => API.Node | undefined;
+  isProtocolUsedInNodes: (
+    serverId: string | number,
+    protocolType: string
+  ) => boolean;
+  isServerReferencedByNodes: (serverId: string | number) => boolean;
   getNodesByTag: (tag: string) => API.Node[];
   getNodesWithoutTags: () => API.Node[];
   getNodesWithoutGroups: () => API.Node[];
@@ -77,15 +80,18 @@ export const useNodeStore = create<NodeState>((set, get) => ({
   },
 
   // Getters
-  getNodeById: (nodeId: number) => get().nodes.find((n) => n.id === nodeId),
+  getNodeById: (nodeId: string | number) =>
+    get().nodes.find((n) => String(n.id) === String(nodeId)),
 
-  isProtocolUsedInNodes: (serverId: number, protocolType: string) =>
+  isProtocolUsedInNodes: (serverId: string | number, protocolType: string) =>
     get().nodes.some(
-      (node) => node.server_id === serverId && node.protocol === protocolType
+      (node) =>
+        String(node.server_id) === String(serverId) &&
+        node.protocol === protocolType
     ),
 
-  isServerReferencedByNodes: (serverId: number) =>
-    get().nodes.some((node) => node.server_id === serverId),
+  isServerReferencedByNodes: (serverId: string | number) =>
+    get().nodes.some((node) => String(node.server_id) === String(serverId)),
 
   getNodesByTag: (tag: string) =>
     get().nodes.filter((node) => (node.tags || []).includes(tag)),

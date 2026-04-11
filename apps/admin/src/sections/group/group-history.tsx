@@ -46,7 +46,7 @@ export default function GroupHistory() {
   const [detailLoading, setDetailLoading] = useState(false);
   const [selectedHistory, setSelectedHistory] = useState<API.GroupHistory | null>(null);
   const [details, setDetails] = useState<any[]>([]);
-  const [nodeGroupMap, setNodeGroupMap] = useState<Map<number, string>>(new Map());
+  const [nodeGroupMap, setNodeGroupMap] = useState<Map<string, string>>(new Map());
 
   // User list dialog state
   const [userListOpen, setUserListOpen] = useState(false);
@@ -68,9 +68,9 @@ export default function GroupHistory() {
 
   // Build ID to name maps when groups are loaded
   if (nodeGroups) {
-    const newNodeGroupMap = new Map<number, string>();
+    const newNodeGroupMap = new Map<string, string>();
     nodeGroups.forEach((ng: API.NodeGroup) => {
-      newNodeGroupMap.set(ng.id, ng.name);
+      newNodeGroupMap.set(String(ng.id), ng.name);
     });
     if (newNodeGroupMap.size !== nodeGroupMap.size) {
       setNodeGroupMap(newNodeGroupMap);
@@ -109,7 +109,7 @@ export default function GroupHistory() {
     setDetailLoading(true);
     try {
       const { data } = await getGroupHistoryDetail({
-        id: record.id,
+        id: String(record.id),
       });
 
       console.log("Group history detail response:", data);
@@ -130,14 +130,14 @@ export default function GroupHistory() {
     }
   };
 
-  const handleShowUserList = async (nodeGroupId: number, nodeGroupName: string) => {
+  const handleShowUserList = async (nodeGroupId: string, nodeGroupName: string) => {
     setSelectedNodeGroupName(nodeGroupName);
     setUserListOpen(true);
 
     // 从历史详情记录中获取用户数据
     const detail = details.find((d: any) => {
       const detailNodeGroupId = d.NodeGroupId || d.node_group_id;
-      return detailNodeGroupId === nodeGroupId;
+      return String(detailNodeGroupId) === String(nodeGroupId);
     });
 
     if (detail) {
@@ -416,7 +416,9 @@ export default function GroupHistory() {
                       <tbody>
                         {details.map((detail: any, index: number) => {
                           const nodeGroupId = detail.NodeGroupId || detail.node_group_id;
-                          const nodeGroupName = nodeGroupMap.get(nodeGroupId) || `${t("idPrefix", "#")}${nodeGroupId}`;
+                          const nodeGroupName =
+                            nodeGroupMap.get(String(nodeGroupId)) ||
+                            `${t("idPrefix", "#")}${nodeGroupId}`;
 
                           return (
                             <tr key={index}>

@@ -263,7 +263,9 @@ export default function PaymentTable() {
         const list = ((data?.data?.list || []) as PaymentRow[]).sort((a, b) => {
           const sortDiff = (a.sort ?? 0) - (b.sort ?? 0);
           if (sortDiff !== 0) return sortDiff;
-          return a.id - b.id;
+          return String(a.id).localeCompare(String(b.id), undefined, {
+            numeric: true,
+          });
         });
         return {
           list,

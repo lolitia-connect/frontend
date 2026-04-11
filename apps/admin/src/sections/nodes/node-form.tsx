@@ -55,7 +55,7 @@ const buildSchema = (t: TFunction) =>
         .string()
         .trim()
         .min(1, t("errors.nameRequired", "Please enter a name")),
-      server_id: z.number().int().positive().optional(),
+      server_id: z.string().optional(),
       protocol: z.string().default(""),
       address: z
         .string()
@@ -81,7 +81,7 @@ const buildSchema = (t: TFunction) =>
         return;
       }
 
-      if (!(values.server_id && values.server_id > 0)) {
+      if (!values.server_id?.trim()) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: t("errors.serverRequired", "Please select a server"),
@@ -226,7 +226,7 @@ export default function NodeForm(props: {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialValues]);
 
-  function handleServerChange(nextId?: number | null) {
+  function handleServerChange(nextId?: string | null) {
     const id = nextId ?? undefined;
     form.setValue("server_id", id);
 
@@ -235,7 +235,7 @@ export default function NodeForm(props: {
       return;
     }
 
-    const selectedServer = servers.find((s) => s.id === id);
+    const selectedServer = servers.find((s) => String(s.id) === String(id));
     if (!selectedServer) return;
 
     const currentValues = form.getValues();
@@ -395,7 +395,7 @@ export default function NodeForm(props: {
                     <FormItem>
                       <FormLabel>{t("server", "Server")}</FormLabel>
                       <FormControl>
-                        <Combobox<number, false>
+                        <Combobox<string, false>
                           onChange={(v) => handleServerChange(v)}
                           options={servers.map((s) => ({
                             value: s.id,

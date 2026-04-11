@@ -273,7 +273,7 @@ export async function getGroupHistory(
 
 /** Get group history detail GET /v1/admin/group/history/detail */
 export async function getGroupHistoryDetail(
-  params: { id: number },
+  params: { id: string },
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: API.GetGroupHistoryDetailResponse }>(

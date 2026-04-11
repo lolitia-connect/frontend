@@ -36,8 +36,8 @@ export default function Purchase({
   const router = useRouter();
   const [params, setParams] = useState<Partial<API.PurchaseOrderRequest>>({
     quantity: 1,
-    subscribe_id: 0,
-    payment: -1,
+    subscribe_id: "",
+    payment: "",
     coupon: "",
   });
   const [loading, startTransition] = useTransition();
@@ -56,7 +56,7 @@ export default function Purchase({
       try {
         const { data } = await preCreateOrder({
           ...params,
-          subscribe_id: subscribe?.id as number,
+          subscribe_id: subscribe?.id ?? "",
         } as API.PurchaseOrderRequest);
         const result = data.data;
         if (result) {
@@ -161,7 +161,7 @@ export default function Purchase({
                 onChange={(value) => {
                   handleChange("payment", value);
                 }}
-                value={params.payment as number}
+                value={params.payment ?? ""}
               />
             </div>
             <Button

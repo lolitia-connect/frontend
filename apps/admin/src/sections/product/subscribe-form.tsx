@@ -147,7 +147,7 @@ export default function SubscribeForm<T extends Record<string, any>>({
     quota: z.number().optional(),
     language: z.string().optional(),
     node_tags: z.array(z.string()).optional(),
-    nodes: z.array(z.number()).optional(),
+    nodes: z.array(z.string()).optional(),
     node_group_id: z.string().optional(),
     node_group_ids: z.optional(z.array(z.string()).default([])),
     deduction_ratio: z.number().optional(),
@@ -285,6 +285,11 @@ export default function SubscribeForm<T extends Record<string, any>>({
     // Convert node_group_id from number to string (including 0)
     if (initialValues?.node_group_id !== undefined) {
       processedValues.node_group_id = String(initialValues.node_group_id);
+    }
+
+    // Convert nodes from number[] to string[]
+    if (initialValues?.nodes && Array.isArray(initialValues.nodes)) {
+      processedValues.nodes = (initialValues.nodes as Array<string | number>).map((id) => String(id));
     }
 
     // Convert node_group_ids from number[] to string[]
@@ -1146,18 +1151,18 @@ export default function SubscribeForm<T extends Record<string, any>>({
                                     key={item.id}
                                   >
                                     <Checkbox
-                                      checked={value.includes(item.id!)}
+                                      checked={value.includes(String(item.id))}
                                       onCheckedChange={(checked) =>
                                         checked
                                           ? form.setValue(field.name, [
                                               ...value,
-                                              item.id,
+                                              String(item.id),
                                             ])
                                           : form.setValue(
                                               field.name,
                                               value.filter(
-                                                (value: number) =>
-                                                  value !== item.id
+                                                (value: string) =>
+                                                  value !== String(item.id)
                                               )
                                             )
                                       }

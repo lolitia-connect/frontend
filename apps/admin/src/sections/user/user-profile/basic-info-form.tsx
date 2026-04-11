@@ -32,7 +32,7 @@ const basicInfoSchema = z.object({
   commission: z.number().optional(),
   gift_amount: z.number().optional(),
   refer_code: z.string().optional(),
-  referer_id: z.number().optional(),
+  referer_id: z.string().optional(),
   referral_percentage: z.number().optional(),
   only_first_purchase: z.boolean().optional(),
   is_admin: z.boolean().optional(),
@@ -238,7 +238,7 @@ export function BasicInfoForm({
                     <FormControl>
                       <EnhancedInput
                         onValueChange={(value) => {
-                          form.setValue(field.name, value as number);
+                          form.setValue(field.name, value as string);
                         }}
                         type="number"
                         value={field.value}

@@ -46,7 +46,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 
 const phoneSettingsSchema = z.object({
-  id: z.number(),
+  id: z.string(),
   method: z.string(),
   enabled: z.boolean(),
   config: z
@@ -103,7 +103,7 @@ export default function PhoneSettingsForm() {
   const form = useForm<PhoneSettingsFormData>({
     resolver: zodResolver(phoneSettingsSchema),
     defaultValues: {
-      id: 0,
+      id: "",
       method: "mobile",
       enabled: false,
       config: {

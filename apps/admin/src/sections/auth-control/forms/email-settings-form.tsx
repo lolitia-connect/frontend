@@ -42,7 +42,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 
 const emailSettingsSchema = z.object({
-  id: z.number(),
+  id: z.string(),
   method: z.string(),
   enabled: z.boolean(),
   config: z
@@ -91,7 +91,7 @@ export default function EmailSettingsForm() {
   const form = useForm<EmailSettingsFormData>({
     resolver: zodResolver(emailSettingsSchema),
     defaultValues: {
-      id: 0,
+      id: "",
       method: "email",
       enabled: false,
       config: {

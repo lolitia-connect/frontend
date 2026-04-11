@@ -64,8 +64,7 @@ export default function Nodes() {
       tags: values.tags || [],
       node_type: values.node_type,
       is_hidden: values.is_hidden ?? false,
-      node_group_ids:
-        values.node_group_ids?.map((id: string | number) => Number(id)) || [],
+      node_group_ids: values.node_group_ids || [],
     };
 
     if (isFrontNode) {
@@ -74,7 +73,7 @@ export default function Nodes() {
       return payload;
     }
 
-    payload.server_id = Number(values.server_id);
+    payload.server_id = values.server_id;
     payload.protocol = values.protocol;
     return payload;
   };
@@ -160,7 +159,7 @@ export default function Nodes() {
         id: "node_group_ids",
         header: t("nodeGroups", "Node Groups"),
         cell: ({ row }: { row: any }) => {
-          const groupIds = row.original.node_group_ids as number[] || [];
+          const groupIds = (row.original.node_group_ids as string[]) || [];
 
           // Public node indicator (when node_group_ids is empty)
           if (groupIds.length === 0) {
@@ -176,7 +175,9 @@ export default function Nodes() {
           return (
             <div className="flex flex-wrap gap-1">
               {groupIds.map((groupId) => {
-                const group = nodeGroupsData?.find((g) => g.id === groupId);
+                const group = nodeGroupsData?.find(
+                  (g) => String(g.id) === String(groupId)
+                );
                 return (
                   <Badge key={groupId} variant="outline">
                     {group?.name || String(groupId)}
@@ -193,7 +194,7 @@ export default function Nodes() {
   }, [isGroupEnabled, nodeGroupsData, t, getServerName, getServerAddress, getProtocolPort]);
 
   return (
-    <ProTable<API.Node, { search: string; node_group_id?: number }>
+    <ProTable<API.Node, { search: string; node_group_id?: string }>
       action={ref}
       actions={{
         render: (row) => [
@@ -378,7 +379,7 @@ export default function Nodes() {
           page: pagination.page,
           size: pagination.size,
           search: filter?.search || undefined,
-          node_group_id: filter?.node_group_id ? Number(filter.node_group_id) : undefined,
+          node_group_id: filter?.node_group_id || undefined,
         };
 
         const { data } = await filterNodeList(filters);

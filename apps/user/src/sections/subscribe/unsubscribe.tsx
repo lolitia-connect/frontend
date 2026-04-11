@@ -19,7 +19,7 @@ import { Display } from "@/components/display";
 import { useGlobalStore } from "@/stores/global";
 
 interface UnsubscribeProps {
-  id: number;
+  id: string;
   allowDeduction?: boolean;
   onSuccess?: () => void;
 }

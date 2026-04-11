@@ -13,13 +13,13 @@ interface ServerState {
   fetchServers: () => Promise<void>;
 
   // Getters
-  getServerById: (serverId: number) => API.Server | undefined;
-  getServerName: (serverId?: number) => string;
-  getServerAddress: (serverId?: number) => string;
-  getServerEnabledProtocols: (serverId: number) => API.Protocol[];
-  getProtocolPort: (serverId?: number, protocol?: string) => string;
+  getServerById: (serverId: string | number) => API.Server | undefined;
+  getServerName: (serverId?: string | number) => string;
+  getServerAddress: (serverId?: string | number) => string;
+  getServerEnabledProtocols: (serverId: string | number) => API.Protocol[];
+  getProtocolPort: (serverId?: string | number, protocol?: string) => string;
   getAvailableProtocols: (
-    serverId?: number
+    serverId?: string | number
   ) => Array<{ protocol: string; port: number }>;
 }
 
@@ -49,34 +49,34 @@ export const useServerStore = create<ServerState>((set, get) => ({
   },
 
   // Getters
-  getServerById: (serverId: number) =>
-    get().servers.find((s) => s.id === serverId),
+  getServerById: (serverId: string | number) =>
+    get().servers.find((s) => String(s.id) === String(serverId)),
 
-  getServerName: (serverId?: number) => {
+  getServerName: (serverId?: string | number) => {
     if (!serverId) return "—";
-    const server = get().servers.find((s) => s.id === serverId);
+    const server = get().servers.find((s) => String(s.id) === String(serverId));
     return server?.name ?? `#${serverId}`;
   },
 
-  getServerAddress: (serverId?: number) => {
+  getServerAddress: (serverId?: string | number) => {
     if (!serverId) return "—";
-    const server = get().servers.find((s) => s.id === serverId);
+    const server = get().servers.find((s) => String(s.id) === String(serverId));
     return server?.address ?? "—";
   },
 
-  getServerEnabledProtocols: (serverId: number) => {
-    const server = get().servers.find((s) => s.id === serverId);
+  getServerEnabledProtocols: (serverId: string | number) => {
+    const server = get().servers.find((s) => String(s.id) === String(serverId));
     return server?.protocols?.filter((p) => p.enable) || [];
   },
 
-  getProtocolPort: (serverId?: number, protocol?: string) => {
+  getProtocolPort: (serverId?: string | number, protocol?: string) => {
     if (!(serverId && protocol)) return "—";
     const enabledProtocols = get().getServerEnabledProtocols(serverId);
     const protocolConfig = enabledProtocols.find((p) => p.type === protocol);
     return protocolConfig?.port ? String(protocolConfig.port) : "—";
   },
 
-  getAvailableProtocols: (serverId?: number) => {
+  getAvailableProtocols: (serverId?: string | number) => {
     if (!serverId) return [];
     return get()
       .getServerEnabledProtocols(serverId)

@@ -45,7 +45,7 @@ export default function QuotaBroadcastForm() {
   // Define schema with internationalized error messages
   const quotaBroadcastSchema = z.object({
     subscribers: z
-      .array(z.number())
+      .array(z.string())
       .min(1, t("pleaseSelectSubscribers", "Please select packages")),
     is_active: z.boolean(),
     start_time: z.string().optional(),

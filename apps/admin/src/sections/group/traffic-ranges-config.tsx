@@ -7,7 +7,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 interface NodeGroup {
-  id: number;
+  id: string;
   name: string;
   min_traffic_gb?: number;
   max_traffic_gb?: number;
@@ -15,11 +15,11 @@ interface NodeGroup {
 
 interface TrafficRangeConfigProps {
   nodeGroups: NodeGroup[];
-  onTrafficUpdate: (nodeGroupId: number, fields: { min_traffic_gb?: number; max_traffic_gb?: number }) => Promise<void>;
+  onTrafficUpdate: (nodeGroupId: string, fields: { min_traffic_gb?: number; max_traffic_gb?: number }) => Promise<void>;
 }
 
 interface UpdatingNode {
-  nodeGroupId: number;
+  nodeGroupId: string;
   field: 'min_traffic_gb' | 'max_traffic_gb';
 }
 
@@ -32,10 +32,10 @@ export default function TrafficRangeConfig({ nodeGroups, onTrafficUpdate }: Traf
   const { t } = useTranslation("group");
   const [updatingNodes, setUpdatingNodes] = useState<UpdatingNode[]>([]);
   // 使用对象存储每个节点组的临时值
-  const [temporaryValues, setTemporaryValues] = useState<Record<number, NodeGroupTempValues>>({});
+  const [temporaryValues, setTemporaryValues] = useState<Record<string, NodeGroupTempValues>>({});
 
   // Get the display value (temporary or actual)
-  const getDisplayValue = (nodeGroupId: number, field: 'min_traffic_gb' | 'max_traffic_gb'): number => {
+  const getDisplayValue = (nodeGroupId: string, field: 'min_traffic_gb' | 'max_traffic_gb'): number => {
     const temp = temporaryValues[nodeGroupId];
     if (temp && temp[field] !== undefined) {
       return temp[field]!;
@@ -46,7 +46,7 @@ export default function TrafficRangeConfig({ nodeGroups, onTrafficUpdate }: Traf
 
   // Validate traffic ranges: no overlaps
   const validateTrafficRange = (
-    nodeGroupId: number,
+    nodeGroupId: string,
     minTraffic: number,
     maxTraffic: number
   ): { valid: boolean; error?: string } => {
@@ -93,7 +93,7 @@ export default function TrafficRangeConfig({ nodeGroups, onTrafficUpdate }: Traf
     return { valid: true };
   };
 
-  const handleTrafficBlur = async (nodeGroupId: number) => {
+  const handleTrafficBlur = async (nodeGroupId: string) => {
     const nodeGroup = nodeGroups.find(ng => ng.id === nodeGroupId);
     if (!nodeGroup) return;
 
@@ -156,7 +156,7 @@ export default function TrafficRangeConfig({ nodeGroups, onTrafficUpdate }: Traf
     }
   };
 
-  const isUpdating = (nodeGroupId: number) => {
+  const isUpdating = (nodeGroupId: string) => {
     return updatingNodes.some(u => u.nodeGroupId === nodeGroupId);
   };
 

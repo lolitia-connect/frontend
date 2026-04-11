@@ -1,6 +1,6 @@
 declare namespace API {
   type Ads = {
-    id: number;
+    id: string;
     title: string;
     type: string;
     content: string;
@@ -18,7 +18,7 @@ declare namespace API {
   };
 
   type Announcement = {
-    id: number;
+    id: string;
     title: string;
     content: string;
     show: boolean;
@@ -34,7 +34,7 @@ declare namespace API {
   };
 
   type Application = {
-    id: number;
+    id: string;
     icon: string;
     name: string;
     description: string;
@@ -55,7 +55,7 @@ declare namespace API {
   };
 
   type ApplicationResponseInfo = {
-    id: number;
+    id: string;
     name: string;
     icon: string;
     description: string;
@@ -64,7 +64,7 @@ declare namespace API {
   };
 
   type ApplicationVersion = {
-    id: number;
+    id: string;
     url: string;
     version: string;
     description: string;
@@ -72,7 +72,7 @@ declare namespace API {
   };
 
   type AppUserSubcbribe = {
-    id: number;
+    id: string;
     name: string;
     upload: number;
     traffic: number;
@@ -84,7 +84,7 @@ declare namespace API {
   };
 
   type AppUserSubscbribeNode = {
-    id: number;
+    id: string;
     name: string;
     uuid: string;
     protocol: string;
@@ -114,7 +114,7 @@ declare namespace API {
   };
 
   type AuthMethodConfig = {
-    id: number;
+    id: string;
     method: string;
     config: Record<string, any>;
     enabled: boolean;
@@ -122,7 +122,7 @@ declare namespace API {
 
   type BalanceLog = {
     type: number;
-    user_id: number;
+    user_id: string;
     amount: number;
     order_no?: string;
     balance: number;
@@ -130,27 +130,27 @@ declare namespace API {
   };
 
   type BatchDeleteCouponRequest = {
-    ids: number[];
+    ids: string[];
   };
 
   type BatchDeleteDocumentRequest = {
-    ids: number[];
+    ids: string[];
   };
 
   type BatchDeleteSubscribeGroupRequest = {
-    ids: number[];
+    ids: string[];
   };
 
   type BatchDeleteSubscribeRequest = {
-    ids: number[];
+    ids: string[];
   };
 
   type BatchDeleteUserRequest = {
-    ids: number[];
+    ids: string[];
   };
 
   type BatchSendEmailTask = {
-    id: number;
+    id: string;
     subject: string;
     content: string;
     recipients: string;
@@ -186,14 +186,14 @@ declare namespace API {
 
   type CommissionLog = {
     type: number;
-    user_id: number;
+    user_id: string;
     amount: number;
     order_no: string;
     timestamp: number;
   };
 
   type Coupon = {
-    id: number;
+    id: string;
     name: string;
     code: string;
     count: number;
@@ -202,7 +202,7 @@ declare namespace API {
     start_time: number;
     expire_time: number;
     user_limit: number;
-    subscribe: number[];
+    subscribe: string[];
     used_count: number;
     enable: boolean;
     created_at: number;
@@ -246,45 +246,45 @@ declare namespace API {
     start_time: number;
     expire_time: number;
     user_limit?: number;
-    subscribe?: number[];
+    subscribe?: string[];
     used_count?: number;
     enable?: boolean;
   };
 
   type CreateRedemptionCodeRequest = {
     total_count: number;
-    subscribe_plan: number;
+    subscribe_plan: string;
     unit_time: string;
     quantity: number;
     batch_count: number;
   };
 
   type UpdateRedemptionCodeRequest = {
-    id: number;
+    id: string;
     total_count?: number;
-    subscribe_plan?: number;
+    subscribe_plan?: string;
     unit_time?: string;
     quantity?: number;
     status?: number;
   };
 
   type ToggleRedemptionCodeStatusRequest = {
-    id: number;
+    id: string;
     status: number;
   };
 
   type DeleteRedemptionCodeRequest = {
-    id: number;
+    id: string;
   };
 
   type BatchDeleteRedemptionCodeRequest = {
-    ids: number[];
+    ids: string[];
   };
 
   type GetRedemptionCodeListRequest = {
     page: number;
     size: number;
-    subscribe_plan?: number;
+    subscribe_plan?: string;
     unit_time?: string;
     code?: string;
   };
@@ -297,8 +297,8 @@ declare namespace API {
   type GetRedemptionRecordListRequest = {
     page: number;
     size: number;
-    user_id?: number;
-    code_id?: number;
+    user_id?: string;
+    code_id?: string;
   };
 
   type GetRedemptionRecordListResponse = {
@@ -307,11 +307,11 @@ declare namespace API {
   };
 
   type RedemptionCode = {
-    id: number;
+    id: string;
     code: string;
     total_count: number;
     used_count: number;
-    subscribe_plan: number;
+    subscribe_plan: string;
     unit_time: string;
     quantity: number;
     status: number;
@@ -320,10 +320,10 @@ declare namespace API {
   };
 
   type RedemptionRecord = {
-    id: number;
-    redemption_code_id: number;
-    user_id: number;
-    subscribe_id: number;
+    id: string;
+    redemption_code_id: string;
+    user_id: string;
+    subscribe_id: string;
     unit_time: string;
     quantity: number;
     redeemed_at: number;
@@ -342,16 +342,16 @@ declare namespace API {
     tags?: string[];
     port: number;
     address: string;
-    server_id?: number;
+    server_id?: string;
     protocol?: string;
     enabled?: boolean;
     node_type?: string;
     is_hidden?: boolean;
-    node_group_ids?: number[];
+    node_group_ids?: string[];
   };
 
   type CreateOrderRequest = {
-    user_id: number;
+    user_id: string;
     type: number;
     quantity?: number;
     price: number;
@@ -361,10 +361,10 @@ declare namespace API {
     coupon_discount?: number;
     commission: number;
     fee_amount: number;
-    payment_id: number;
+    payment_id: string;
     trade_no?: string;
     status?: number;
-    subscribe_id?: number;
+    subscribe_id?: string;
   };
 
   type CreatePaymentMethodRequest = {
@@ -382,7 +382,7 @@ declare namespace API {
   };
 
   type CreateQuotaTaskRequest = {
-    subscribers: number[];
+    subscribers: string[];
     is_active: boolean;
     start_time: number;
     end_time: number;
@@ -443,14 +443,14 @@ declare namespace API {
   };
 
   type CreateTicketFollowRequest = {
-    ticket_id: number;
+    ticket_id: string;
     from: string;
     type: number;
     content: string;
   };
 
   type CreateUserAuthMethodRequest = {
-    user_id: number;
+    user_id: string;
     auth_type: string;
     auth_identifier: string;
   };
@@ -460,7 +460,7 @@ declare namespace API {
     telephone: string;
     telephone_area_code: string;
     password: string;
-    product_id: number;
+    product_id: string;
     duration: number;
     referral_percentage: number;
     only_first_purchase: boolean;
@@ -473,10 +473,10 @@ declare namespace API {
   };
 
   type CreateUserSubscribeRequest = {
-    user_id: number;
+    user_id: string;
     expired_at: number;
     traffic: number;
-    subscribe_id: number;
+    subscribe_id: string;
   };
 
   type CurrencyConfig = {
@@ -486,56 +486,56 @@ declare namespace API {
   };
 
   type DeleteAdsRequest = {
-    id: number;
+    id: string;
   };
 
   type DeleteAnnouncementRequest = {
-    id: number;
+    id: string;
   };
 
   type DeleteCouponRequest = {
-    id: number;
+    id: string;
   };
 
   type DeleteDocumentRequest = {
-    id: number;
+    id: string;
   };
 
   type DeleteNodeRequest = {
-    id: number;
+    id: string;
   };
 
   type DeletePaymentMethodRequest = {
-    id: number;
+    id: string;
   };
 
   type DeleteServerRequest = {
-    id: number;
+    id: string;
   };
 
   type DeleteSubscribeApplicationRequest = {
-    id: number;
+    id: string;
   };
 
   type DeleteSubscribeGroupRequest = {
-    id: number;
+    id: string;
   };
 
   type DeleteSubscribeRequest = {
-    id: number;
+    id: string;
   };
 
   type DeleteUserAuthMethodRequest = {
-    user_id: number;
+    user_id: string;
     auth_type: string;
   };
 
   type DeleteUserDeivceRequest = {
-    id: number;
+    id: string;
   };
 
   type DeleteUserParams = {
-    id: number;
+    id: string;
   };
 
   type DeleteUserSubscribeRequest = {
@@ -550,7 +550,7 @@ declare namespace API {
   };
 
   type Document = {
-    id: number;
+    id: string;
     title: string;
     content: string;
     tags: string[];
@@ -593,7 +593,7 @@ declare namespace API {
     size: number;
     date?: string;
     search?: string;
-    user_id?: number;
+    user_id?: string;
   };
 
   type FilterBalanceLogRequest = {
@@ -601,7 +601,7 @@ declare namespace API {
     size?: number;
     date?: string;
     search?: string;
-    user_id?: number;
+    user_id?: string;
   };
 
   type FilterBalanceLogResponse = {
@@ -614,7 +614,7 @@ declare namespace API {
     size: number;
     date?: string;
     search?: string;
-    user_id?: number;
+    user_id?: string;
   };
 
   type FilterCommissionLogRequest = {
@@ -622,7 +622,7 @@ declare namespace API {
     size?: number;
     date?: string;
     search?: string;
-    user_id?: number;
+    user_id?: string;
   };
 
   type FilterCommissionLogResponse = {
@@ -647,7 +647,7 @@ declare namespace API {
     size: number;
     date?: string;
     search?: string;
-    user_id?: number;
+    user_id?: string;
   };
 
   type FilterGiftLogRequest = {
@@ -655,7 +655,7 @@ declare namespace API {
     size?: number;
     date?: string;
     search?: string;
-    user_id?: number;
+    user_id?: string;
   };
 
   type FilterGiftLogResponse = {
@@ -668,7 +668,7 @@ declare namespace API {
     size: number;
     date?: string;
     search?: string;
-    user_id?: number;
+    user_id?: string;
   };
 
   type FilterLoginLogRequest = {
@@ -676,7 +676,7 @@ declare namespace API {
     size?: number;
     date?: string;
     search?: string;
-    user_id?: number;
+    user_id?: string;
   };
 
   type FilterLoginLogResponse = {
@@ -707,14 +707,14 @@ declare namespace API {
     page: number;
     size: number;
     search?: string;
-    node_group_id?: number;
+    node_group_id?: string;
   };
 
   type FilterNodeListRequest = {
     page: number;
     size: number;
     search?: string;
-    node_group_id?: number;
+    node_group_id?: string;
   };
 
   type FilterNodeListResponse = {
@@ -727,7 +727,7 @@ declare namespace API {
     size: number;
     date?: string;
     search?: string;
-    user_id?: number;
+    user_id?: string;
   };
 
   type FilterRegisterLogRequest = {
@@ -735,7 +735,7 @@ declare namespace API {
     size?: number;
     date?: string;
     search?: string;
-    user_id?: number;
+    user_id?: string;
   };
 
   type FilterRegisterLogResponse = {
@@ -748,7 +748,7 @@ declare namespace API {
     size: number;
     date?: string;
     search?: string;
-    user_subscribe_id?: number;
+    user_subscribe_id?: string;
   };
 
   type FilterResetSubscribeLogRequest = {
@@ -756,7 +756,7 @@ declare namespace API {
     size?: number;
     date?: string;
     search?: string;
-    user_subscribe_id?: number;
+    user_subscribe_id?: string;
   };
 
   type FilterResetSubscribeLogResponse = {
@@ -786,7 +786,7 @@ declare namespace API {
     size: number;
     date?: string;
     search?: string;
-    server_id?: number;
+    server_id?: string;
   };
 
   type FilterServerTrafficLogRequest = {
@@ -794,7 +794,7 @@ declare namespace API {
     size?: number;
     date?: string;
     search?: string;
-    server_id?: number;
+    server_id?: string;
   };
 
   type FilterServerTrafficLogResponse = {
@@ -807,8 +807,8 @@ declare namespace API {
     size: number;
     date?: string;
     search?: string;
-    user_id?: number;
-    user_subscribe_id?: number;
+    user_id?: string;
+    user_subscribe_id?: string;
   };
 
   type FilterSubscribeLogRequest = {
@@ -816,8 +816,8 @@ declare namespace API {
     size?: number;
     date?: string;
     search?: string;
-    user_id?: number;
-    user_subscribe_id?: number;
+    user_id?: string;
+    user_subscribe_id?: string;
   };
 
   type FilterSubscribeLogResponse = {
@@ -830,8 +830,8 @@ declare namespace API {
     size?: number;
     date?: string;
     search?: string;
-    user_id?: number;
-    user_subscribe_id?: number;
+    user_id?: string;
+    user_subscribe_id?: string;
   };
 
   type FilterSubscribeTrafficResponse = {
@@ -844,9 +844,9 @@ declare namespace API {
     size: number;
     date?: string;
     search?: string;
-    server_id?: number;
-    subscribe_id?: number;
-    user_id?: number;
+    server_id?: string;
+    subscribe_id?: string;
+    user_id?: string;
   };
 
   type FilterTrafficLogDetailsRequest = {
@@ -854,9 +854,9 @@ declare namespace API {
     size?: number;
     date?: string;
     search?: string;
-    server_id?: number;
-    subscribe_id?: number;
-    user_id?: number;
+    server_id?: string;
+    subscribe_id?: string;
+    user_id?: string;
   };
 
   type FilterTrafficLogDetailsResponse = {
@@ -869,13 +869,13 @@ declare namespace API {
     size: number;
     date?: string;
     search?: string;
-    user_id?: number;
-    user_subscribe_id?: number;
+    user_id?: string;
+    user_subscribe_id?: string;
   };
 
   type Follow = {
-    id: number;
-    ticket_id: number;
+    id: string;
+    ticket_id: string;
     from: string;
     type: number;
     content: string;
@@ -883,11 +883,11 @@ declare namespace API {
   };
 
   type GetAdsDetailParams = {
-    id: number;
+    id: string;
   };
 
   type GetAdsDetailRequest = {
-    id: number;
+    id: string;
   };
 
   type GetAdsListParams = {
@@ -933,11 +933,11 @@ declare namespace API {
   };
 
   type GetAnnouncementParams = {
-    id: number;
+    id: string;
   };
 
   type GetAnnouncementRequest = {
-    id: number;
+    id: string;
   };
 
   type GetAuthMethodConfigParams = {
@@ -976,7 +976,7 @@ declare namespace API {
   };
 
   type GetBatchSendEmailTaskStatusRequest = {
-    id: number;
+    id: string;
   };
 
   type GetBatchSendEmailTaskStatusResponse = {
@@ -1006,11 +1006,11 @@ declare namespace API {
   };
 
   type GetDetailRequest = {
-    id: number;
+    id: string;
   };
 
   type GetDocumentDetailRequest = {
-    id: number;
+    id: string;
   };
 
   type GetDocumentListParams = {
@@ -1058,18 +1058,18 @@ declare namespace API {
   type GetOrderListParams = {
     page: number;
     size: number;
-    user_id?: number;
+    user_id?: string;
     status?: number;
-    subscribe_id?: number;
+    subscribe_id?: string;
     search?: string;
   };
 
   type GetOrderListRequest = {
     page: number;
     size: number;
-    user_id?: number;
+    user_id?: string;
     status?: number;
-    subscribe_id?: number;
+    subscribe_id?: string;
     search?: string;
   };
 
@@ -1110,11 +1110,11 @@ declare namespace API {
   };
 
   type GetServerProtocolsParams = {
-    id: number;
+    id: string;
   };
 
   type GetServerProtocolsRequest = {
-    id: number;
+    id: string;
   };
 
   type GetServerProtocolsResponse = {
@@ -1137,11 +1137,11 @@ declare namespace API {
   };
 
   type GetSubscribeDetailsParams = {
-    id: number;
+    id: string;
   };
 
   type GetSubscribeDetailsRequest = {
-    id: number;
+    id: string;
   };
 
   type GetSubscribeGroupListResponse = {
@@ -1154,7 +1154,7 @@ declare namespace API {
     size: number;
     language?: string;
     search?: string;
-    node_group_id?: number;
+    node_group_id?: string;
   };
 
   type GetSubscribeListRequest = {
@@ -1162,7 +1162,7 @@ declare namespace API {
     size: number;
     language?: string;
     search?: string;
-    node_group_id?: number;
+    node_group_id?: string;
   };
 
   type GetSubscribeListResponse = {
@@ -1173,7 +1173,7 @@ declare namespace API {
   type GetTicketListParams = {
     page: number;
     size: number;
-    user_id?: number;
+    user_id?: string;
     status?: number;
     search?: string;
   };
@@ -1181,7 +1181,7 @@ declare namespace API {
   type GetTicketListRequest = {
     page: number;
     size: number;
-    user_id?: number;
+    user_id?: string;
     status?: number;
     search?: string;
   };
@@ -1192,15 +1192,15 @@ declare namespace API {
   };
 
   type GetTicketParams = {
-    id: number;
+    id: string;
   };
 
   type GetTicketRequest = {
-    id: number;
+    id: string;
   };
 
   type GetUserAuthMethodRequest = {
-    user_id: number;
+    user_id: string;
   };
 
   type GetUserAuthMethodResponse = {
@@ -1208,17 +1208,17 @@ declare namespace API {
   };
 
   type GetUserDetailParams = {
-    id: number;
+    id: string;
   };
 
   type GetUserListParams = {
     page: number;
     size: number;
     search?: string;
-    user_id?: number;
+    user_id?: string;
     unscoped?: boolean;
-    subscribe_id?: number;
-    user_subscribe_id?: number;
+    subscribe_id?: string;
+    user_subscribe_id?: string;
     user_group_id?: number;
   };
 
@@ -1226,10 +1226,10 @@ declare namespace API {
     page: number;
     size: number;
     search?: string;
-    user_id?: number;
+    user_id?: string;
     unscoped?: boolean;
-    subscribe_id?: number;
-    user_subscribe_id?: number;
+    subscribe_id?: string;
+    user_subscribe_id?: string;
   };
 
   type GetUserListResponse = {
@@ -1240,13 +1240,13 @@ declare namespace API {
   type GetUserLoginLogsParams = {
     page: number;
     size: number;
-    user_id: number;
+    user_id: string;
   };
 
   type GetUserLoginLogsRequest = {
     page: number;
     size: number;
-    user_id: number;
+    user_id: string;
   };
 
   type GetUserLoginLogsResponse = {
@@ -1255,25 +1255,25 @@ declare namespace API {
   };
 
   type GetUserSubscribeByIdParams = {
-    id: number;
+    id: string;
   };
 
   type GetUserSubscribeByIdRequest = {
-    id: number;
+    id: string;
   };
 
   type GetUserSubscribeDevicesParams = {
     page: number;
     size: number;
-    user_id: number;
-    subscribe_id: number;
+    user_id: string;
+    subscribe_id: string;
   };
 
   type GetUserSubscribeDevicesRequest = {
     page: number;
     size: number;
-    user_id: number;
-    subscribe_id: number;
+    user_id: string;
+    subscribe_id: string;
   };
 
   type GetUserSubscribeDevicesResponse = {
@@ -1284,7 +1284,7 @@ declare namespace API {
   type GetUserSubscribeListRequest = {
     page: number;
     size: number;
-    user_id: number;
+    user_id: string;
   };
 
   type GetUserSubscribeListResponse = {
@@ -1295,15 +1295,15 @@ declare namespace API {
   type GetUserSubscribeLogsParams = {
     page: number;
     size: number;
-    user_id: number;
-    subscribe_id?: number;
+    user_id: string;
+    subscribe_id?: string;
   };
 
   type GetUserSubscribeLogsRequest = {
     page: number;
     size: number;
-    user_id: number;
-    subscribe_id?: number;
+    user_id: string;
+    subscribe_id?: string;
   };
 
   type GetUserSubscribeLogsResponse = {
@@ -1314,19 +1314,19 @@ declare namespace API {
   type GetUserSubscribeParams = {
     page: number;
     size: number;
-    user_id: number;
+    user_id: string;
   };
 
   type GetUserSubscribeResetTrafficLogsParams = {
     page: number;
     size: number;
-    user_subscribe_id: number;
+    user_subscribe_id: string;
   };
 
   type GetUserSubscribeResetTrafficLogsRequest = {
     page: number;
     size: number;
-    user_subscribe_id: number;
+    user_subscribe_id: string;
   };
 
   type GetUserSubscribeResetTrafficLogsResponse = {
@@ -1337,8 +1337,8 @@ declare namespace API {
   type GetUserSubscribeTrafficLogsParams = {
     page: number;
     size: number;
-    user_id: number;
-    subscribe_id: number;
+    user_id: string;
+    subscribe_id: string;
     start_time: number;
     end_time: number;
   };
@@ -1346,8 +1346,8 @@ declare namespace API {
   type GetUserSubscribeTrafficLogsRequest = {
     page: number;
     size: number;
-    user_id: number;
-    subscribe_id: number;
+    user_id: string;
+    subscribe_id: string;
     start_time: number;
     end_time: number;
   };
@@ -1359,9 +1359,9 @@ declare namespace API {
 
   type GiftLog = {
     type: number;
-    user_id: number;
+    user_id: string;
     order_no: string;
-    subscribe_id: number;
+    subscribe_id: string;
     amount: number;
     balance: number;
     remark?: string;
@@ -1387,11 +1387,11 @@ declare namespace API {
   };
 
   type KickOfflineRequest = {
-    id: number;
+    id: string;
   };
 
   type LoginLog = {
-    user_id: number;
+    user_id: string;
     method: string;
     login_ip: string;
     user_agent: string;
@@ -1409,7 +1409,7 @@ declare namespace API {
   };
 
   type MessageLog = {
-    id: number;
+    id: string;
     type: number;
     platform: string;
     to: string;
@@ -1441,19 +1441,19 @@ declare namespace API {
   };
 
   type Node = {
-    id: number;
+    id: string;
     name: string;
     tags: string[];
     port: number;
     address: string;
-    server_id: number;
+    server_id: string;
     protocol: string;
     enabled: boolean;
     node_type?: string;
     is_hidden?: boolean;
     sort?: number;
-    node_group_id?: number;
-    node_group_ids?: number[];
+    node_group_id?: string;
+    node_group_ids?: string[];
     created_at: number;
     updated_at: number;
   };
@@ -1491,8 +1491,8 @@ declare namespace API {
   };
 
   type Order = {
-    id: number;
-    user_id: number;
+    id: string;
+    user_id: string;
     order_no: string;
     type: number;
     quantity: number;
@@ -1507,14 +1507,14 @@ declare namespace API {
     fee_amount: number;
     trade_no: string;
     status: number;
-    subscribe_id: number;
+    subscribe_id: string;
     created_at: number;
     updated_at: number;
   };
 
   type OrderDetail = {
-    id: number;
-    user_id: number;
+    id: string;
+    user_id: string;
     order_no: string;
     type: number;
     quantity: number;
@@ -1530,7 +1530,7 @@ declare namespace API {
     fee_amount: number;
     trade_no: string;
     status: number;
-    subscribe_id: number;
+    subscribe_id: string;
     subscribe: Subscribe;
     created_at: number;
     updated_at: number;
@@ -1545,7 +1545,7 @@ declare namespace API {
   };
 
   type PaymentConfig = {
-    id: number;
+    id: string;
     name: string;
     platform: string;
     description: string;
@@ -1560,7 +1560,7 @@ declare namespace API {
   };
 
   type PaymentMethod = {
-    id: number;
+    id: string;
     name: string;
     platform: string;
     description: string;
@@ -1571,7 +1571,7 @@ declare namespace API {
   };
 
   type PaymentMethodDetail = {
-    id: number;
+    id: string;
     name: string;
     platform: string;
     description: string;
@@ -1616,11 +1616,11 @@ declare namespace API {
   };
 
   type PreviewSubscribeTemplateParams = {
-    id: number;
+    id: string;
   };
 
   type PreviewSubscribeTemplateRequest = {
-    id: number;
+    id: string;
   };
 
   type PreviewSubscribeTemplateResponse = {
@@ -1715,9 +1715,9 @@ declare namespace API {
   };
 
   type PurchaseOrderRequest = {
-    subscribe_id: number;
+    subscribe_id: string;
     quantity: number;
-    payment?: number;
+    payment?: string;
     coupon?: string;
   };
 
@@ -1738,7 +1738,7 @@ declare namespace API {
   };
 
   type QueryDocumentDetailRequest = {
-    id: number;
+    id: string;
   };
 
   type QueryDocumentListResponse = {
@@ -1796,7 +1796,7 @@ declare namespace API {
   };
 
   type QueryQuotaTaskPreCountRequest = {
-    subscribers: number[];
+    subscribers: string[];
     is_active: boolean;
     start_time: number;
     end_time: number;
@@ -1807,7 +1807,7 @@ declare namespace API {
   };
 
   type QueryQuotaTaskStatusRequest = {
-    id: number;
+    id: string;
   };
 
   type QueryQuotaTaskStatusResponse = {
@@ -1843,8 +1843,8 @@ declare namespace API {
   };
 
   type QuotaTask = {
-    id: number;
-    subscribers: number[];
+    id: string;
+    subscribers: string[];
     is_active: boolean;
     start_time: number;
     end_time: number;
@@ -1853,7 +1853,7 @@ declare namespace API {
     gift_type: number;
     gift_value: number;
     /** UserSubscribe IDs */
-    objects: number[];
+    objects: string[];
     status: number;
     total: number;
     current: number;
@@ -1864,7 +1864,7 @@ declare namespace API {
 
   type RechargeOrderRequest = {
     amount: number;
-    payment: number;
+    payment: string;
   };
 
   type RechargeOrderResponse = {
@@ -1874,7 +1874,7 @@ declare namespace API {
   type RegisterConfig = {
     stop_register: boolean;
     enable_trial: boolean;
-    trial_subscribe: number;
+    trial_subscribe: string;
     trial_time: number;
     trial_time_unit: string;
     enable_ip_register_limit: boolean;
@@ -1884,7 +1884,7 @@ declare namespace API {
   };
 
   type RegisterLog = {
-    user_id: number;
+    user_id: string;
     auth_method: string;
     identifier: string;
     register_ip: string;
@@ -1893,9 +1893,9 @@ declare namespace API {
   };
 
   type RenewalOrderRequest = {
-    user_subscribe_id: number;
+    user_subscribe_id: string;
     quantity: number;
-    payment: number;
+    payment: string;
     coupon?: string;
   };
 
@@ -1913,23 +1913,23 @@ declare namespace API {
 
   type ResetSubscribeLog = {
     type: number;
-    user_id: number;
-    user_subscribe_id: number;
+    user_id: string;
+    user_subscribe_id: string;
     order_no?: string;
     timestamp: number;
   };
 
   type ResetSubscribeTrafficLog = {
-    id: number;
+    id: string;
     type: number;
-    user_subscribe_id: number;
+    user_subscribe_id: string;
     order_no?: string;
     timestamp: number;
   };
 
   type ResetTrafficOrderRequest = {
-    user_subscribe_id: number;
-    payment: number;
+    user_subscribe_id: string;
+    payment: string;
   };
 
   type ResetTrafficOrderResponse = {
@@ -1971,7 +1971,7 @@ declare namespace API {
   };
 
   type Server = {
-    id: number;
+    id: string;
     name: string;
     country: string;
     city: string;
@@ -1985,7 +1985,7 @@ declare namespace API {
   };
 
   type ServerGroup = {
-    id: number;
+    id: string;
     name: string;
     description: string;
     created_at: number;
@@ -1999,15 +1999,15 @@ declare namespace API {
 
   type ServerOnlineUser = {
     ip: ServerOnlineIP[];
-    user_id: number;
+    user_id: string;
     subscribe: string;
-    subscribe_id: number;
+    subscribe_id: string;
     traffic: number;
     expired_at: number;
   };
 
   type ServerRuleGroup = {
-    id: number;
+    id: string;
     icon: string;
     name: string;
     type: string;
@@ -2044,7 +2044,7 @@ declare namespace API {
   };
 
   type ServerTrafficData = {
-    server_id: number;
+    server_id: string;
     name: string;
     upload: number;
     download: number;
@@ -2052,7 +2052,7 @@ declare namespace API {
 
   type ServerTrafficLog = {
     /** Server ID */
-    server_id: number;
+    server_id: string;
     /** Upload traffic in bytes */
     upload: number;
     /** Download traffic in bytes */
@@ -2092,12 +2092,12 @@ declare namespace API {
   };
 
   type SortItem = {
-    id: number;
+    id: string;
     sort: number;
   };
 
   type StopBatchSendEmailTaskRequest = {
-    id: number;
+    id: string;
   };
 
   type StripePayment = {
@@ -2107,7 +2107,7 @@ declare namespace API {
   };
 
   type Subscribe = {
-    id: number;
+    id: string;
     name: string;
     language: string;
     description: string;
@@ -2122,8 +2122,8 @@ declare namespace API {
     quota: number;
     nodes: number[];
     node_tags: string[];
-    node_group_ids?: number[];
-    node_group_id?: number;
+    node_group_ids?: string[];
+    node_group_id?: string;
     show: boolean;
     sell: boolean;
     sort: number;
@@ -2137,7 +2137,7 @@ declare namespace API {
   };
 
   type SubscribeApplication = {
-    id: number;
+    id: string;
     name: string;
     description?: string;
     icon?: string;
@@ -2166,7 +2166,7 @@ declare namespace API {
   };
 
   type SubscribeGroup = {
-    id: number;
+    id: string;
     name: string;
     description: string;
     created_at: number;
@@ -2174,7 +2174,7 @@ declare namespace API {
   };
 
   type SubscribeItem = {
-    id?: number;
+    id?: string;
     name?: string;
     language?: string;
     description?: string;
@@ -2189,8 +2189,8 @@ declare namespace API {
     quota?: number;
     nodes?: number[];
     node_tags?: string[];
-    node_group_ids?: number[];
-    node_group_id?: number;
+    node_group_ids?: string[];
+    node_group_id?: string;
     show?: boolean;
     sell?: boolean;
     sort?: number;
@@ -2205,11 +2205,11 @@ declare namespace API {
   };
 
   type SubscribeLog = {
-    user_id: number;
+    user_id: string;
     token: string;
     user_agent: string;
     client_ip: string;
-    user_subscribe_id: number;
+    user_subscribe_id: string;
     timestamp: number;
   };
 
@@ -2238,10 +2238,10 @@ declare namespace API {
   };
 
   type Ticket = {
-    id: number;
+    id: string;
     title: string;
     description: string;
-    user_id: number;
+    user_id: string;
     follow?: Follow[];
     status: number;
     created_at: number;
@@ -2259,7 +2259,7 @@ declare namespace API {
   };
 
   type ToggleNodeStatusRequest = {
-    id: number;
+    id: string;
     enable: boolean;
   };
 
@@ -2272,20 +2272,20 @@ declare namespace API {
   };
 
   type TrafficLog = {
-    id: number;
-    server_id: number;
-    user_id: number;
-    subscribe_id: number;
+    id: string;
+    server_id: string;
+    user_id: string;
+    subscribe_id: string;
     download: number;
     upload: number;
     timestamp: number;
   };
 
   type TrafficLogDetails = {
-    id: number;
-    server_id: number;
-    user_id: number;
-    subscribe_id: number;
+    id: string;
+    server_id: string;
+    user_id: string;
+    subscribe_id: string;
     download: number;
     upload: number;
     timestamp: number;
@@ -2315,7 +2315,7 @@ declare namespace API {
   };
 
   type UpdateAdsRequest = {
-    id: number;
+    id: string;
     title: string;
     type: string;
     content: string;
@@ -2327,12 +2327,12 @@ declare namespace API {
   };
 
   type UpdateAnnouncementEnableRequest = {
-    id: number;
+    id: string;
     enable: boolean;
   };
 
   type UpdateAnnouncementRequest = {
-    id: number;
+    id: string;
     title: string;
     content: string;
     show: boolean;
@@ -2341,14 +2341,14 @@ declare namespace API {
   };
 
   type UpdateAuthMethodConfigRequest = {
-    id: number;
+    id: string;
     method: string;
     config: Record<string, any>;
     enabled: boolean;
   };
 
   type UpdateCouponRequest = {
-    id: number;
+    id: string;
     name: string;
     code?: string;
     count?: number;
@@ -2357,13 +2357,13 @@ declare namespace API {
     start_time: number;
     expire_time: number;
     user_limit?: number;
-    subscribe?: number[];
+    subscribe?: string[];
     used_count?: number;
     enable?: boolean;
   };
 
   type UpdateDocumentRequest = {
-    id: number;
+    id: string;
     title: string;
     content: string;
     tags?: string[];
@@ -2371,28 +2371,28 @@ declare namespace API {
   };
 
   type UpdateNodeRequest = {
-    id: number;
+    id: string;
     name: string;
     tags?: string[];
     port: number;
     address: string;
-    server_id?: number;
+    server_id?: string;
     protocol?: string;
     enabled?: boolean;
     node_type?: string;
     is_hidden?: boolean;
-    node_group_ids?: number[];
+    node_group_ids?: string[];
   };
 
   type UpdateOrderStatusRequest = {
-    id: number;
+    id: string;
     status: number;
-    payment_id?: number;
+    payment_id?: string;
     trade_no?: string;
   };
 
   type UpdatePaymentMethodRequest = {
-    id: number;
+    id: string;
     name: string;
     platform: string;
     description: string;
@@ -2407,7 +2407,7 @@ declare namespace API {
   };
 
   type UpdateServerRequest = {
-    id: number;
+    id: string;
     name: string;
     country?: string;
     city?: string;
@@ -2417,7 +2417,7 @@ declare namespace API {
   };
 
   type UpdateSubscribeApplicationRequest = {
-    id: number;
+    id: string;
     name: string;
     description?: string;
     icon?: string;
@@ -2430,13 +2430,13 @@ declare namespace API {
   };
 
   type UpdateSubscribeGroupRequest = {
-    id: number;
+    id: string;
     name: string;
     description: string;
   };
 
   type UpdateSubscribeRequest = {
-    id: number;
+    id: string;
     name: string;
     language: string;
     description: string;
@@ -2462,18 +2462,18 @@ declare namespace API {
   };
 
   type UpdateTicketStatusRequest = {
-    id: number;
+    id: string;
     status: number;
   };
 
   type UpdateUserAuthMethodRequest = {
-    user_id: number;
+    user_id: string;
     auth_type: string;
     auth_identifier: string;
   };
 
   type UpdateUserBasiceInfoRequest = {
-    user_id: number;
+    user_id: string;
     password: string;
     avatar: string;
     balance: number;
@@ -2483,13 +2483,13 @@ declare namespace API {
     gift_amount: number;
     telegram: number;
     refer_code: string;
-    referer_id: number;
+    referer_id: string;
     enable: boolean;
     is_admin: boolean;
   };
 
   type UpdateUserNotifySettingRequest = {
-    user_id: number;
+    user_id: string;
     enable_balance_notify: boolean;
     enable_login_notify: boolean;
     enable_subscribe_notify: boolean;
@@ -2498,7 +2498,7 @@ declare namespace API {
 
   type UpdateUserSubscribeRequest = {
     user_subscribe_id: string;
-    subscribe_id: number;
+    subscribe_id: string;
     traffic: number;
     expired_at: number;
     upload: number;
@@ -2506,7 +2506,7 @@ declare namespace API {
   };
 
   type User = {
-    id: number;
+    id: string;
     avatar: string;
     balance: number;
     commission: number;
@@ -2515,7 +2515,7 @@ declare namespace API {
     gift_amount: number;
     telegram: number;
     refer_code: string;
-    referer_id: number;
+    referer_id: string;
     enable: boolean;
     is_admin?: boolean;
     enable_balance_notify: boolean;
@@ -2546,7 +2546,7 @@ declare namespace API {
   };
 
   type UserDevice = {
-    id: number;
+    id: string;
     ip: string;
     identifier: string;
     user_agent: string;
@@ -2557,8 +2557,8 @@ declare namespace API {
   };
 
   type UserLoginLog = {
-    id: number;
-    user_id: number;
+    id: string;
+    user_id: string;
     login_ip: string;
     user_agent: string;
     success: boolean;
@@ -2580,10 +2580,10 @@ declare namespace API {
   };
 
   type UserSubscribe = {
-    id: number;
-    user_id: number;
-    order_id: number;
-    subscribe_id: number;
+    id: string;
+    user_id: string;
+    order_id: string;
+    subscribe_id: string;
     subscribe: Subscribe;
     start_time: number;
     expire_time: number;
@@ -2600,11 +2600,11 @@ declare namespace API {
   };
 
   type UserSubscribeDetail = {
-    id: number;
-    user_id: number;
+    id: string;
+    user_id: string;
     user: User;
-    order_id: number;
-    subscribe_id: number;
+    order_id: string;
+    subscribe_id: string;
     subscribe: Subscribe;
     start_time: number;
     expire_time: number;
@@ -2619,9 +2619,9 @@ declare namespace API {
   };
 
   type UserSubscribeLog = {
-    id: number;
-    user_id: number;
-    user_subscribe_id: number;
+    id: string;
+    user_id: string;
+    user_subscribe_id: string;
     token: string;
     ip: string;
     user_agent: string;
@@ -2630,9 +2630,9 @@ declare namespace API {
 
   type UserSubscribeTrafficLog = {
     /** Subscribe ID */
-    subscribe_id: number;
+    subscribe_id: string;
     /** User ID */
-    user_id: number;
+    user_id: string;
     /** Upload traffic in bytes */
     upload: number;
     /** Download traffic in bytes */
@@ -2689,7 +2689,7 @@ declare namespace API {
   // ===== Group Management Types =====
 
   type UserGroup = {
-    id: number;
+    id: string;
     name: string;
     description: string;
     sort: number;
@@ -2700,7 +2700,7 @@ declare namespace API {
   };
 
   type NodeGroup = {
-    id: number;
+    id: string;
     name: string;
     type: string;
     description: string;
@@ -2718,7 +2718,7 @@ declare namespace API {
   };
 
   type Subscribe = {
-    id: number;
+    id: string;
     name: string;
     unit_price: number;
     unit_time: number;
@@ -2730,15 +2730,15 @@ declare namespace API {
   };
 
   type SubscribeGroupMapping = {
-    subscribe_id: number;
+    subscribe_id: string;
     user_group_id: string;
     created_at: number;
     updated_at: number;
   };
 
   type SubscribeGroupMappingInfo = {
-    id: number;
-    subscribe_id: number;
+    id: string;
+    subscribe_id: string;
     user_group_id: number;
     subscribe?: Subscribe;
     user_group?: UserGroup;
@@ -2747,7 +2747,7 @@ declare namespace API {
   };
 
   type GroupHistory = {
-    id: number;
+    id: string;
     group_mode: string;
     trigger_type: string;
     total_users: number;
@@ -2761,8 +2761,8 @@ declare namespace API {
   };
 
   type GroupHistoryDetailItem = {
-    id: number;
-    history_id: number;
+    id: string;
+    history_id: string;
     user_group_id: string;
     node_group_id: string;
     user_count: number;
@@ -2772,7 +2772,7 @@ declare namespace API {
   };
 
   type GroupHistoryDetail = {
-    id: number;
+    id: string;
     group_mode: string;
     trigger_type: string;
     total_users: number;
@@ -2817,7 +2817,7 @@ declare namespace API {
   };
 
   type UpdateUserGroupRequest = {
-    id: number;
+    id: string;
     name?: string;
     description?: string;
     sort?: number;
@@ -2826,7 +2826,7 @@ declare namespace API {
   };
 
   type DeleteUserGroupRequest = {
-    id: number;
+    id: string;
   };
 
   type BindNodeGroupsRequest = {
@@ -2860,7 +2860,7 @@ declare namespace API {
   };
 
   type UpdateNodeGroupRequest = {
-    id: number;
+    id: string;
     name?: string;
     type?: string;
     description?: string;
@@ -2875,13 +2875,13 @@ declare namespace API {
   };
 
   type DeleteNodeGroupRequest = {
-    id: number;
+    id: string;
   };
 
   type GetSubscribeMappingRequest = {
     page: number;
     size: number;
-    subscribe_id?: number;
+    subscribe_id?: string;
     user_group_id?: number;
   };
 
@@ -2891,7 +2891,7 @@ declare namespace API {
   };
 
   type UpdateSubscribeMappingRequest = {
-    subscribe_id: number;
+    subscribe_id: string;
     user_group_id: number;
   };
 
@@ -2922,13 +2922,13 @@ declare namespace API {
   };
 
   type GetGroupHistoryDetailRequest = {
-    id: number;
+    id: string;
   };
 
   type GetGroupHistoryDetailResponse = GroupHistoryDetail;
 
   type ExportGroupResultRequest = {
-    history_id?: number;
+    history_id?: string;
   };
   type MigrateUsersRequest = {
     from_user_group_id: number;
@@ -2944,16 +2944,16 @@ declare namespace API {
   };
 
   type PreviewUserNodesRequest = {
-    user_id: number;
+    user_id: string;
   };
 
   type PreviewUserNodesResponse = {
-    user_id: number;
+    user_id: string;
     node_groups: Array<{
-      id: number;
+      id: string;
       name: string;
       nodes: Array<{
-        id: number;
+        id: string;
         name: string;
         address: string;
         port: number;

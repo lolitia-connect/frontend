@@ -37,7 +37,7 @@ export default function EmailTaskManager() {
     useState<API.BatchSendEmailTask | null>(null);
   const [open, setOpen] = useState(false);
 
-  const stopTask = async (taskId: number) => {
+  const stopTask = async (taskId: string) => {
     try {
       await stopBatchSendEmailTask({
         id: taskId,

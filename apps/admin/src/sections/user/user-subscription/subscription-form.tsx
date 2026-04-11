@@ -37,15 +37,17 @@ interface Props {
 }
 
 const formSchema = z.object({
-  subscribe_id: z.number().optional(),
+  subscribe_id: z.string().optional(),
   traffic: z.number().optional(),
   speed_limit: z.number().optional(),
   device_limit: z.number().optional(),
   expired_at: z.number().nullish().optional(),
   upload: z.number().optional(),
   download: z.number().optional(),
-  id: z.number().optional(),
+  id: z.string().optional(),
 });
+
+type SubscriptionFormValues = z.infer<typeof formSchema>;
 
 export function SubscriptionForm({
   trigger,
@@ -57,10 +59,10 @@ export function SubscriptionForm({
   const { t } = useTranslation("user");
   const [open, setOpen] = useState(false);
 
-  const form = useForm({
+  const form = useForm<SubscriptionFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      subscribe_id: initialData?.subscribe_id || 0,
+      subscribe_id: initialData?.subscribe_id || "",
       traffic: initialData?.traffic || 0,
       upload: initialData?.upload || 0,
       download: initialData?.download || 0,
@@ -69,7 +71,7 @@ export function SubscriptionForm({
     },
   });
 
-  const handleSubmit = async (values: any) => {
+  const handleSubmit = async (values: SubscriptionFormValues) => {
     const success = await onSubmit(values);
     if (success) {
       setOpen(false);
@@ -109,7 +111,7 @@ export function SubscriptionForm({
                     <FormItem>
                       <FormLabel>{t("subscription", "Subscription")}</FormLabel>
                       <FormControl>
-                        <Combobox<number, false>
+                        <Combobox<string, false>
                           onChange={(value) => {
                             form.setValue(field.name, value);
                           }}

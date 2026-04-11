@@ -26,7 +26,7 @@ import { useTranslation } from "react-i18next";
 interface NodeGroupFormProps {
   initialValues?: Partial<API.NodeGroup>;
   allNodeGroups?: API.NodeGroup[];
-  currentGroupId?: number;
+  currentGroupId?: string;
   loading?: boolean;
   onSubmit: (values: Record<string, unknown>) => Promise<boolean>;
   title: string;
@@ -109,7 +109,7 @@ const NodeGroupForm = forwardRef<
     // 检查与其他节点组的冲突
     for (const group of allNodeGroups) {
       // 跳过当前编辑的节点组
-      if (currentGroupId && group.id === currentGroupId) {
+      if (currentGroupId && String(group.id) === String(currentGroupId)) {
         continue;
       }
 
@@ -148,7 +148,8 @@ const NodeGroupForm = forwardRef<
 
     // 检查是否已存在其他过期节点组
     const existingExpiredGroup = allNodeGroups.find(
-      (group) => group.is_expired_group && group.id !== currentGroupId
+      (group) =>
+        group.is_expired_group && String(group.id) !== String(currentGroupId)
     );
 
     if (existingExpiredGroup) {
@@ -178,7 +179,8 @@ const NodeGroupForm = forwardRef<
 
   // 检查是否存在其他过期节点组（用于隐藏开关）
   const hasOtherExpiredGroup = allNodeGroups.some(
-    (group) => group.is_expired_group && group.id !== currentGroupId
+    (group) =>
+      group.is_expired_group && String(group.id) !== String(currentGroupId)
   );
 
   // 当前是否是过期节点组（编辑模式下）

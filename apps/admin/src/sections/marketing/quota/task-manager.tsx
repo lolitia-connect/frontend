@@ -27,7 +27,7 @@ export default function QuotaTaskManager() {
         acc[subscribe.id!] = subscribe.name!;
         return acc;
       },
-      {} as Record<number, string>
+      {} as Record<string, string>
     ) || {};
 
   const getStatusBadge = (status: number) => {
@@ -84,7 +84,7 @@ export default function QuotaTaskManager() {
                     cell: ({ row }) => {
                       const subscribers = row.getValue(
                         "subscribers"
-                      ) as number[];
+                      ) as string[];
                       const subscriptionNames =
                         subscribers
                           ?.map((id) => subscribeMap[id])

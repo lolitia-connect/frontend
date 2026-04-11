@@ -70,7 +70,7 @@ export default function SubscribeTable() {
   const isGroupEnabled = groupConfigData?.enabled || false;
 
   return (
-    <ProTable<API.SubscribeItem, { group_id: number; query: string; node_group_id?: number }>
+    <ProTable<API.SubscribeItem, { group_id: string; query: string; node_group_id?: string }>
       action={ref}
       actions={{
         render: (row) => [
@@ -88,7 +88,7 @@ export default function SubscribeTable() {
                 // Add node_group_ids if it exists in values
                 const vals = values as any;
                 if (vals.node_group_ids) {
-                  updateBody.node_group_ids = vals.node_group_ids.map((id: string | number) => Number(id));
+                  updateBody.node_group_ids = vals.node_group_ids;
                 }
                 await updateSubscribe(updateBody as API.UpdateSubscribeRequest);
                 toast.success(t("updateSuccess"));
@@ -162,7 +162,9 @@ export default function SubscribeTable() {
             key="delete"
             onConfirm={async () => {
               await batchDeleteSubscribe({
-                ids: rows.map((item) => item.id) as number[],
+                ids: rows
+                  .map((item) => item.id)
+                  .filter((id): id is string => Boolean(id)),
               });
 
               toast.success(t("deleteSuccess"));
@@ -299,7 +301,9 @@ export default function SubscribeTable() {
                 header: t("defaultNodeGroup", "Default Node Group"),
                 cell: ({ row }: { row: any }) => {
                   const nodeGroupId = row.original.node_group_id;
-                  const nodeGroup = nodeGroupsData?.find((g) => g.id === nodeGroupId);
+                  const nodeGroup = nodeGroupsData?.find(
+                    (g) => String(g.id) === String(nodeGroupId)
+                  );
                   const specialLabel = getNodeGroupSpecialLabel(nodeGroup);
 
                   return (
@@ -334,7 +338,7 @@ export default function SubscribeTable() {
                 // Add node_group_ids if it exists in values
                 const vals = values as any;
                 if (vals.node_group_ids) {
-                  createBody.node_group_ids = vals.node_group_ids.map((id: string | number) => Number(id));
+                  createBody.node_group_ids = vals.node_group_ids;
                 }
                 await createSubscribe(createBody);
                 toast.success(t("createSuccess"));
@@ -413,7 +417,7 @@ export default function SubscribeTable() {
         const params = {
           ...pagination,
           ...filters,
-          node_group_id: filters?.node_group_id ? Number(filters.node_group_id) : undefined,
+          node_group_id: filters?.node_group_id || undefined,
         } as any;
 
         const { data } = await getSubscribeList(params);

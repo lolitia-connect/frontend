@@ -81,7 +81,7 @@ export default function ResetSubscribeLogPage() {
           page: pagination.page,
           size: pagination.size,
           date: (filter as any)?.date,
-          user_subscribe_id: (filter as any)?.user_subscribe_id ? Number((filter as any)?.user_subscribe_id) : undefined,
+          user_subscribe_id: (filter as any)?.user_subscribe_id,
         });
         const list = (data?.data?.list || []) as any[];
         const total = Number(data?.data?.total || list.length);

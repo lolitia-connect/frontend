@@ -1,0 +1,18 @@
+[build]
+  command = "bun install && bun run build --filter=ppanel-admin-web"
+  publish = "apps/admin/dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+[[redirects]]
+  from = "/api/*"
+  to = "https://api.ppanel.dev/:splat"
+  status = 200
+  force = false
+
+# SPA 路由支持
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

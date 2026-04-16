@@ -36,7 +36,7 @@ import {
   TabsTrigger,
 } from "@workspace/ui/components/tabs";
 import { Textarea } from "@workspace/ui/components/textarea";
-import { ArrayInput } from "@workspace/ui/composed/dynamic-Inputs";
+import { ArrayInput } from "@workspace/ui/composed/dynamic-inputs";
 import { EnhancedInput } from "@workspace/ui/composed/enhanced-input";
 import { Icon } from "@workspace/ui/composed/icon";
 import {

@@ -13,7 +13,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@workspace/ui/components/sheet";
-import { ArrayInput } from "@workspace/ui/composed/dynamic-Inputs";
+import { ArrayInput } from "@workspace/ui/composed/dynamic-inputs";
 import { Icon } from "@workspace/ui/composed/icon";
 import {
   getNodeMultiplier,

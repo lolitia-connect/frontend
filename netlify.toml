@@ -6,22 +6,6 @@
 [build.environment]
   NODE_VERSION = "20"
 
-# Admin 后台应用
-[context.admin]
-  command = "bun install && bun run build --filter=ppanel-admin-web"
-  publish = "apps/admin/dist"
-
-[context.admin.environment]
-  NODE_VERSION = "20"
-
-# User 用户前台应用
-[context.user]
-  command = "bun install && bun run build --filter=ppanel-user-web"
-  publish = "apps/user/dist"
-
-[context.user.environment]
-  NODE_VERSION = "20"
-
 # 重定向规则
 [[redirects]]
   from = "/api/*"

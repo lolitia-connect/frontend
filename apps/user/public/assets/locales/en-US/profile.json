@@ -17,15 +17,15 @@
     "updateSuccess": "Notification settings updated successfully"
   },
   "thirdParty": {
-    "bind": "thirdParty.bind",
+    "bind": "Bind",
     "bindFailed": "Bind failed",
     "bindMobile": "Bind Mobile",
     "bindSuccess": "Bind successfully",
     "confirm": "Confirm",
-    "save": "thirdParty.save",
+    "save": "Save",
     "title": "Third-party Accounts",
-    "unbind": "thirdParty.unbind",
-    "update": "thirdParty.update",
+    "unbind": "Unbind",
+    "update": "Update",
     "updateSuccess": "Update successfully"
   }
 }

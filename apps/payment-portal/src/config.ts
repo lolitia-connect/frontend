@@ -36,7 +36,7 @@ export const fallbackLng = "en-US";
 export const supportedLngs = ["en-US", "zh-CN"] as const;
 
 export const portalConfig = {
-  currency: import.meta.env.VITE_PAYMENT_PORTAL_CURRENCY ,
+  currency: import.meta.env.VITE_PAYMENT_PORTAL_CURRENCY,
   rechargeAmounts: parseAmounts(import.meta.env.VITE_PAYMENT_PORTAL_AMOUNTS),
   minCustomAmount: Math.max(
     parseNumber(import.meta.env.VITE_PAYMENT_PORTAL_MIN_CUSTOM_AMOUNT, 1),

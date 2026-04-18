@@ -128,10 +128,10 @@ const CardPaymentForm: React.FC<CardPaymentFormProps> = ({
         <div className="mb-4 flex justify-center">
           <CheckCircle className="h-12 w-12 text-emerald-500" />
         </div>
-        <p className="text-xl font-medium text-slate-950">
+        <p className="font-medium text-slate-950 text-xl">
           {t("stripe.successTitle", "Payment Successful")}
         </p>
-        <p className="mt-2 text-sm text-slate-500">
+        <p className="mt-2 text-slate-500 text-sm">
           {t(
             "stripe.successMessage",
             "Thank you. Your payment has been completed successfully."
@@ -144,7 +144,10 @@ const CardPaymentForm: React.FC<CardPaymentFormProps> = ({
   return (
     <form className="space-y-4 text-left" onSubmit={handleSubmit}>
       <div className="space-y-1.5">
-        <label className="text-sm font-medium text-slate-600" htmlFor="cardholderName">
+        <label
+          className="font-medium text-slate-600 text-sm"
+          htmlFor="cardholderName"
+        >
           {t("stripe.cardName", "Cardholder Name")}
         </label>
         <input
@@ -156,12 +159,15 @@ const CardPaymentForm: React.FC<CardPaymentFormProps> = ({
           value={cardholderName}
         />
         {errors.name ? (
-          <p className="text-xs text-red-500">{errors.name}</p>
+          <p className="text-red-500 text-xs">{errors.name}</p>
         ) : null}
       </div>
 
       <div className="space-y-1.5">
-        <label className="text-sm font-medium text-slate-600" htmlFor="cardNumber">
+        <label
+          className="font-medium text-slate-600 text-sm"
+          htmlFor="cardNumber"
+        >
           {t("stripe.cardNumber", "Card Number")}
         </label>
         <div
@@ -174,13 +180,16 @@ const CardPaymentForm: React.FC<CardPaymentFormProps> = ({
           />
         </div>
         {errors.cardNumber ? (
-          <p className="text-xs text-red-500">{errors.cardNumber}</p>
+          <p className="text-red-500 text-xs">{errors.cardNumber}</p>
         ) : null}
       </div>
 
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-1.5">
-          <label className="text-sm font-medium text-slate-600" htmlFor="cardExpiry">
+          <label
+            className="font-medium text-slate-600 text-sm"
+            htmlFor="cardExpiry"
+          >
             {t("stripe.expiryDate", "Expiry Date")}
           </label>
           <div
@@ -193,12 +202,15 @@ const CardPaymentForm: React.FC<CardPaymentFormProps> = ({
             />
           </div>
           {errors.cardExpiry ? (
-            <p className="text-xs text-red-500">{errors.cardExpiry}</p>
+            <p className="text-red-500 text-xs">{errors.cardExpiry}</p>
           ) : null}
         </div>
 
         <div className="space-y-1.5">
-          <label className="text-sm font-medium text-slate-600" htmlFor="cardCvc">
+          <label
+            className="font-medium text-slate-600 text-sm"
+            htmlFor="cardCvc"
+          >
             {t("stripe.cvc", "CVC")}
           </label>
           <div
@@ -211,7 +223,7 @@ const CardPaymentForm: React.FC<CardPaymentFormProps> = ({
             />
           </div>
           {errors.cardCvc ? (
-            <p className="text-xs text-red-500">{errors.cardCvc}</p>
+            <p className="text-red-500 text-xs">{errors.cardCvc}</p>
           ) : null}
         </div>
       </div>
@@ -226,7 +238,7 @@ const CardPaymentForm: React.FC<CardPaymentFormProps> = ({
             ? t("stripe.processingButton", "Processing...")
             : t("stripe.payButton", "Pay Now")}
         </button>
-        <p className="mt-3 text-center text-xs text-slate-500">
+        <p className="mt-3 text-center text-slate-500 text-xs">
           {t("stripe.secureNotice", "Payments are secure and encrypted")}
         </p>
       </div>
@@ -252,34 +264,35 @@ const CheckoutForm: React.FC<Omit<StripePaymentProps, "publishable_key">> = ({
     setIsSubmitted(false);
   }, []);
 
-  const confirmPayment = useCallback(async (): Promise<PaymentIntentResult | null> => {
-    if (!stripe) {
-      handleError(t("stripe.loading", "Loading Stripe..."));
-      return null;
-    }
+  const confirmPayment =
+    useCallback(async (): Promise<PaymentIntentResult | null> => {
+      if (!stripe) {
+        handleError(t("stripe.loading", "Loading Stripe..."));
+        return null;
+      }
 
-    if (method === "alipay") {
-      return stripe.confirmAlipayPayment(
-        client_secret,
-        { return_url: window.location.href },
-        { handleActions: false }
-      );
-    }
+      if (method === "alipay") {
+        return stripe.confirmAlipayPayment(
+          client_secret,
+          { return_url: window.location.href },
+          { handleActions: false }
+        );
+      }
 
-    if (method === "wechat_pay") {
-      return stripe.confirmWechatPayPayment(
-        client_secret,
-        {
-          payment_method_options: {
-            wechat_pay: { client: "web" },
+      if (method === "wechat_pay") {
+        return stripe.confirmWechatPayPayment(
+          client_secret,
+          {
+            payment_method_options: {
+              wechat_pay: { client: "web" },
+            },
           },
-        },
-        { handleActions: false }
-      );
-    }
+          { handleActions: false }
+        );
+      }
 
-    return null;
-  }, [client_secret, handleError, method, stripe, t]);
+      return null;
+    }, [client_secret, handleError, method, stripe, t]);
 
   const autoSubmit = useCallback(async () => {
     if (isSubmitted || method === "card") return;
@@ -319,7 +332,9 @@ const CheckoutForm: React.FC<Omit<StripePaymentProps, "publishable_key">> = ({
   }, [autoSubmit]);
 
   if (method === "card") {
-    return <CardPaymentForm clientSecret={client_secret} onError={handleError} />;
+    return (
+      <CardPaymentForm clientSecret={client_secret} onError={handleError} />
+    );
   }
 
   if (qrCodeUrl || qrCodeImageDataUrl) {
@@ -334,7 +349,7 @@ const CheckoutForm: React.FC<Omit<StripePaymentProps, "publishable_key">> = ({
         ) : (
           <QRCodeCanvas size={220} value={qrCodeUrl || ""} />
         )}
-        <p className="text-sm text-slate-500">
+        <p className="text-slate-500 text-sm">
           {method === "alipay"
             ? t("stripe.alipayHint", "Scan with Alipay to pay")
             : t("stripe.wechatHint", "Scan with WeChat to pay")}
@@ -344,11 +359,11 @@ const CheckoutForm: React.FC<Omit<StripePaymentProps, "publishable_key">> = ({
   }
 
   return errorMessage ? (
-    <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+    <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-red-600 text-sm">
       {errorMessage}
     </div>
   ) : (
-    <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-500">
+    <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-500 text-sm">
       {t("stripe.processing", "Processing payment...")}
     </div>
   );

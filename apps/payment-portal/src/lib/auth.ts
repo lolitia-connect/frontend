@@ -1,8 +1,4 @@
-import {
-  getCookie,
-  removeCookie,
-  setCookie,
-} from "@workspace/ui/lib/cookies";
+import { getCookie, removeCookie, setCookie } from "@workspace/ui/lib/cookies";
 
 export function getAuthorization(): string | undefined {
   return getCookie("Authorization");

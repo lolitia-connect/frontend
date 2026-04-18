@@ -1,4 +1,3 @@
-import { useTranslation } from "react-i18next";
 import {
   Dialog,
   DialogContent,
@@ -6,6 +5,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@workspace/ui/components/dialog";
+import { useTranslation } from "react-i18next";
 import { StripePayment } from "./stripe-payment";
 
 interface StripeCheckoutDialogProps {
@@ -35,10 +35,10 @@ export function StripeCheckoutDialog({
     <Dialog onOpenChange={onOpenChange} open={open}>
       <DialogContent className="max-w-2xl gap-5 p-6 sm:p-7">
         <DialogHeader className="space-y-2 text-left">
-          <DialogTitle className="text-2xl font-semibold text-slate-950">
+          <DialogTitle className="font-semibold text-2xl text-slate-950">
             {t("stripeDialog.title", "Stripe 支付")}
           </DialogTitle>
-          <DialogDescription className="text-sm leading-6 text-slate-500">
+          <DialogDescription className="text-slate-500 text-sm leading-6">
             {t(
               "stripeDialog.description",
               "请在弹窗内完成 Stripe 支付。关闭弹窗后，仍可通过支付状态中的继续支付重新打开。"
@@ -46,7 +46,7 @@ export function StripeCheckoutDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="grid gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600 sm:grid-cols-2">
+        <div className="grid gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-600 text-sm sm:grid-cols-2">
           <div>
             <span className="text-slate-400">
               {t("order.number", "订单号")}

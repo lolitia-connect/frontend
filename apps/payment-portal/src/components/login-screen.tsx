@@ -124,8 +124,8 @@ export function LoginScreen({
                   {configLoading
                     ? t("login.loadingConfig", "加载配置中...")
                     : loading
-                    ? t("login.submitting", "登录中...")
-                    : t("login.submit", "登录")}
+                      ? t("login.submitting", "登录中...")
+                      : t("login.submit", "登录")}
                 </button>
               </form>
             </div>

@@ -36,16 +36,16 @@ import {
   type ProTableActions,
 } from "@workspace/ui/composed/pro-table/pro-table";
 import {
+  // getUserGroupList,
+  previewUserNodes,
+} from "@workspace/ui/services/admin/group";
+import {
   createUser,
   deleteUser,
   getUserDetail,
   getUserList,
   updateUserBasicInfo,
 } from "@workspace/ui/services/admin/user";
-import {
-  // getUserGroupList,
-  previewUserNodes,
-} from "@workspace/ui/services/admin/group";
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
@@ -467,16 +467,19 @@ function PreviewNodesDialog({ userId }: { userId: string | number }) {
         ) : previewData ? (
           <div className="space-y-4">
             <div>
-              <span className="text-sm font-medium text-muted-foreground">
+              <span className="font-medium text-muted-foreground text-sm">
                 {t("availableNodes", "Available Nodes")}:
               </span>{" "}
-              {previewData.node_groups?.reduce((sum, group) => sum + (group.nodes?.length || 0), 0) || 0}
+              {previewData.node_groups?.reduce(
+                (sum, group) => sum + (group.nodes?.length || 0),
+                0
+              ) || 0}
             </div>
             {previewData.node_groups && previewData.node_groups.length > 0 ? (
-              <div className="max-h-[400px] overflow-y-auto space-y-4">
+              <div className="max-h-[400px] space-y-4 overflow-y-auto">
                 {previewData.node_groups.map((group) => (
                   <div key={group.id}>
-                    <h4 className="text-sm font-semibold mb-2">
+                    <h4 className="mb-2 font-semibold text-sm">
                       {group.name ||
                         (group.id === "-1"
                           ? t("subscriptionNodes", "Subscription Nodes")
@@ -489,16 +492,22 @@ function PreviewNodesDialog({ userId }: { userId: string | number }) {
                         <thead>
                           <tr className="border-b">
                             <th className="p-2 text-left font-medium">ID</th>
-                            <th className="p-2 text-left font-medium">{t("name", "Name")}</th>
-                            <th className="p-2 text-left font-medium">{t("address", "Address")}</th>
+                            <th className="p-2 text-left font-medium">
+                              {t("name", "Name")}
+                            </th>
+                            <th className="p-2 text-left font-medium">
+                              {t("address", "Address")}
+                            </th>
                           </tr>
                         </thead>
                         <tbody>
                           {group.nodes.map((node) => (
-                            <tr key={node.id} className="border-b">
+                            <tr className="border-b" key={node.id}>
                               <td className="p-2">{node.id}</td>
                               <td className="p-2">{node.name}</td>
-                              <td className="p-2">{node.address}:{node.port}</td>
+                              <td className="p-2">
+                                {node.address}:{node.port}
+                              </td>
                             </tr>
                           ))}
                         </tbody>

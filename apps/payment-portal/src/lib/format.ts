@@ -1,5 +1,5 @@
-import type { TFunction } from "i18next";
 import { formatDate as formatPortalDate } from "@workspace/ui/utils/formatting";
+import type { TFunction } from "i18next";
 
 export function formatCurrency(
   amount: number,

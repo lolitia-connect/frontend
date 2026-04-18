@@ -1,6 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQuery } from "@tanstack/react-query";
 import {
   Accordion,
   AccordionContent,
@@ -43,11 +44,13 @@ import { JSONEditor } from "@workspace/ui/composed/editor/index";
 import { EnhancedInput } from "@workspace/ui/composed/enhanced-input";
 import { Icon } from "@workspace/ui/composed/icon";
 import {
+  getGroupConfig,
+  getNodeGroupList,
+} from "@workspace/ui/services/admin/group";
+import {
   evaluateWithPrecision,
   unitConversion,
 } from "@workspace/ui/utils/unit-conversions";
-import { getGroupConfig, getNodeGroupList } from "@workspace/ui/services/admin/group";
-import { useQuery } from "@tanstack/react-query";
 import { CreditCard, Server, Settings } from "lucide-react";
 import { assign, shake } from "radash";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -89,7 +92,7 @@ const defaultValues = {
 };
 
 function getFirstValidationMessage(error: unknown): string | undefined {
-  if (!error || typeof error !== "object") return undefined;
+  if (!error || typeof error !== "object") return;
 
   const message = (error as { message?: unknown }).message;
   if (typeof message === "string" && message.trim()) {
@@ -101,7 +104,7 @@ function getFirstValidationMessage(error: unknown): string | undefined {
       const nestedMessage = getFirstValidationMessage(item);
       if (nestedMessage) return nestedMessage;
     }
-    return undefined;
+    return;
   }
 
   for (const value of Object.values(error as Record<string, unknown>)) {
@@ -109,7 +112,7 @@ function getFirstValidationMessage(error: unknown): string | undefined {
     if (nestedMessage) return nestedMessage;
   }
 
-  return undefined;
+  return;
 }
 
 export default function SubscribeForm<T extends Record<string, any>>({
@@ -289,12 +292,19 @@ export default function SubscribeForm<T extends Record<string, any>>({
 
     // Convert nodes from number[] to string[]
     if (initialValues?.nodes && Array.isArray(initialValues.nodes)) {
-      processedValues.nodes = (initialValues.nodes as Array<string | number>).map((id) => String(id));
+      processedValues.nodes = (
+        initialValues.nodes as Array<string | number>
+      ).map((id) => String(id));
     }
 
     // Convert node_group_ids from number[] to string[]
-    if (initialValues?.node_group_ids && Array.isArray(initialValues.node_group_ids)) {
-      processedValues.node_group_ids = (initialValues.node_group_ids as any[]).map((id) => String(id));
+    if (
+      initialValues?.node_group_ids &&
+      Array.isArray(initialValues.node_group_ids)
+    ) {
+      processedValues.node_group_ids = (
+        initialValues.node_group_ids as any[]
+      ).map((id) => String(id));
     }
 
     form?.reset(processedValues);
@@ -320,7 +330,13 @@ export default function SubscribeForm<T extends Record<string, any>>({
     if (bool) setOpen(false);
   }
 
-  const { getAllAvailableTags, getNodesByTag, getNodesWithoutTags, getNodesWithoutGroups, nodes } = useNode();
+  const {
+    getAllAvailableTags,
+    getNodesByTag,
+    getNodesWithoutTags,
+    getNodesWithoutGroups,
+    nodes,
+  } = useNode();
 
   const tagGroups = getAllAvailableTags();
 
@@ -344,7 +360,7 @@ export default function SubscribeForm<T extends Record<string, any>>({
     },
   });
 
-  const isGroupEnabled = groupConfigData?.enabled || false;
+  const isGroupEnabled = groupConfigData?.enabled;
   const getNodeGroupSpecialLabel = (nodeGroup?: API.NodeGroup) => {
     switch (nodeGroup?.type) {
       case "subscribe":
@@ -357,7 +373,9 @@ export default function SubscribeForm<T extends Record<string, any>>({
   };
   const formatNodeGroupOptionLabel = (nodeGroup: API.NodeGroup) => {
     const specialLabel = getNodeGroupSpecialLabel(nodeGroup);
-    return specialLabel ? `${nodeGroup.name} (${specialLabel})` : nodeGroup.name;
+    return specialLabel
+      ? `${nodeGroup.name} (${specialLabel})`
+      : nodeGroup.name;
   };
 
   const unit_time = form.watch("unit_time");
@@ -376,7 +394,11 @@ export default function SubscribeForm<T extends Record<string, any>>({
 
   // If node_group_id is empty or 0, automatically set it to the first item in node_group_ids
   useEffect(() => {
-    if ((!node_group_id || node_group_id === "0") && node_group_ids && node_group_ids.length > 0) {
+    if (
+      (!node_group_id || node_group_id === "0") &&
+      node_group_ids &&
+      node_group_ids.length > 0
+    ) {
       form.setValue("node_group_id", node_group_ids[0]);
     }
   }, [node_group_ids, node_group_id, form]);
@@ -1074,11 +1096,16 @@ export default function SubscribeForm<T extends Record<string, any>>({
                                   const nodesWithTag = getNodesByTag(tag);
 
                                   return (
-                                    <AccordionItem key={tag} value={String(tag)}>
+                                    <AccordionItem
+                                      key={tag}
+                                      value={String(tag)}
+                                    >
                                       <AccordionTrigger>
                                         <div className="flex items-center gap-2">
                                           <Checkbox
-                                            checked={value.includes(tagId as any)}
+                                            checked={value.includes(
+                                              tagId as any
+                                            )}
                                             onCheckedChange={(checked) =>
                                               checked
                                                 ? form.setValue(field.name, [
@@ -1142,7 +1169,10 @@ export default function SubscribeForm<T extends Record<string, any>>({
                             <div className="flex flex-col gap-2">
                               {/* When group feature is enabled, show nodes without groups */}
                               {/* When group feature is disabled, show nodes without tags */}
-                              {(isGroupEnabled ? getNodesWithoutGroups() : getNodesWithoutTags()).map((item: API.Node) => {
+                              {(isGroupEnabled
+                                ? getNodesWithoutGroups()
+                                : getNodesWithoutTags()
+                              ).map((item: API.Node) => {
                                 const value = field.value || [];
 
                                 return (
@@ -1185,9 +1215,14 @@ export default function SubscribeForm<T extends Record<string, any>>({
                           </FormControl>
                           <FormDescription>
                             {isGroupEnabled
-                              ? t("form.nodesWithoutGroupsDescription", "Nodes without group assignment will be shown here (nodes that belong to groups are managed in the Node Groups section above)")
-                              : t("form.nodesDescription", "Select nodes for this subscription")
-                            }
+                              ? t(
+                                  "form.nodesWithoutGroupsDescription",
+                                  "Nodes without group assignment will be shown here (nodes that belong to groups are managed in the Node Groups section above)"
+                                )
+                              : t(
+                                  "form.nodesDescription",
+                                  "Select nodes for this subscription"
+                                )}
                           </FormDescription>
                           <FormMessage />
                         </FormItem>
@@ -1198,80 +1233,364 @@ export default function SubscribeForm<T extends Record<string, any>>({
                     {isGroupEnabled && (
                       <>
                         {/* When no default node group is set, show simple node group selection */}
-                        {!node_group_id ? (
+                        {node_group_id ? (
+                          <>
+                            {/* Default Node Group Selection - shown when default is set */}
+                            <FormField
+                              control={form.control}
+                              name="node_group_id"
+                              render={({ field }) => {
+                                // Find the selected node group
+                                const selectedNodeGroup = nodeGroupsData?.find(
+                                  (g) => String(g.id) === field.value
+                                );
+                                // Filter nodes that belong to this group
+                                const nodesInGroup = selectedNodeGroup
+                                  ? (nodes || []).filter((node) => {
+                                      const nodeGroupIds =
+                                        (node as any).node_group_ids || [];
+                                      return nodeGroupIds.includes(
+                                        selectedNodeGroup.id
+                                      );
+                                    })
+                                  : [];
+
+                                return (
+                                  <FormItem>
+                                    <FormLabel>
+                                      {t(
+                                        "form.defaultNodeGroup",
+                                        "Default Node Group"
+                                      )}
+                                    </FormLabel>
+                                    <Card className="p-4">
+                                      <FormControl>
+                                        <Combobox
+                                          onChange={(value) => {
+                                            form.setValue(
+                                              field.name,
+                                              value || ""
+                                            );
+                                          }}
+                                          options={[
+                                            {
+                                              label: t(
+                                                "form.noDefaultNodeGroup",
+                                                "No Default Node Group"
+                                              ),
+                                              value: "",
+                                            },
+                                            ...(nodeGroupsData?.map((g) => ({
+                                              label:
+                                                formatNodeGroupOptionLabel(g),
+                                              value: String(g.id),
+                                            })) || []),
+                                          ]}
+                                          placeholder={t(
+                                            "form.selectDefaultNodeGroup",
+                                            "Select a default node group..."
+                                          )}
+                                          value={field.value}
+                                        />
+                                      </FormControl>
+                                      <FormDescription className="mt-2">
+                                        {t(
+                                          "form.defaultNodeGroupDescription",
+                                          "The default node group for this product."
+                                        )}
+                                      </FormDescription>
+                                      {/* Show nodes in the selected default node group */}
+                                      {nodesInGroup.length > 0 && (
+                                        <>
+                                          <div className="mt-3 mb-2 text-muted-foreground text-xs">
+                                            {t(
+                                              "form.nodesInGroup",
+                                              "Nodes in this group:"
+                                            )}
+                                          </div>
+                                          <div className="grid grid-cols-1 gap-2">
+                                            {nodesInGroup.map((node) => (
+                                              <div
+                                                className="flex items-center justify-between rounded border bg-muted/30 p-2 text-sm"
+                                                key={node.id}
+                                              >
+                                                <span className="flex-1 font-medium">
+                                                  {node.name}
+                                                </span>
+                                                <span className="flex-1 text-muted-foreground">
+                                                  {node.address}:{node.port}
+                                                </span>
+                                                <span className="flex-1 text-right text-muted-foreground">
+                                                  {node.protocol}
+                                                </span>
+                                              </div>
+                                            ))}
+                                          </div>
+                                        </>
+                                      )}
+                                    </Card>
+                                    <FormMessage />
+                                  </FormItem>
+                                );
+                              }}
+                            />
+
+                            {/* Backup Node Groups Selection - filter out default node group */}
+                            <FormField
+                              control={form.control}
+                              name="node_group_ids"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>
+                                    {t(
+                                      "form.backupNodeGroups",
+                                      "Backup Node Groups"
+                                    )}
+                                  </FormLabel>
+                                  <FormControl>
+                                    <div className="space-y-4">
+                                      {nodeGroupsData
+                                        ?.filter(
+                                          (g) => String(g.id) !== node_group_id
+                                        )
+                                        ?.map((g) => {
+                                          // Filter nodes that belong to this group
+                                          const nodesInGroup = (
+                                            nodes || []
+                                          ).filter((node) => {
+                                            const nodeGroupIds =
+                                              (node as any).node_group_ids ||
+                                              [];
+                                            return nodeGroupIds.includes(g.id);
+                                          });
+
+                                          return (
+                                            <div
+                                              className="rounded-lg border p-4"
+                                              key={g.id}
+                                            >
+                                              <div className="mb-3 flex items-center space-x-2">
+                                                <Checkbox
+                                                  checked={field.value?.includes(
+                                                    String(g.id)
+                                                  )}
+                                                  id={`subscribe-backup-node-group-${g.id}`}
+                                                  onCheckedChange={(
+                                                    checked
+                                                  ) => {
+                                                    const currentValue =
+                                                      field.value || [];
+                                                    if (checked) {
+                                                      form.setValue(
+                                                        field.name,
+                                                        [
+                                                          ...currentValue,
+                                                          String(g.id),
+                                                        ]
+                                                      );
+                                                    } else {
+                                                      form.setValue(
+                                                        field.name,
+                                                        currentValue.filter(
+                                                          (v: string) =>
+                                                            v !== String(g.id)
+                                                        )
+                                                      );
+                                                    }
+                                                  }}
+                                                />
+                                                <Label
+                                                  className="cursor-pointer font-medium"
+                                                  htmlFor={`subscribe-backup-node-group-${g.id}`}
+                                                >
+                                                  <span>{g.name}</span>
+                                                  {g.type === "subscribe" && (
+                                                    <Badge
+                                                      className="ml-2"
+                                                      variant="secondary"
+                                                    >
+                                                      {t(
+                                                        "form.nodeGroupSubscribeOnly"
+                                                      )}
+                                                    </Badge>
+                                                  )}
+                                                  {g.type === "app" && (
+                                                    <Badge
+                                                      className="ml-2"
+                                                      variant="secondary"
+                                                    >
+                                                      {t(
+                                                        "form.nodeGroupAppOnly"
+                                                      )}
+                                                    </Badge>
+                                                  )}
+                                                  <span className="ml-2 text-muted-foreground text-sm">
+                                                    ({nodesInGroup.length}{" "}
+                                                    {t("form.nodes", "nodes")})
+                                                  </span>
+                                                </Label>
+                                              </div>
+
+                                              {/* Show nodes in this group */}
+                                              {nodesInGroup.length > 0 && (
+                                                <div className="mt-3 ml-6">
+                                                  <div className="mb-2 text-muted-foreground text-xs">
+                                                    {t(
+                                                      "form.nodesInGroup",
+                                                      "Nodes in this group:"
+                                                    )}
+                                                  </div>
+                                                  <div className="grid grid-cols-1 gap-2">
+                                                    {nodesInGroup.map(
+                                                      (node) => (
+                                                        <div
+                                                          className="flex items-center justify-between rounded border bg-muted/30 p-2 text-sm"
+                                                          key={node.id}
+                                                        >
+                                                          <span className="flex-1 font-medium">
+                                                            {node.name}
+                                                          </span>
+                                                          <span className="flex-1 text-muted-foreground">
+                                                            {node.address}:
+                                                            {node.port}
+                                                          </span>
+                                                          <span className="flex-1 text-right text-muted-foreground">
+                                                            {node.protocol}
+                                                          </span>
+                                                        </div>
+                                                      )
+                                                    )}
+                                                  </div>
+                                                </div>
+                                              )}
+                                            </div>
+                                          );
+                                        })}
+                                    </div>
+                                  </FormControl>
+                                  <FormDescription>
+                                    {t(
+                                      "form.backupNodeGroupsDescription",
+                                      "Select additional backup node groups."
+                                    )}
+                                  </FormDescription>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                          </>
+                        ) : (
                           <FormField
                             control={form.control}
                             name="node_group_ids"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel>{t("form.nodeGroups", "Node Groups")}</FormLabel>
+                                <FormLabel>
+                                  {t("form.nodeGroups", "Node Groups")}
+                                </FormLabel>
                                 <FormControl>
                                   <div className="space-y-4">
                                     {nodeGroupsData?.map((g) => {
                                       // Filter nodes that belong to this group
-                                      const nodesInGroup = (nodes || []).filter((node) => {
-                                        const nodeGroupIds = (node as any).node_group_ids || [];
-                                        return nodeGroupIds.includes(g.id);
-                                      });
+                                      const nodesInGroup = (nodes || []).filter(
+                                        (node) => {
+                                          const nodeGroupIds =
+                                            (node as any).node_group_ids || [];
+                                          return nodeGroupIds.includes(g.id);
+                                        }
+                                      );
 
                                       return (
-                                        <div key={g.id} className="border rounded-lg p-4">
-                                          <div className="flex items-center space-x-2 mb-3">
+                                        <div
+                                          className="rounded-lg border p-4"
+                                          key={g.id}
+                                        >
+                                          <div className="mb-3 flex items-center space-x-2">
                                             <Checkbox
+                                              checked={field.value?.includes(
+                                                String(g.id)
+                                              )}
                                               id={`subscribe-node-group-${g.id}`}
-                                              checked={field.value?.includes(String(g.id))}
                                               onCheckedChange={(checked) => {
-                                                const currentValue = field.value || [];
-                                                const currentDefaultGroupId = form.getValues("node_group_id");
+                                                const currentValue =
+                                                  field.value || [];
+                                                const currentDefaultGroupId =
+                                                  form.getValues(
+                                                    "node_group_id"
+                                                  );
 
                                                 if (checked) {
-                                                  const newValue = [...currentValue, String(g.id)];
-                                                  form.setValue(field.name, newValue);
+                                                  const newValue = [
+                                                    ...currentValue,
+                                                    String(g.id),
+                                                  ];
+                                                  form.setValue(
+                                                    field.name,
+                                                    newValue
+                                                  );
 
                                                   // If no default node group is set, set this one as default
                                                   if (!currentDefaultGroupId) {
-                                                    form.setValue("node_group_id", String(g.id));
+                                                    form.setValue(
+                                                      "node_group_id",
+                                                      String(g.id)
+                                                    );
                                                   }
                                                 } else {
                                                   form.setValue(
                                                     field.name,
-                                                    currentValue.filter((v: string) => v !== String(g.id))
+                                                    currentValue.filter(
+                                                      (v: string) =>
+                                                        v !== String(g.id)
+                                                    )
                                                   );
                                                 }
                                               }}
                                             />
                                             <Label
-                                              htmlFor={`subscribe-node-group-${g.id}`}
                                               className="cursor-pointer font-medium"
+                                              htmlFor={`subscribe-node-group-${g.id}`}
                                             >
                                               <span>{g.name}</span>
                                               {g.type === "subscribe" && (
-                                                <Badge className="ml-2" variant="secondary">
-                                                  {t("form.nodeGroupSubscribeOnly")}
+                                                <Badge
+                                                  className="ml-2"
+                                                  variant="secondary"
+                                                >
+                                                  {t(
+                                                    "form.nodeGroupSubscribeOnly"
+                                                  )}
                                                 </Badge>
                                               )}
                                               {g.type === "app" && (
-                                                <Badge className="ml-2" variant="secondary">
+                                                <Badge
+                                                  className="ml-2"
+                                                  variant="secondary"
+                                                >
                                                   {t("form.nodeGroupAppOnly")}
                                                 </Badge>
                                               )}
                                               <span className="ml-2 text-muted-foreground text-sm">
-                                                ({nodesInGroup.length} {t("form.nodes", "nodes")})
+                                                ({nodesInGroup.length}{" "}
+                                                {t("form.nodes", "nodes")})
                                               </span>
                                             </Label>
                                           </div>
 
                                           {/* Show nodes in this group */}
                                           {nodesInGroup.length > 0 && (
-                                            <div className="ml-6 mt-3">
-                                              <div className="text-xs text-muted-foreground mb-2">
-                                                {t("form.nodesInGroup", "Nodes in this group:")}
+                                            <div className="mt-3 ml-6">
+                                              <div className="mb-2 text-muted-foreground text-xs">
+                                                {t(
+                                                  "form.nodesInGroup",
+                                                  "Nodes in this group:"
+                                                )}
                                               </div>
                                               <div className="grid grid-cols-1 gap-2">
                                                 {nodesInGroup.map((node) => (
                                                   <div
+                                                    className="flex items-center justify-between rounded border bg-muted/30 p-2 text-sm"
                                                     key={node.id}
-                                                    className="flex items-center justify-between rounded border p-2 text-sm bg-muted/30"
                                                   >
                                                     <span className="flex-1 font-medium">
                                                       {node.name}
@@ -1302,179 +1621,6 @@ export default function SubscribeForm<T extends Record<string, any>>({
                               </FormItem>
                             )}
                           />
-                        ) : (
-                          <>
-                            {/* Default Node Group Selection - shown when default is set */}
-                            <FormField
-                              control={form.control}
-                              name="node_group_id"
-                              render={({ field }) => {
-                                // Find the selected node group
-                                const selectedNodeGroup = nodeGroupsData?.find((g) => String(g.id) === field.value);
-                                // Filter nodes that belong to this group
-                                const nodesInGroup = selectedNodeGroup ? (nodes || []).filter((node) => {
-                                  const nodeGroupIds = (node as any).node_group_ids || [];
-                                  return nodeGroupIds.includes(selectedNodeGroup.id);
-                                }) : [];
-
-                                return (
-                                  <FormItem>
-                                    <FormLabel>{t("form.defaultNodeGroup", "Default Node Group")}</FormLabel>
-                                    <Card className="p-4">
-                                      <FormControl>
-                                        <Combobox
-                                          placeholder={t("form.selectDefaultNodeGroup", "Select a default node group...")}
-                                          value={field.value}
-                                          onChange={(value) => {
-                                            form.setValue(field.name, value || "");
-                                          }}
-                                          options={[
-                                            { label: t("form.noDefaultNodeGroup", "No Default Node Group"), value: "" },
-                                            ...(nodeGroupsData?.map((g) => ({
-                                              label: formatNodeGroupOptionLabel(g),
-                                              value: String(g.id),
-                                            })) || []),
-                                          ]}
-                                        />
-                                      </FormControl>
-                                      <FormDescription className="mt-2">
-                                        {t(
-                                          "form.defaultNodeGroupDescription",
-                                          "The default node group for this product."
-                                        )}
-                                      </FormDescription>
-                                      {/* Show nodes in the selected default node group */}
-                                      {nodesInGroup.length > 0 && (
-                                        <>
-                                          <div className="text-xs text-muted-foreground mb-2 mt-3">
-                                            {t("form.nodesInGroup", "Nodes in this group:")}
-                                          </div>
-                                          <div className="grid grid-cols-1 gap-2">
-                                            {nodesInGroup.map((node) => (
-                                              <div
-                                                key={node.id}
-                                                className="flex items-center justify-between rounded border p-2 text-sm bg-muted/30"
-                                              >
-                                                <span className="flex-1 font-medium">
-                                                  {node.name}
-                                                </span>
-                                                <span className="flex-1 text-muted-foreground">
-                                                  {node.address}:{node.port}
-                                                </span>
-                                                <span className="flex-1 text-right text-muted-foreground">
-                                                  {node.protocol}
-                                                </span>
-                                              </div>
-                                            ))}
-                                          </div>
-                                        </>
-                                      )}
-                                    </Card>
-                                    <FormMessage />
-                                  </FormItem>
-                                );
-                              }}
-                            />
-
-                            {/* Backup Node Groups Selection - filter out default node group */}
-                            <FormField
-                              control={form.control}
-                              name="node_group_ids"
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>{t("form.backupNodeGroups", "Backup Node Groups")}</FormLabel>
-                                  <FormControl>
-                                    <div className="space-y-4">
-                                      {nodeGroupsData
-                                        ?.filter((g) => String(g.id) !== node_group_id)
-                                        ?.map((g) => {
-                                          // Filter nodes that belong to this group
-                                          const nodesInGroup = (nodes || []).filter((node) => {
-                                            const nodeGroupIds = (node as any).node_group_ids || [];
-                                            return nodeGroupIds.includes(g.id);
-                                          });
-
-                                          return (
-                                            <div key={g.id} className="border rounded-lg p-4">
-                                              <div className="flex items-center space-x-2 mb-3">
-                                                <Checkbox
-                                                  id={`subscribe-backup-node-group-${g.id}`}
-                                                  checked={field.value?.includes(String(g.id))}
-                                                  onCheckedChange={(checked) => {
-                                                    const currentValue = field.value || [];
-                                                    if (checked) {
-                                                      form.setValue(field.name, [...currentValue, String(g.id)]);
-                                                    } else {
-                                                      form.setValue(
-                                                        field.name,
-                                                        currentValue.filter((v: string) => v !== String(g.id))
-                                                      );
-                                                    }
-                                                  }}
-                                                />
-                                                <Label
-                                                  htmlFor={`subscribe-backup-node-group-${g.id}`}
-                                                  className="cursor-pointer font-medium"
-                                                >
-                                                  <span>{g.name}</span>
-                                                  {g.type === "subscribe" && (
-                                                    <Badge className="ml-2" variant="secondary">
-                                                      {t("form.nodeGroupSubscribeOnly")}
-                                                    </Badge>
-                                                  )}
-                                                  {g.type === "app" && (
-                                                    <Badge className="ml-2" variant="secondary">
-                                                      {t("form.nodeGroupAppOnly")}
-                                                    </Badge>
-                                                  )}
-                                                  <span className="ml-2 text-muted-foreground text-sm">
-                                                    ({nodesInGroup.length} {t("form.nodes", "nodes")})
-                                                  </span>
-                                                </Label>
-                                              </div>
-
-                                              {/* Show nodes in this group */}
-                                              {nodesInGroup.length > 0 && (
-                                                <div className="ml-6 mt-3">
-                                                  <div className="text-xs text-muted-foreground mb-2">
-                                                    {t("form.nodesInGroup", "Nodes in this group:")}
-                                                  </div>
-                                                  <div className="grid grid-cols-1 gap-2">
-                                                    {nodesInGroup.map((node) => (
-                                                      <div
-                                                        key={node.id}
-                                                        className="flex items-center justify-between rounded border p-2 text-sm bg-muted/30"
-                                                      >
-                                                        <span className="flex-1 font-medium">
-                                                          {node.name}
-                                                        </span>
-                                                        <span className="flex-1 text-muted-foreground">
-                                                          {node.address}:{node.port}
-                                                        </span>
-                                                        <span className="flex-1 text-right text-muted-foreground">
-                                                          {node.protocol}
-                                                        </span>
-                                                      </div>
-                                                    ))}
-                                                  </div>
-                                                </div>
-                                              )}
-                                            </div>
-                                          );
-                                        })}
-                                    </div>
-                                  </FormControl>
-                                  <FormDescription>
-                                    {t(
-                                      "form.backupNodeGroupsDescription",
-                                      "Select additional backup node groups."
-                                    )}
-                                  </FormDescription>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
-                          </>
                         )}
                       </>
                     )}
@@ -1489,68 +1635,111 @@ export default function SubscribeForm<T extends Record<string, any>>({
                       name="traffic_limit"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>{t("form.trafficLimitRules", "Traffic Limit Rules")}</FormLabel>
+                          <FormLabel>
+                            {t("form.trafficLimitRules", "Traffic Limit Rules")}
+                          </FormLabel>
                           <FormControl>
                             <ArrayInput
-                              value={field.value && field.value.length > 0 ? field.value : [{ stat_type: "day", stat_value: 1, traffic_usage: 0, speed_limit: 0 }]}
-                              onChange={field.onChange}
                               fields={[
                                 {
                                   name: "stat_type",
                                   type: "select",
-                                  placeholder: t("form.statType", "Statistics Type"),
+                                  placeholder: t(
+                                    "form.statType",
+                                    "Statistics Type"
+                                  ),
                                   value: "day",
                                   options: [
-                                    { label: t("form.statTypeHour", "Hour"), value: "hour" },
-                                    { label: t("form.statTypeDay", "Day"), value: "day" },
+                                    {
+                                      label: t("form.statTypeHour", "Hour"),
+                                      value: "hour",
+                                    },
+                                    {
+                                      label: t("form.statTypeDay", "Day"),
+                                      value: "day",
+                                    },
                                   ],
                                 },
                                 {
                                   name: "stat_value",
                                   type: "number",
-                                  placeholder: t("form.statValue", "Time Value"),
+                                  placeholder: t(
+                                    "form.statValue",
+                                    "Time Value"
+                                  ),
                                   min: 1,
-                                  onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => {
-                                    if (e.key === '.' || e.key === ',') {
+                                  onKeyDown: (
+                                    e: React.KeyboardEvent<HTMLInputElement>
+                                  ) => {
+                                    if (e.key === "." || e.key === ",") {
                                       e.preventDefault();
                                     }
                                   },
                                   formatOutput: (value: string | number) => {
                                     const num = Number(value);
-                                    return Number.isNaN(num) ? 0 : Math.floor(num);
+                                    return Number.isNaN(num)
+                                      ? 0
+                                      : Math.floor(num);
                                   },
                                 },
                                 {
                                   name: "traffic_usage",
                                   type: "number",
-                                  placeholder: t("form.trafficUsage", "Traffic Usage (GB)"),
+                                  placeholder: t(
+                                    "form.trafficUsage",
+                                    "Traffic Usage (GB)"
+                                  ),
                                   min: 0,
-                                  onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => {
-                                    if (e.key === '.' || e.key === ',') {
+                                  onKeyDown: (
+                                    e: React.KeyboardEvent<HTMLInputElement>
+                                  ) => {
+                                    if (e.key === "." || e.key === ",") {
                                       e.preventDefault();
                                     }
                                   },
                                   formatOutput: (value: string | number) => {
                                     const num = Number(value);
-                                    return Number.isNaN(num) ? 0 : Math.floor(num);
+                                    return Number.isNaN(num)
+                                      ? 0
+                                      : Math.floor(num);
                                   },
                                 },
                                 {
                                   name: "speed_limit",
                                   type: "number",
-                                  placeholder: t("form.speedLimitKb", "Speed Limit (kb)"),
+                                  placeholder: t(
+                                    "form.speedLimitKb",
+                                    "Speed Limit (kb)"
+                                  ),
                                   min: 0,
-                                  onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => {
-                                    if (e.key === '.' || e.key === ',') {
+                                  onKeyDown: (
+                                    e: React.KeyboardEvent<HTMLInputElement>
+                                  ) => {
+                                    if (e.key === "." || e.key === ",") {
                                       e.preventDefault();
                                     }
                                   },
                                   formatOutput: (value: string | number) => {
                                     const num = Number(value);
-                                    return Number.isNaN(num) ? 0 : Math.floor(num);
+                                    return Number.isNaN(num)
+                                      ? 0
+                                      : Math.floor(num);
                                   },
                                 },
                               ]}
+                              onChange={field.onChange}
+                              value={
+                                field.value && field.value.length > 0
+                                  ? field.value
+                                  : [
+                                      {
+                                        stat_type: "day",
+                                        stat_value: 1,
+                                        traffic_usage: 0,
+                                        speed_limit: 0,
+                                      },
+                                    ]
+                              }
                             />
                           </FormControl>
                           <FormDescription>

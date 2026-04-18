@@ -1,5 +1,6 @@
 "use client";
 
+import { useQuery } from "@tanstack/react-query";
 import { Badge } from "@workspace/ui/components/badge";
 import { Button } from "@workspace/ui/components/button";
 import { Switch } from "@workspace/ui/components/switch";
@@ -8,6 +9,7 @@ import {
   ProTable,
   type ProTableActions,
 } from "@workspace/ui/composed/pro-table/pro-table";
+import { getNodeGroupList } from "@workspace/ui/services/admin/group";
 import {
   batchDeleteSubscribe,
   createSubscribe,
@@ -16,8 +18,6 @@ import {
   subscribeSort,
   updateSubscribe,
 } from "@workspace/ui/services/admin/subscribe";
-import { getNodeGroupList } from "@workspace/ui/services/admin/group";
-import { useQuery } from "@tanstack/react-query";
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
@@ -44,7 +44,9 @@ export default function SubscribeTable() {
 
   const formatNodeGroupOptionLabel = (nodeGroup: API.NodeGroup) => {
     const specialLabel = getNodeGroupSpecialLabel(nodeGroup);
-    return specialLabel ? `${nodeGroup.name} (${specialLabel})` : nodeGroup.name;
+    return specialLabel
+      ? `${nodeGroup.name} (${specialLabel})`
+      : nodeGroup.name;
   };
 
   // Fetch node groups for filtering (exclude expired groups)
@@ -62,15 +64,20 @@ export default function SubscribeTable() {
   const { data: groupConfigData } = useQuery({
     queryKey: ["groupConfig"],
     queryFn: async () => {
-      const { data } = await (await import("@workspace/ui/services/admin/group")).getGroupConfig();
+      const { data } = await (
+        await import("@workspace/ui/services/admin/group")
+      ).getGroupConfig();
       return data.data;
     },
   });
 
-  const isGroupEnabled = groupConfigData?.enabled || false;
+  const isGroupEnabled = groupConfigData?.enabled;
 
   return (
-    <ProTable<API.SubscribeItem, { group_id: string; query: string; node_group_id?: string }>
+    <ProTable<
+      API.SubscribeItem,
+      { group_id: string; query: string; node_group_id?: string }
+    >
       action={ref}
       actions={{
         render: (row) => [

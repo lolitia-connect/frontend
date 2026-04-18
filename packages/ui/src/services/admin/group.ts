@@ -180,10 +180,12 @@ export async function updateSubscribeMapping(
 }
 
 /** Get subscribe group mapping GET /v1/admin/group/subscribe/mapping */
-export async function getSubscribeGroupMapping(
-  options?: { [key: string]: any }
-) {
-  return request<API.Response & { data?: API.GetSubscribeGroupMappingResponse }>(
+export async function getSubscribeGroupMapping(options?: {
+  [key: string]: any;
+}) {
+  return request<
+    API.Response & { data?: API.GetSubscribeGroupMappingResponse }
+  >(
     `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/group/subscribe/mapping`,
     {
       method: "GET",
@@ -298,7 +300,7 @@ export async function exportGroupResult(
     {
       method: "GET",
       params: params || {},
-      responseType: 'blob',
+      responseType: "blob",
       ...(options || {}),
     }
   );

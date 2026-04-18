@@ -132,10 +132,10 @@ export default function Subscribe() {
                     shouldShowOriginal || !hasDiscount
                       ? item.unit_price
                       : Math.round(
-                        item.unit_price *
-                        (item.discount?.[0]?.quantity ?? 1) *
-                        ((item.discount?.[0]?.discount ?? 100) / 100)
-                      );
+                          item.unit_price *
+                            (item.discount?.[0]?.quantity ?? 1) *
+                            ((item.discount?.[0]?.discount ?? 100) / 100)
+                        );
 
                   const displayQuantity =
                     shouldShowOriginal || !hasDiscount

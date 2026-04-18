@@ -302,7 +302,7 @@ export async function getUserSubscribe(
                 /"([^"]+)":\s*(\d{16,})/g,
                 (match, key, value) => {
                   // Check if number exceeds MAX_SAFE_INTEGER
-                  const num = parseInt(value, 10);
+                  const num = Number.parseInt(value, 10);
                   if (!Number.isSafeInteger(num)) {
                     return `"${key}": "${value}"`;
                   }

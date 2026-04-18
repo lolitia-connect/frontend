@@ -70,7 +70,8 @@ export function NewsMarquee({
     return () => window.clearInterval(timer);
   }, [slides.length]);
 
-  const activeSlide = slides[activeIndex] ?? slides[0] ?? normalizeNewsItem(subtitle, 0);
+  const activeSlide =
+    slides[activeIndex] ?? slides[0] ?? normalizeNewsItem(subtitle, 0);
 
   return (
     <div className="portal-news-panel w-full max-w-2xl">
@@ -91,7 +92,10 @@ export function NewsMarquee({
       <div className="portal-news-stage">
         <div className="space-y-4">
           <h1 className="portal-news-heading">{title}</h1>
-          <div className="portal-news-slide" key={`${activeSlide.date}-${activeIndex}`}>
+          <div
+            className="portal-news-slide"
+            key={`${activeSlide.date}-${activeIndex}`}
+          >
             <p className="portal-news-date">{activeSlide.date}</p>
             <h2 className="portal-news-slide-title">{activeSlide.title}</h2>
             <p className="portal-news-slide-description">

@@ -53,11 +53,13 @@ export function DatePicker({
           )}
           variant="outline"
         >
-          <span className="truncate">{value ? intlFormat(value) : <span>{placeholder}</span>}</span>
+          <span className="truncate">
+            {value ? intlFormat(value) : <span>{placeholder}</span>}
+          </span>
           <div className="flex items-center gap-2">
             {value && (
               <span
-                className="flex items-center cursor-pointer"
+                className="flex cursor-pointer items-center"
                 onClick={handleClear}
                 onMouseDown={handleClear}
                 role="button"

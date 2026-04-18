@@ -1,7 +1,7 @@
 import request from "@workspace/ui/lib/request";
 
 export interface GetUserTrafficStatsRequest {
-  user_subscribe_id: string;  // 保持字符串，避免精度问题
+  user_subscribe_id: string; // 保持字符串，避免精度问题
   days: 7 | 30;
 }
 

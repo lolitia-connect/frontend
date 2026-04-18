@@ -1,3 +1,4 @@
+import { useSearch } from "@tanstack/react-router";
 import { Badge } from "@workspace/ui/components/badge";
 import { Button } from "@workspace/ui/components/button";
 import {
@@ -16,7 +17,6 @@ import {
   getOrderList,
   updateOrderStatus,
 } from "@workspace/ui/services/admin/order";
-import { useSearch } from "@tanstack/react-router";
 import { useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { Display } from "@/components/display";
@@ -238,6 +238,7 @@ export default function Order() {
         },
       ]}
       initialFilters={initialFilters}
+      key={JSON.stringify(initialFilters)}
       params={[
         {
           key: "status",
@@ -262,7 +263,6 @@ export default function Order() {
           options: undefined,
         },
       ]}
-      key={JSON.stringify(initialFilters)}
       request={async (pagination, filter) => {
         const { data } = await getOrderList({ ...pagination, ...filter });
         return {

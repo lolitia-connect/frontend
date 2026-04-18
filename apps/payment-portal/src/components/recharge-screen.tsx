@@ -1,5 +1,3 @@
-import { QRCodeCanvas } from "qrcode.react";
-import { useTranslation } from "react-i18next";
 import { Input } from "@workspace/ui/components/input";
 import {
   Select,
@@ -8,6 +6,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@workspace/ui/components/select";
+import { QRCodeCanvas } from "qrcode.react";
+import { useTranslation } from "react-i18next";
 import { supportedLngs } from "@/config";
 import {
   formatCurrency,
@@ -86,10 +86,10 @@ export function RechargeScreen({
       <section className="portal-banner px-4 py-7 sm:px-6 lg:px-8">
         <div className="mx-auto w-full max-w-7xl">
           <div className="space-y-3">
-            <h1 className="text-3xl font-medium tracking-[-0.03em] text-white sm:text-4xl">
+            <h1 className="font-medium text-3xl text-white tracking-[-0.03em] sm:text-4xl">
               {t("dashboard.title", "支付充值中心")}
             </h1>
-            <p className="max-w-3xl text-sm leading-6 text-white/82 sm:text-base">
+            <p className="max-w-3xl text-sm text-white/82 leading-6 sm:text-base">
               {t(
                 "dashboard.description",
                 "选择启用中的支付方式和预设充值金额，先确认手续费，再创建充值订单。"
@@ -116,7 +116,7 @@ export function RechargeScreen({
         <div className="mx-auto flex w-full max-w-7xl flex-col gap-4">
           <section className="portal-card">
             <div className="mb-4">
-              <h2 className="text-xl font-medium tracking-[-0.02em] text-slate-950 sm:text-2xl">
+              <h2 className="font-medium text-slate-950 text-xl tracking-[-0.02em] sm:text-2xl">
                 {selectedMethod
                   ? t("dashboard.rechargeWith", "使用当前方式充值")
                   : t("dashboard.selectMethodTitle", "请选择一种方式进行充值")}
@@ -126,13 +126,15 @@ export function RechargeScreen({
             <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
               <div className="grid flex-1 gap-3">
                 <label className="space-y-2">
-                  <span className="text-sm font-medium text-slate-600">
+                  <span className="font-medium text-slate-600 text-sm">
                     {t("dashboard.methods", "支付方式")}
                   </span>
                   <Select
                     onValueChange={(value) => onMethodSelect(Number(value))}
                     value={
-                      selectedMethodId == null ? undefined : String(selectedMethodId)
+                      selectedMethodId == null
+                        ? undefined
+                        : String(selectedMethodId)
                     }
                   >
                     <SelectTrigger className="h-12 w-full rounded-xl border-slate-200 bg-white px-4 text-left text-slate-700 shadow-none transition-colors focus:border-blue-500 focus:ring-4 focus:ring-blue-100">
@@ -155,7 +157,7 @@ export function RechargeScreen({
                 </label>
 
                 <label className="space-y-2">
-                  <span className="text-sm font-medium text-slate-600">
+                  <span className="font-medium text-slate-600 text-sm">
                     {t("dashboard.amounts", "充值金额")}
                   </span>
                   <Select
@@ -184,7 +186,7 @@ export function RechargeScreen({
                     </SelectContent>
                   </Select>
                   {epayCustomAmountEnabled ? (
-                    <p className="text-xs leading-5 text-slate-500">
+                    <p className="text-slate-500 text-xs leading-5">
                       {t("dashboard.customAmountHint", {
                         amount: formatCurrency(
                           minimumCustomAmount,
@@ -201,7 +203,9 @@ export function RechargeScreen({
                       className="h-12 rounded-xl border-slate-200 bg-white px-4 text-slate-700 shadow-none focus-visible:border-blue-500 focus-visible:ring-4 focus-visible:ring-blue-100"
                       inputMode="decimal"
                       min={String(minimumCustomAmount)}
-                      onChange={(event) => onCustomAmountChange(event.target.value)}
+                      onChange={(event) =>
+                        onCustomAmountChange(event.target.value)
+                      }
                       placeholder={t(
                         "dashboard.customAmountPlaceholder",
                         "请输入自定义金额"
@@ -215,7 +219,7 @@ export function RechargeScreen({
               </div>
 
               <div className="flex flex-col items-stretch gap-3 xl:min-w-[360px] xl:max-w-[360px]">
-              <div className="flex flex-wrap items-center justify-end gap-2.5">
+                <div className="flex flex-wrap items-center justify-end gap-2.5">
                   <div className="flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 p-1">
                     {supportedLngs.map((language) => (
                       <button
@@ -259,23 +263,23 @@ export function RechargeScreen({
                     {hasPendingOrder
                       ? t("dashboard.pendingOrder", "订单支付中")
                       : submitting
-                      ? t("dashboard.creating", "创建订单中...")
-                      : t("dashboard.submit", "确认充值")}
+                        ? t("dashboard.creating", "创建订单中...")
+                        : t("dashboard.submit", "确认充值")}
                   </button>
                 </div>
 
-                <p className="text-right text-sm text-slate-500">
+                <p className="text-right text-slate-500 text-sm">
                   {loadingData
                     ? t("dashboard.loading", "正在加载支付数据...")
                     : hasPendingOrder
-                    ? t(
-                        "dashboard.pendingHint",
-                        "当前已有待支付订单，系统会持续监听支付状态，请勿重复下单。"
-                      )
-                    : t(
-                        "dashboard.selectionReady",
-                        "选择完成后点击确认，先查看手续费与合计金额。"
-                      )}
+                      ? t(
+                          "dashboard.pendingHint",
+                          "当前已有待支付订单，系统会持续监听支付状态，请勿重复下单。"
+                        )
+                      : t(
+                          "dashboard.selectionReady",
+                          "选择完成后点击确认，先查看手续费与合计金额。"
+                        )}
                 </p>
               </div>
             </div>
@@ -284,10 +288,10 @@ export function RechargeScreen({
               <div className="mt-4 rounded-2xl border border-blue-100 bg-blue-50/70 p-4">
                 <div className="mb-3 flex flex-col gap-2.5 md:flex-row md:items-center md:justify-between">
                   <div className="space-y-1">
-                    <h2 className="text-lg font-medium tracking-[-0.02em] text-slate-950">
+                    <h2 className="font-medium text-lg text-slate-950 tracking-[-0.02em]">
                       {t("dashboard.currentOrderTitle", "支付状态")}
                     </h2>
-                    <p className="text-sm text-slate-500">
+                    <p className="text-slate-500 text-sm">
                       {t("order.number", "订单号")}: {activeOrder.orderNo}
                     </p>
                   </div>
@@ -303,7 +307,7 @@ export function RechargeScreen({
                 </div>
 
                 {[2, 5].includes(Number(activeOrder.status)) ? (
-                  <div className="mb-3 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+                  <div className="mb-3 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-emerald-700 text-sm">
                     <p className="font-medium text-emerald-800">
                       {t("dashboard.paymentSuccessTitle", "支付已完成")}
                     </p>
@@ -318,18 +322,18 @@ export function RechargeScreen({
 
                 <div className="grid gap-2.5 md:grid-cols-4">
                   <div className="rounded-xl border border-blue-100 bg-white px-4 py-2.5">
-                    <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-slate-400">
+                    <p className="font-medium text-[11px] text-slate-400 uppercase tracking-[0.14em]">
                       {t("order.status", "状态")}
                     </p>
-                    <p className="mt-2 text-base font-medium text-slate-950">
+                    <p className="mt-2 font-medium text-base text-slate-950">
                       {getOrderStatusLabel(activeOrder.status, t)}
                     </p>
                   </div>
                   <div className="rounded-xl border border-blue-100 bg-white px-4 py-2.5">
-                    <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-slate-400">
+                    <p className="font-medium text-[11px] text-slate-400 uppercase tracking-[0.14em]">
                       {t("order.amount", "充值金额")}
                     </p>
-                    <p className="mt-2 text-base font-medium text-slate-950">
+                    <p className="mt-2 font-medium text-base text-slate-950">
                       {formatCurrency(
                         activeOrder.rechargeAmount,
                         currentLanguage,
@@ -338,18 +342,18 @@ export function RechargeScreen({
                     </p>
                   </div>
                   <div className="rounded-xl border border-blue-100 bg-white px-4 py-2.5">
-                    <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-slate-400">
+                    <p className="font-medium text-[11px] text-slate-400 uppercase tracking-[0.14em]">
                       {t("order.method", "支付方式")}
                     </p>
-                    <p className="mt-2 text-base font-medium text-slate-950">
+                    <p className="mt-2 font-medium text-base text-slate-950">
                       {activeOrder.paymentName || "-"}
                     </p>
                   </div>
                   <div className="rounded-xl border border-blue-100 bg-white px-4 py-2.5">
-                    <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-slate-400">
+                    <p className="font-medium text-[11px] text-slate-400 uppercase tracking-[0.14em]">
                       {t("order.time", "充值时间")}
                     </p>
-                    <p className="mt-2 text-base font-medium text-slate-950">
+                    <p className="mt-2 font-medium text-base text-slate-950">
                       {formatTimestamp(activeOrder.createdAt, currentLanguage)}
                     </p>
                   </div>
@@ -359,7 +363,7 @@ export function RechargeScreen({
                 activeOrder.checkout.checkoutUrl ? (
                   <div className="mt-4 flex justify-center rounded-2xl border border-blue-100 bg-white p-5">
                     <div className="space-y-3 text-center">
-                      <p className="text-sm text-slate-500">
+                      <p className="text-slate-500 text-sm">
                         {t("dashboard.scanToPay", "请扫码继续支付")}
                       </p>
                       <QRCodeCanvas
@@ -369,7 +373,6 @@ export function RechargeScreen({
                     </div>
                   </div>
                 ) : null}
-
               </div>
             ) : null}
           </section>
@@ -380,11 +383,11 @@ export function RechargeScreen({
                 <span className="portal-section-label">
                   {t("dashboard.records", "充值记录")}
                 </span>
-                <h2 className="text-xl font-medium tracking-[-0.02em] text-slate-950 sm:text-2xl">
+                <h2 className="font-medium text-slate-950 text-xl tracking-[-0.02em] sm:text-2xl">
                   {t("dashboard.recordsTitle", "最近充值订单")}
                 </h2>
               </div>
-              <p className="text-sm text-slate-500">
+              <p className="text-slate-500 text-sm">
                 {t(
                   "dashboard.recordsHint",
                   "记录来自现有订单列表接口，当前前端会过滤出充值类型订单。"
@@ -413,17 +416,23 @@ export function RechargeScreen({
                         <td>{record.tradeNo || record.orderNo}</td>
                         <td>{getOrderTypeLabel(record.type, t)}</td>
                         <td>
-                          {formatCurrency(record.amount, currentLanguage, currency)}
+                          {formatCurrency(
+                            record.amount,
+                            currentLanguage,
+                            currency
+                          )}
                         </td>
                         <td>{getOrderStatusLabel(record.status, t)}</td>
-                        <td>{formatTimestamp(record.createdAt, currentLanguage)}</td>
+                        <td>
+                          {formatTimestamp(record.createdAt, currentLanguage)}
+                        </td>
                         <td>
                           {record.orderNo === activeOrder?.orderNo &&
                           (activeOrder.checkout?.checkoutUrl ||
                             (activeOrder.checkout?.type === "stripe" &&
                               activeOrder.checkout.stripe)) ? (
                             <button
-                              className="text-sm font-medium text-blue-600 transition-colors hover:text-blue-700"
+                              className="font-medium text-blue-600 text-sm transition-colors hover:text-blue-700"
                               onClick={onContinuePayment}
                               type="button"
                             >
@@ -439,7 +448,7 @@ export function RechargeScreen({
                 </table>
               </div>
             ) : (
-              <div className="rounded-2xl border border-dashed border-blue-200 bg-blue-50/70 px-6 py-10 text-center text-sm text-slate-500">
+              <div className="rounded-2xl border border-blue-200 border-dashed bg-blue-50/70 px-6 py-10 text-center text-slate-500 text-sm">
                 {t("dashboard.empty", "暂无充值记录")}
               </div>
             )}

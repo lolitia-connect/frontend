@@ -1,6 +1,6 @@
+import { generateCaptcha } from "@workspace/ui/services/common/auth";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { generateCaptcha } from "@workspace/ui/services/common/auth";
 
 interface LocalCaptchaProps {
   value: string;
@@ -61,7 +61,7 @@ export function LocalCaptcha({
             type="button"
           >
             {loading ? (
-              <span className="text-sm text-slate-500">
+              <span className="text-slate-500 text-sm">
                 {t("captcha.loading", "加载中...")}
               </span>
             ) : captchaImage ? (
@@ -71,7 +71,7 @@ export function LocalCaptcha({
                 src={captchaImage}
               />
             ) : (
-              <span className="text-xs text-slate-500">
+              <span className="text-slate-500 text-xs">
                 {t("captcha.local.refresh", "刷新验证码")}
               </span>
             )}

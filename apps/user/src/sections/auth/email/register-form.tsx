@@ -16,11 +16,11 @@ import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
 import { useGlobalStore } from "@/stores/global";
+import LocalCaptcha, { type LocalCaptchaRef } from "../local-captcha";
 import SendCode from "../send-code";
+import SliderCaptcha, { type SliderCaptchaRef } from "../slider-captcha";
 import type { TurnstileRef } from "../turnstile";
 import CloudFlareTurnstile from "../turnstile";
-import LocalCaptcha, { type LocalCaptchaRef } from "../local-captcha";
-import SliderCaptcha, { type SliderCaptchaRef } from "../slider-captcha";
 
 export default function RegisterForm({
   loading,
@@ -80,11 +80,15 @@ export default function RegisterForm({
           : z.string().nullish(),
       captcha_code:
         captchaEnabled && isLocal
-          ? z.string().min(1, t("captcha.required", "Please enter captcha code"))
+          ? z
+              .string()
+              .min(1, t("captcha.required", "Please enter captcha code"))
           : z.string().nullish(),
       slider_token:
         captchaEnabled && isSlider
-          ? z.string().min(1, t("captcha.sliderRequired", "Please complete the slider"))
+          ? z
+              .string()
+              .min(1, t("captcha.sliderRequired", "Please complete the slider"))
           : z.string().optional(),
     })
     .superRefine(({ password, repeat_password }, ctx) => {
@@ -141,7 +145,10 @@ export default function RegisterForm({
                 <FormItem>
                   <FormControl>
                     <Input
-                      placeholder={t("register.emailPlaceholder", "Enter your email...")}
+                      placeholder={t(
+                        "register.emailPlaceholder",
+                        "Enter your email..."
+                      )}
                       type="email"
                       {...field}
                     />
@@ -157,7 +164,10 @@ export default function RegisterForm({
                 <FormItem>
                   <FormControl>
                     <Input
-                      placeholder={t("register.passwordPlaceholder", "Enter your password...")}
+                      placeholder={t(
+                        "register.passwordPlaceholder",
+                        "Enter your password..."
+                      )}
                       type="password"
                       {...field}
                     />
@@ -174,7 +184,10 @@ export default function RegisterForm({
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder={t("register.repeatPasswordPlaceholder", "Enter password again...")}
+                      placeholder={t(
+                        "register.repeatPasswordPlaceholder",
+                        "Enter password again..."
+                      )}
                       type="password"
                       {...field}
                     />
@@ -193,7 +206,10 @@ export default function RegisterForm({
                       <div className="flex items-center gap-2">
                         <Input
                           disabled={loading}
-                          placeholder={t("register.codePlaceholder", "Enter code...")}
+                          placeholder={t(
+                            "register.codePlaceholder",
+                            "Enter code..."
+                          )}
                           type="text"
                           {...field}
                           value={field.value as string}
@@ -259,8 +275,8 @@ export default function RegisterForm({
                     <FormControl>
                       <LocalCaptcha
                         {...field}
-                        ref={localCaptcha}
                         onCaptchaIdChange={setCaptchaId}
+                        ref={localCaptcha}
                       />
                     </FormControl>
                     <FormMessage />
@@ -275,10 +291,7 @@ export default function RegisterForm({
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <SliderCaptcha
-                        {...field}
-                        ref={sliderCaptcha}
-                      />
+                      <SliderCaptcha {...field} ref={sliderCaptcha} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

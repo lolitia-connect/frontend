@@ -103,7 +103,9 @@ export function UserSubscribeDetail({
               </span>
             </li>
             <li className="flex items-center justify-between">
-              <span className="text-muted-foreground">{t("remainingTraffic")}</span>
+              <span className="text-muted-foreground">
+                {t("remainingTraffic")}
+              </span>
               <span>
                 {data
                   ? totalTraffic === 0

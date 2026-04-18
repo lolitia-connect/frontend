@@ -1,8 +1,8 @@
-import { StrictMode } from "react";
-import ReactDOM from "react-dom/client";
 import { LanguageProvider } from "@workspace/ui/integrations/language";
 import { ThemeProvider } from "@workspace/ui/integrations/theme";
 import { initializeI18n } from "@workspace/ui/lib/i18n";
+import { StrictMode } from "react";
+import ReactDOM from "react-dom/client";
 import { Toaster } from "sonner";
 import App from "./App";
 import { fallbackLng, supportedLngs } from "./config";

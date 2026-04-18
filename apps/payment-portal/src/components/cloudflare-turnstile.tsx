@@ -1,12 +1,12 @@
-import { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
-import Turnstile, { useTurnstile } from "react-turnstile";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@workspace/ui/components/dialog";
+import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import Turnstile, { useTurnstile } from "react-turnstile";
 
 interface CloudflareTurnstileProps {
   language: string;

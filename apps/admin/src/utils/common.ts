@@ -31,7 +31,7 @@ export function formatDate(date?: Date | number, showTime = true) {
   let dateValue = date;
   if (typeof date === "number") {
     // 如果小于 10000000000（100亿），认为是秒级时间戳，需要乘以1000
-    if (date < 10000000000) {
+    if (date < 10_000_000_000) {
       dateValue = date * 1000;
     }
   }

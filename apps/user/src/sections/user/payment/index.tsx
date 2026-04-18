@@ -65,7 +65,11 @@ export default function Page() {
         orderNo: order_no!,
         returnUrl: window.location.href,
       });
-      if (data.data?.type === "url" && data.data.checkout_url && !paymentOpened) {
+      if (
+        data.data?.type === "url" &&
+        data.data.checkout_url &&
+        !paymentOpened
+      ) {
         window.open(data.data.checkout_url, "_blank");
         setPaymentOpened(true);
       }

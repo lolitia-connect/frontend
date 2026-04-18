@@ -22,9 +22,7 @@ export default function Purchasing() {
     },
   });
 
-  const subscription = data?.find(
-    (item: API.Subscribe) => item.id === id
-  );
+  const subscription = data?.find((item: API.Subscribe) => item.id === id);
 
   return (
     <main className="container space-y-16">

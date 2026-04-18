@@ -7,7 +7,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@workspace/ui/components/dropdown-menu";
-import { copyText } from "@workspace/ui/utils/clipboard";
 import { ConfirmButton } from "@workspace/ui/composed/confirm-button";
 import {
   ProTable,
@@ -21,6 +20,7 @@ import {
   toggleUserSubscribeStatus,
   updateUserSubscribe,
 } from "@workspace/ui/services/admin/user";
+import { copyText } from "@workspace/ui/utils/clipboard";
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
@@ -155,7 +155,8 @@ export default function UserSubscription({
             const upload = row.original.upload || 0;
             const download = row.original.download || 0;
             const totalTraffic = row.original.traffic || 0;
-            const remainingTraffic = totalTraffic > 0 ? totalTraffic - upload - download : 0;
+            const remainingTraffic =
+              totalTraffic > 0 ? totalTraffic - upload - download : 0;
             return (
               <Display type="traffic" unlimited value={remainingTraffic} />
             );

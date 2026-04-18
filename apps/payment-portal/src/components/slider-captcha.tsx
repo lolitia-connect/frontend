@@ -1,5 +1,3 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { useTranslation } from "react-i18next";
 import {
   Dialog,
   DialogContent,
@@ -10,6 +8,8 @@ import {
   generateCaptcha,
   verifyCaptchaSlider,
 } from "@workspace/ui/services/common/auth";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 interface SliderCaptchaProps {
   value: string;
@@ -149,10 +149,16 @@ export function SliderCaptcha({
     const dx = (event.clientX - startPointer.current.x) * scaleX;
     const dy = (event.clientY - startPointer.current.y) * scaleY;
     const finalX = Math.round(
-      Math.max(0, Math.min(startBlock.current.x + dx, BG_NATURAL_WIDTH - BLOCK_SIZE))
+      Math.max(
+        0,
+        Math.min(startBlock.current.x + dx, BG_NATURAL_WIDTH - BLOCK_SIZE)
+      )
     );
     const finalY = Math.round(
-      Math.max(0, Math.min(startBlock.current.y + dy, BG_NATURAL_HEIGHT - BLOCK_SIZE))
+      Math.max(
+        0,
+        Math.min(startBlock.current.y + dy, BG_NATURAL_HEIGHT - BLOCK_SIZE)
+      )
     );
     setBlockPos({ x: finalX, y: finalY });
 
@@ -231,7 +237,7 @@ export function SliderCaptcha({
           >
             <div className="absolute inset-0">
               {loading ? (
-                <div className="flex h-full items-center justify-center text-sm text-slate-500">
+                <div className="flex h-full items-center justify-center text-slate-500 text-sm">
                   {t("captcha.loading", "加载中...")}
                 </div>
               ) : bgImage ? (
@@ -262,7 +268,7 @@ export function SliderCaptcha({
                   ) : null}
                   {status !== "idle" ? (
                     <div
-                      className={`absolute inset-0 flex items-center justify-center text-sm font-medium ${
+                      className={`absolute inset-0 flex items-center justify-center font-medium text-sm ${
                         status === "success"
                           ? "bg-green-500/20 text-green-700"
                           : "bg-red-500/20 text-red-700"
@@ -278,7 +284,7 @@ export function SliderCaptcha({
             </div>
           </div>
 
-          <p className="text-center text-xs text-muted-foreground">
+          <p className="text-center text-muted-foreground text-xs">
             {t("captcha.slider.hint", "拖动拼图块完成验证")}
           </p>
 

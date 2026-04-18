@@ -42,10 +42,10 @@ export function ConfirmRechargeDialog({
           <span className="portal-chip portal-chip-light">
             {t("dialog.badge", "确认信息")}
           </span>
-          <h3 className="text-2xl font-semibold text-slate-950">
+          <h3 className="font-semibold text-2xl text-slate-950">
             {t("dialog.title", "确认充值")}
           </h3>
-          <p className="text-sm text-slate-500">
+          <p className="text-slate-500 text-sm">
             {t(
               "dialog.description",
               "账单金额取自后端订单详情，确认后再拉起实际支付。"
@@ -60,7 +60,9 @@ export function ConfirmRechargeDialog({
           </div>
           <div className="portal-dialog-row">
             <dt>{t("dialog.amount", "充值金额")}</dt>
-            <dd>{formatCurrency(breakdown?.amount || 0, language, currency)}</dd>
+            <dd>
+              {formatCurrency(breakdown?.amount || 0, language, currency)}
+            </dd>
           </div>
           <div className="portal-dialog-row">
             <dt>{t("dialog.fee", "手续费")}</dt>
@@ -73,7 +75,11 @@ export function ConfirmRechargeDialog({
         </dl>
 
         <div className="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
-          <button className="portal-secondary-btn" onClick={onClose} type="button">
+          <button
+            className="portal-secondary-btn"
+            onClick={onClose}
+            type="button"
+          >
             {t("dialog.cancel", "取消")}
           </button>
           <button

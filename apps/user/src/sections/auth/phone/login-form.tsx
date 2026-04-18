@@ -16,11 +16,11 @@ import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
 import { useGlobalStore } from "@/stores/global";
+import LocalCaptcha, { type LocalCaptchaRef } from "../local-captcha";
 import SendCode from "../send-code";
+import SliderCaptcha, { type SliderCaptchaRef } from "../slider-captcha";
 import type { TurnstileRef } from "../turnstile";
 import CloudFlareTurnstile from "../turnstile";
-import LocalCaptcha, { type LocalCaptchaRef } from "../local-captcha";
-import SliderCaptcha, { type SliderCaptchaRef } from "../slider-captcha";
 
 export default function LoginForm({
   loading,
@@ -58,12 +58,19 @@ export default function LoginForm({
         : z.string().optional(),
     slider_token:
       captchaEnabled && isSlider
-        ? z.string().min(1, t("captcha.sliderRequired", "Please complete the slider"))
+        ? z
+            .string()
+            .min(1, t("captcha.sliderRequired", "Please complete the slider"))
         : z.string().optional(),
   });
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: { cf_token: "", captcha_code: "", slider_token: "", ...initialValues },
+    defaultValues: {
+      cf_token: "",
+      captcha_code: "",
+      slider_token: "",
+      ...initialValues,
+    },
   });
 
   const [mode, setMode] = useState<"password" | "code">("password");
@@ -112,7 +119,10 @@ export default function LoginForm({
                                   );
                                 }
                               }}
-                              placeholder={t("register.areaCodePlaceholder", "Area code...")}
+                              placeholder={t(
+                                "register.areaCodePlaceholder",
+                                "Area code..."
+                              )}
                               simple
                               value={field.value}
                             />
@@ -123,7 +133,10 @@ export default function LoginForm({
                     />
                     <Input
                       className="rounded-l-none"
-                      placeholder={t("register.telephonePlaceholder", "Enter your telephone...")}
+                      placeholder={t(
+                        "register.telephonePlaceholder",
+                        "Enter your telephone..."
+                      )}
                       type="tel"
                       {...field}
                     />
@@ -145,7 +158,10 @@ export default function LoginForm({
                       placeholder={
                         mode === "code"
                           ? t("register.codePlaceholder", "Enter code...")
-                          : t("login.passwordPlaceholder", "Enter your password...")
+                          : t(
+                              "login.passwordPlaceholder",
+                              "Enter your password..."
+                            )
                       }
                       type={mode === "code" ? "text" : "password"}
                       {...field}
@@ -210,8 +226,8 @@ export default function LoginForm({
                   <FormControl>
                     <LocalCaptcha
                       {...field}
-                      ref={localCaptcha}
                       onCaptchaIdChange={setCaptchaId}
+                      ref={localCaptcha}
                     />
                   </FormControl>
                   <FormMessage />
@@ -226,10 +242,7 @@ export default function LoginForm({
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <SliderCaptcha
-                      {...field}
-                      ref={sliderCaptcha}
-                    />
+                    <SliderCaptcha {...field} ref={sliderCaptcha} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

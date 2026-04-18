@@ -57,7 +57,7 @@ export default function TrafficStatistics() {
   });
 
   return (
-    <div className="flex min-h-[calc(100vh-64px-58px-32px-114px)] w-full flex-col gap-4">
+    <div className="flex min-h-[calc(100vh-64px-58px-32px-114px)] w-full flex-col gap-4 overflow-x-hidden">
       {/* 标题和控制栏 */}
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <h2 className="flex items-center gap-1.5 font-semibold">

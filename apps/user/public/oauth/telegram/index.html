@@ -17,6 +17,28 @@
 
         const search = window.location.search || "";
         const target = `/#${path}${search}`;
+        const payload = Object.fromEntries(
+          new URLSearchParams(search).entries()
+        );
+
+        if (window.opener && !window.opener.closed) {
+          try {
+            window.opener.postMessage(payload, window.location.origin);
+            window.opener.focus();
+          } catch (_messageError) {
+            // ignore opener message errors
+          }
+
+          window.setTimeout(() => {
+            window.close();
+
+            if (!window.closed) {
+              window.location.replace(target);
+            }
+          }, 150);
+          return;
+        }
+
         window.location.replace(target);
       } catch (_e) {
         window.location.replace("/#/auth");

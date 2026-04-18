@@ -1,9 +1,16 @@
 "use client";
 
+import { useSearch } from "@tanstack/react-router";
 import { Button } from "@workspace/ui/components/button";
 import { Icon } from "@workspace/ui/composed/icon";
 import { oAuthLogin } from "@workspace/ui/services/common/oauth";
 import { useGlobalStore } from "@/stores/global";
+import { setRedirectUrl } from "@/utils/common";
+import {
+  closePopup,
+  navigatePopupToUrl,
+  openTelegramAuthPopup,
+} from "@/utils/oauth/telegram-popup";
 
 const icons = {
   apple: "uil:apple",
@@ -15,6 +22,7 @@ const icons = {
 
 export function OAuthMethods() {
   const { common } = useGlobalStore();
+  const searchParams = useSearch({ strict: false }) as { redirect?: string };
   const { oauth_methods } = common;
   const OAUTH_METHODS = oauth_methods?.filter(
     (method: string) => !["mobile", "email", "device"].includes(method)
@@ -33,15 +41,35 @@ export function OAuthMethods() {
               asChild
               key={method}
               onClick={async () => {
-                const { data } = await oAuthLogin({
-                  method,
-                  // OAuth providers disallow URL fragments (#) in redirect URIs.
-                  // Use a real path (with trailing slash so static hosting can serve /oauth/<provider>/index.html)
-                  // which then bridges into our hash-router at /#/oauth/<provider>.
-                  redirect: `${window.location.origin}/oauth/${method}/`,
-                });
-                if (data.data?.redirect) {
-                  window.location.href = data.data?.redirect;
+                if (searchParams.redirect?.startsWith("/")) {
+                  setRedirectUrl(searchParams.redirect);
+                }
+
+                const popup =
+                  method === "telegram" ? openTelegramAuthPopup("login") : null;
+
+                try {
+                  const { data } = await oAuthLogin({
+                    method,
+                    // OAuth providers disallow URL fragments (#) in redirect URIs.
+                    // Use a real path (with trailing slash so static hosting can serve /oauth/<provider>/index.html)
+                    // which then bridges into our hash-router at /#/oauth/<provider>.
+                    redirect: `${window.location.origin}/oauth/${method}/`,
+                  });
+
+                  if (!data.data?.redirect) {
+                    closePopup(popup);
+                    return;
+                  }
+
+                  if (method === "telegram") {
+                    navigatePopupToUrl(popup, data.data.redirect);
+                    return;
+                  }
+
+                  window.location.href = data.data.redirect;
+                } catch {
+                  closePopup(popup);
                 }
               }}
               size="icon"

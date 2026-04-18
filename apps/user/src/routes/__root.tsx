@@ -10,6 +10,10 @@ import { isBrowser } from "@workspace/ui/utils/index";
 import { useEffect } from "react";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import { useGlobalStore } from "@/stores/global";
+import {
+  extractTelegramAuthCallbackPayload,
+  getPendingTelegramAuthMode,
+} from "@/utils/oauth/telegram-popup";
 
 export const Route = createRootRouteWithContext()({
   component: () => {
@@ -34,6 +38,54 @@ export const Route = createRootRouteWithContext()({
       };
 
       initializeApp();
+    }, []);
+
+    useEffect(() => {
+      if (!isBrowser()) {
+        return;
+      }
+
+      const apiOrigin = (() => {
+        try {
+          return new URL(
+            import.meta.env.VITE_API_PREFIX || window.location.origin,
+            window.location.origin
+          ).origin;
+        } catch {
+          return window.location.origin;
+        }
+      })();
+
+      const allowedOrigins = new Set([window.location.origin, apiOrigin]);
+
+      const handleTelegramAuthCallback = (payload: Record<string, string>) => {
+        const mode = getPendingTelegramAuthMode() ?? "login";
+        const path = mode === "bind" ? "/bind/telegram" : "/oauth/telegram";
+        const search = new URLSearchParams(payload).toString();
+        const target = search ? `${path}?${search}` : path;
+
+        if (window.location.hash.slice(1) === target) {
+          return;
+        }
+
+        window.location.hash = target;
+      };
+
+      const handleMessage = (event: MessageEvent) => {
+        if (!allowedOrigins.has(event.origin)) {
+          return;
+        }
+
+        const payload = extractTelegramAuthCallbackPayload(event.data);
+        if (!payload) {
+          return;
+        }
+
+        handleTelegramAuthCallback(payload);
+      };
+
+      window.addEventListener("message", handleMessage);
+      return () => window.removeEventListener("message", handleMessage);
     }, []);
 
     const { site } = common;

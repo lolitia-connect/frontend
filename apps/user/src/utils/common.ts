@@ -32,9 +32,29 @@ export function setAuthorization(token: string): void {
 
 export function getRedirectUrl(): string {
   if (typeof window === "undefined") return "/dashboard";
-  const params = new URLSearchParams(window.location.search);
-  const redirect = params.get("redirect");
-  return redirect?.startsWith("/") ? redirect : "/dashboard";
+
+  const readRedirect = (search: string) => {
+    const redirect = new URLSearchParams(search).get("redirect");
+    return redirect?.startsWith("/") ? redirect : undefined;
+  };
+
+  const hash = window.location.hash.startsWith("#")
+    ? window.location.hash.slice(1)
+    : "";
+  const hashSearchIndex = hash.indexOf("?");
+  const hashSearch = hashSearchIndex >= 0 ? hash.slice(hashSearchIndex) : "";
+  const redirect =
+    readRedirect(window.location.search) ||
+    readRedirect(hashSearch) ||
+    sessionStorage.getItem("redirect-url") ||
+    "/dashboard";
+
+  if (redirect.startsWith("/")) {
+    sessionStorage.removeItem("redirect-url");
+    return redirect;
+  }
+
+  return "/dashboard";
 }
 
 export function setRedirectUrl(value?: string) {

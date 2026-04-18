@@ -63,11 +63,7 @@ export default function TrafficTrendChart({ data }: TrafficTrendChartProps) {
           height={36}
           verticalAlign="bottom"
           wrapperStyle={{
-            position: "absolute",
-            width: "444px",
-            height: "36px",
-            left: "5px",
-            bottom: "-5px",
+            paddingTop: "10px",
           }}
         />
         <Line

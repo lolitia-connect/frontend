@@ -36,16 +36,16 @@ export default function TrafficStatsCards({ stats }: TrafficStatsCardsProps) {
     <div className="grid gap-4 md:grid-cols-3">
       {cards.map((card) => (
         <Card key={card.title}>
-          <CardContent className="pi-2 flex items-center justify-between">
-            <div className="flex flex-col gap-1">
-              <span className="text-muted-foreground text-sm">
+          <CardContent className="pi-2 flex items-center justify-between gap-2 overflow-hidden">
+            <div className="flex flex-col gap-1 min-w-0 flex-1">
+              <span className="text-muted-foreground text-sm truncate">
                 {card.title}
               </span>
-              <span className="font-bold text-2xl">
+              <span className="font-bold text-2xl truncate">
                 <Display type="traffic" value={card.value} />
               </span>
             </div>
-            <Icon className={`size-10 ${card.color}`} icon={card.icon} />
+            <Icon className={`size-10 flex-shrink-0 ${card.color}`} icon={card.icon} />
           </CardContent>
         </Card>
       ))}

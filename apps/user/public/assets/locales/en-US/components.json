@@ -64,9 +64,9 @@
   "loginRegister": "Login / Register",
   "menu": {
     "affiliate": "Commission",
-    "announcement": "Announcement Management",
+    "announcement": "Announcements",
     "dashboard": "Dashboard",
-    "document": "Document Management",
+    "document": "Documents",
     "finance": "Commerce",
     "help": "Users & Support",
     "logout": "Logout",

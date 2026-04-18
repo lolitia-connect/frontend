@@ -18,6 +18,7 @@ import { useTranslation } from "react-i18next";
 import { Display } from "@/components/display";
 import { SubscribeDetail } from "./detail";
 import Purchase from "./purchase";
+import RedeemCode from "./redeem-code";
 
 export default function Subscribe() {
   const { t, i18n } = useTranslation("subscribe");
@@ -44,7 +45,8 @@ export default function Subscribe() {
   const filteredData = data?.filter((item) => item.show);
 
   return (
-    <>
+    <div className="flex min-h-[calc(100vh-64px-58px-32px-114px)] w-full flex-col gap-4 overflow-hidden">
+      <RedeemCode />
       <div className="space-y-4">
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
           {filteredData?.map((item) => (
@@ -130,10 +132,10 @@ export default function Subscribe() {
                     shouldShowOriginal || !hasDiscount
                       ? item.unit_price
                       : Math.round(
-                          item.unit_price *
-                            (item.discount?.[0]?.quantity ?? 1) *
-                            ((item.discount?.[0]?.discount ?? 100) / 100)
-                        );
+                        item.unit_price *
+                        (item.discount?.[0]?.quantity ?? 1) *
+                        ((item.discount?.[0]?.discount ?? 100) / 100)
+                      );
 
                   const displayQuantity =
                     shouldShowOriginal || !hasDiscount
@@ -170,6 +172,6 @@ export default function Subscribe() {
         {filteredData?.length === 0 && <Empty />}
       </div>
       <Purchase setSubscribe={setSubscribe} subscribe={subscribe} />
-    </>
+    </div>
   );
 }

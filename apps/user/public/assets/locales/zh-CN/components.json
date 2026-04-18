@@ -64,9 +64,9 @@
   "loginRegister": "登录 / 注册",
   "menu": {
     "affiliate": "推广佣金",
-    "announcement": "公告管理",
+    "announcement": "站点公告",
     "dashboard": "仪表盘",
-    "document": "文档管理",
+    "document": "使用文档",
     "finance": "财务管理",
     "help": "用户支持",
     "logout": "退出登录",
@@ -74,10 +74,10 @@
     "personal": "个人中心",
     "profile": "用户详情",
     "server": "服务器管理",
-    "subscribe": "订阅管理",
-    "ticket": "工单管理",
+    "subscribe": "套餐订阅",
+    "ticket": "工单支持",
     "traffic": "流量统计",
-    "wallet": "余额管理"
+    "wallet": "资产明细"
   },
   "pagination": {
     "pageInfo": "第 {{page}} 页，共 {{total}} 页",

@@ -3,6 +3,7 @@
 import { useRouter, useSearch } from "@tanstack/react-router";
 import { oAuthLoginGetToken } from "@workspace/ui/services/common/oauth";
 import { useEffect } from "react";
+import { useGlobalStore } from "@/stores/global";
 import { getRedirectUrl, setAuthorization } from "@/utils/common";
 
 interface CertificationProps {
@@ -16,6 +17,7 @@ export default function Certification({
 }: CertificationProps) {
   const router = useRouter();
   const searchParams = useSearch({ strict: false });
+  const { getUserInfo } = useGlobalStore();
 
   useEffect(() => {
     const inviteCode = localStorage.getItem("invite") || "";
@@ -24,12 +26,13 @@ export default function Certification({
       callback: searchParams as Record<string, string>,
       ...(inviteCode && { invite: inviteCode }),
     } as API.OAuthLoginGetTokenRequest)
-      .then((res) => {
+      .then(async (res) => {
         const token = res?.data?.data?.token;
         if (!token) {
           throw new Error("Invalid token");
         }
         setAuthorization(token);
+        await getUserInfo();
         router.navigate({ to: getRedirectUrl() });
       })
       .catch(() => {

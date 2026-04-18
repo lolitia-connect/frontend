@@ -47,7 +47,6 @@ import Subscribe from "../../subscribe";
 import Renewal from "../../subscribe/renewal";
 import ResetTraffic from "../../subscribe/reset-traffic";
 import Unsubscribe from "../../subscribe/unsubscribe";
-import RedeemCode from "./redeem-code";
 
 const platforms: (keyof API.DownloadLink)[] = [
   "windows",
@@ -140,7 +139,6 @@ export default function Content() {
 
   return (
     <>
-      <RedeemCode onSuccess={refetch} />
       {userSubscribe.length ? (
         <>
           <div className="flex items-center justify-between">
@@ -184,16 +182,15 @@ export default function Content() {
                     >
                       <Icon
                         className="size-5"
-                        icon={`${
-                          {
-                            windows: "mdi:microsoft-windows",
-                            mac: "uil:apple",
-                            linux: "uil:linux",
-                            ios: "simple-icons:ios",
-                            android: "uil:android",
-                            harmony: "simple-icons:harmonyos",
-                          }[item]
-                        }`}
+                        icon={`${{
+                          windows: "mdi:microsoft-windows",
+                          mac: "uil:apple",
+                          linux: "uil:linux",
+                          ios: "simple-icons:ios",
+                          android: "uil:android",
+                          harmony: "simple-icons:harmonyos",
+                        }[item]
+                          }`}
                       />
                     </TabsTrigger>
                   ))}
@@ -264,7 +261,7 @@ export default function Content() {
                           >
                             {
                               statusWatermarks[
-                                item.status as keyof typeof statusWatermarks
+                              item.status as keyof typeof statusWatermarks
                               ]
                             }
                           </span>
@@ -368,9 +365,9 @@ export default function Content() {
                       <span className="font-semibold text-2xl">
                         {item.reset_time
                           ? differenceInDays(
-                              new Date(item.reset_time),
-                              new Date()
-                            )
+                            new Date(item.reset_time),
+                            new Date()
+                          )
                           : t("noReset", "No Reset")}
                       </span>
                     </li>
@@ -379,12 +376,12 @@ export default function Content() {
                         {t("expirationDays", "Expiration Days")}
                       </span>
                       <span className="font-semibold text-2xl">
-                        {}
+                        { }
                         {item.expire_time
                           ? differenceInDays(
-                              new Date(item.expire_time),
-                              new Date()
-                            ) || t("unknown", "Unknown")
+                            new Date(item.expire_time),
+                            new Date()
+                          ) || t("unknown", "Unknown")
                           : t("noLimit", "No Limit")}
                       </span>
                     </li>
@@ -432,13 +429,7 @@ export default function Content() {
                           <AccordionContent>
                             <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
                               {applications
-                                ?.filter(
-                                  (application) =>
-                                    !!(
-                                      application.download_link?.[platform] ||
-                                      application.scheme
-                                    )
-                                )
+                                ?.filter((application) => !!(application.download_link?.[platform]))
                                 .map((application) => {
                                   const downloadUrl =
                                     application.download_link?.[platform];

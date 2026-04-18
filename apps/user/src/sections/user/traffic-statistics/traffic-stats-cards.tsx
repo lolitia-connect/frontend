@@ -36,7 +36,7 @@ export default function TrafficStatsCards({ stats }: TrafficStatsCardsProps) {
     <div className="grid gap-4 md:grid-cols-3">
       {cards.map((card) => (
         <Card key={card.title}>
-          <CardContent className="flex items-center justify-between p-6">
+          <CardContent className="flex items-center justify-between pi-2">
             <div className="flex flex-col gap-1">
               <span className="text-muted-foreground text-sm">{card.title}</span>
               <span className="font-bold text-2xl">

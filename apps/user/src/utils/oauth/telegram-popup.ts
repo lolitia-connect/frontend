@@ -43,12 +43,16 @@ function normalizeTelegramAuthValue(value: unknown): string | null {
   return null;
 }
 
-function encodeTelegramAuthResult(payload: Record<string, string>) {
-  const json = JSON.stringify(payload);
+function encodeTelegramAuthResult(payload: Record<string, string | number>) {
+  const processedPayload = {
+    ...payload,
+    id: Number(payload.id),
+    auth_date: Number(payload.auth_date)
+  };
+
+  const json = JSON.stringify(processedPayload);
   const bytes = new TextEncoder().encode(json);
-  const binary = Array.from(bytes, (byte) => String.fromCharCode(byte)).join(
-    ""
-  );
+  const binary = Array.from(bytes, (byte) => String.fromCharCode(byte)).join("");
 
   return btoa(binary);
 }

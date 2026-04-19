@@ -7,9 +7,8 @@ import { oAuthLogin } from "@workspace/ui/services/common/oauth";
 import { useGlobalStore } from "@/stores/global";
 import { setRedirectUrl } from "@/utils/common";
 import {
-  closePopup,
-  navigatePopupToUrl,
-  openTelegramAuthPopup,
+  navigateToTelegramCallbackRoute,
+  requestTelegramAuthCallback,
 } from "@/utils/oauth/telegram-popup";
 
 const icons = {
@@ -45,9 +44,6 @@ export function OAuthMethods() {
                   setRedirectUrl(searchParams.redirect);
                 }
 
-                const popup =
-                  method === "telegram" ? openTelegramAuthPopup("login") : null;
-
                 try {
                   const { data } = await oAuthLogin({
                     method,
@@ -58,18 +54,20 @@ export function OAuthMethods() {
                   });
 
                   if (!data.data?.redirect) {
-                    closePopup(popup);
                     return;
                   }
 
                   if (method === "telegram") {
-                    navigatePopupToUrl(popup, data.data.redirect);
+                    const payload = await requestTelegramAuthCallback(
+                      data.data.redirect
+                    );
+                    navigateToTelegramCallbackRoute("login", payload);
                     return;
                   }
 
                   window.location.href = data.data.redirect;
                 } catch {
-                  closePopup(popup);
+                  // ignore telegram popup cancellation and request failures
                 }
               }}
               size="icon"

@@ -39,9 +39,8 @@ import { z } from "zod";
 import SendCode from "@/sections/auth/send-code";
 import { useGlobalStore } from "@/stores/global";
 import {
-  closePopup,
-  navigatePopupToUrl,
-  openTelegramAuthPopup,
+  navigateToTelegramCallbackRoute,
+  requestTelegramAuthCallback,
 } from "@/utils/oauth/telegram-popup";
 
 function MobileBindDialog({
@@ -261,9 +260,6 @@ export default function ThirdPartyAccounts() {
       await unbindOAuth({ method: account.id });
       await getUserInfo();
     } else {
-      const popup =
-        account.id === "telegram" ? openTelegramAuthPopup("bind") : null;
-
       try {
         const res = await bindOAuth({
           method: account.id,
@@ -273,18 +269,17 @@ export default function ThirdPartyAccounts() {
         const redirectUrl = res.data?.data?.redirect;
 
         if (!redirectUrl) {
-          closePopup(popup);
           return;
         }
 
         if (account.id === "telegram") {
-          navigatePopupToUrl(popup, redirectUrl);
+          const payload = await requestTelegramAuthCallback(redirectUrl);
+          navigateToTelegramCallbackRoute("bind", payload);
           return;
         }
 
         window.location.href = redirectUrl;
       } catch (_error) {
-        closePopup(popup);
         toast.error(t("thirdParty.bindFailed", "Failed to connect"));
       }
     }

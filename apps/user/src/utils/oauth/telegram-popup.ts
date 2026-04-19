@@ -2,7 +2,8 @@ import { isBrowser } from "@workspace/ui/utils/index";
 
 export type TelegramAuthMode = "login" | "bind";
 
-const TELEGRAM_WIDGET_SCRIPT_SRC = "https://telegram.org/js/telegram-widget.js?23";
+const TELEGRAM_WIDGET_SCRIPT_SRC =
+  "https://telegram.org/js/telegram-widget.js?23";
 
 let telegramWidgetScriptPromise: Promise<void> | null = null;
 
@@ -40,6 +41,16 @@ function normalizeTelegramAuthValue(value: unknown): string | null {
   }
 
   return null;
+}
+
+function encodeTelegramAuthResult(payload: Record<string, string>) {
+  const json = JSON.stringify(payload);
+  const bytes = new TextEncoder().encode(json);
+  const binary = Array.from(bytes, (byte) => String.fromCharCode(byte)).join(
+    ""
+  );
+
+  return btoa(binary);
 }
 
 function hasTelegramAuthFields(value: Record<string, unknown>) {
@@ -108,7 +119,9 @@ export function extractTelegramAuthCallbackPayload(
 
 function ensureTelegramWidgetLoaded(): Promise<void> {
   if (!isBrowser()) {
-    return Promise.reject(new Error("Telegram widget can only be loaded in browser"));
+    return Promise.reject(
+      new Error("Telegram widget can only be loaded in browser")
+    );
   }
 
   if (typeof window.Telegram?.Login?.auth === "function") {
@@ -121,7 +134,7 @@ function ensureTelegramWidgetLoaded(): Promise<void> {
 
   telegramWidgetScriptPromise = new Promise((resolve, reject) => {
     const existingScript = document.querySelector<HTMLScriptElement>(
-      `script[src=\"${TELEGRAM_WIDGET_SCRIPT_SRC}\"]`
+      `script[src="${TELEGRAM_WIDGET_SCRIPT_SRC}"]`
     );
 
     const handleLoad = () => {
@@ -198,7 +211,9 @@ export async function requestTelegramAuthCallback(redirectUrl: string) {
         const payload = extractTelegramAuthCallbackPayload(user);
 
         if (!payload) {
-          reject(new Error("Telegram auth callback did not return valid payload"));
+          reject(
+            new Error("Telegram auth callback did not return valid payload")
+          );
           return;
         }
 
@@ -221,7 +236,9 @@ export function navigateToTelegramCallbackRoute(
   }
 
   const path = mode === "bind" ? "/bind/telegram" : "/oauth/telegram";
-  const search = new URLSearchParams(payload).toString();
+  const search = new URLSearchParams({
+    tgAuthResult: encodeTelegramAuthResult(payload),
+  }).toString();
   window.location.hash = search ? `${path}?${search}` : path;
 }
 

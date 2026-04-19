@@ -2,7 +2,25 @@ import { isBrowser } from "@workspace/ui/utils/index";
 
 export type TelegramAuthMode = "login" | "bind";
 
-const TELEGRAM_AUTH_MODE_STORAGE_KEY = "telegram-auth-mode";
+const TELEGRAM_WIDGET_SCRIPT_SRC = "https://telegram.org/js/telegram-widget.js?23";
+
+let telegramWidgetScriptPromise: Promise<void> | null = null;
+
+declare global {
+  interface Window {
+    Telegram?: {
+      Login?: {
+        auth: (
+          options: {
+            bot_id: number;
+            request_access?: string;
+          },
+          callback: (user: unknown) => void
+        ) => void;
+      };
+    };
+  }
+}
 
 function isTelegramAuthMode(value: unknown): value is TelegramAuthMode {
   return value === "login" || value === "bind";
@@ -30,31 +48,6 @@ function hasTelegramAuthFields(value: Record<string, unknown>) {
     typeof value.hash !== "undefined" &&
     (typeof value.id !== "undefined" || typeof value.username !== "undefined")
   );
-}
-
-export function setPendingTelegramAuthMode(mode: TelegramAuthMode) {
-  if (!isBrowser()) {
-    return;
-  }
-
-  try {
-    sessionStorage.setItem(TELEGRAM_AUTH_MODE_STORAGE_KEY, mode);
-  } catch {
-    // ignore storage errors
-  }
-}
-
-export function getPendingTelegramAuthMode(): TelegramAuthMode | null {
-  if (!isBrowser()) {
-    return null;
-  }
-
-  try {
-    const mode = sessionStorage.getItem(TELEGRAM_AUTH_MODE_STORAGE_KEY);
-    return isTelegramAuthMode(mode) ? mode : null;
-  } catch {
-    return null;
-  }
 }
 
 export function extractTelegramAuthCallbackPayload(
@@ -113,6 +106,125 @@ export function extractTelegramAuthCallbackPayload(
   return null;
 }
 
+function ensureTelegramWidgetLoaded(): Promise<void> {
+  if (!isBrowser()) {
+    return Promise.reject(new Error("Telegram widget can only be loaded in browser"));
+  }
+
+  if (typeof window.Telegram?.Login?.auth === "function") {
+    return Promise.resolve();
+  }
+
+  if (telegramWidgetScriptPromise) {
+    return telegramWidgetScriptPromise;
+  }
+
+  telegramWidgetScriptPromise = new Promise((resolve, reject) => {
+    const existingScript = document.querySelector<HTMLScriptElement>(
+      `script[src=\"${TELEGRAM_WIDGET_SCRIPT_SRC}\"]`
+    );
+
+    const handleLoad = () => {
+      if (typeof window.Telegram?.Login?.auth === "function") {
+        resolve();
+        return;
+      }
+
+      reject(new Error("Telegram widget loaded but Login.auth is unavailable"));
+    };
+
+    const handleError = () => {
+      telegramWidgetScriptPromise = null;
+      reject(new Error("Failed to load Telegram widget script"));
+    };
+
+    if (existingScript) {
+      existingScript.addEventListener("load", handleLoad, { once: true });
+      existingScript.addEventListener("error", handleError, { once: true });
+
+      if (typeof window.Telegram?.Login?.auth === "function") {
+        handleLoad();
+      }
+
+      return;
+    }
+
+    const script = document.createElement("script");
+    script.async = true;
+    script.src = TELEGRAM_WIDGET_SCRIPT_SRC;
+    script.addEventListener("load", handleLoad, { once: true });
+    script.addEventListener("error", handleError, { once: true });
+    document.head.appendChild(script);
+  });
+
+  return telegramWidgetScriptPromise;
+}
+
+function parseTelegramRedirectConfig(redirectUrl: string) {
+  const url = new URL(redirectUrl);
+  const botId = Number(url.searchParams.get("bot_id"));
+
+  if (!Number.isFinite(botId)) {
+    throw new Error("Telegram redirect url does not include a valid bot_id");
+  }
+
+  const requestAccess = url.searchParams.get("request_access") || undefined;
+
+  return {
+    botId,
+    requestAccess,
+  };
+}
+
+export async function requestTelegramAuthCallback(redirectUrl: string) {
+  await ensureTelegramWidgetLoaded();
+
+  const { botId, requestAccess } = parseTelegramRedirectConfig(redirectUrl);
+
+  return new Promise<Record<string, string>>((resolve, reject) => {
+    const telegramLogin = window.Telegram?.Login?.auth;
+
+    if (typeof telegramLogin !== "function") {
+      reject(new Error("Telegram Login.auth is unavailable"));
+      return;
+    }
+
+    telegramLogin(
+      {
+        bot_id: botId,
+        ...(requestAccess ? { request_access: requestAccess } : {}),
+      },
+      (user) => {
+        const payload = extractTelegramAuthCallbackPayload(user);
+
+        if (!payload) {
+          reject(new Error("Telegram auth callback did not return valid payload"));
+          return;
+        }
+
+        resolve(payload);
+      }
+    );
+  });
+}
+
+export function navigateToTelegramCallbackRoute(
+  mode: TelegramAuthMode,
+  payload: Record<string, string>
+) {
+  if (!isBrowser()) {
+    return;
+  }
+
+  if (!isTelegramAuthMode(mode)) {
+    throw new Error("Invalid Telegram auth mode");
+  }
+
+  const path = mode === "bind" ? "/bind/telegram" : "/oauth/telegram";
+  const search = new URLSearchParams(payload).toString();
+  window.location.hash = search ? `${path}?${search}` : path;
+}
+
 export function openCenteredPopup(
   url: string,
   name: string,
@@ -142,33 +254,4 @@ export function openCenteredPopup(
   popup?.focus();
 
   return popup;
-}
-
-export function openTelegramAuthPopup(mode: "login" | "bind") {
-  setPendingTelegramAuthMode(mode);
-  return openCenteredPopup("about:blank", `telegram-${mode}-popup`);
-}
-
-export function navigatePopupToUrl(popup: Window | null, url: string) {
-  if (popup && !popup.closed) {
-    popup.location.replace(url);
-    popup.focus();
-    return true;
-  }
-
-  if (isBrowser()) {
-    window.location.href = url;
-  }
-
-  return false;
-}
-
-export function closePopup(popup: Window | null) {
-  try {
-    if (popup && !popup.closed) {
-      popup.close();
-    }
-  } catch {
-    // ignore popup close errors
-  }
 }

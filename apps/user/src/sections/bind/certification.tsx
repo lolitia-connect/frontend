@@ -3,6 +3,7 @@
 import { useRouter, useSearch } from "@tanstack/react-router";
 import { bindOAuthCallback } from "@workspace/ui/services/user/user";
 import { useEffect } from "react";
+import { useGlobalStore } from "@/stores/global";
 
 interface CertificationProps {
   platform: string;
@@ -14,6 +15,7 @@ export default function Certification({
   children,
 }: CertificationProps) {
   const router = useRouter();
+  const { getUserInfo } = useGlobalStore();
   const searchParams = useSearch({
     strict: false,
     structuralSharing: false,
@@ -29,13 +31,14 @@ export default function Certification({
       method: platform,
       callback,
     })
-      .then(() => {
+      .then(async () => {
+        await getUserInfo();
         router.navigate({ to: "/profile" });
       })
       .catch(() => {
         router.navigate({ to: "/auth" });
       });
-  }, [platform, router, searchParams]);
+  }, [platform, router, searchParams, getUserInfo]);
 
   return children;
 }

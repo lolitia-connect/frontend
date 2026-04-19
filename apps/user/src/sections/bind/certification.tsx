@@ -14,12 +14,20 @@ export default function Certification({
   children,
 }: CertificationProps) {
   const router = useRouter();
-  const searchParams = useSearch({ strict: false });
+  const searchParams = useSearch({
+    strict: false,
+    structuralSharing: false,
+  }) as Record<string, unknown>;
 
   useEffect(() => {
+    const callback =
+      platform === "telegram" && typeof searchParams.tgAuthResult === "string"
+        ? { tgAuthResult: searchParams.tgAuthResult }
+        : (searchParams as Record<string, string>);
+
     bindOAuthCallback({
       method: platform,
-      callback: searchParams as Record<string, string>,
+      callback,
     })
       .then(() => {
         router.navigate({ to: "/profile" });

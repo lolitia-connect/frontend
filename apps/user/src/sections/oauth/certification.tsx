@@ -16,14 +16,22 @@ export default function Certification({
   children,
 }: CertificationProps) {
   const router = useRouter();
-  const searchParams = useSearch({ strict: false });
+  const searchParams = useSearch({
+    strict: false,
+    structuralSharing: false,
+  }) as Record<string, unknown>;
   const { getUserInfo } = useGlobalStore();
 
   useEffect(() => {
     const inviteCode = localStorage.getItem("invite") || "";
+    const callback =
+      platform === "telegram" && typeof searchParams.tgAuthResult === "string"
+        ? { tgAuthResult: searchParams.tgAuthResult }
+        : (searchParams as Record<string, string>);
+
     oAuthLoginGetToken({
       method: platform,
-      callback: searchParams as Record<string, string>,
+      callback,
       ...(inviteCode && { invite: inviteCode }),
     } as API.OAuthLoginGetTokenRequest)
       .then(async (res) => {
@@ -38,7 +46,7 @@ export default function Certification({
       .catch(() => {
         router.navigate({ to: "/auth" });
       });
-  }, [platform, router, searchParams]);
+  }, [platform, router, searchParams, getUserInfo]);
 
   return children;
 }

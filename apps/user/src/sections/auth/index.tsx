@@ -56,10 +56,10 @@ export default function Main() {
             </p>
           </div>
         </div>
-        <div className="flex flex-initial justify-center p-12 lg:flex-auto lg:justify-end">
-          <div className="flex w-full flex-col items-center rounded-2xl md:w-[600px] md:p-10 lg:flex-auto lg:bg-background lg:shadow">
-            <div className="flex w-full flex-col items-stretch justify-center md:w-[400px] lg:h-full">
-              <div className="flex flex-col justify-center lg:flex-auto">
+        <div className="flex flex-initial justify-center px-5 py-7 md:px-8 md:py-10 lg:flex-auto lg:justify-end lg:px-10 xl:px-16">
+          <div className="flex w-full max-w-[520px] flex-col rounded-2xl md:max-w-[560px] md:px-8 md:py-10 lg:h-full lg:bg-background lg:shadow">
+            <div className="flex h-full w-full max-w-[480px] self-center flex-col items-stretch">
+              <div className="flex flex-1 flex-col justify-center">
                 <h1 className="mb-3 text-center font-bold text-2xl">
                   {t("verifyAccount", "Verify Your Account")}
                 </h1>
@@ -72,26 +72,26 @@ export default function Main() {
                 {AUTH_METHODS.length === 1
                   ? AUTH_METHODS[0]?.children
                   : AUTH_METHODS[0] && (
-                      <Tabs defaultValue={AUTH_METHODS[0].key}>
-                        <TabsList className="mb-6 flex w-full *:flex-1">
-                          {AUTH_METHODS.map((item) => (
-                            <TabsTrigger key={item.key} value={item.key}>
-                              {t(`methods.${item.key}`)}
-                            </TabsTrigger>
-                          ))}
-                        </TabsList>
+                    <Tabs defaultValue={AUTH_METHODS[0].key}>
+                      <TabsList className="mb-6 flex w-full *:flex-1">
                         {AUTH_METHODS.map((item) => (
-                          <TabsContent key={item.key} value={item.key}>
-                            {item.children}
-                          </TabsContent>
+                          <TabsTrigger key={item.key} value={item.key}>
+                            {t(`methods.${item.key}`)}
+                          </TabsTrigger>
                         ))}
-                      </Tabs>
-                    )}
+                      </TabsList>
+                      {AUTH_METHODS.map((item) => (
+                        <TabsContent key={item.key} value={item.key}>
+                          {item.children}
+                        </TabsContent>
+                      ))}
+                    </Tabs>
+                  )}
               </div>
               <div className="py-8">
                 <OAuthMethods />
               </div>
-              <div className="flex items-center justify-between">
+              <div className="mt-auto flex items-center justify-between">
                 <div className="flex items-center gap-5">
                   <LanguageSwitch />
                   <ThemeSwitch />

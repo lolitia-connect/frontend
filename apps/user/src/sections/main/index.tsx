@@ -1,9 +1,5 @@
 import { useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { Card, CardContent } from "@workspace/ui/components/card";
-import { Icon } from "@workspace/ui/composed/icon";
-import { motion } from "framer-motion";
-import { useTranslation } from "react-i18next";
 import { useGlobalStore } from "@/stores/global";
 import { GlobalMap } from "./global-map";
 import { Hero } from "./hero";
@@ -13,7 +9,6 @@ import { Stats } from "./stats";
 export default function Main() {
   const { user } = useGlobalStore();
   const navigate = useNavigate();
-  const { t } = useTranslation("main");
 
   const showLanding = import.meta.env.VITE_SHOW_LANDING_PAGE !== "false";
 

@@ -44,13 +44,13 @@ export default function Auth() {
             </p>
           </div>
         </div>
-        <div className="flex flex-initial justify-center p-8 lg:flex-auto lg:justify-end">
-          <div className="flex flex-col items-center rounded-2xl md:w-[600px] lg:flex-auto lg:bg-background lg:p-10 lg:shadow">
-            <div className="flex flex-col items-stretch justify-center md:w-[400px] lg:h-full">
-              <div className="flex flex-col justify-center pb-14 lg:flex-auto lg:pb-20">
+        <div className="flex flex-initial justify-center px-5 py-7 md:px-8 md:py-10 lg:flex-auto lg:justify-end lg:px-10 xl:px-16">
+          <div className="flex w-full max-w-[520px] flex-col rounded-2xl md:max-w-[560px] md:px-8 md:py-10 lg:h-full lg:bg-background lg:shadow">
+            <div className="flex h-full w-full max-w-[480px] self-center flex-col items-stretch">
+              <div className="flex flex-1 flex-col justify-center pb-14 lg:pb-20">
                 <EmailAuthForm />
               </div>
-              <div className="flex items-center justify-end">
+              <div className="mt-auto flex items-center justify-end">
                 {/* <div className='text-primary flex gap-5 text-sm font-semibold'>
                   <Link href='/tos'>{t('tos')}</Link>
                 </div> */}

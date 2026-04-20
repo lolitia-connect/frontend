@@ -349,21 +349,21 @@ export interface FileRoutesByFullPath {
   '/dashboard/log/subscribe': typeof DashboardLogSubscribeLazyRoute
   '/dashboard/log/subscribe-traffic': typeof DashboardLogSubscribeTrafficLazyRoute
   '/dashboard/log/traffic-details': typeof DashboardLogTrafficDetailsLazyRoute
-  '/dashboard/ads': typeof DashboardAdsIndexLazyRoute
-  '/dashboard/announcement': typeof DashboardAnnouncementIndexLazyRoute
-  '/dashboard/auth-control': typeof DashboardAuthControlIndexLazyRoute
-  '/dashboard/coupon': typeof DashboardCouponIndexLazyRoute
-  '/dashboard/document': typeof DashboardDocumentIndexLazyRoute
-  '/dashboard/group': typeof DashboardGroupIndexLazyRoute
-  '/dashboard/marketing': typeof DashboardMarketingIndexLazyRoute
-  '/dashboard/order': typeof DashboardOrderIndexLazyRoute
-  '/dashboard/payment': typeof DashboardPaymentIndexLazyRoute
-  '/dashboard/product': typeof DashboardProductIndexLazyRoute
-  '/dashboard/redemption': typeof DashboardRedemptionIndexLazyRoute
-  '/dashboard/subscribe': typeof DashboardSubscribeIndexLazyRoute
-  '/dashboard/system': typeof DashboardSystemIndexLazyRoute
-  '/dashboard/ticket': typeof DashboardTicketIndexLazyRoute
-  '/dashboard/user': typeof DashboardUserIndexLazyRoute
+  '/dashboard/ads/': typeof DashboardAdsIndexLazyRoute
+  '/dashboard/announcement/': typeof DashboardAnnouncementIndexLazyRoute
+  '/dashboard/auth-control/': typeof DashboardAuthControlIndexLazyRoute
+  '/dashboard/coupon/': typeof DashboardCouponIndexLazyRoute
+  '/dashboard/document/': typeof DashboardDocumentIndexLazyRoute
+  '/dashboard/group/': typeof DashboardGroupIndexLazyRoute
+  '/dashboard/marketing/': typeof DashboardMarketingIndexLazyRoute
+  '/dashboard/order/': typeof DashboardOrderIndexLazyRoute
+  '/dashboard/payment/': typeof DashboardPaymentIndexLazyRoute
+  '/dashboard/product/': typeof DashboardProductIndexLazyRoute
+  '/dashboard/redemption/': typeof DashboardRedemptionIndexLazyRoute
+  '/dashboard/subscribe/': typeof DashboardSubscribeIndexLazyRoute
+  '/dashboard/system/': typeof DashboardSystemIndexLazyRoute
+  '/dashboard/ticket/': typeof DashboardTicketIndexLazyRoute
+  '/dashboard/user/': typeof DashboardUserIndexLazyRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexLazyRoute
@@ -453,21 +453,21 @@ export interface FileRouteTypes {
     | '/dashboard/log/subscribe'
     | '/dashboard/log/subscribe-traffic'
     | '/dashboard/log/traffic-details'
-    | '/dashboard/ads'
-    | '/dashboard/announcement'
-    | '/dashboard/auth-control'
-    | '/dashboard/coupon'
-    | '/dashboard/document'
-    | '/dashboard/group'
-    | '/dashboard/marketing'
-    | '/dashboard/order'
-    | '/dashboard/payment'
-    | '/dashboard/product'
-    | '/dashboard/redemption'
-    | '/dashboard/subscribe'
-    | '/dashboard/system'
-    | '/dashboard/ticket'
-    | '/dashboard/user'
+    | '/dashboard/ads/'
+    | '/dashboard/announcement/'
+    | '/dashboard/auth-control/'
+    | '/dashboard/coupon/'
+    | '/dashboard/document/'
+    | '/dashboard/group/'
+    | '/dashboard/marketing/'
+    | '/dashboard/order/'
+    | '/dashboard/payment/'
+    | '/dashboard/product/'
+    | '/dashboard/redemption/'
+    | '/dashboard/subscribe/'
+    | '/dashboard/system/'
+    | '/dashboard/ticket/'
+    | '/dashboard/user/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -582,105 +582,105 @@ declare module '@tanstack/react-router' {
     '/dashboard/user/': {
       id: '/dashboard/user/'
       path: '/user'
-      fullPath: '/dashboard/user'
+      fullPath: '/dashboard/user/'
       preLoaderRoute: typeof DashboardUserIndexLazyRouteImport
       parentRoute: typeof DashboardRouteLazyRoute
     }
     '/dashboard/ticket/': {
       id: '/dashboard/ticket/'
       path: '/ticket'
-      fullPath: '/dashboard/ticket'
+      fullPath: '/dashboard/ticket/'
       preLoaderRoute: typeof DashboardTicketIndexLazyRouteImport
       parentRoute: typeof DashboardRouteLazyRoute
     }
     '/dashboard/system/': {
       id: '/dashboard/system/'
       path: '/system'
-      fullPath: '/dashboard/system'
+      fullPath: '/dashboard/system/'
       preLoaderRoute: typeof DashboardSystemIndexLazyRouteImport
       parentRoute: typeof DashboardRouteLazyRoute
     }
     '/dashboard/subscribe/': {
       id: '/dashboard/subscribe/'
       path: '/subscribe'
-      fullPath: '/dashboard/subscribe'
+      fullPath: '/dashboard/subscribe/'
       preLoaderRoute: typeof DashboardSubscribeIndexLazyRouteImport
       parentRoute: typeof DashboardRouteLazyRoute
     }
     '/dashboard/redemption/': {
       id: '/dashboard/redemption/'
       path: '/redemption'
-      fullPath: '/dashboard/redemption'
+      fullPath: '/dashboard/redemption/'
       preLoaderRoute: typeof DashboardRedemptionIndexLazyRouteImport
       parentRoute: typeof DashboardRouteLazyRoute
     }
     '/dashboard/product/': {
       id: '/dashboard/product/'
       path: '/product'
-      fullPath: '/dashboard/product'
+      fullPath: '/dashboard/product/'
       preLoaderRoute: typeof DashboardProductIndexLazyRouteImport
       parentRoute: typeof DashboardRouteLazyRoute
     }
     '/dashboard/payment/': {
       id: '/dashboard/payment/'
       path: '/payment'
-      fullPath: '/dashboard/payment'
+      fullPath: '/dashboard/payment/'
       preLoaderRoute: typeof DashboardPaymentIndexLazyRouteImport
       parentRoute: typeof DashboardRouteLazyRoute
     }
     '/dashboard/order/': {
       id: '/dashboard/order/'
       path: '/order'
-      fullPath: '/dashboard/order'
+      fullPath: '/dashboard/order/'
       preLoaderRoute: typeof DashboardOrderIndexLazyRouteImport
       parentRoute: typeof DashboardRouteLazyRoute
     }
     '/dashboard/marketing/': {
       id: '/dashboard/marketing/'
       path: '/marketing'
-      fullPath: '/dashboard/marketing'
+      fullPath: '/dashboard/marketing/'
       preLoaderRoute: typeof DashboardMarketingIndexLazyRouteImport
       parentRoute: typeof DashboardRouteLazyRoute
     }
     '/dashboard/group/': {
       id: '/dashboard/group/'
       path: '/group'
-      fullPath: '/dashboard/group'
+      fullPath: '/dashboard/group/'
       preLoaderRoute: typeof DashboardGroupIndexLazyRouteImport
       parentRoute: typeof DashboardRouteLazyRoute
     }
     '/dashboard/document/': {
       id: '/dashboard/document/'
       path: '/document'
-      fullPath: '/dashboard/document'
+      fullPath: '/dashboard/document/'
       preLoaderRoute: typeof DashboardDocumentIndexLazyRouteImport
       parentRoute: typeof DashboardRouteLazyRoute
     }
     '/dashboard/coupon/': {
       id: '/dashboard/coupon/'
       path: '/coupon'
-      fullPath: '/dashboard/coupon'
+      fullPath: '/dashboard/coupon/'
       preLoaderRoute: typeof DashboardCouponIndexLazyRouteImport
       parentRoute: typeof DashboardRouteLazyRoute
     }
     '/dashboard/auth-control/': {
       id: '/dashboard/auth-control/'
       path: '/auth-control'
-      fullPath: '/dashboard/auth-control'
+      fullPath: '/dashboard/auth-control/'
       preLoaderRoute: typeof DashboardAuthControlIndexLazyRouteImport
       parentRoute: typeof DashboardRouteLazyRoute
     }
     '/dashboard/announcement/': {
       id: '/dashboard/announcement/'
       path: '/announcement'
-      fullPath: '/dashboard/announcement'
+      fullPath: '/dashboard/announcement/'
       preLoaderRoute: typeof DashboardAnnouncementIndexLazyRouteImport
       parentRoute: typeof DashboardRouteLazyRoute
     }
     '/dashboard/ads/': {
       id: '/dashboard/ads/'
       path: '/ads'
-      fullPath: '/dashboard/ads'
+      fullPath: '/dashboard/ads/'
       preLoaderRoute: typeof DashboardAdsIndexLazyRouteImport
       parentRoute: typeof DashboardRouteLazyRoute
     }

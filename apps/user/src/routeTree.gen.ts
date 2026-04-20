@@ -217,13 +217,13 @@ const mainPurchasingOrderIndexRoute = mainPurchasingOrderIndexRouteImport
   )
 
 export interface FileRoutesByFullPath {
-  '/': typeof mainIndexLazyRoute
   '/payment': typeof mainPaymentLazyRoute
   '/privacy-policy': typeof mainPrivacyPolicyLazyRoute
   '/tos': typeof mainTosLazyRoute
   '/bind/$platform': typeof BindPlatformLazyRoute
   '/oauth/$platform': typeof OauthPlatformLazyRoute
-  '/auth': typeof AuthIndexLazyRoute
+  '/': typeof mainIndexLazyRoute
+  '/auth/': typeof AuthIndexLazyRoute
   '/affiliate': typeof mainuserAffiliateLazyRoute
   '/announcement': typeof mainuserAnnouncementLazyRoute
   '/dashboard': typeof mainuserDashboardLazyRoute
@@ -234,16 +234,16 @@ export interface FileRoutesByFullPath {
   '/ticket': typeof mainuserTicketLazyRoute
   '/traffic': typeof mainuserTrafficLazyRoute
   '/wallet': typeof mainuserWalletLazyRoute
-  '/purchasing': typeof mainPurchasingIndexLazyRoute
-  '/purchasing/order': typeof mainPurchasingOrderIndexRoute
+  '/purchasing/': typeof mainPurchasingIndexLazyRoute
+  '/purchasing/order/': typeof mainPurchasingOrderIndexRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof mainIndexLazyRoute
   '/payment': typeof mainPaymentLazyRoute
   '/privacy-policy': typeof mainPrivacyPolicyLazyRoute
   '/tos': typeof mainTosLazyRoute
   '/bind/$platform': typeof BindPlatformLazyRoute
   '/oauth/$platform': typeof OauthPlatformLazyRoute
+  '/': typeof mainIndexLazyRoute
   '/auth': typeof AuthIndexLazyRoute
   '/affiliate': typeof mainuserAffiliateLazyRoute
   '/announcement': typeof mainuserAnnouncementLazyRoute
@@ -285,13 +285,13 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | '/'
     | '/payment'
     | '/privacy-policy'
     | '/tos'
     | '/bind/$platform'
     | '/oauth/$platform'
-    | '/auth'
+    | '/'
+    | '/auth/'
     | '/affiliate'
     | '/announcement'
     | '/dashboard'
@@ -302,16 +302,16 @@ export interface FileRouteTypes {
     | '/ticket'
     | '/traffic'
     | '/wallet'
-    | '/purchasing'
-    | '/purchasing/order'
+    | '/purchasing/'
+    | '/purchasing/order/'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/'
     | '/payment'
     | '/privacy-policy'
     | '/tos'
     | '/bind/$platform'
     | '/oauth/$platform'
+    | '/'
     | '/auth'
     | '/affiliate'
     | '/announcement'
@@ -362,14 +362,14 @@ declare module '@tanstack/react-router' {
     '/(main)': {
       id: '/(main)'
       path: '/'
-      fullPath: '/'
+      fullPath: ''
       preLoaderRoute: typeof mainRouteLazyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth/': {
       id: '/auth/'
       path: '/auth'
-      fullPath: '/auth'
+      fullPath: '/auth/'
       preLoaderRoute: typeof AuthIndexLazyRouteImport
       parentRoute: typeof rootRouteImport
     }
@@ -418,14 +418,14 @@ declare module '@tanstack/react-router' {
     '/(main)/(user)': {
       id: '/(main)/(user)'
       path: '/'
-      fullPath: '/'
+      fullPath: ''
       preLoaderRoute: typeof mainuserRouteLazyRouteImport
       parentRoute: typeof mainRouteLazyRoute
     }
     '/(main)/purchasing/': {
       id: '/(main)/purchasing/'
       path: '/purchasing'
-      fullPath: '/purchasing'
+      fullPath: '/purchasing/'
       preLoaderRoute: typeof mainPurchasingIndexLazyRouteImport
       parentRoute: typeof mainRouteLazyRoute
     }
@@ -502,7 +502,7 @@ declare module '@tanstack/react-router' {
     '/(main)/purchasing/order/': {
       id: '/(main)/purchasing/order/'
       path: '/purchasing/order'
-      fullPath: '/purchasing/order'
+      fullPath: '/purchasing/order/'
       preLoaderRoute: typeof mainPurchasingOrderIndexRouteImport
       parentRoute: typeof mainRouteLazyRoute
     }

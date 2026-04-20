@@ -47,7 +47,7 @@ export function Hero() {
       </motion.div>
       <motion.div
         animate={{ opacity: 1, y: 0 }}
-        className="flex w-full"
+        className="flex w-full h-min"
         initial={{ opacity: 0, y: 50 }}
         transition={{ type: "spring", stiffness: 80, damping: 15, delay: 0.5 }}
         viewport={{ once: true, amount: 0.3 }}

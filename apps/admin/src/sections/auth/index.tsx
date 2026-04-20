@@ -21,7 +21,7 @@ export default function Auth() {
 
   return (
     <main className="flex h-full min-h-screen items-center bg-muted/50">
-      <div className="flex size-full flex-auto flex-col justify-center lg:flex-row">
+      <div className="flex size-full flex-auto flex-col lg:flex-row">
         <div className="flex lg:w-1/2 lg:flex-auto">
           <div className="flex w-full flex-col items-center justify-center px-5 py-4 md:px-14 lg:py-14">
             <Link className="mb-0 flex flex-col items-center lg:mb-12" to="/">
@@ -44,13 +44,13 @@ export default function Auth() {
             </p>
           </div>
         </div>
-        <div className="flex flex-initial justify-center px-5 py-7 md:px-8 md:py-10 lg:flex-auto lg:justify-end lg:px-10 xl:px-16">
-          <div className="flex w-full max-w-[520px] flex-col rounded-2xl md:max-w-[560px] md:px-8 md:py-10 lg:h-full lg:bg-background lg:shadow">
-            <div className="flex h-full w-full max-w-[480px] self-center flex-col items-stretch">
-              <div className="flex flex-1 flex-col justify-center pb-14 lg:pb-20">
+        <div className="flex flex-initial items-center justify-center px-5 py-7 md:px-8 md:py-10 lg:flex-auto lg:justify-end lg:px-10 xl:px-16">
+          <div className="flex h-min w-full max-w-[520px] flex-col rounded-2xl md:max-w-[560px] md:px-8 md:py-10 lg:bg-background lg:shadow">
+            <div className="flex w-full max-w-[480px] self-center flex-col items-stretch">
+              <div className="flex flex-col justify-center">
                 <EmailAuthForm />
               </div>
-              <div className="mt-auto flex items-center justify-end">
+              <div className="mt-8 flex items-center justify-end">
                 {/* <div className='text-primary flex gap-5 text-sm font-semibold'>
                   <Link href='/tos'>{t('tos')}</Link>
                 </div> */}

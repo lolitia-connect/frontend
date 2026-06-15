@@ -34,6 +34,7 @@ export default function ServiceMonitoring() {
       const res = await queryPublicServerList({});
       return res.data?.data?.list || [];
     },
+    refetchInterval: 5000,
   });
 
   const servers = data || [];

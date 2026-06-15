@@ -89,11 +89,11 @@ export default function RedemptionRecords({
                 <TableBody>
                   {records.map((record) => {
                     const unitTimeMap: Record<string, string> = {
-                      day: t("form.day", "Day"),
-                      month: t("form.month", "Month"),
-                      quarter: t("form.quarter", "Quarter"),
-                      half_year: t("form.halfYear", "Half Year"),
-                      year: t("form.year", "Year"),
+                      Day: t("form.day", "Day"),
+                      Month: t("form.month", "Month"),
+                      Quarter: t("form.quarter", "Quarter"),
+                      HalfYear: t("form.halfYear", "Half Year"),
+                      Year: t("form.year", "Year"),
                     };
                     return (
                       <TableRow key={record.id}>

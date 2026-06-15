@@ -20,11 +20,25 @@ import {
 import { Combobox } from "@workspace/ui/composed/combobox";
 import { EnhancedInput } from "@workspace/ui/composed/enhanced-input";
 import { Icon } from "@workspace/ui/composed/icon";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
 import { useSubscribe } from "@/stores/subscribe";
+
+// PascalCase to snake_case mapping for unit_time
+const unitTimeReverseMap: Record<string, string> = {
+  Day: "day",
+  Month: "month",
+  Quarter: "quarter",
+  HalfYear: "half_year",
+  Year: "year",
+};
+
+function normalizeUnitTime(value?: string): string {
+  if (!value) return value ?? "";
+  return unitTimeReverseMap[value] ?? value.toLowerCase();
+}
 
 const getFormSchema = (t: (key: string, defaultValue: string) => string) =>
   z.object({
@@ -64,16 +78,25 @@ export default function RedemptionForm<T extends Record<string, any>>({
   const formSchema = getFormSchema(t);
 
   const [open, setOpen] = useState(false);
+
+  const normalizedInitialValues = useMemo(() => {
+    if (!initialValues) return initialValues;
+    return {
+      ...initialValues,
+      unit_time: normalizeUnitTime(initialValues.unit_time),
+    };
+  }, [initialValues]);
+
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      ...initialValues,
+      ...normalizedInitialValues,
     } as any,
   });
 
   useEffect(() => {
-    form?.reset(initialValues);
-  }, [form, initialValues]);
+    form?.reset(normalizedInitialValues);
+  }, [form, normalizedInitialValues]);
 
   async function handleSubmit(data: { [x: string]: any }) {
     // When editing, merge the id from initialValues

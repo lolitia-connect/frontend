@@ -20,7 +20,7 @@ export function initializeI18n(i18nConfig?: InitOptions) {
     .init({
       // Language configuration
       fallbackLng: "en-US", // Default language when detection fails
-      supportedLngs: ["en-US", "zh-CN"], // Available locales
+      supportedLngs: ["en-US", "zh-CN", "zh-TW", "zh-HK", "ja-JP"], // Available locales
       // Note: lng is not set to allow LanguageDetector to handle detection
 
       // Interpolation configuration

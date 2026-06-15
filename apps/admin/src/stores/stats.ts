@@ -27,9 +27,9 @@ async function hashHostname(hostname: string): Promise<string> {
 export const useStatsStore = create<StatsState>((set) => ({
   loading: false,
   loaded:
-    typeof window !== "undefined"
-      ? Boolean(window.localStorage.getItem(STATS_LOADED_KEY))
-      : false,
+    typeof window === "undefined"
+      ? false
+      : Boolean(window.localStorage.getItem(STATS_LOADED_KEY)),
 
   stats: async () => {
     // if already recorded, skip

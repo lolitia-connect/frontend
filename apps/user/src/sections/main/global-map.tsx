@@ -1,5 +1,6 @@
 import { useTheme } from "@workspace/ui/integrations/theme";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import {
   ComposableMap,
   Geographies,
@@ -7,7 +8,6 @@ import {
   Line,
   Marker,
 } from "react-simple-maps";
-import { useTranslation } from "react-i18next";
 import worldAtlasUrl from "world-atlas/countries-110m.json?url";
 
 interface MapLocation {
@@ -159,9 +159,14 @@ export function GlobalMap() {
       </motion.p>
       <motion.div
         animate={{ scale: 1, opacity: 1 }}
-        className="overflow-hidden rounded-[2rem] border bg-gradient-to-b from-rose-50/70 via-background to-background p-3 shadow-sm dark:from-rose-950/10 dark:via-background dark:to-background sm:p-5"
+        className="overflow-hidden rounded-[2rem] border bg-gradient-to-b from-rose-50/70 via-background to-background p-3 shadow-sm sm:p-5 dark:from-rose-950/10 dark:via-background dark:to-background"
         initial={{ scale: 0.96, opacity: 0 }}
-        transition={{ type: "spring", stiffness: 100, damping: 15, delay: 0.25 }}
+        transition={{
+          type: "spring",
+          stiffness: 100,
+          damping: 15,
+          delay: 0.25,
+        }}
       >
         <div className="aspect-[16/9] w-full overflow-hidden rounded-[1.5rem] bg-transparent">
           <ComposableMap
@@ -172,11 +177,7 @@ export function GlobalMap() {
             width={980}
           >
             <Geographies geography={worldAtlasUrl}>
-              {({
-                geographies,
-              }: {
-                geographies: Array<{ rsmKey: string }>;
-              }) =>
+              {({ geographies }: { geographies: Array<{ rsmKey: string }> }) =>
                 geographies.map((geo: { rsmKey: string }) => (
                   <Geography
                     geography={geo}

@@ -46,7 +46,7 @@ export default function Auth() {
         </div>
         <div className="flex flex-initial items-center justify-center px-5 py-7 md:px-8 md:py-10 lg:flex-auto lg:justify-end lg:px-10 xl:px-16">
           <div className="flex h-min w-full max-w-[520px] flex-col rounded-2xl md:max-w-[560px] md:px-8 md:py-10 lg:bg-background lg:shadow">
-            <div className="flex w-full max-w-[480px] self-center flex-col items-stretch">
+            <div className="flex w-full max-w-[480px] flex-col items-stretch self-center">
               <div className="flex flex-col justify-center">
                 <EmailAuthForm />
               </div>

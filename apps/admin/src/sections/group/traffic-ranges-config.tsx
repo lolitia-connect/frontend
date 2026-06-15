@@ -88,13 +88,13 @@ export default function TrafficRangeConfig({
           id: ng.id,
           name: ng.name,
           min:
-            temp?.min_traffic_gb !== undefined
-              ? temp.min_traffic_gb
-              : (ng.min_traffic_gb ?? 0),
+            temp?.min_traffic_gb === undefined
+              ? (ng.min_traffic_gb ?? 0)
+              : temp.min_traffic_gb,
           max:
-            temp?.max_traffic_gb !== undefined
-              ? temp.max_traffic_gb
-              : (ng.max_traffic_gb ?? 0),
+            temp?.max_traffic_gb === undefined
+              ? (ng.max_traffic_gb ?? 0)
+              : temp.max_traffic_gb,
         };
       })
       .filter((ng) => !(ng.min === 0 && ng.max === 0)) // 跳过未配置流量区间的组
@@ -131,13 +131,13 @@ export default function TrafficRangeConfig({
 
     // 获取当前的临时值或实际值
     const currentMin =
-      tempValues.min_traffic_gb !== undefined
-        ? tempValues.min_traffic_gb
-        : (nodeGroup.min_traffic_gb ?? 0);
+      tempValues.min_traffic_gb === undefined
+        ? (nodeGroup.min_traffic_gb ?? 0)
+        : tempValues.min_traffic_gb;
     const currentMax =
-      tempValues.max_traffic_gb !== undefined
-        ? tempValues.max_traffic_gb
-        : (nodeGroup.max_traffic_gb ?? 0);
+      tempValues.max_traffic_gb === undefined
+        ? (nodeGroup.max_traffic_gb ?? 0)
+        : tempValues.max_traffic_gb;
 
     // 只要有一个字段被修改了就保存
     const hasMinChange = tempValues.min_traffic_gb !== undefined;
@@ -250,7 +250,7 @@ export default function TrafficRangeConfig({
                 value={getDisplayValue(nodeGroup.id, "min_traffic_gb")}
               />
               {isUpdating(nodeGroup.id) && (
-                <div className="-translate-y-1/2 absolute top-1/2 right-2">
+                <div className="absolute top-1/2 right-2 -translate-y-1/2">
                   <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
                 </div>
               )}
@@ -278,7 +278,7 @@ export default function TrafficRangeConfig({
                 value={getDisplayValue(nodeGroup.id, "max_traffic_gb")}
               />
               {isUpdating(nodeGroup.id) && (
-                <div className="-translate-y-1/2 absolute top-1/2 right-2">
+                <div className="absolute top-1/2 right-2 -translate-y-1/2">
                   <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
                 </div>
               )}

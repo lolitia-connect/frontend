@@ -35,6 +35,9 @@ const mainuserTicketLazyRouteImport = createFileRoute('/(main)/(user)/ticket')()
 const mainuserSubscribeLazyRouteImport = createFileRoute(
   '/(main)/(user)/subscribe',
 )()
+const mainuserServersLazyRouteImport = createFileRoute(
+  '/(main)/(user)/servers',
+)()
 const mainuserProfileLazyRouteImport = createFileRoute(
   '/(main)/(user)/profile',
 )()
@@ -154,6 +157,15 @@ const mainuserSubscribeLazyRoute = mainuserSubscribeLazyRouteImport
   .lazy(() =>
     import('./routes/(main)/(user)/subscribe.lazy').then((d) => d.Route),
   )
+const mainuserServersLazyRoute = mainuserServersLazyRouteImport
+  .update({
+    id: '/servers',
+    path: '/servers',
+    getParentRoute: () => mainuserRouteLazyRoute,
+  } as any)
+  .lazy(() =>
+    import('./routes/(main)/(user)/servers.lazy').then((d) => d.Route),
+  )
 const mainuserProfileLazyRoute = mainuserProfileLazyRouteImport
   .update({
     id: '/profile',
@@ -230,6 +242,7 @@ export interface FileRoutesByFullPath {
   '/document': typeof mainuserDocumentLazyRoute
   '/order': typeof mainuserOrderLazyRoute
   '/profile': typeof mainuserProfileLazyRoute
+  '/servers': typeof mainuserServersLazyRoute
   '/subscribe': typeof mainuserSubscribeLazyRoute
   '/ticket': typeof mainuserTicketLazyRoute
   '/traffic': typeof mainuserTrafficLazyRoute
@@ -251,6 +264,7 @@ export interface FileRoutesByTo {
   '/document': typeof mainuserDocumentLazyRoute
   '/order': typeof mainuserOrderLazyRoute
   '/profile': typeof mainuserProfileLazyRoute
+  '/servers': typeof mainuserServersLazyRoute
   '/subscribe': typeof mainuserSubscribeLazyRoute
   '/ticket': typeof mainuserTicketLazyRoute
   '/traffic': typeof mainuserTrafficLazyRoute
@@ -275,6 +289,7 @@ export interface FileRoutesById {
   '/(main)/(user)/document': typeof mainuserDocumentLazyRoute
   '/(main)/(user)/order': typeof mainuserOrderLazyRoute
   '/(main)/(user)/profile': typeof mainuserProfileLazyRoute
+  '/(main)/(user)/servers': typeof mainuserServersLazyRoute
   '/(main)/(user)/subscribe': typeof mainuserSubscribeLazyRoute
   '/(main)/(user)/ticket': typeof mainuserTicketLazyRoute
   '/(main)/(user)/traffic': typeof mainuserTrafficLazyRoute
@@ -298,6 +313,7 @@ export interface FileRouteTypes {
     | '/document'
     | '/order'
     | '/profile'
+    | '/servers'
     | '/subscribe'
     | '/ticket'
     | '/traffic'
@@ -319,6 +335,7 @@ export interface FileRouteTypes {
     | '/document'
     | '/order'
     | '/profile'
+    | '/servers'
     | '/subscribe'
     | '/ticket'
     | '/traffic'
@@ -342,6 +359,7 @@ export interface FileRouteTypes {
     | '/(main)/(user)/document'
     | '/(main)/(user)/order'
     | '/(main)/(user)/profile'
+    | '/(main)/(user)/servers'
     | '/(main)/(user)/subscribe'
     | '/(main)/(user)/ticket'
     | '/(main)/(user)/traffic'
@@ -457,6 +475,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof mainuserSubscribeLazyRouteImport
       parentRoute: typeof mainuserRouteLazyRoute
     }
+    '/(main)/(user)/servers': {
+      id: '/(main)/(user)/servers'
+      path: '/servers'
+      fullPath: '/servers'
+      preLoaderRoute: typeof mainuserServersLazyRouteImport
+      parentRoute: typeof mainuserRouteLazyRoute
+    }
     '/(main)/(user)/profile': {
       id: '/(main)/(user)/profile'
       path: '/profile'
@@ -516,6 +541,7 @@ interface mainuserRouteLazyRouteChildren {
   mainuserDocumentLazyRoute: typeof mainuserDocumentLazyRoute
   mainuserOrderLazyRoute: typeof mainuserOrderLazyRoute
   mainuserProfileLazyRoute: typeof mainuserProfileLazyRoute
+  mainuserServersLazyRoute: typeof mainuserServersLazyRoute
   mainuserSubscribeLazyRoute: typeof mainuserSubscribeLazyRoute
   mainuserTicketLazyRoute: typeof mainuserTicketLazyRoute
   mainuserTrafficLazyRoute: typeof mainuserTrafficLazyRoute
@@ -529,6 +555,7 @@ const mainuserRouteLazyRouteChildren: mainuserRouteLazyRouteChildren = {
   mainuserDocumentLazyRoute: mainuserDocumentLazyRoute,
   mainuserOrderLazyRoute: mainuserOrderLazyRoute,
   mainuserProfileLazyRoute: mainuserProfileLazyRoute,
+  mainuserServersLazyRoute: mainuserServersLazyRoute,
   mainuserSubscribeLazyRoute: mainuserSubscribeLazyRoute,
   mainuserTicketLazyRoute: mainuserTicketLazyRoute,
   mainuserTrafficLazyRoute: mainuserTrafficLazyRoute,

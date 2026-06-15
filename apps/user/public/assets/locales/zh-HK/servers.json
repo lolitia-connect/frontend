@@ -1,0 +1,15 @@
+{
+  "serviceMonitoring": "服務監控",
+  "title": "服務監控",
+  "online": "在線",
+  "offline": "離線",
+  "noData": "暫無可用伺服器",
+  "pageTitle": "服務監控",
+  "name": "名稱",
+  "status": "狀態",
+  "location": "位置",
+  "memory": "記憶體",
+  "onlineUsers": "在線",
+  "ratio": "倍率",
+  "protocols": "協議"
+}

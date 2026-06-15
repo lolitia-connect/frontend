@@ -1,0 +1,15 @@
+{
+  "serviceMonitoring": "Service Monitoring",
+  "title": "Service Monitoring",
+  "online": "Online",
+  "offline": "Offline",
+  "noData": "No servers available",
+  "pageTitle": "Service Monitoring",
+  "name": "Name",
+  "status": "Status",
+  "location": "Location",
+  "memory": "Memory",
+  "onlineUsers": "Online",
+  "ratio": "Ratio",
+  "protocols": "Protocols"
+}

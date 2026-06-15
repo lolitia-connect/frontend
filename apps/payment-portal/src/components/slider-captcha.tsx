@@ -266,7 +266,7 @@ export function SliderCaptcha({
                       }}
                     />
                   ) : null}
-                  {status !== "idle" ? (
+                  {status === "idle" ? null : (
                     <div
                       className={`absolute inset-0 flex items-center justify-center font-medium text-sm ${
                         status === "success"
@@ -278,7 +278,7 @@ export function SliderCaptcha({
                         ? t("captcha.slider.verified", "验证已通过")
                         : t("captcha.slider.retry", "请重试")}
                     </div>
-                  ) : null}
+                  )}
                 </>
               ) : null}
             </div>

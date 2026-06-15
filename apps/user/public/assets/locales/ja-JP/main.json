@@ -1,0 +1,21 @@
+{
+  "Day": "日",
+  "global_map_description": "シームレスなグローバル接続をお届けします。お客様のニーズに合ったネットワークサービスを選び、いつでもどこでも接続を維持できます。",
+  "global_map_itle": "グローバル接続、簡単で安心",
+  "Hour": "時間",
+  "locations": "ノード配置",
+  "locations_description": "複数の地域に対応",
+  "Minute": "分",
+  "Month": "月",
+  "NoLimit": "無制限",
+  "product_showcase_description": "お客様に最適なプランをご提案します。さあ、楽しみましょう。",
+  "product_showcase_title": "プランを選ぶ",
+  "servers": "サーバー",
+  "servers_description": "世界中の高性能サーバー",
+  "started": "はじめる",
+  "subscribe": "購読する",
+  "users": "ユーザー",
+  "users_description": "世界中のユーザーから信頼されています",
+  "welcome": "ようこそ",
+  "Year": "年"
+}

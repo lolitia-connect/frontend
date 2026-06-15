@@ -1,0 +1,26 @@
+{
+  "cancel": "キャンセル",
+  "check": "確認",
+  "close": "閉じる",
+  "closeSuccess": "クローズしました",
+  "closeWarning": "このチケットをクローズしてもよろしいですか？",
+  "confirm": "確認",
+  "confirmClose": "クローズを確認",
+  "createSuccess": "作成しました",
+  "createTicket": "チケットを作成",
+  "createTicketDescription": "お問い合わせ内容をご記入ください",
+  "description": "説明",
+  "inputPlaceholder": "内容を入力してください",
+  "reply": "返信",
+  "status": {
+    "0": "ステータス",
+    "1": "返信待ち",
+    "2": "対応待ち",
+    "3": "解決済み",
+    "4": "クローズ済み"
+  },
+  "submit": "送信",
+  "ticketList": "チケット一覧",
+  "title": "件名",
+  "updatedAt": "更新日時"
+}

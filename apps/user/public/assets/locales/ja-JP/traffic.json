@@ -1,0 +1,16 @@
+{
+  "title": "トラフィック統計",
+  "selectSubscription": "サブスクリプションを選択",
+  "days7": "7日間",
+  "days30": "30日間",
+  "totalTraffic": "総トラフィック",
+  "uploadTraffic": "アップロードトラフィック",
+  "downloadTraffic": "ダウンロードトラフィック",
+  "trafficTrend": "トラフィック推移",
+  "trafficRatio": "アップロード/ダウンロード比率",
+  "upload": "アップロード",
+  "download": "ダウンロード",
+  "noData": "トラフィックデータがありません",
+  "date": "日付",
+  "traffic": "トラフィック (MB)"
+}

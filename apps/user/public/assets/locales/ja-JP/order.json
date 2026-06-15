@@ -1,0 +1,40 @@
+{
+  "balanceRecharge": "残高チャージ",
+  "cancel": "キャンセル",
+  "createdAt": "作成日時",
+  "detail": "詳細",
+  "goToPayment": "支払いへ進む",
+  "name": "商品名",
+  "orderClosed": "注文はクローズされました",
+  "orderList": "注文一覧",
+  "orderNo": "注文番号",
+  "orderNumber": "注文番号",
+  "payment": "支払い",
+  "paymentAmount": "支払い金額",
+  "paymentMethod": "支払い方法",
+  "paymentSuccess": "支払い成功",
+  "productList": "商品一覧",
+  "rechargeAmount": "チャージ金額",
+  "resetPrice": "リセット料金",
+  "resetTraffic": "トラフィックリセット",
+  "scanToPay": "スキャンして支払い",
+  "status": {
+    "0": "ステータス",
+    "1": "未払い",
+    "2": "支払い済み",
+    "3": "キャンセル済み",
+    "4": "クローズ済み",
+    "5": "完了"
+  },
+  "subscribeNow": "今すぐ購読",
+  "timeExpired": "期限切れ",
+  "type": {
+    "0": "タイプ",
+    "1": "新規購入",
+    "2": "更新",
+    "3": "トラフィックリセット",
+    "4": "チャージ"
+  },
+  "viewDocument": "ドキュメントを見る",
+  "waitingForPayment": "支払い待ち"
+}

@@ -52,7 +52,6 @@
       "nursery": {
         "noShadow": "off",
         "noSyncScripts": "off",
-        "useMaxParams": "off",
         "noIncrementDecrement": "off"
       },
       "complexity": {

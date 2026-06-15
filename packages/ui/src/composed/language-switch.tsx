@@ -9,7 +9,7 @@ import { useLanguage } from "@workspace/ui/integrations/language";
 import { Check, Languages } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
-const languages = [
+const allLanguages = [
   {
     code: "en-US",
     name: "English",
@@ -17,14 +17,33 @@ const languages = [
   },
   {
     code: "zh-CN",
-    name: "中文",
+    name: "简体中文",
     flag: "🇨🇳",
+  },
+  {
+    code: "zh-TW",
+    name: "繁體中文（台灣）",
+    flag: "🇹🇼",
+  },
+  {
+    code: "zh-HK",
+    name: "繁體中文（香港）",
+    flag: "🇭🇰",
+  },
+  {
+    code: "ja-JP",
+    name: "日本語",
+    flag: "🇯🇵",
   },
 ];
 
 export function LanguageSwitch() {
-  const { language, changeLanguage } = useLanguage();
+  const { language, changeLanguage, supportedLanguages } = useLanguage();
   const { t } = useTranslation("components");
+
+  const languages = allLanguages.filter((lang) =>
+    supportedLanguages.includes(lang.code)
+  );
 
   const currentLanguage = languages.find((lang) => lang.code === language);
 
@@ -41,7 +60,7 @@ export function LanguageSwitch() {
           <DropdownMenuItem
             className="flex items-center justify-between"
             key={language.code}
-            onClick={() => changeLanguage(language.code as "en-US" | "zh-CN")}
+            onClick={() => changeLanguage(language.code)}
           >
             <div className="flex items-center gap-2">
               <span>{language.flag}</span>

@@ -1,0 +1,31 @@
+{
+  "accountSettings": {
+    "accountSettings": "アカウント設定",
+    "newPassword": "新しいパスワード",
+    "passwordMismatch": "パスワードが一致しません",
+    "repeatNewPassword": "新しいパスワードを再入力",
+    "updatePassword": "パスワードを更新",
+    "updateSuccess": "パスワードの更新が完了しました"
+  },
+  "notify": {
+    "balanceChange": "残高変動通知",
+    "finance": "財務通知",
+    "login": "ログイン通知",
+    "notificationSettings": "通知設定",
+    "save": "保存",
+    "subscribe": "サブスクリプション通知",
+    "updateSuccess": "通知設定の更新が完了しました"
+  },
+  "thirdParty": {
+    "bind": "連携",
+    "bindFailed": "連携に失敗しました",
+    "bindMobile": "携帯電話を連携",
+    "bindSuccess": "連携が完了しました",
+    "confirm": "確認",
+    "save": "保存",
+    "title": "サードパーティアカウント",
+    "unbind": "連携解除",
+    "update": "更新",
+    "updateSuccess": "更新が完了しました"
+  }
+}

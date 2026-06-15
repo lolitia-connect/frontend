@@ -192,7 +192,15 @@ export default function Ticket() {
                 </span>
               </CardTitle>
               <CardDescription className="flex gap-2">
-                {item.status !== 4 ? (
+                {item.status === 4 ? (
+                  <Button
+                    key="check"
+                    onClick={() => setTicketId(item.id)}
+                    size="sm"
+                  >
+                    {t("check", "Check")}
+                  </Button>
+                ) : (
                   <>
                     <Button
                       key="reply"
@@ -225,14 +233,6 @@ export default function Ticket() {
                       }
                     />
                   </>
-                ) : (
-                  <Button
-                    key="check"
-                    onClick={() => setTicketId(item.id)}
-                    size="sm"
-                  >
-                    {t("check", "Check")}
-                  </Button>
                 )}
               </CardDescription>
             </CardHeader>

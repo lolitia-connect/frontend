@@ -1,0 +1,15 @@
+{
+  "serviceMonitoring": "サービス監視",
+  "title": "サービス監視",
+  "online": "オンライン",
+  "offline": "オフライン",
+  "noData": "利用可能なサーバーがありません",
+  "pageTitle": "サービス監視",
+  "name": "名称",
+  "status": "状態",
+  "location": "場所",
+  "memory": "メモリ",
+  "onlineUsers": "オンライン",
+  "ratio": "倍率",
+  "protocols": "プロトコル"
+}

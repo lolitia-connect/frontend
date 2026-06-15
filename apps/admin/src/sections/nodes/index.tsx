@@ -348,7 +348,7 @@ export default function Nodes() {
 
         const updatedItems = items.map((item, index) => {
           const originalSort = originalSorts[index];
-          const newSort = originalSort !== undefined ? originalSort : item.sort;
+          const newSort = originalSort === undefined ? item.sort : originalSort;
           return { ...item, sort: newSort };
         });
 

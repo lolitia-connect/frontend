@@ -41,6 +41,11 @@ export function useNavs() {
           title: t("menu.subscribe", "Subscribe"),
         },
         {
+          url: "/servers",
+          icon: "uil:servers",
+          title: t("menu.serviceMonitoring", "Service Monitoring"),
+        },
+        {
           url: "/traffic",
           icon: "uil:chart-line",
           title: t("menu.traffic", "Traffic Statistics"),

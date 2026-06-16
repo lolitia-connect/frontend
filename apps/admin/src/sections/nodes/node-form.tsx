@@ -103,6 +103,11 @@ const buildSchema = (t: TFunction) =>
 
 export type NodeFormValues = z.infer<ReturnType<typeof buildSchema>>;
 
+function normalizeValues(v?: Partial<NodeFormValues>): Partial<NodeFormValues> {
+  if (!v) return {};
+  return { ...v, tags: Array.isArray(v.tags) ? v.tags : [] };
+}
+
 export default function NodeForm(props: {
   trigger: string;
   title: string;
@@ -346,7 +351,15 @@ export default function NodeForm(props: {
       <SheetTrigger asChild>
         <Button
           onClick={() => {
-            form.reset();
+            form.reset({
+              name: "",
+              server_id: undefined,
+              protocol: "",
+              address: "",
+              port: 0,
+              tags: [],
+              ...normalizeValues(initialValues),
+            });
             setAutoFilledFields(new Set());
           }}
         >

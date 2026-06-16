@@ -1121,6 +1121,20 @@ declare namespace API {
     protocols: Protocol[];
   };
 
+  type GetServerNodeConfigParams = {
+    server_id: number;
+  };
+
+  type GetServerNodeConfigRequest = {
+    server_id: number;
+  };
+
+  type GetServerNodeConfigResponse = {
+    global: ServerNodeConfigValues;
+    override: ServerNodeConfigOverride;
+    effective: ServerNodeConfigValues;
+  };
+
   type GetSubscribeApplicationListParams = {
     page: number;
     size: number;
@@ -1480,8 +1494,49 @@ declare namespace API {
     protocol: string;
     address: string;
     port: number;
+    user?: string;
     password: string;
+    uuid?: string;
+    cipher?: string;
+    security?: string;
+    sni?: string;
+    allow_insecure?: boolean;
+    fingerprint?: string;
+    transport?: string;
+    host?: string;
+    path?: string;
+    service_name?: string;
+    flow?: string;
+    uot?: boolean;
+    uot_version?: number;
+    congestion_controller?: string;
+    udp_stream?: boolean;
+    reduce_rtt?: boolean;
+    heartbeat?: number;
+    reality_public_key?: string;
+    reality_short_id?: string;
+    spider_x?: string;
+    settings?: string;
+    stream_settings?: string;
     rules: string[];
+  };
+
+  type ServerNodeConfigValues = {
+    ip_strategy: string;
+    dns: NodeDNS[];
+    block: string[];
+    outbound: NodeOutbound[];
+  };
+
+  type ServerNodeConfigOverride = {
+    inherit_ip_strategy: boolean;
+    ip_strategy: string;
+    inherit_dns: boolean;
+    dns: NodeDNS[];
+    inherit_block: boolean;
+    block: string[];
+    inherit_outbound: boolean;
+    outbound: NodeOutbound[];
   };
 
   type NodeRelay = {
@@ -2158,6 +2213,7 @@ declare namespace API {
     pan_domain: boolean;
     user_agent_limit: boolean;
     user_agent_list: string;
+    show_tutorial?: boolean;
   };
 
   type SubscribeDiscount = {
@@ -2414,6 +2470,18 @@ declare namespace API {
     address: string;
     sort?: number;
     protocols: Protocol[];
+  };
+
+  type UpdateServerNodeConfigRequest = {
+    server_id: number;
+    inherit_ip_strategy: boolean;
+    ip_strategy: string;
+    inherit_dns: boolean;
+    dns: NodeDNS[];
+    inherit_block: boolean;
+    block: string[];
+    inherit_outbound: boolean;
+    outbound: NodeOutbound[];
   };
 
   type UpdateSubscribeApplicationRequest = {

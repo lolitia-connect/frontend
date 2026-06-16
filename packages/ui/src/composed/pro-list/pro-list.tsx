@@ -23,7 +23,7 @@ import { Pagination } from "@workspace/ui/composed/pro-list/pagination";
 import { cn } from "@workspace/ui/lib/utils";
 import { ListRestart, Loader, RefreshCcw } from "lucide-react";
 import type React from "react";
-import { useEffect, useImperativeHandle, useState } from "react";
+import { useEffect, useImperativeHandle, useRef, useState } from "react";
 
 export interface ProListProps<TData, TValue> {
   request: (
@@ -74,6 +74,7 @@ export function ProList<TData, TValue extends Record<string, unknown>>({
     pageSize: 10,
   });
   const [loading, setLoading] = useState(false);
+  const loadingRef = useRef(false);
 
   const table = useReactTable({
     data,
@@ -95,6 +96,8 @@ export function ProList<TData, TValue extends Record<string, unknown>>({
   });
 
   const fetchData = async () => {
+    if (loadingRef.current) return;
+    loadingRef.current = true;
     setLoading(true);
     try {
       const response = await request(
@@ -111,6 +114,7 @@ export function ProList<TData, TValue extends Record<string, unknown>>({
     } catch (error) {
       console.log("Fetch data error:", error);
     } finally {
+      loadingRef.current = false;
       setLoading(false);
     }
   };

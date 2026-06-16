@@ -17,6 +17,7 @@ import {
 } from "@workspace/ui/components/form";
 import { Input } from "@workspace/ui/components/input";
 import { updateUserPassword } from "@workspace/ui/services/user/user";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
@@ -24,6 +25,7 @@ import { z } from "zod";
 
 export default function ChangePassword() {
   const { t } = useTranslation("profile");
+  const [loading, setLoading] = useState(false);
   const FormSchema = z
     .object({
       password: z.string().min(6),
@@ -39,9 +41,15 @@ export default function ChangePassword() {
   });
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
-    await updateUserPassword({ password: data.password });
-    toast.success(t("accountSettings.updateSuccess", "Update Successful"));
-    form.reset();
+    if (loading) return;
+    setLoading(true);
+    try {
+      await updateUserPassword({ password: data.password });
+      toast.success(t("accountSettings.updateSuccess", "Update Successful"));
+      form.reset();
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -49,7 +57,12 @@ export default function ChangePassword() {
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
           {t("accountSettings.accountSettings", "Password Settings")}
-          <Button form="password-form" size="sm" type="submit">
+          <Button
+            disabled={loading}
+            form="password-form"
+            size="sm"
+            type="submit"
+          >
             {t("accountSettings.updatePassword", "Update Password")}
           </Button>
         </CardTitle>

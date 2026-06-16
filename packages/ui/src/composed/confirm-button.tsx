@@ -12,7 +12,7 @@ import {
   AlertDialogTrigger,
 } from "@workspace/ui/components/alert-dialog";
 import type React from "react";
-import type { ReactNode } from "react";
+import { type ReactNode, useState } from "react";
 
 interface ConfirmationButtonProps {
   trigger: ReactNode;
@@ -30,18 +30,36 @@ export const ConfirmButton: React.FC<ConfirmationButtonProps> = ({
   onConfirm,
   cancelText = "Cancel",
   confirmText = "Confirm",
-}) => (
-  <AlertDialog>
-    <AlertDialogTrigger asChild>{trigger}</AlertDialogTrigger>
-    <AlertDialogContent>
-      <AlertDialogHeader>
-        <AlertDialogTitle>{title}</AlertDialogTitle>
-        <AlertDialogDescription>{description}</AlertDialogDescription>
-      </AlertDialogHeader>
-      <AlertDialogFooter>
-        <AlertDialogCancel>{cancelText}</AlertDialogCancel>
-        <AlertDialogAction onClick={onConfirm}>{confirmText}</AlertDialogAction>
-      </AlertDialogFooter>
-    </AlertDialogContent>
-  </AlertDialog>
-);
+}) => {
+  const [loading, setLoading] = useState(false);
+
+  return (
+    <AlertDialog>
+      <AlertDialogTrigger asChild>{trigger}</AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>{title}</AlertDialogTitle>
+          <AlertDialogDescription>{description}</AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel disabled={loading}>{cancelText}</AlertDialogCancel>
+          <AlertDialogAction
+            disabled={loading}
+            onClick={async (e) => {
+              e.preventDefault();
+              if (loading) return;
+              setLoading(true);
+              try {
+                await onConfirm();
+              } finally {
+                setLoading(false);
+              }
+            }}
+          >
+            {confirmText}
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+};

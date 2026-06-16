@@ -38,7 +38,7 @@ export default function Content({
   const [params, setParams] = useState<API.PortalPurchaseRequest>({
     quantity: 1,
     subscribe_id: "",
-    payment: "",
+    payment: 0,
     coupon: "",
     auth_type: "email",
     identifier: "",
@@ -307,7 +307,7 @@ export default function Content({
               />
               <PaymentMethods
                 balance={false}
-                onChange={(value: string) => handleChange("payment", value)}
+                onChange={(value: number) => handleChange("payment", value)}
                 value={params.payment!}
               />
             </div>

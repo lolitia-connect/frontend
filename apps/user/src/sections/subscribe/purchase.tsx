@@ -37,7 +37,7 @@ export default function Purchase({
   const [params, setParams] = useState<Partial<API.PurchaseOrderRequest>>({
     quantity: 1,
     subscribe_id: "",
-    payment: "",
+    payment: 0,
     coupon: "",
   });
   const [loading, startTransition] = useTransition();
@@ -161,7 +161,7 @@ export default function Purchase({
                 onChange={(value) => {
                   handleChange("payment", value);
                 }}
-                value={params.payment ?? ""}
+                value={params.payment ?? 0}
               />
             </div>
             <Button

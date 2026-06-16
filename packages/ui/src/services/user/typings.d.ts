@@ -414,7 +414,30 @@ declare namespace API {
     protocol: string;
     address: string;
     port: number;
+    user?: string;
     password: string;
+    uuid?: string;
+    cipher?: string;
+    security?: string;
+    sni?: string;
+    allow_insecure?: boolean;
+    fingerprint?: string;
+    transport?: string;
+    host?: string;
+    path?: string;
+    service_name?: string;
+    flow?: string;
+    uot?: boolean;
+    uot_version?: number;
+    congestion_controller?: string;
+    udp_stream?: boolean;
+    reduce_rtt?: boolean;
+    heartbeat?: number;
+    reality_public_key?: string;
+    reality_short_id?: string;
+    spider_x?: string;
+    settings?: string;
+    stream_settings?: string;
     rules: string[];
   };
 
@@ -485,7 +508,7 @@ declare namespace API {
   };
 
   type PaymentMethod = {
-    id: string;
+    id: number;
     name: string;
     platform: string;
     description: string;
@@ -524,7 +547,7 @@ declare namespace API {
     auth_type: string;
     identifier: string;
     password?: string;
-    payment: string;
+    payment: number;
     subscribe_id: string;
     quantity: number;
     coupon?: string;
@@ -547,7 +570,7 @@ declare namespace API {
   };
 
   type PrePurchaseOrderRequest = {
-    payment?: string;
+    payment?: number;
     subscribe_id: string;
     quantity: number;
     coupon?: string;
@@ -663,7 +686,7 @@ declare namespace API {
   type PurchaseOrderRequest = {
     subscribe_id: string;
     quantity: number;
-    payment?: string;
+    payment?: number;
     coupon?: string;
   };
 
@@ -674,8 +697,8 @@ declare namespace API {
   type QueryAnnouncementParams = {
     page: number;
     size: number;
-    pinned: boolean;
-    popup: boolean;
+    pinned?: boolean;
+    popup?: boolean;
   };
 
   type QueryAnnouncementRequest = {
@@ -838,7 +861,7 @@ declare namespace API {
 
   type RechargeOrderRequest = {
     amount: number;
-    payment: string;
+    payment: number;
   };
 
   type RechargeOrderResponse = {
@@ -859,7 +882,7 @@ declare namespace API {
   type RenewalOrderRequest = {
     user_subscribe_id: string;
     quantity: number;
-    payment: string;
+    payment: number;
     coupon?: string;
   };
 
@@ -877,7 +900,7 @@ declare namespace API {
 
   type ResetTrafficOrderRequest = {
     user_subscribe_id: string;
-    payment: string;
+    payment: number;
   };
 
   type ResetTrafficOrderResponse = {
@@ -997,6 +1020,7 @@ declare namespace API {
     pan_domain: boolean;
     user_agent_limit: boolean;
     user_agent_list: string;
+    show_tutorial?: boolean;
   };
 
   type SubscribeDiscount = {

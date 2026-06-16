@@ -37,7 +37,7 @@ export default function Renewal({ id, subscribe }: Readonly<RenewalProps>) {
     Partial<API.RenewalOrderRequest> & { subscribe_id?: string }
   >({
     quantity: 1,
-    payment: "",
+    payment: 0,
     coupon: "",
     user_subscribe_id: id,
   });
@@ -117,7 +117,7 @@ export default function Renewal({ id, subscribe }: Readonly<RenewalProps>) {
       <DialogTrigger asChild>
         <Button size="sm">{t("renew", "Renew")}</Button>
       </DialogTrigger>
-      <DialogContent className="flex h-full flex-col overflow-hidden md:h-auto md:max-w-screen-lg">
+      <DialogContent className="flex h-full flex-col overflow-y-auto md:h-auto md:max-w-screen-lg">
         <DialogHeader>
           <DialogTitle>
             {t("renewSubscription", "Renew Subscription")}
@@ -162,11 +162,11 @@ export default function Renewal({ id, subscribe }: Readonly<RenewalProps>) {
                 onChange={(value) => {
                   handleChange("payment", value);
                 }}
-                value={params.payment ?? ""}
+                value={params.payment ?? 0}
               />
             </div>
             <Button
-              className="fixed bottom-0 left-0 w-full md:relative md:mt-6"
+              className="sticky bottom-0 left-0 w-full md:relative md:mt-6"
               disabled={loading}
               onClick={handleSubmit}
             >

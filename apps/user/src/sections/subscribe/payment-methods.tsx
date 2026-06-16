@@ -13,8 +13,9 @@ import { memo, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
 interface PaymentMethodsProps {
-  value: string;
-  onChange: (value: string) => void;
+  value: number;
+  onChange: (value: number) => void;
+  onAvailableMethodsChange?: (count: number) => void;
   balance?: boolean;
 }
 
@@ -22,6 +23,7 @@ const PaymentMethods: React.FC<PaymentMethodsProps> = ({
   value,
   onChange,
   balance = true,
+  onAvailableMethodsChange,
 }) => {
   const { t } = useTranslation("subscribe");
 
@@ -30,7 +32,7 @@ const PaymentMethods: React.FC<PaymentMethodsProps> = ({
     queryFn: async () => {
       const { data } = await getAvailablePaymentMethods();
       const list = data.data?.list || [];
-      return balance ? list : list.filter((item) => item.id !== "-1");
+      return balance ? list : list.filter((item) => item.id !== -1);
     },
   });
 
@@ -39,12 +41,17 @@ const PaymentMethods: React.FC<PaymentMethodsProps> = ({
   // Prefer non-balance methods when possible.
   useEffect(() => {
     if (!data || data.length === 0) return;
-    const valid = data.some((m) => String(m.id) === String(value));
+    const valid = data.some((m) => m.id === value);
     if (valid) return;
 
-    const preferred = data.find((m) => m.id !== "-1")?.id ?? data[0]!.id;
+    const preferred = data.find((m) => m.id !== -1)?.id ?? data[0]!.id;
     onChange(preferred);
   }, [data, onChange, value]);
+
+  useEffect(() => {
+    onAvailableMethodsChange?.(data?.length ?? 0);
+  }, [data, onAvailableMethodsChange]);
+
   return (
     <>
       <div className="font-semibold">
@@ -52,7 +59,7 @@ const PaymentMethods: React.FC<PaymentMethodsProps> = ({
       </div>
       <RadioGroup
         className="grid grid-cols-2 gap-2 md:grid-cols-5"
-        onValueChange={onChange}
+        onValueChange={(v) => onChange(Number(v))}
         value={String(value)}
       >
         {data?.map((item) => (
@@ -64,8 +71,10 @@ const PaymentMethods: React.FC<PaymentMethodsProps> = ({
             />
             <Label
               className={cn(
-                "flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover py-2 hover:bg-accent hover:text-accent-foreground",
-                String(value) === String(item.id) ? "border-primary" : ""
+                "flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover py-2 text-popover-foreground hover:bg-accent hover:text-accent-foreground",
+                String(value) === String(item.id)
+                  ? "border-primary bg-primary/10 text-foreground"
+                  : ""
               )}
               htmlFor={String(item.id)}
             >

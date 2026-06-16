@@ -5,9 +5,11 @@ import { create } from "zustand";
 export interface GlobalStore {
   common: API.GetGlobalConfigResponse;
   user?: API.User;
+  isLoadingUser: boolean;
   setCommon: (common: Partial<API.GetGlobalConfigResponse>) => void;
   setUser: (user?: API.User) => void;
   getUserInfo: () => Promise<void>;
+  clearUserLoading: () => void;
   getUserSubscribe: (short: string, token: string, type?: string) => string[];
   getAppSubLink: (url: string, schema?: string) => string;
 }
@@ -109,6 +111,7 @@ export const useGlobalStore = create<GlobalStore>((set, get) => ({
     web_ad: false,
   },
   user: undefined,
+  isLoadingUser: true,
   setCommon: (common) =>
     set((state) => ({
       common: {
@@ -118,12 +121,18 @@ export const useGlobalStore = create<GlobalStore>((set, get) => ({
     })),
   setUser: (user) => set({ user }),
   getUserInfo: async () => {
+    set({ isLoadingUser: true });
     try {
       const { data } = await queryUserInfo();
       set({ user: data.data });
     } catch (error) {
       console.error("Failed to refresh user:", error);
+    } finally {
+      set({ isLoadingUser: false });
     }
+  },
+  clearUserLoading: () => {
+    set({ isLoadingUser: false });
   },
   getUserSubscribe: (short: string, token: string, type?: string) => {
     const { pan_domain, subscribe_domain, subscribe_path } =

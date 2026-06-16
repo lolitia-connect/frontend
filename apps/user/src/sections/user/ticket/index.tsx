@@ -88,6 +88,8 @@ export default function Ticket() {
   const ref = useRef<ProListActions>(null);
   const [create, setCreate] =
     useState<Partial<API.CreateUserTicketRequest & { open: boolean }>>();
+  const [createLoading, setCreateLoading] = useState(false);
+  const [followLoading, setFollowLoading] = useState(false);
 
   return (
     <>
@@ -135,15 +137,23 @@ export default function Ticket() {
                 </div>
                 <DialogFooter>
                   <Button
-                    disabled={!(create?.title && create?.description)}
+                    disabled={
+                      !(create?.title && create?.description) || createLoading
+                    }
                     onClick={async () => {
-                      await createUserTicket({
-                        title: create!.title!,
-                        description: create!.description!,
-                      });
-                      ref.current?.refresh();
-                      toast.success(t("createSuccess", "Create Success"));
-                      setCreate({ open: false });
+                      if (createLoading) return;
+                      setCreateLoading(true);
+                      try {
+                        await createUserTicket({
+                          title: create!.title!,
+                          description: create!.description!,
+                        });
+                        ref.current?.refresh();
+                        toast.success(t("createSuccess", "Create Success"));
+                        setCreate({ open: false });
+                      } finally {
+                        setCreateLoading(false);
+                      }
                     }}
                   >
                     {t("submit", "Submit")}
@@ -333,15 +343,20 @@ export default function Ticket() {
                 className="flex w-full flex-row items-center gap-2"
                 onSubmit={async (event) => {
                   event.preventDefault();
-                  if (message) {
-                    await createUserTicketFollow({
-                      ticket_id: ticketId,
-                      from: "User",
-                      type: 1,
-                      content: message,
-                    });
-                    refetchTicket();
-                    setMessage("");
+                  if (message && !followLoading) {
+                    setFollowLoading(true);
+                    try {
+                      await createUserTicketFollow({
+                        ticket_id: ticketId,
+                        from: "User",
+                        type: 1,
+                        content: message,
+                      });
+                      refetchTicket();
+                      setMessage("");
+                    } finally {
+                      setFollowLoading(false);
+                    }
                   }
                 }}
               >
@@ -415,7 +430,7 @@ export default function Ticket() {
                   placeholder={t("inputPlaceholder", "Input Placeholder")}
                   value={message}
                 />
-                <Button disabled={!message} type="submit">
+                <Button disabled={!message || followLoading} type="submit">
                   <Icon icon="uil:navigator" />
                 </Button>
               </form>

@@ -15,12 +15,13 @@ import {
 } from "@workspace/ui/composed/pro-list/pro-list";
 import { closeOrder, queryOrderList } from "@workspace/ui/services/user/order";
 import { formatDate } from "@workspace/ui/utils/formatting";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Display } from "@/components/display";
 
 export default function Order() {
   const { t } = useTranslation("order");
+  const [cancelLoading, setCancelLoading] = useState(false);
   const statusMap: Record<number, string> = {
     0: t("status.0", "Status"),
     1: t("status.1", "Pending"),
@@ -60,10 +61,17 @@ export default function Order() {
                     {t("payment", "Payment")}
                   </Link>
                   <Button
+                    disabled={cancelLoading}
                     key="cancel"
                     onClick={async () => {
-                      await closeOrder({ orderNo: item.order_no });
-                      ref.current?.refresh();
+                      if (cancelLoading) return;
+                      setCancelLoading(true);
+                      try {
+                        await closeOrder({ orderNo: item.order_no });
+                        ref.current?.refresh();
+                      } finally {
+                        setCancelLoading(false);
+                      }
                     }}
                     size="sm"
                     variant="destructive"

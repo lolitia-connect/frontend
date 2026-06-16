@@ -42,6 +42,7 @@ export default function Page() {
   const [ticketId, setTicketId] = useState<any>(null);
 
   const [message, setMessage] = useState("");
+  const [followLoading, setFollowLoading] = useState(false);
 
   const { data: ticket, refetch: refetchTicket } = useQuery({
     queryKey: ["getTicket", ticketId],
@@ -249,15 +250,20 @@ export default function Page() {
                 className="flex w-full flex-row items-center gap-2"
                 onSubmit={async (event) => {
                   event.preventDefault();
-                  if (message) {
-                    await createTicketFollow({
-                      ticket_id: ticketId,
-                      from: "System",
-                      type: 1,
-                      content: message,
-                    });
-                    refetchTicket();
-                    setMessage("");
+                  if (message && !followLoading) {
+                    setFollowLoading(true);
+                    try {
+                      await createTicketFollow({
+                        ticket_id: ticketId,
+                        from: "System",
+                        type: 1,
+                        content: message,
+                      });
+                      refetchTicket();
+                      setMessage("");
+                    } finally {
+                      setFollowLoading(false);
+                    }
                   }
                 }}
               >
@@ -334,7 +340,7 @@ export default function Page() {
                   )}
                   value={message}
                 />
-                <Button disabled={!message} type="submit">
+                <Button disabled={!message || followLoading} type="submit">
                   <Icon icon="uil:navigator" />
                 </Button>
               </form>

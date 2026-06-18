@@ -19,7 +19,7 @@
         const search = window.location.search || "";
         const target = `/#${path}${search}`;
         window.location.replace(target);
-      } catch (_e) {
+      } catch {
         window.location.replace("/#/auth");
       }
     })();

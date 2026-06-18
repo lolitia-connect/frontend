@@ -19,7 +19,7 @@ async function hashHostname(hostname: string): Promise<string> {
     const hashBuffer = await crypto.subtle.digest("SHA-256", data);
     const hashArray = Array.from(new Uint8Array(hashBuffer));
     return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
-  } catch (_e) {
+  } catch {
     return "";
   }
 }
@@ -67,7 +67,7 @@ export const useStatsStore = create<StatsState>((set) => ({
           /* empty */
         }
       }
-    } catch (_error) {
+    } catch {
       // treat as completed to avoid repeated attempts
       set({ loaded: false });
       if (typeof window !== "undefined") {

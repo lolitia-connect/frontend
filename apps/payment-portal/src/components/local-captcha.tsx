@@ -32,7 +32,7 @@ export function LocalCaptcha({
         setCaptchaImage(data.image || "");
         onCaptchaIdChange(String(data.id || ""));
       }
-    } catch (_error) {
+    } catch {
       setCaptchaImage("");
       onCaptchaIdChange("");
     } finally {

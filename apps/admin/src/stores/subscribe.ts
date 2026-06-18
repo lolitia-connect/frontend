@@ -35,7 +35,7 @@ export const useSubscribeStore = create<SubscribeState>((set, get) => ({
         subscribes: data?.data?.list || [],
         loaded: true,
       });
-    } catch (_error) {
+    } catch {
       // Handle error silently
       set({ loaded: true });
     } finally {

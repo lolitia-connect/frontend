@@ -109,7 +109,7 @@ export default function Recharge(
                     });
                     setOpen(false);
                   }
-                } catch (_error) {
+                } catch {
                   /* empty */
                 }
               });

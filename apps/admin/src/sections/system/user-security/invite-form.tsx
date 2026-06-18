@@ -76,7 +76,7 @@ export default function InviteConfig() {
       toast.success(t("invite.saveSuccess", "Save Successful"));
       refetch();
       setOpen(false);
-    } catch (_error) {
+    } catch {
       toast.error(t("invite.saveFailed", "Save Failed"));
     } finally {
       setLoading(false);

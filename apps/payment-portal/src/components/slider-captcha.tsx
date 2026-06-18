@@ -71,7 +71,7 @@ export function SliderCaptcha({
         setBgImage(String(data.image || ""));
         setBlockImage(String(data.block_image || ""));
       }
-    } catch (_error) {
+    } catch {
       setCaptchaId("");
       setBgImage("");
       setBlockImage("");
@@ -188,7 +188,7 @@ export function SliderCaptcha({
         return;
       }
       triggerFail();
-    } catch (_error) {
+    } catch {
       triggerFail();
     }
   };

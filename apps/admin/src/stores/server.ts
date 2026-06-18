@@ -39,7 +39,7 @@ export const useServerStore = create<ServerState>((set, get) => ({
         servers: data?.data?.list || [],
         loaded: true,
       });
-    } catch (_error) {
+    } catch {
       // Handle error silently
       set({ loaded: true });
     } finally {

@@ -56,7 +56,7 @@ export default function Unsubscribe({
       await getUserInfo();
       onSuccess?.();
       setOpen(false);
-    } catch (_error) {
+    } catch {
       toast.error(t("unsubscribe.failed", "Unsubscribe failed"));
     }
   };

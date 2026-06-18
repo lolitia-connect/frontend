@@ -105,7 +105,7 @@ export default function Purchase({
           getUserInfo();
           router.navigate({ to: "/payment", search: { order_no: orderNo } });
         }
-      } catch (_error) {
+      } catch {
         /* empty */
       }
     });

@@ -347,7 +347,7 @@ const CheckoutForm: React.FC<Omit<StripePaymentProps, "publishable_key">> = ({
           setQrCodeImageDataUrl(data ? null : imageDataUrl || null);
         }
       }
-    } catch (_error) {
+    } catch {
       handleError(t("stripe.error", "An error occurred"));
     }
   }, [confirmPayment, isSubmitted, handleError, method, t]);

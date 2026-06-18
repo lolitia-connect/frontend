@@ -233,7 +233,7 @@ export const useGlobalStore = create<GlobalStore>((set, get) => ({
         loop++;
       } while (result !== prev && loop < maxLoop);
       return result;
-    } catch (_error) {
+    } catch {
       return "";
     }
   },

@@ -33,12 +33,10 @@ export function StripeCheckoutDialog({
 
   return (
     <Dialog onOpenChange={onOpenChange} open={open}>
-      <DialogContent className="max-w-2xl gap-5 p-6 sm:p-7">
-        <DialogHeader className="space-y-2 text-left">
-          <DialogTitle className="font-semibold text-2xl text-slate-950">
-            {t("stripeDialog.title", "Stripe 支付")}
-          </DialogTitle>
-          <DialogDescription className="text-slate-500 text-sm leading-6">
+      <DialogContent className="max-w-2xl">
+        <DialogHeader>
+          <DialogTitle>{t("stripeDialog.title", "Stripe 支付")}</DialogTitle>
+          <DialogDescription>
             {t(
               "stripeDialog.description",
               "请在弹窗内完成 Stripe 支付。关闭弹窗后，仍可通过支付状态中的继续支付重新打开。"
@@ -46,26 +44,22 @@ export function StripeCheckoutDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="grid gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-600 text-sm sm:grid-cols-2">
+        <div className="grid gap-3 rounded-lg border bg-muted/50 p-4 text-sm sm:grid-cols-2">
           <div>
-            <span className="text-slate-400">
-              {t("order.number", "订单号")}
-              {": "}
+            <span className="text-muted-foreground">
+              {t("order.number", "订单号")}:{" "}
             </span>
-            <span className="font-medium text-slate-900">{orderNo || "-"}</span>
+            <span className="font-medium">{orderNo || "-"}</span>
           </div>
           <div>
-            <span className="text-slate-400">
-              {t("dialog.method", "支付方式")}
-              {": "}
+            <span className="text-muted-foreground">
+              {t("dialog.method", "支付方式")}:{" "}
             </span>
-            <span className="font-medium text-slate-900">
-              {paymentMethodName || "-"}
-            </span>
+            <span className="font-medium">{paymentMethodName || "-"}</span>
           </div>
         </div>
 
-        <div className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5">
+        <div className="rounded-lg border p-4 sm:p-5">
           <StripePayment {...stripe} />
         </div>
       </DialogContent>

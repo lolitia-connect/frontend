@@ -8,14 +8,16 @@ import {
 } from "@stripe/react-stripe-js";
 import {
   loadStripe,
-  type PaymentIntentResult,
   type StripeCardNumberElementOptions,
   type StripeElementStyle,
 } from "@stripe/stripe-js";
+import { Button } from "@workspace/ui/components/button";
+import { Input } from "@workspace/ui/components/input";
+import { Label } from "@workspace/ui/components/label";
+import { useTheme } from "@workspace/ui/integrations/theme";
 import { CheckCircle } from "lucide-react";
-import { QRCodeCanvas } from "qrcode.react";
 import type React from "react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 interface StripePaymentProps {
@@ -34,6 +36,7 @@ const CardPaymentForm: React.FC<CardPaymentFormProps> = ({
   onError,
 }) => {
   const stripe = useStripe();
+  const { resolvedTheme } = useTheme();
   const elements = useElements();
   const { t } = useTranslation("app");
   const [processing, setProcessing] = useState(false);
@@ -46,17 +49,18 @@ const CardPaymentForm: React.FC<CardPaymentFormProps> = ({
     name?: string;
   }>({});
 
+  const currentTheme = resolvedTheme;
   const elementStyle: StripeElementStyle = {
     base: {
       fontSize: "16px",
-      color: "#0f172a",
+      color: currentTheme === "dark" ? "#fff" : "#000",
       "::placeholder": {
-        color: "#94a3b8",
+        color: "#aab7c4",
       },
     },
     invalid: {
-      color: "#dc2626",
-      iconColor: "#dc2626",
+      color: "#EF4444",
+      iconColor: "#EF4444",
     },
   };
 
@@ -65,13 +69,13 @@ const CardPaymentForm: React.FC<CardPaymentFormProps> = ({
     showIcon: true,
   };
 
-  const handleChange = (event: any, field: keyof typeof errors) => {
+  const handleChange = useCallback((event: any, field: keyof typeof errors) => {
     if (event.error) {
       setErrors((prev) => ({ ...prev, [field]: event.error.message }));
-      return;
+    } else {
+      setErrors((prev) => ({ ...prev, [field]: undefined }));
     }
-    setErrors((prev) => ({ ...prev, [field]: undefined }));
-  };
+  }, []);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -90,12 +94,17 @@ const CardPaymentForm: React.FC<CardPaymentFormProps> = ({
     }
 
     const cardNumber = elements.getElement(CardNumberElement);
-    if (!cardNumber) {
+    const cardExpiry = elements.getElement(CardExpiryElement);
+    const cardCvc = elements.getElement(CardCvcElement);
+
+    if (!(cardNumber && cardExpiry && cardCvc)) {
       onError(t("stripe.elementError", "Please fill in all card details"));
+      setProcessing(false);
       return;
     }
 
     setProcessing(true);
+
     const { error, paymentIntent } = await stripe.confirmCardPayment(
       clientSecret,
       {
@@ -111,27 +120,25 @@ const CardPaymentForm: React.FC<CardPaymentFormProps> = ({
     if (error) {
       onError(error.message || t("stripe.paymentFailed", "Payment failed"));
       setProcessing(false);
-      return;
-    }
-
-    if (paymentIntent?.status === "succeeded") {
+    } else if (paymentIntent && paymentIntent.status === "succeeded") {
       setSucceeded(true);
+      setProcessing(false);
     } else {
       onError(t("stripe.processing", "Processing payment..."));
+      setProcessing(false);
     }
-    setProcessing(false);
   };
 
   if (succeeded) {
     return (
       <div className="py-6 text-center">
         <div className="mb-4 flex justify-center">
-          <CheckCircle className="h-12 w-12 text-emerald-500" />
+          <CheckCircle className="h-12 w-12 text-green-500" />
         </div>
-        <p className="font-medium text-slate-950 text-xl">
+        <p className="font-medium text-xl">
           {t("stripe.successTitle", "Payment Successful")}
         </p>
-        <p className="mt-2 text-slate-500 text-sm">
+        <p className="mt-2 text-muted-foreground">
           {t(
             "stripe.successMessage",
             "Thank you. Your payment has been completed successfully."
@@ -142,235 +149,86 @@ const CardPaymentForm: React.FC<CardPaymentFormProps> = ({
   }
 
   return (
-    <form className="space-y-4 text-left" onSubmit={handleSubmit}>
+    <form className="space-y-4" onSubmit={handleSubmit}>
       <div className="space-y-1.5">
-        <label
-          className="font-medium text-slate-600 text-sm"
-          htmlFor="cardholderName"
-        >
+        <Label htmlFor="cardholderName">
           {t("stripe.cardName", "Cardholder Name")}
-        </label>
-        <input
-          className={`portal-input portal-input-light ${errors.name ? "border-red-500" : ""}`}
+        </Label>
+        <Input
+          className={errors.name ? "border-destructive" : ""}
           id="cardholderName"
-          onChange={(event) => setCardholderName(event.target.value)}
+          onChange={(e) => setCardholderName(e.target.value)}
           placeholder={t("stripe.namePlaceholder", "Full Name on Card")}
           type="text"
           value={cardholderName}
         />
-        {errors.name ? (
-          <p className="text-red-500 text-xs">{errors.name}</p>
-        ) : null}
+        {errors.name && (
+          <p className="text-destructive text-xs">{errors.name}</p>
+        )}
       </div>
 
       <div className="space-y-1.5">
-        <label
-          className="font-medium text-slate-600 text-sm"
-          htmlFor="cardNumber"
-        >
+        <Label htmlFor="cardNumber">
           {t("stripe.cardNumber", "Card Number")}
-        </label>
+        </Label>
         <div
-          className={`rounded-md border bg-white p-3 focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500 ${errors.cardNumber ? "border-red-500" : "border-slate-200"}`}
+          className={`rounded-md border p-3 focus-within:ring-1 focus-within:ring-ring ${errors.cardNumber ? "border-destructive" : ""}`}
         >
           <CardNumberElement
             id="cardNumber"
-            onChange={(event: any) => handleChange(event, "cardNumber")}
+            onChange={(e: any) => handleChange(e, "cardNumber")}
             options={elementOptions}
           />
         </div>
-        {errors.cardNumber ? (
-          <p className="text-red-500 text-xs">{errors.cardNumber}</p>
-        ) : null}
+        {errors.cardNumber && (
+          <p className="text-destructive text-xs">{errors.cardNumber}</p>
+        )}
       </div>
 
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-1.5">
-          <label
-            className="font-medium text-slate-600 text-sm"
-            htmlFor="cardExpiry"
-          >
+          <Label htmlFor="cardExpiry">
             {t("stripe.expiryDate", "Expiry Date")}
-          </label>
+          </Label>
           <div
-            className={`rounded-md border bg-white p-3 focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500 ${errors.cardExpiry ? "border-red-500" : "border-slate-200"}`}
+            className={`rounded-md border p-3 focus-within:ring-1 focus-within:ring-ring ${errors.cardExpiry ? "border-destructive" : ""}`}
           >
             <CardExpiryElement
               id="cardExpiry"
-              onChange={(event: any) => handleChange(event, "cardExpiry")}
-              options={{ style: elementStyle }}
+              onChange={(e: any) => handleChange(e, "cardExpiry")}
             />
           </div>
-          {errors.cardExpiry ? (
-            <p className="text-red-500 text-xs">{errors.cardExpiry}</p>
-          ) : null}
+          {errors.cardExpiry && (
+            <p className="text-destructive text-xs">{errors.cardExpiry}</p>
+          )}
         </div>
 
         <div className="space-y-1.5">
-          <label
-            className="font-medium text-slate-600 text-sm"
-            htmlFor="cardCvc"
-          >
-            {t("stripe.cvc", "CVC")}
-          </label>
+          <Label htmlFor="cardCvc">{t("stripe.cvv", "CVV")}</Label>
           <div
-            className={`rounded-md border bg-white p-3 focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500 ${errors.cardCvc ? "border-red-500" : "border-slate-200"}`}
+            className={`rounded-md border p-3 focus-within:ring-1 focus-within:ring-ring ${errors.cardCvc ? "border-destructive" : ""}`}
           >
             <CardCvcElement
               id="cardCvc"
-              onChange={(event: any) => handleChange(event, "cardCvc")}
-              options={{ style: elementStyle }}
+              onChange={(e: any) => handleChange(e, "cardCvc")}
             />
           </div>
-          {errors.cardCvc ? (
-            <p className="text-red-500 text-xs">{errors.cardCvc}</p>
-          ) : null}
+          {errors.cardCvc && (
+            <p className="text-destructive text-xs">{errors.cardCvc}</p>
+          )}
         </div>
       </div>
 
-      <div className="pt-2">
-        <button
-          className="portal-primary-btn w-full"
-          disabled={processing || !stripe || !elements}
-          type="submit"
-        >
-          {processing
-            ? t("stripe.processingButton", "Processing...")
-            : t("stripe.payButton", "Pay Now")}
-        </button>
-        <p className="mt-3 text-center text-slate-500 text-xs">
-          {t("stripe.secureNotice", "Payments are secure and encrypted")}
-        </p>
-      </div>
+      <Button className="w-full" disabled={!stripe || processing} type="submit">
+        {processing
+          ? t("stripe.processing", "Processing...")
+          : t("stripe.payNow", "Pay Now")}
+      </Button>
     </form>
   );
 };
 
-const CheckoutForm: React.FC<Omit<StripePaymentProps, "publishable_key">> = ({
-  client_secret,
-  method,
-}) => {
-  const stripe = useStripe();
-  const { t } = useTranslation("app");
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [qrCodeUrl, setQrCodeUrl] = useState<string | null>(null);
-  const [qrCodeImageDataUrl, setQrCodeImageDataUrl] = useState<string | null>(
-    null
-  );
-  const [isSubmitted, setIsSubmitted] = useState(false);
-
-  const handleError = useCallback((message: string) => {
-    setErrorMessage(message);
-    setIsSubmitted(false);
-  }, []);
-
-  const confirmPayment =
-    useCallback(async (): Promise<PaymentIntentResult | null> => {
-      if (!stripe) {
-        handleError(t("stripe.loading", "Loading Stripe..."));
-        return null;
-      }
-
-      if (method === "alipay") {
-        return stripe.confirmAlipayPayment(
-          client_secret,
-          { return_url: window.location.href },
-          { handleActions: false }
-        );
-      }
-
-      if (method === "wechat_pay") {
-        return stripe.confirmWechatPayPayment(
-          client_secret,
-          {
-            payment_method_options: {
-              wechat_pay: { client: "web" },
-            },
-          },
-          { handleActions: false }
-        );
-      }
-
-      return null;
-    }, [client_secret, handleError, method, stripe, t]);
-
-  const autoSubmit = useCallback(async () => {
-    if (isSubmitted || method === "card") return;
-
-    setIsSubmitted(true);
-    try {
-      const result = await confirmPayment();
-      if (!result) return;
-
-      const { error, paymentIntent } = result;
-      if (error) {
-        handleError(error.message || t("stripe.error", "An error occurred"));
-        return;
-      }
-
-      if (paymentIntent?.status === "requires_action") {
-        const nextAction = paymentIntent.next_action as any;
-        if (method === "alipay") {
-          setQrCodeUrl(nextAction?.alipay_handle_redirect?.url || null);
-          setQrCodeImageDataUrl(null);
-          return;
-        }
-
-        const wechat = nextAction?.wechat_pay_display_qr_code;
-        const data = wechat?.data;
-        const imageDataUrl = wechat?.image_data_url;
-        setQrCodeUrl(data || null);
-        setQrCodeImageDataUrl(data ? null : imageDataUrl || null);
-      }
-    } catch (_error) {
-      handleError(t("stripe.error", "An error occurred"));
-    }
-  }, [confirmPayment, handleError, isSubmitted, method, t]);
-
-  useEffect(() => {
-    autoSubmit();
-  }, [autoSubmit]);
-
-  if (method === "card") {
-    return (
-      <CardPaymentForm clientSecret={client_secret} onError={handleError} />
-    );
-  }
-
-  if (qrCodeUrl || qrCodeImageDataUrl) {
-    return (
-      <div className="space-y-4 text-center">
-        {qrCodeImageDataUrl ? (
-          <img
-            alt={method}
-            className="mx-auto h-[220px] w-[220px]"
-            src={qrCodeImageDataUrl}
-          />
-        ) : (
-          <QRCodeCanvas size={220} value={qrCodeUrl || ""} />
-        )}
-        <p className="text-slate-500 text-sm">
-          {method === "alipay"
-            ? t("stripe.alipayHint", "Scan with Alipay to pay")
-            : t("stripe.wechatHint", "Scan with WeChat to pay")}
-        </p>
-      </div>
-    );
-  }
-
-  return errorMessage ? (
-    <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-red-600 text-sm">
-      {errorMessage}
-    </div>
-  ) : (
-    <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-500 text-sm">
-      {t("stripe.processing", "Processing payment...")}
-    </div>
-  );
-};
-
 export function StripePayment({
-  method,
   client_secret,
   publishable_key,
 }: Readonly<StripePaymentProps>) {
@@ -379,9 +237,17 @@ export function StripePayment({
     [publishable_key]
   );
 
+  const handleError = useCallback((message: string) => {
+    // Error is already shown by the form
+    console.error("Stripe error:", message);
+  }, []);
+
   return (
-    <Elements stripe={stripePromise}>
-      <CheckoutForm client_secret={client_secret} method={method} />
+    <Elements
+      options={{ clientSecret: client_secret, appearance: { theme: "stripe" } }}
+      stripe={stripePromise}
+    >
+      <CardPaymentForm clientSecret={client_secret} onError={handleError} />
     </Elements>
   );
 }

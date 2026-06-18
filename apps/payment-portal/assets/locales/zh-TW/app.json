@@ -2,19 +2,14 @@
   "meta": {
     "title": "支付充值中心"
   },
-  "news": {
-    "title": "滾動新聞",
-    "subtitle": "滾動展示支付動態、設定變更和充值提醒。"
-  },
   "login": {
     "badge": "獨立支付前台",
     "title": "登入充值中心",
-    "description": "認證直接呼叫現有後端登入介面，登入成功後即可選擇充值方式和預設充值金額。",
     "accountLabel": "帳號 / 電郵",
     "accountPlaceholder": "請輸入現有系統帳號或電郵",
     "passwordLabel": "密碼",
     "passwordPlaceholder": "請輸入密碼",
-    "helper": "當前前端不儲存獨立使用者體系，直接複用現有後端認證與支付介面。",
+
     "loadingConfig": "載入設定中...",
     "submit": "登入",
     "submitting": "登入中...",
@@ -31,7 +26,7 @@
     "selectAmountTitle": "預設充值金額",
     "selectAmountHint": "充值金額來自當前前端專案的 .env 設定。",
     "customAmountOption": "自訂金額",
-    "customAmountHint": "epay 支付方式支援輸入自訂充值金額，最低金額為 {{amount}}。",
+    "customAmountHint": "支援輸入自訂充值金額，最低金額為 {{amount}}。",
     "customAmountPlaceholder": "請輸入自訂金額",
     "amountLabel": "金額",
     "methods": "支付方式",

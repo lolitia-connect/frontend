@@ -1,3 +1,9 @@
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@workspace/ui/components/card";
 import { useEffect, useMemo, useState } from "react";
 
 interface NewsMarqueeProps {
@@ -74,42 +80,37 @@ export function NewsMarquee({
     slides[activeIndex] ?? slides[0] ?? normalizeNewsItem(subtitle, 0);
 
   return (
-    <div className="portal-news-panel w-full max-w-2xl">
-      <div className="portal-news-brand">
-        {siteLogo ? (
-          <img
-            alt={siteName || title}
-            className="portal-news-brand-logo"
-            src={siteLogo}
-          />
-        ) : siteName ? (
-          <span className="portal-news-brand-text">{siteName}</span>
-        ) : (
-          <div className="portal-news-brand-mark" />
-        )}
-      </div>
+    <Card className="w-full max-w-2xl">
+      <CardHeader>
+        <div className="flex items-center gap-3">
+          {siteLogo ? (
+            <img
+              alt={siteName || title}
+              className="h-12 w-auto object-contain"
+              src={siteLogo}
+            />
+          ) : siteName ? (
+            <span className="font-semibold text-2xl">{siteName}</span>
+          ) : null}
+        </div>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        <CardTitle className="text-3xl">{title}</CardTitle>
 
-      <div className="portal-news-stage">
-        <div className="space-y-4">
-          <h1 className="portal-news-heading">{title}</h1>
-          <div
-            className="portal-news-slide"
-            key={`${activeSlide.date}-${activeIndex}`}
-          >
-            <p className="portal-news-date">{activeSlide.date}</p>
-            <h2 className="portal-news-slide-title">{activeSlide.title}</h2>
-            <p className="portal-news-slide-description">
-              {activeSlide.description}
-            </p>
-          </div>
+        <div className="space-y-3" key={`${activeSlide.date}-${activeIndex}`}>
+          <p className="text-muted-foreground text-sm">{activeSlide.date}</p>
+          <h3 className="font-semibold text-xl">{activeSlide.title}</h3>
+          <p className="text-muted-foreground">{activeSlide.description}</p>
         </div>
 
-        <div className="portal-news-dots" role="tablist">
+        <div className="flex justify-center gap-2" role="tablist">
           {slides.map((slide, index) => (
             <button
               aria-label={slide.title}
-              className={`portal-news-dot ${
-                index === activeIndex ? "is-active" : ""
+              className={`h-2 w-2 rounded-full transition-colors ${
+                index === activeIndex
+                  ? "bg-primary"
+                  : "bg-muted-foreground/30 hover:bg-muted-foreground/50"
               }`}
               key={`${slide.date}-${index}`}
               onClick={() => setActiveIndex(index)}
@@ -117,7 +118,7 @@ export function NewsMarquee({
             />
           ))}
         </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }

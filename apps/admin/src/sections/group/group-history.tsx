@@ -474,6 +474,7 @@ export default function GroupHistory() {
                                       nodeGroupName
                                     )
                                   }
+                                  type="button"
                                 >
                                   {detail.UserCount || detail.user_count || 0}
                                 </button>

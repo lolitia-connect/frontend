@@ -357,6 +357,7 @@ export default function CurrentGroupResults() {
                                 onClick={() =>
                                   handleShowUserList(nodeGroupId, nodeGroupName)
                                 }
+                                type="button"
                               >
                                 {userCount}
                               </button>

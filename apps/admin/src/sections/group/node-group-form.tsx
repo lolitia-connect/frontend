@@ -325,7 +325,7 @@ const NodeGroupForm = forwardRef<HTMLButtonElement, NodeGroupFormProps>(
                 onChange={(e) =>
                   setValues({
                     ...values,
-                    sort: Number.parseInt(e.target.value) || 0,
+                    sort: Number.parseInt(e.target.value, 10) || 0,
                   })
                 }
                 type="number"
@@ -412,7 +412,7 @@ const NodeGroupForm = forwardRef<HTMLButtonElement, NodeGroupFormProps>(
                       setValues({
                         ...values,
                         expired_days_limit:
-                          Number.parseInt(e.target.value) || 7,
+                          Number.parseInt(e.target.value, 10) || 7,
                       })
                     }
                     type="number"
@@ -440,7 +440,7 @@ const NodeGroupForm = forwardRef<HTMLButtonElement, NodeGroupFormProps>(
                       setValues({
                         ...values,
                         max_traffic_gb_expired:
-                          Number.parseInt(e.target.value) || 0,
+                          Number.parseInt(e.target.value, 10) || 0,
                       })
                     }
                     type="number"
@@ -458,7 +458,7 @@ const NodeGroupForm = forwardRef<HTMLButtonElement, NodeGroupFormProps>(
                     onChange={(e) =>
                       setValues({
                         ...values,
-                        speed_limit: Number.parseInt(e.target.value) || 0,
+                        speed_limit: Number.parseInt(e.target.value, 10) || 0,
                       })
                     }
                     type="number"

@@ -29,11 +29,9 @@ export function formatDate(date?: Date | number, showTime = true) {
   // Unix时间戳（秒级）：10位数字，如 1771936457
   // JavaScript时间戳（毫秒级）：13位数字
   let dateValue = date;
-  if (typeof date === "number") {
-    // 如果小于 10000000000（100亿），认为是秒级时间戳，需要乘以1000
-    if (date < 10_000_000_000) {
-      dateValue = date * 1000;
-    }
+  // 如果小于 10000000000（100亿），认为是秒级时间戳，需要乘以1000
+  if (typeof date === "number" && date < 10_000_000_000) {
+    dateValue = date * 1000;
   }
 
   const timeZone = localStorage.getItem("timezone") || "UTC";

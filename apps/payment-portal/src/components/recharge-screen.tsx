@@ -125,7 +125,7 @@ export function RechargeScreen({
 
             <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
               <div className="grid flex-1 gap-3">
-                <label className="space-y-2">
+                <span className="block space-y-2">
                   <span className="font-medium text-slate-600 text-sm">
                     {t("dashboard.methods", "支付方式")}
                   </span>
@@ -154,9 +154,9 @@ export function RechargeScreen({
                       ))}
                     </SelectContent>
                   </Select>
-                </label>
+                </span>
 
-                <label className="space-y-2">
+                <span className="block space-y-2">
                   <span className="font-medium text-slate-600 text-sm">
                     {t("dashboard.amounts", "充值金额")}
                   </span>
@@ -215,7 +215,7 @@ export function RechargeScreen({
                       value={customAmountInput}
                     />
                   ) : null}
-                </label>
+                </span>
               </div>
 
               <div className="flex flex-col items-stretch gap-3 xl:min-w-[360px] xl:max-w-[360px]">

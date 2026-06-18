@@ -8,16 +8,16 @@ import { useEffect, useMemo, useState } from "react";
 
 interface NewsMarqueeProps {
   items: string[];
-  title: string;
-  subtitle: string;
   siteLogo?: string;
   siteName?: string;
+  subtitle: string;
+  title: string;
 }
 
 interface NewsSlide {
   date: string;
-  title: string;
   description: string;
+  title: string;
 }
 
 function normalizeNewsItem(item: string, index: number): NewsSlide {

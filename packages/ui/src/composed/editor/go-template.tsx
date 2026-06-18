@@ -14,23 +14,23 @@ import { useEffect, useRef } from "react";
 type SchemaType = "string" | "number" | "boolean" | "object" | "array" | "null";
 
 interface SchemaProperty {
-  type: SchemaType;
+  description?: string;
   items?: SchemaProperty;
   properties?: Record<string, SchemaProperty>;
-  description?: string;
+  type: SchemaType;
 }
 
 export interface GoTemplateEditorProps
   extends Omit<MonacoEditorProps, "language"> {
-  schema?: Record<string, SchemaProperty> | Record<string, unknown>;
   enableSprig?: boolean;
+  schema?: Record<string, SchemaProperty> | Record<string, unknown>;
 }
 
 interface CompletionItem {
-  label: string;
-  kind: number;
-  insertText: string;
   documentation: string;
+  insertText: string;
+  kind: number;
+  label: string;
   sortText: string;
 }
 

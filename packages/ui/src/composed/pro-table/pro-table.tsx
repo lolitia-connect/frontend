@@ -50,7 +50,25 @@ import {
 } from "react";
 
 export interface ProTableProps<TData, TValue> {
+  action?: React.Ref<ProTableActions | undefined>;
+  actions?: {
+    render?: (row: TData) => React.ReactNode[];
+    batchRender?: (rows: TData[]) => React.ReactNode[];
+  };
   columns: ColumnDef<TData, TValue>[];
+  empty?: React.ReactNode;
+  header?: {
+    title?: React.ReactNode;
+    toolbar?: React.ReactNode | React.ReactNode[];
+    hidden?: boolean;
+  };
+  initialFilters?: Record<string, unknown>;
+  onSort?: (
+    sourceId: string | number,
+    targetId: string | number | null,
+    items: TData[]
+  ) => Promise<TData[]>;
+  params?: IParams[];
   request: (
     pagination: {
       page: number;
@@ -58,17 +76,6 @@ export interface ProTableProps<TData, TValue> {
     },
     filter: TValue
   ) => Promise<{ list: TData[]; total: number }>;
-  params?: IParams[];
-  header?: {
-    title?: React.ReactNode;
-    toolbar?: React.ReactNode | React.ReactNode[];
-    hidden?: boolean;
-  };
-  actions?: {
-    render?: (row: TData) => React.ReactNode[];
-    batchRender?: (rows: TData[]) => React.ReactNode[];
-  };
-  action?: React.Ref<ProTableActions | undefined>;
   texts?: Partial<{
     actions: string;
     asc: string;
@@ -78,13 +85,6 @@ export interface ProTableProps<TData, TValue> {
     textPageOf: (current: number, total: number) => string;
     selectedRowsText: (total: number) => string;
   }>;
-  empty?: React.ReactNode;
-  onSort?: (
-    sourceId: string | number,
-    targetId: string | number | null,
-    items: TData[]
-  ) => Promise<TData[]>;
-  initialFilters?: Record<string, unknown>;
 }
 
 export interface ProTableActions {

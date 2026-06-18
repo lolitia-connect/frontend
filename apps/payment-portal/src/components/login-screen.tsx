@@ -8,15 +8,15 @@ import { useTranslation } from "react-i18next";
 
 interface LoginScreenProps {
   account: string;
-  password: string;
-  loading: boolean;
-  configLoading: boolean;
-  siteLogo?: string;
-  siteName?: string;
   captchaSlot?: ReactNode;
+  configLoading: boolean;
+  loading: boolean;
   onAccountChange: (value: string) => void;
   onPasswordChange: (value: string) => void;
   onSubmit: () => void;
+  password: string;
+  siteLogo?: string;
+  siteName?: string;
 }
 
 export function LoginScreen({

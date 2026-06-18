@@ -21,8 +21,8 @@ import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 interface StripePaymentProps {
-  method: string;
   client_secret: string;
+  method: string;
   publishable_key: string;
 }
 

@@ -16,9 +16,9 @@ import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 interface TimezoneOption {
-  value: string;
   label: string;
   timezone: string;
+  value: string;
 }
 
 function getCurrentTime(timezone: string): string {

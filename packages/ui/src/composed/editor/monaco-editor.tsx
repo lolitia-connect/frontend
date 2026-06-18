@@ -11,19 +11,19 @@ import DraculaTheme from "monaco-themes/themes/Dracula.json" with {
 import { useEffect, useRef, useState } from "react";
 
 export interface MonacoEditorProps {
-  value?: string;
-  onChange?: (value: string | undefined) => void;
-  onBlur?: (value: string | undefined) => void;
-  title?: string;
-  description?: string;
-  placeholder?: string;
-  render?: (value?: string) => React.ReactNode;
-  onMount?: OnMount;
   beforeMount?: (monaco: Monaco) => void;
-  language?: string;
   className?: string;
-  showLineNumbers?: boolean;
+  description?: string;
+  language?: string;
+  onBlur?: (value: string | undefined) => void;
+  onChange?: (value: string | undefined) => void;
+  onMount?: OnMount;
+  placeholder?: string;
   readOnly?: boolean;
+  render?: (value?: string) => React.ReactNode;
+  showLineNumbers?: boolean;
+  title?: string;
+  value?: string;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

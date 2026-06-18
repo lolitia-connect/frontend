@@ -19,8 +19,8 @@ import { Display } from "@/components/display";
 import { useGlobalStore } from "@/stores/global";
 
 interface UnsubscribeProps {
-  id: string;
   allowDeduction?: boolean;
+  id: string;
   onSuccess?: () => void;
 }
 

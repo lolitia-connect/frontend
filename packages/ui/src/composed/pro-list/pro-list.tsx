@@ -26,6 +26,15 @@ import type React from "react";
 import { useEffect, useImperativeHandle, useRef, useState } from "react";
 
 export interface ProListProps<TData, TValue> {
+  action?: React.Ref<ProListActions | undefined>;
+  batchRender?: (rows: TData[]) => React.ReactNode[];
+  empty?: React.ReactNode;
+  header?: {
+    title?: React.ReactNode;
+    toolbar?: React.ReactNode | React.ReactNode[];
+  };
+  params?: IParams[];
+  renderItem: (item: TData, checkbox: React.ReactNode) => React.ReactNode;
   request: (
     pagination: {
       page: number;
@@ -33,20 +42,11 @@ export interface ProListProps<TData, TValue> {
     },
     filter: TValue
   ) => Promise<{ list: TData[]; total: number }>;
-  params?: IParams[];
-  header?: {
-    title?: React.ReactNode;
-    toolbar?: React.ReactNode | React.ReactNode[];
-  };
-  batchRender?: (rows: TData[]) => React.ReactNode[];
-  renderItem: (item: TData, checkbox: React.ReactNode) => React.ReactNode;
-  action?: React.Ref<ProListActions | undefined>;
   texts?: Partial<{
     textRowsPerPage: string;
     textPageOf: (current: number, total: number) => string;
     selectedRowsText: (total: number) => string;
   }>;
-  empty?: React.ReactNode;
 }
 export interface ProListActions {
   refresh: () => void;

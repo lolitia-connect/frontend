@@ -7,12 +7,12 @@ import { useState } from "react";
 type ReturnType = "base64" | "file";
 
 interface UploadImageProps {
-  onChange: (value: string | File) => void;
-  returnType?: ReturnType;
-  id?: string;
   children?: React.ReactNode;
   className?: string;
+  id?: string;
   maxSize?: number; // Maximum file size in MB
+  onChange: (value: string | File) => void;
+  returnType?: ReturnType;
 }
 
 export const UploadImage = ({

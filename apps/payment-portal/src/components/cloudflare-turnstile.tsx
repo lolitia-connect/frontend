@@ -12,10 +12,10 @@ import Turnstile, { useTurnstile } from "react-turnstile";
 
 interface CloudflareTurnstileProps {
   language: string;
+  onChange: (value: string) => void;
+  resetKey: number;
   siteKey: string;
   value: string;
-  resetKey: number;
-  onChange: (value: string) => void;
 }
 
 export function CloudflareTurnstile({

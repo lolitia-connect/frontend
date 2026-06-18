@@ -9,6 +9,7 @@ import { useTranslation } from "react-i18next";
 import { StripePayment } from "./stripe-payment";
 
 interface StripeCheckoutDialogProps {
+  onOpenChange: (open: boolean) => void;
   open: boolean;
   orderNo?: string;
   paymentMethodName?: string;
@@ -17,7 +18,6 @@ interface StripeCheckoutDialogProps {
     client_secret: string;
     publishable_key: string;
   };
-  onOpenChange: (open: boolean) => void;
 }
 
 export function StripeCheckoutDialog({

@@ -40,7 +40,7 @@ export default function Announcement({ type }: { type: "popup" | "pinned" }) {
   });
 
   useEffect(() => {
-    if (type === "popup" && !!data) setOpen(true);
+    if (type === "popup" && data) setOpen(true);
   }, [data, type]);
 
   if (!data) return null;

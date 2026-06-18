@@ -17,11 +17,11 @@ interface BillingProps {
 }
 
 interface ItemType {
-  logo: string;
-  title: string;
   description: string;
   expiryDate: string;
   href: string;
+  logo: string;
+  title: string;
 }
 
 async function getBillingURL() {

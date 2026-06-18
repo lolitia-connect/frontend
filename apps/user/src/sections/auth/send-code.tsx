@@ -10,13 +10,13 @@ import { useTranslation } from "react-i18next";
 import { useGlobalStore } from "@/stores/global";
 
 interface SendCodeProps {
-  type: "email" | "phone";
   params: {
     email?: string;
     type?: 1 | 2;
     telephone_area_code?: string;
     telephone?: string;
   };
+  type: "email" | "phone";
 }
 export default function SendCode({ type, params }: SendCodeProps) {
   const { t } = useTranslation("auth");

@@ -14,17 +14,17 @@ import { useEffect, useState } from "react";
 interface FieldConfig
   extends Omit<EnhancedInputProps<string | number>, "type"> {
   name: string;
-  type: "text" | "number" | "select" | "time" | "boolean" | "textarea";
   options?: { label: string; value: string }[];
+  type: "text" | "number" | "select" | "time" | "boolean" | "textarea";
   // optional per-item visibility function: returns true to show the field for the given item
   visible?: (item: Record<string, any>) => boolean;
 }
 
 interface ObjectInputProps<T> {
-  value: T;
-  onChange: (value: T) => void;
-  fields: FieldConfig[];
   className?: string;
+  fields: FieldConfig[];
+  onChange: (value: T) => void;
+  value: T;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -111,11 +111,11 @@ export function ObjectInput<T extends Record<string, any>>({
   );
 }
 interface ArrayInputProps<T> {
-  value?: T[];
-  onChange: (value: T[]) => void;
+  className?: string;
   fields: FieldConfig[];
   isReverse?: boolean;
-  className?: string;
+  onChange: (value: T[]) => void;
+  value?: T[];
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

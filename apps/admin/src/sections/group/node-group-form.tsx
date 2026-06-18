@@ -24,9 +24,9 @@ import { forwardRef, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 interface NodeGroupFormProps {
-  initialValues?: Partial<API.NodeGroup>;
   allNodeGroups?: API.NodeGroup[];
   currentGroupId?: string;
+  initialValues?: Partial<API.NodeGroup>;
   loading?: boolean;
   onSubmit: (values: Record<string, unknown>) => Promise<boolean>;
   title: string;

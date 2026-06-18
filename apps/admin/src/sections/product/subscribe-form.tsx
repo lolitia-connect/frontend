@@ -62,11 +62,11 @@ import { useGlobalStore } from "@/stores/global";
 import { useNode } from "@/stores/node";
 
 interface SubscribeFormProps<T> {
-  onSubmit: (data: T) => Promise<boolean> | boolean;
   initialValues?: T;
   loading?: boolean;
-  trigger: string;
+  onSubmit: (data: T) => Promise<boolean> | boolean;
   title: string;
+  trigger: string;
 }
 
 const defaultValues = {

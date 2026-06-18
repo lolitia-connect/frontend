@@ -1,7 +1,14 @@
-import { getGlobalConfig } from "@workspace/ui/services/common/common";
 import { userLogin } from "@workspace/ui/services/common/auth";
-import { recharge, queryOrderDetail } from "@workspace/ui/services/user/order";
-import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from "react";
+import { getGlobalConfig } from "@workspace/ui/services/common/common";
+import { queryOrderDetail, recharge } from "@workspace/ui/services/user/order";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useTransition,
+} from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { CloudflareTurnstile } from "@/components/cloudflare-turnstile";
@@ -51,10 +58,14 @@ export default function App() {
   const [captchaValue, setCaptchaValue] = useState("");
   const [captchaId, setCaptchaId] = useState("");
   const [captchaResetKey, setCaptchaResetKey] = useState(0);
-  const [authenticated, setAuthenticated] = useState(Boolean(getAuthorization()));
+  const [authenticated, setAuthenticated] = useState(
+    Boolean(getAuthorization())
+  );
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [confirmOrderNo, setConfirmOrderNo] = useState("");
-  const [confirmBreakdown, setConfirmBreakdown] = useState<FeeBreakdown | null>(null);
+  const [confirmBreakdown, setConfirmBreakdown] = useState<FeeBreakdown | null>(
+    null
+  );
   const [confirmPaymentName, setConfirmPaymentName] = useState("");
   const [stripeDialogOpen, setStripeDialogOpen] = useState(false);
   const [loginPending, startLoginTransition] = useTransition();
@@ -136,7 +147,9 @@ export default function App() {
 
     completedOrderNoticeRef.current = activeOrder.orderNo;
     setStripeDialogOpen(false);
-    toast.success(t("dashboard.paymentSuccess", "支付成功，余额和订单记录已更新"));
+    toast.success(
+      t("dashboard.paymentSuccess", "支付成功，余额和订单记录已更新")
+    );
     refreshPortal();
   }, [activeOrder?.orderNo, activeOrder?.status, refreshPortal, t]);
 
@@ -149,7 +162,10 @@ export default function App() {
 
   // Reset custom amount when not enabled and selected amount is not in preset list
   useEffect(() => {
-    if (!customAmountEnabled && portalConfig.rechargeAmounts.includes(selectedAmount)) {
+    if (
+      !customAmountEnabled &&
+      portalConfig.rechargeAmounts.includes(selectedAmount)
+    ) {
       return;
     }
 
@@ -180,7 +196,9 @@ export default function App() {
 
   const handleLogin = useCallback(() => {
     if (!(account.trim() && password.trim())) {
-      toast.error(t("errors.missingCredentials", "请输入账号和密码后再继续登录。"));
+      toast.error(
+        t("errors.missingCredentials", "请输入账号和密码后再继续登录。")
+      );
       return;
     }
 
@@ -246,7 +264,9 @@ export default function App() {
 
   const handleOpenConfirm = useCallback(() => {
     if (isCurrentSelectionPendingOrder) {
-      toast.error(t("errors.pendingOrder", "当前已有待支付订单，请先完成支付。"));
+      toast.error(
+        t("errors.pendingOrder", "当前已有待支付订单，请先完成支付。")
+      );
       return;
     }
 
@@ -258,7 +278,9 @@ export default function App() {
     if (customAmountEnabled && selectedAmount < minimumCustomAmount) {
       setCustomAmountInput(String(minimumCustomAmount));
       setSelectedAmount(minimumCustomAmount);
-      toast.error(t("errors.invalidCustomAmount", "自定义充值金额不能低于最小金额。"));
+      toast.error(
+        t("errors.invalidCustomAmount", "自定义充值金额不能低于最小金额。")
+      );
       return;
     }
 
@@ -274,7 +296,9 @@ export default function App() {
           return;
         }
 
-        const detailResponse = await queryOrderDetail({ order_no: String(orderNo) });
+        const detailResponse = await queryOrderDetail({
+          order_no: String(orderNo),
+        });
         const detail = detailResponse.data.data;
         if (!detail) {
           toast.error(t("errors.orderFailed", "充值订单创建失败。"));
@@ -321,7 +345,9 @@ export default function App() {
     startSubmitTransition(async () => {
       try {
         setConfirmOpen(false);
-        toast.success(t("dialog.success", "订单已确认，请点击支付按钮完成付款"));
+        toast.success(
+          t("dialog.success", "订单已确认，请点击支付按钮完成付款")
+        );
         await refreshPortal();
         await refreshActiveOrder(confirmOrderNo);
       } catch (_error) {
@@ -338,11 +364,24 @@ export default function App() {
       requestCheckout: true,
     }).then(() => {
       const updatedOrder = usePortalStore.getState().activeOrder;
-      if (updatedOrder?.checkout?.type === "stripe" && updatedOrder.checkout.stripe) {
+      if (
+        updatedOrder?.checkout?.type === "stripe" &&
+        updatedOrder.checkout.stripe
+      ) {
         setStripeDialogOpen(true);
-      } else if (updatedOrder?.checkout?.type === "url" && updatedOrder.checkout.checkoutUrl) {
-        window.open(updatedOrder.checkout.checkoutUrl, "_blank", "noopener,noreferrer");
-      } else if (updatedOrder?.checkout?.type === "qr" && updatedOrder.checkout.checkoutUrl) {
+      } else if (
+        updatedOrder?.checkout?.type === "url" &&
+        updatedOrder.checkout.checkoutUrl
+      ) {
+        window.open(
+          updatedOrder.checkout.checkoutUrl,
+          "_blank",
+          "noopener,noreferrer"
+        );
+      } else if (
+        updatedOrder?.checkout?.type === "qr" &&
+        updatedOrder.checkout.checkoutUrl
+      ) {
         // QR code is already shown in the UI, no need to open anything
       }
     });
@@ -365,7 +404,13 @@ export default function App() {
       setCustomAmountEnabled(false);
       setSelectedAmount(Number(value));
     },
-    [customAmountInput, minimumCustomAmount, setCustomAmountEnabled, setCustomAmountInput, setSelectedAmount]
+    [
+      customAmountInput,
+      minimumCustomAmount,
+      setCustomAmountEnabled,
+      setCustomAmountInput,
+      setSelectedAmount,
+    ]
   );
 
   const handleCustomAmountChange = useCallback(

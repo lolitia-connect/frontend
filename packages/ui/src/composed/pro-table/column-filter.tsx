@@ -6,15 +6,15 @@ import { Combobox } from "@workspace/ui/composed/combobox";
 
 export interface IParams {
   key: string;
-  placeholder?: string;
   options?: { label: string; value: string }[];
+  placeholder?: string;
   type?: "text" | "select" | "date";
 }
 interface ColumnFilterProps<TData> {
-  table: Table<TData>;
-  params: IParams[];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   filters?: any;
+  params: IParams[];
+  table: Table<TData>;
 }
 
 export function ColumnFilter<TData>({

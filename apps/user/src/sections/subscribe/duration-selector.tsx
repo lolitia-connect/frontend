@@ -11,11 +11,11 @@ import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 
 interface DurationSelectorProps {
-  quantity: number;
-  unitTime?: string;
   discounts?: Array<{ quantity: number; discount: number }>;
   onChange: (value: number) => void;
+  quantity: number;
   showOriginalPrice?: boolean;
+  unitTime?: string;
 }
 
 const DurationSelector: React.FC<DurationSelectorProps> = ({

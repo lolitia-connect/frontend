@@ -7,8 +7,8 @@ const STATS_URL = "https://stats.ppanel.dev";
 const STATS_LOADED_KEY = "ppanel:stats:loaded";
 
 interface StatsState {
-  loading: boolean;
   loaded: boolean;
+  loading: boolean;
   stats: () => Promise<void>;
 }
 

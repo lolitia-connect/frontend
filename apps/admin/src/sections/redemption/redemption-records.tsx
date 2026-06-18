@@ -19,8 +19,8 @@ import { formatDate } from "@/utils/common";
 
 interface RedemptionRecordsProps {
   codeId: string | null;
-  open: boolean;
   onOpenChange: (open: boolean) => void;
+  open: boolean;
 }
 
 export default function RedemptionRecords({

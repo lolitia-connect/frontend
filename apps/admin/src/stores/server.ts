@@ -2,25 +2,24 @@ import { filterServerList } from "@workspace/ui/services/admin/server";
 import { create } from "zustand";
 
 interface ServerState {
-  // Data
-  servers: API.Server[];
-
-  // Loading states
-  loading: boolean;
-  loaded: boolean;
-
   // Actions
   fetchServers: () => Promise<void>;
-
-  // Getters
-  getServerById: (serverId: string | number) => API.Server | undefined;
-  getServerName: (serverId?: string | number) => string;
-  getServerAddress: (serverId?: string | number) => string;
-  getServerEnabledProtocols: (serverId: string | number) => API.Protocol[];
-  getProtocolPort: (serverId?: string | number, protocol?: string) => string;
   getAvailableProtocols: (
     serverId?: string | number
   ) => Array<{ protocol: string; port: number }>;
+  getProtocolPort: (serverId?: string | number, protocol?: string) => string;
+  getServerAddress: (serverId?: string | number) => string;
+
+  // Getters
+  getServerById: (serverId: string | number) => API.Server | undefined;
+  getServerEnabledProtocols: (serverId: string | number) => API.Protocol[];
+  getServerName: (serverId?: string | number) => string;
+  loaded: boolean;
+
+  // Loading states
+  loading: boolean;
+  // Data
+  servers: API.Server[];
 }
 
 export const useServerStore = create<ServerState>((set, get) => ({

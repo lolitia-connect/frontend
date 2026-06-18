@@ -6,8 +6,8 @@ import { useEffect } from "react";
 import { useGlobalStore } from "@/stores/global";
 
 interface CertificationProps {
-  platform: string;
   children: React.ReactNode;
+  platform: string;
 }
 
 export default function Certification({

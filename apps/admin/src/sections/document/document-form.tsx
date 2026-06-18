@@ -33,11 +33,11 @@ const formSchema = z.object({
 });
 
 interface DocumentFormProps<T> {
-  onSubmit: (data: T) => Promise<boolean> | boolean;
   initialValues?: T;
   loading?: boolean;
-  trigger: string;
+  onSubmit: (data: T) => Promise<boolean> | boolean;
   title: string;
+  trigger: string;
 }
 
 export default function DocumentForm<T extends Record<string, any>>({

@@ -17,28 +17,28 @@ import { Display } from "@/components/display";
 import type { ActiveOrder, PaymentMethod, RechargeRecord } from "@/types";
 
 interface RechargeScreenProps {
-  amounts: number[];
-  minimumCustomAmount: number;
-  methods: PaymentMethod[];
-  records: RechargeRecord[];
   activeOrder: ActiveOrder | null;
-  userBalance: number | null;
-  userEmail: string;
-  hasPendingOrder: boolean;
-  selectedAmount: number;
+  amounts: number[];
   customAmountEnabled: boolean;
   customAmountInput: string;
-  selectedMethodId: string | null;
+  hasPendingOrder: boolean;
   loadingData: boolean;
-  submitting: boolean;
+  methods: PaymentMethod[];
+  minimumCustomAmount: number;
   onAmountSelect: (value: string) => void;
-  onCustomAmountChange: (value: string) => void;
-  onMethodSelect: (value: string) => void;
-  onRefresh: () => void;
-  onLogout: () => void;
-  onOpenConfirm: () => void;
-  onRefreshOrder: () => void;
   onContinuePayment: () => void;
+  onCustomAmountChange: (value: string) => void;
+  onLogout: () => void;
+  onMethodSelect: (value: string) => void;
+  onOpenConfirm: () => void;
+  onRefresh: () => void;
+  onRefreshOrder: () => void;
+  records: RechargeRecord[];
+  selectedAmount: number;
+  selectedMethodId: string | null;
+  submitting: boolean;
+  userBalance: number | null;
+  userEmail: string;
 }
 
 const statusMap: Record<number, string> = {

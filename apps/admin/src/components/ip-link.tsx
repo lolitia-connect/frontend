@@ -4,9 +4,9 @@ import { ExternalLink } from "lucide-react";
 import type React from "react";
 
 interface IpLinkProps {
-  ip: string;
   children?: React.ReactNode;
   className?: string;
+  ip: string;
   target?: "_blank" | "_self";
 }
 

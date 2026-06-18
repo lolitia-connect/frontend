@@ -4,12 +4,12 @@ import { create } from "zustand";
 
 export interface GlobalStore {
   common: API.GetGlobalConfigResponse;
-  user?: API.User;
-  setCommon: (common: Partial<API.GetGlobalConfigResponse>) => void;
-  setUser: (user?: API.User) => void;
+  getAppSubLink: (url: string, schema?: string) => string;
   getUserInfo: () => Promise<void>;
   getUserSubscribe: (short: string, token: string, type?: string) => string[];
-  getAppSubLink: (url: string, schema?: string) => string;
+  setCommon: (common: Partial<API.GetGlobalConfigResponse>) => void;
+  setUser: (user?: API.User) => void;
+  user?: API.User;
 }
 
 /**

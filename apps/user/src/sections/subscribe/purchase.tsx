@@ -23,8 +23,8 @@ import { SubscribeBilling } from "./billing";
 import { SubscribeDetail } from "./detail";
 
 interface PurchaseProps {
-  subscribe?: API.Subscribe;
   setSubscribe: (subscribe?: API.Subscribe) => void;
+  subscribe?: API.Subscribe;
 }
 
 export default function Purchase({

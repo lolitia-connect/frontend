@@ -5,32 +5,31 @@ import {
 import { create } from "zustand";
 
 interface NodeState {
-  // Data
-  nodes: API.Node[];
-  tags: string[];
-
-  // Loading states
-  loading: boolean;
-  loadingTags: boolean;
-  loaded: boolean;
-  loadedTags: boolean;
-
   // Actions
   fetchNodes: () => Promise<void>;
   fetchTags: () => Promise<void>;
+  getAllAvailableTags: () => string[];
 
   // Getters
   getNodeById: (nodeId: string | number) => API.Node | undefined;
+  getNodesByTag: (tag: string) => API.Node[];
+  getNodesWithoutGroups: () => API.Node[];
+  getNodesWithoutTags: () => API.Node[];
+  getNodeTags: () => string[];
   isProtocolUsedInNodes: (
     serverId: string | number,
     protocolType: string
   ) => boolean;
   isServerReferencedByNodes: (serverId: string | number) => boolean;
-  getNodesByTag: (tag: string) => API.Node[];
-  getNodesWithoutTags: () => API.Node[];
-  getNodesWithoutGroups: () => API.Node[];
-  getNodeTags: () => string[];
-  getAllAvailableTags: () => string[];
+  loaded: boolean;
+  loadedTags: boolean;
+
+  // Loading states
+  loading: boolean;
+  loadingTags: boolean;
+  // Data
+  nodes: API.Node[];
+  tags: string[];
 }
 
 export const useNodeStore = create<NodeState>((set, get) => ({

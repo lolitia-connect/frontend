@@ -2,21 +2,20 @@ import { getSubscribeList } from "@workspace/ui/services/admin/subscribe";
 import { create } from "zustand";
 
 interface SubscribeState {
-  // Data
-  subscribes: API.SubscribeItem[];
-
-  // Loading states
-  loading: boolean;
-  loaded: boolean;
-
   // Actions
   fetchSubscribes: () => Promise<void>;
-
-  // Getters
-  getSubscribeName: (subscribeId?: string | number) => string;
   getSubscribeById: (
     subscribeId: string | number
   ) => API.SubscribeItem | undefined;
+
+  // Getters
+  getSubscribeName: (subscribeId?: string | number) => string;
+  loaded: boolean;
+
+  // Loading states
+  loading: boolean;
+  // Data
+  subscribes: API.SubscribeItem[];
 }
 
 export const useSubscribeStore = create<SubscribeState>((set, get) => ({

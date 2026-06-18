@@ -15,12 +15,12 @@ import type React from "react";
 import { type ReactNode, useState } from "react";
 
 interface ConfirmationButtonProps {
-  trigger: ReactNode;
-  title: string;
-  description: string;
-  onConfirm: () => void | Promise<void>;
   cancelText?: string;
   confirmText?: string;
+  description: string;
+  onConfirm: () => void | Promise<void>;
+  title: string;
+  trigger: ReactNode;
 }
 
 export const ConfirmButton: React.FC<ConfirmationButtonProps> = ({

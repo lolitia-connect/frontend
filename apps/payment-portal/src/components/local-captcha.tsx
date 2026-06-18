@@ -7,10 +7,10 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 interface LocalCaptchaProps {
-  value: string;
-  resetKey: number;
-  onChange: (value: string) => void;
   onCaptchaIdChange: (value: string) => void;
+  onChange: (value: string) => void;
+  resetKey: number;
+  value: string;
 }
 
 export function LocalCaptcha({

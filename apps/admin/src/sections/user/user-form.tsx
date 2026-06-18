@@ -29,11 +29,11 @@ import { z } from "zod";
 import { useGlobalStore } from "@/stores/global";
 
 interface UserFormProps<T> {
-  onSubmit: (data: T) => Promise<boolean> | boolean;
   initialValues?: T;
   loading?: boolean;
-  trigger: string;
+  onSubmit: (data: T) => Promise<boolean> | boolean;
   title: string;
+  trigger: string;
   update?: boolean;
 }
 

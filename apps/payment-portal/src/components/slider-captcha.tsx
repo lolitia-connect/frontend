@@ -14,15 +14,15 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 interface SliderCaptchaProps {
-  value: string;
-  resetKey: number;
   onChange: (value: string) => void;
+  resetKey: number;
+  value: string;
 }
 
 interface TrailPoint {
+  t: number;
   x: number;
   y: number;
-  t: number;
 }
 
 const BLOCK_SIZE = 100;

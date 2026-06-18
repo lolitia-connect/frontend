@@ -13,12 +13,12 @@ import { Display } from "@/components/display";
 import type { FeeBreakdown } from "@/lib/fees";
 
 interface ConfirmRechargeDialogProps {
-  open: boolean;
-  loading: boolean;
   breakdown: FeeBreakdown | null;
-  paymentMethodName?: string;
+  loading: boolean;
   onClose: () => void;
   onConfirm: () => void;
+  open: boolean;
+  paymentMethodName?: string;
 }
 
 export function ConfirmRechargeDialog({

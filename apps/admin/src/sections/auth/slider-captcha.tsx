@@ -24,14 +24,14 @@ export interface SliderCaptchaRef {
 }
 
 interface SliderCaptchaProps {
-  value?: string;
   onChange?: (value: string) => void;
+  value?: string;
 }
 
 interface TrailPoint {
+  t: number;
   x: number;
   y: number;
-  t: number;
 }
 
 const BLOCK_SIZE = 100;

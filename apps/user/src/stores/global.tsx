@@ -3,15 +3,15 @@ import { isBrowser } from "@workspace/ui/utils/index";
 import { create } from "zustand";
 
 export interface GlobalStore {
+  clearUserLoading: () => void;
   common: API.GetGlobalConfigResponse;
-  user?: API.User;
+  getAppSubLink: (url: string, schema?: string) => string;
+  getUserInfo: () => Promise<void>;
+  getUserSubscribe: (short: string, token: string, type?: string) => string[];
   isLoadingUser: boolean;
   setCommon: (common: Partial<API.GetGlobalConfigResponse>) => void;
   setUser: (user?: API.User) => void;
-  getUserInfo: () => Promise<void>;
-  clearUserLoading: () => void;
-  getUserSubscribe: (short: string, token: string, type?: string) => string[];
-  getAppSubLink: (url: string, schema?: string) => string;
+  user?: API.User;
 }
 
 /**

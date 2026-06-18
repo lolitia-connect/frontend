@@ -2,8 +2,8 @@ import { Link } from "@tanstack/react-router";
 import { Button } from "@workspace/ui/components/button";
 
 interface OrderLinkProps {
-  orderId?: string | number;
   className?: string;
+  orderId?: string | number;
 }
 
 export function OrderLink({ orderId, className }: OrderLinkProps) {

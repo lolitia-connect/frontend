@@ -1,8 +1,8 @@
+import { LanguageProvider } from "@workspace/ui/integrations/language";
 import {
   TanStackQueryContext,
   TanStackQueryProvider,
 } from "@workspace/ui/integrations/tanstack-query";
-import { LanguageProvider } from "@workspace/ui/integrations/language";
 import { ThemeProvider } from "@workspace/ui/integrations/theme";
 import { initializeI18n } from "@workspace/ui/lib/i18n";
 import { StrictMode } from "react";

@@ -13,10 +13,10 @@ import { memo, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
 interface PaymentMethodsProps {
-  value: string;
-  onChange: (value: string) => void;
-  onAvailableMethodsChange?: (count: number) => void;
   balance?: boolean;
+  onAvailableMethodsChange?: (count: number) => void;
+  onChange: (value: string) => void;
+  value: string;
 }
 
 const PaymentMethods: React.FC<PaymentMethodsProps> = ({

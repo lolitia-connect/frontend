@@ -94,35 +94,35 @@ function mapActiveOrder(item: any, checkout?: CheckoutInfo): ActiveOrder {
 }
 
 export interface PortalStore {
+  activeOrder: ActiveOrder | null;
   // Global config
   common: API.GetGlobalConfigResponse;
-  setCommon: (common: Partial<API.GetGlobalConfigResponse>) => void;
-  // User data
-  userBalance: number | null;
-  userEmail: string;
-  // Payment data
-  paymentMethods: PaymentMethod[];
-  records: RechargeRecord[];
-  activeOrder: ActiveOrder | null;
-  // Selection state
-  selectedMethodId: string | null;
-  selectedAmount: number;
   customAmountEnabled: boolean;
   customAmountInput: string;
   // Loading states
   loadingPortal: boolean;
-  // Actions
-  refreshPortal: () => Promise<void>;
+  // Payment data
+  paymentMethods: PaymentMethod[];
+  records: RechargeRecord[];
   refreshActiveOrder: (
     orderNo: string,
     options?: { autoOpenPayment?: boolean; requestCheckout?: boolean }
   ) => Promise<void>;
-  setSelectedMethodId: (id: string | null) => void;
-  setSelectedAmount: (amount: number) => void;
+  // Actions
+  refreshPortal: () => Promise<void>;
+  reset: () => void;
+  selectedAmount: number;
+  // Selection state
+  selectedMethodId: string | null;
+  setActiveOrder: (order: ActiveOrder | null) => void;
+  setCommon: (common: Partial<API.GetGlobalConfigResponse>) => void;
   setCustomAmountEnabled: (enabled: boolean) => void;
   setCustomAmountInput: (input: string) => void;
-  setActiveOrder: (order: ActiveOrder | null) => void;
-  reset: () => void;
+  setSelectedAmount: (amount: number) => void;
+  setSelectedMethodId: (id: string | null) => void;
+  // User data
+  userBalance: number | null;
+  userEmail: string;
 }
 
 export const usePortalStore = create<PortalStore>((set, get) => ({

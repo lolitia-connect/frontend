@@ -4,8 +4,8 @@ import { usePortalStore } from "@/stores/global";
 type DisplayType = "currency" | "number";
 
 interface DisplayProps<T> {
-  value?: T;
   type?: DisplayType;
+  value?: T;
 }
 
 export function Display<T extends number | undefined | null>({

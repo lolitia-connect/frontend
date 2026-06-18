@@ -7,15 +7,15 @@ export interface EnhancedInputProps<T = string>
     React.InputHTMLAttributes<HTMLInputElement>,
     "prefix" | "value" | "onChange"
   > {
+  formatInput?: (value: T) => string | number;
+  formatOutput?: (value: string | number) => T;
+  max?: number;
+  min?: number;
+  onValueBlur?: (value: T) => void;
+  onValueChange?: (value: T) => void;
   prefix?: string | ReactNode;
   suffix?: string | ReactNode;
   value?: T;
-  formatInput?: (value: T) => string | number;
-  formatOutput?: (value: string | number) => T;
-  onValueChange?: (value: T) => void;
-  onValueBlur?: (value: T) => void;
-  min?: number;
-  max?: number;
 }
 
 export function EnhancedInput<T = string>({

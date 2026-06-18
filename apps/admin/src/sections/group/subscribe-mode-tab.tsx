@@ -27,8 +27,8 @@ import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
 interface SubscribeGroupMapping {
-  subscribe_name: string;
   node_group_name: string;
+  subscribe_name: string;
 }
 
 export default function SubscribeModeTab() {

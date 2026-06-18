@@ -45,11 +45,11 @@ const formSchema = z.object({
 });
 
 interface CouponFormProps<T> {
-  onSubmit: (data: T) => Promise<boolean> | boolean;
   initialValues?: T;
   loading?: boolean;
-  trigger: string;
+  onSubmit: (data: T) => Promise<boolean> | boolean;
   title: string;
+  trigger: string;
 }
 
 export default function CouponForm<T extends Record<string, any>>({

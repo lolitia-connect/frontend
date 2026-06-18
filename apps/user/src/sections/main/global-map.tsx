@@ -11,17 +11,17 @@ import {
 import worldAtlasUrl from "world-atlas/countries-110m.json?url";
 
 interface MapLocation {
+  coordinates: [number, number];
+  isHub?: boolean;
   key: string;
   labelKey: string;
-  coordinates: [number, number];
   labelOffset: [number, number];
-  isHub?: boolean;
 }
 
 interface MapRoute {
   from: string;
-  to: string;
   hub: "hong_kong" | "tokyo";
+  to: string;
 }
 
 const MAP_LOCATIONS: MapLocation[] = [

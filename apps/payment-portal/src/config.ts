@@ -1,4 +1,4 @@
-const DEFAULT_AMOUNTS = [10, 20, 50, 100];
+const DEFAULT_AMOUNTS = [1000, 2000, 5000, 10_000];
 const DEFAULT_NEWS = [
   "Existing backend login is reused directly for authentication.",
   "Enabled payment methods are loaded from the current portal payment API.",
@@ -15,7 +15,14 @@ function parseAmounts(value?: string): number[] {
 
   const parsed = value
     .split(",")
-    .map((item) => Number(item.trim()))
+    .map((item) => {
+      const num = Number(item.trim());
+      // If values look like dollars (< 10000), convert to cents
+      if (Number.isFinite(num) && num > 0) {
+        return num < 10_000 ? num * 100 : num;
+      }
+      return Number.NaN;
+    })
     .filter((item) => Number.isFinite(item) && item > 0);
 
   return parsed.length > 0 ? parsed : DEFAULT_AMOUNTS;
@@ -33,14 +40,20 @@ function parseNews(value?: string): string[] {
 }
 
 export const fallbackLng = "en-US";
-export const supportedLngs = ["en-US", "zh-CN", "zh-TW", "zh-HK", "ja-JP"] as const;
+export const supportedLngs = [
+  "en-US",
+  "zh-CN",
+  "zh-TW",
+  "zh-HK",
+  "ja-JP",
+] as const;
 
 export const portalConfig = {
   currency: import.meta.env.VITE_PAYMENT_PORTAL_CURRENCY,
   rechargeAmounts: parseAmounts(import.meta.env.VITE_PAYMENT_PORTAL_AMOUNTS),
   minCustomAmount: Math.max(
-    parseNumber(import.meta.env.VITE_PAYMENT_PORTAL_MIN_CUSTOM_AMOUNT, 1),
-    1
+    parseNumber(import.meta.env.VITE_PAYMENT_PORTAL_MIN_CUSTOM_AMOUNT, 100),
+    100
   ),
   newsItems: parseNews(import.meta.env.VITE_PAYMENT_PORTAL_NEWS),
 };

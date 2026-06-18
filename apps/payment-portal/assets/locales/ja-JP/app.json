@@ -2,19 +2,14 @@
   "meta": {
     "title": "決済ポータル"
   },
-  "news": {
-    "title": "ローリングニュース",
-    "subtitle": "決済の更新、設定の変更、チャージのリマインダーがここにスクロール表示されます。"
-  },
   "login": {
     "badge": "独立決済フロント",
     "title": "ログインして続行",
-    "description": "認証は既存のバックエンドログインAPIを再利用します。ログイン後、チャージ方法とプリセット金額を選択できます。",
     "accountLabel": "アカウント / メールアドレス",
     "accountPlaceholder": "既存のシステムアカウントまたはメールアドレスを入力",
     "passwordLabel": "パスワード",
     "passwordPlaceholder": "パスワードを入力",
-    "helper": "このフロントエンドは独立したユーザーシステムを維持せず、既存のバックエンド認証と決済APIを再利用します。",
+
     "loadingConfig": "設定を読み込み中...",
     "submit": "ログイン",
     "submitting": "ログイン中...",
@@ -31,7 +26,7 @@
     "selectAmountTitle": "プリセットチャージ金額",
     "selectAmountHint": "チャージ金額はこのフロントエンドプロジェクトの.envファイルから取得されます。",
     "customAmountOption": "カスタム金額",
-    "customAmountHint": "epay決済方法はカスタムチャージ金額をサポートしており、最低金額は{{amount}}です。",
+    "customAmountHint": "カスタムチャージ金額をサポートしており、最低金額は{{amount}}です。",
     "customAmountPlaceholder": "カスタム金額を入力",
     "amountLabel": "金額",
     "methods": "決済方法",

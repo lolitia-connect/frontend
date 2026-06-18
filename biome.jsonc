@@ -26,7 +26,7 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true,
+      "preset": "recommended",
       "a11y": {
         "useSemanticElements": "off",
         "noRedundantRoles": "off",
@@ -39,7 +39,8 @@
       "performance": {
         "noNamespaceImport": "off",
         "useTopLevelRegex": "off",
-        "noBarrelFile": "off"
+        "noBarrelFile": "off",
+        "noSyncScripts": "off"
       },
       "suspicious": {
         "noDoubleEquals": "off",
@@ -48,13 +49,10 @@
         "noExplicitAny": "off",
         "useAwait": "off",
         "noAlert": "off",
-        "noTemplateCurlyInString": "off"
+        "noTemplateCurlyInString": "off",
+        "noShadow": "off"
       },
-      "nursery": {
-        "noShadow": "off",
-        "noSyncScripts": "off",
-        "noIncrementDecrement": "off"
-      },
+      "nursery": {},
       "complexity": {
         "noExcessiveCognitiveComplexity": "off",
         "noForEach": "off",
@@ -67,7 +65,8 @@
         "useConsistentTypeDefinitions": "off",
         "useDefaultSwitchClause": "off",
         "noNamespace": "off",
-        "noNonNullAssertion": "off"
+        "noNonNullAssertion": "off",
+        "noIncrementDecrement": "off"
       },
       "correctness": {
         "useExhaustiveDependencies": "off",
@@ -85,5 +84,5 @@
       "quoteStyle": "double"
     }
   },
-  "extends": ["ultracite/core", "ultracite/react"]
+  "extends": ["ultracite/biome/core", "ultracite/biome/react"]
 }

@@ -162,7 +162,7 @@ export default function Renewal({ id, subscribe }: Readonly<RenewalProps>) {
                 onChange={(value) => {
                   handleChange("payment", value);
                 }}
-                value={params.payment ?? 0}
+                value={params.payment ?? "0"}
               />
             </div>
             <Button

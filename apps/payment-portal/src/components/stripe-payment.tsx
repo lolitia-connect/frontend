@@ -328,7 +328,7 @@ const CheckoutForm: React.FC<Omit<StripePaymentProps, "publishable_key">> = ({
   }, [confirmPayment, handleError, isSubmitted, method, t]);
 
   useEffect(() => {
-    void autoSubmit();
+    autoSubmit();
   }, [autoSubmit]);
 
   if (method === "card") {

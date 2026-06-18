@@ -122,7 +122,9 @@ export default function ServerNodeConfig({ server }: { server: API.Server }) {
   } = useQuery({
     queryKey: ["getServerNodeConfig", server.id],
     queryFn: async () => {
-      const { data } = await getServerNodeConfig({ server_id: Number(server.id) });
+      const { data } = await getServerNodeConfig({
+        server_id: Number(server.id),
+      });
       return data.data;
     },
     enabled: open,

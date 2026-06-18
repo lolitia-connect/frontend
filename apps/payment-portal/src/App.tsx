@@ -352,7 +352,7 @@ export default function App() {
       }
     };
 
-    void loadConfig();
+    loadConfig();
   }, []);
 
   useEffect(() => {
@@ -363,7 +363,7 @@ export default function App() {
     if (!authenticated) return;
     if (portalBootstrappedRef.current) return;
     portalBootstrappedRef.current = true;
-    void refreshPortal();
+    refreshPortal();
   }, [authenticated, refreshPortal]);
 
   useEffect(() => {
@@ -371,7 +371,7 @@ export default function App() {
     if (Number(activeOrder.status) !== 1) return;
 
     const timer = window.setInterval(() => {
-      void refreshActiveOrder(activeOrder.orderNo);
+      refreshActiveOrder(activeOrder.orderNo);
     }, 3000);
 
     return () => window.clearInterval(timer);
@@ -387,7 +387,7 @@ export default function App() {
     toast.success(
       t("dashboard.paymentSuccess", "支付成功，余额和订单记录已更新")
     );
-    void refreshPortal();
+    refreshPortal();
   }, [activeOrder?.orderNo, activeOrder?.status, refreshPortal, t]);
 
   useEffect(() => {
@@ -724,13 +724,11 @@ export default function App() {
         onMethodSelect={setSelectedMethodId}
         onOpenConfirm={handleOpenConfirm}
         onRefresh={() => {
-          void refreshPortal();
-          if (activeOrder?.orderNo)
-            void refreshActiveOrder(activeOrder.orderNo);
+          refreshPortal();
+          if (activeOrder?.orderNo) refreshActiveOrder(activeOrder.orderNo);
         }}
         onRefreshOrder={() => {
-          if (activeOrder?.orderNo)
-            void refreshActiveOrder(activeOrder.orderNo);
+          if (activeOrder?.orderNo) refreshActiveOrder(activeOrder.orderNo);
         }}
         records={records}
         selectedAmount={selectedAmount}

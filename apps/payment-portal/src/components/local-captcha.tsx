@@ -37,7 +37,7 @@ export function LocalCaptcha({
   };
 
   useEffect(() => {
-    void fetchCaptcha();
+    fetchCaptcha();
   }, [resetKey]);
 
   return (
@@ -56,7 +56,7 @@ export function LocalCaptcha({
             className="portal-captcha-image-btn"
             disabled={loading}
             onClick={() => {
-              void fetchCaptcha();
+              fetchCaptcha();
             }}
             type="button"
           >

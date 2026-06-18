@@ -142,7 +142,7 @@ export default function BindNodeGroupsDialog({
               </Label>
               <Select
                 onValueChange={(val) =>
-                  setSelectedNodeGroupId(Number.parseInt(val) || undefined)
+                  setSelectedNodeGroupId(Number.parseInt(val, 10) || undefined)
                 }
                 value={selectedNodeGroupId?.toString() || ""}
               >

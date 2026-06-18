@@ -126,6 +126,7 @@ export default function RedemptionRecords({
                       onClick={() =>
                         setPagination((p) => ({ ...p, page: p.page - 1 }))
                       }
+                      type="button"
                     >
                       {t("previous", "Previous")}
                     </button>
@@ -135,6 +136,7 @@ export default function RedemptionRecords({
                       onClick={() =>
                         setPagination((p) => ({ ...p, page: p.page + 1 }))
                       }
+                      type="button"
                     >
                       {t("next", "Next")}
                     </button>

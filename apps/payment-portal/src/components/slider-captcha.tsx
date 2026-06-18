@@ -95,7 +95,7 @@ export function SliderCaptcha({
     setShaking(true);
     window.setTimeout(() => {
       setShaking(false);
-      void fetchCaptcha();
+      fetchCaptcha();
     }, 800);
   };
 
@@ -203,7 +203,7 @@ export function SliderCaptcha({
         onClick={() => {
           if (verified) return;
           setOpen(true);
-          void fetchCaptcha();
+          fetchCaptcha();
         }}
         type="button"
       >
@@ -292,7 +292,7 @@ export function SliderCaptcha({
             className="portal-secondary-btn w-full"
             disabled={loading}
             onClick={() => {
-              void fetchCaptcha();
+              fetchCaptcha();
             }}
             type="button"
           >

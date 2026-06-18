@@ -14,7 +14,8 @@
       "**/vite.config.js",
       "!**/src/routeTree.gen.ts",
       "!**/src/styles.css",
-      "!**/docs/**/*"
+      "!**/docs/**/*",
+      "!apps/*/public/assets/lotties/**/*"
     ]
   },
   "formatter": {
@@ -70,7 +71,8 @@
       },
       "correctness": {
         "useExhaustiveDependencies": "off",
-        "noNestedComponentDefinitions": "off"
+        "noNestedComponentDefinitions": "off",
+        "useImageSize": "off"
       },
       "security": {
         "noDangerouslySetInnerHtml": "off",

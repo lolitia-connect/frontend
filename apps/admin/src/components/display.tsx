@@ -6,9 +6,9 @@ import { useGlobalStore } from "@/stores/global";
 type DisplayType = "currency" | "traffic" | "number" | "trafficSpeed";
 
 interface DisplayProps<T> {
-  value?: T;
-  unlimited?: boolean;
   type?: DisplayType;
+  unlimited?: boolean;
+  value?: T;
 }
 
 export function Display<T extends number | undefined | null>({

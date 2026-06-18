@@ -8,9 +8,9 @@ import { toast } from "sonner";
 
 interface NodeGroup {
   id: string;
-  name: string;
-  min_traffic_gb?: number;
   max_traffic_gb?: number;
+  min_traffic_gb?: number;
+  name: string;
 }
 
 interface TrafficRangeConfigProps {
@@ -22,13 +22,13 @@ interface TrafficRangeConfigProps {
 }
 
 interface UpdatingNode {
-  nodeGroupId: string;
   field: "min_traffic_gb" | "max_traffic_gb";
+  nodeGroupId: string;
 }
 
 interface NodeGroupTempValues {
-  min_traffic_gb?: number;
   max_traffic_gb?: number;
+  min_traffic_gb?: number;
 }
 
 export default function TrafficRangeConfig({

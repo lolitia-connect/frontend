@@ -51,7 +51,7 @@ export default function ResetForm({
     password: z.string(),
     code: auth?.email?.enable_verify ? z.string() : z.string().nullish(),
     cf_token:
-      captchaEnabled && isTurnstile && verify.turnstile_site_key
+      verify.enable_reset_password_verify && verify.turnstile_site_key
         ? z.string()
         : z.string().nullish(),
     captcha_code:
@@ -85,7 +85,7 @@ export default function ResetForm({
         (data as any).captcha_id = captchaId;
       }
       onSubmit(data);
-    } catch (_error) {
+    } catch {
       turnstile.current?.reset();
       localCaptcha.current?.reset();
       sliderCaptcha.current?.reset();

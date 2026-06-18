@@ -21,9 +21,9 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 interface SystemLogsDialogProps {
+  size?: "sm" | "default" | "lg";
   trigger?: React.ReactNode;
   variant?: "default" | "outline" | "ghost" | "secondary";
-  size?: "sm" | "default" | "lg";
 }
 
 export default function SystemLogsDialog({

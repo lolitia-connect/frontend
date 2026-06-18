@@ -23,8 +23,8 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 interface StripePaymentProps {
-  method: string;
   client_secret: string;
+  method: string;
   publishable_key: string;
 }
 
@@ -347,7 +347,7 @@ const CheckoutForm: React.FC<Omit<StripePaymentProps, "publishable_key">> = ({
           setQrCodeImageDataUrl(data ? null : imageDataUrl || null);
         }
       }
-    } catch (_error) {
+    } catch {
       handleError(t("stripe.error", "An error occurred"));
     }
   }, [confirmPayment, isSubmitted, handleError, method, t]);

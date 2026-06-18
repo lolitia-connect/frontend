@@ -4,9 +4,9 @@ import { useTranslation } from "react-i18next";
 type Language = string;
 
 interface LanguageContextType {
-  language: Language;
   changeLanguage: (lng: Language) => void;
   isLoading: boolean;
+  language: Language;
   supportedLanguages: readonly Language[];
 }
 
@@ -14,8 +14,8 @@ const LanguageContext = createContext<LanguageContextType | null>(null);
 
 interface LanguageProviderProps {
   children: React.ReactNode;
-  supportedLanguages?: readonly Language[];
   defaultLanguage?: Language;
+  supportedLanguages?: readonly Language[];
 }
 
 export function LanguageProvider({

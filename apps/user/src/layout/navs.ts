@@ -1,16 +1,16 @@
 import { useTranslation } from "react-i18next";
 
 export interface NavItem {
+  icon: string;
   title: string;
   url: string;
-  icon: string;
 }
 
 export interface NavGroup {
-  title: string;
-  url?: string;
   icon?: string;
   items?: NavItem[];
+  title: string;
+  url?: string;
 }
 
 export function useNavs() {

@@ -122,7 +122,7 @@ export default function RegisterForm({
         (data as any).captcha_id = captchaId;
       }
       onSubmit(data);
-    } catch (_error) {
+    } catch {
       turnstile.current?.reset();
       localCaptcha.current?.reset();
       sliderCaptcha.current?.reset();
@@ -146,7 +146,7 @@ export default function RegisterForm({
                   <FormControl>
                     <Input
                       placeholder={t(
-                        "register.emailPlaceholder",
+                        "placeholders.email",
                         "Enter your email..."
                       )}
                       type="email"
@@ -165,7 +165,7 @@ export default function RegisterForm({
                   <FormControl>
                     <Input
                       placeholder={t(
-                        "register.passwordPlaceholder",
+                        "placeholders.password",
                         "Enter your password..."
                       )}
                       type="password"
@@ -185,7 +185,7 @@ export default function RegisterForm({
                     <Input
                       disabled={loading}
                       placeholder={t(
-                        "register.repeatPasswordPlaceholder",
+                        "placeholders.repeatPassword",
                         "Enter password again..."
                       )}
                       type="password"
@@ -206,10 +206,7 @@ export default function RegisterForm({
                       <div className="flex items-center gap-2">
                         <Input
                           disabled={loading}
-                          placeholder={t(
-                            "register.codePlaceholder",
-                            "Enter code..."
-                          )}
+                          placeholder={t("placeholders.code", "Enter code...")}
                           type="text"
                           {...field}
                           value={field.value as string}

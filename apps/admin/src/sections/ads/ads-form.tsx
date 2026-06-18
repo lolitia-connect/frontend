@@ -39,11 +39,11 @@ const formSchema = z.object({
 });
 
 interface AdsFormProps<T> {
-  onSubmit: (data: T) => Promise<boolean> | boolean;
   initialValues?: T;
   loading?: boolean;
-  trigger: string;
+  onSubmit: (data: T) => Promise<boolean> | boolean;
   title: string;
+  trigger: string;
 }
 
 export default function AdsForm<T extends Record<string, any>>({

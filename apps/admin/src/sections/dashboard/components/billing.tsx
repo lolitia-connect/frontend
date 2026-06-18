@@ -17,11 +17,11 @@ interface BillingProps {
 }
 
 interface ItemType {
-  logo: string;
-  title: string;
   description: string;
   expiryDate: string;
   href: string;
+  logo: string;
+  title: string;
 }
 
 async function getBillingURL() {
@@ -36,7 +36,7 @@ async function getBillingURL() {
     );
     url.pathname += `@${version}/billing/index.json`;
     return url.toString();
-  } catch (_error) {
+  } catch {
     return "https://cdn.jsdmirror.com/gh/perfect-panel/ppanel-assets/billing/index.json";
   }
 }

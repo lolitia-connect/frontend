@@ -1,19 +1,21 @@
+import { Button } from "@workspace/ui/components/button";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@workspace/ui/components/dialog";
+import { CheckCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Turnstile, { useTurnstile } from "react-turnstile";
 
 interface CloudflareTurnstileProps {
   language: string;
+  onChange: (value: string) => void;
+  resetKey: number;
   siteKey: string;
   value: string;
-  resetKey: number;
-  onChange: (value: string) => void;
 }
 
 export function CloudflareTurnstile({
@@ -36,7 +38,7 @@ export function CloudflareTurnstile({
     setVerified(false);
     try {
       turnstile.reset();
-    } catch (_error) {
+    } catch {
       /* empty */
     }
   }, [resetKey, turnstile]);
@@ -45,27 +47,25 @@ export function CloudflareTurnstile({
 
   return (
     <>
-      <button
-        className={`portal-captcha-trigger ${verified ? "is-verified" : ""}`}
+      <Button
+        className="w-full"
         onClick={() => {
           if (!verified) setOpen(true);
         }}
         type="button"
+        variant={verified ? "default" : "outline"}
       >
-        <span className="portal-captcha-indicator" />
-        <span>
-          {verified
-            ? t("captcha.turnstile.verified", "验证已通过")
-            : t("captcha.turnstile.action", "点击完成人机验证")}
-        </span>
-      </button>
+        {verified ? (
+          <>
+            <CheckCircle className="mr-2 h-4 w-4" />
+            {t("captcha.turnstile.verified", "验证已通过")}
+          </>
+        ) : (
+          t("captcha.turnstile.action", "点击完成人机验证")
+        )}
+      </Button>
 
-      <Dialog
-        onOpenChange={(nextOpen) => {
-          setOpen(nextOpen);
-        }}
-        open={open}
-      >
+      <Dialog onOpenChange={setOpen} open={open}>
         <DialogContent className="flex w-auto flex-col items-center gap-4 p-6 sm:max-w-md">
           <DialogHeader>
             <DialogTitle>
@@ -81,7 +81,7 @@ export function CloudflareTurnstile({
               setVerified(false);
               try {
                 turnstile.reset();
-              } catch (_error) {
+              } catch {
                 /* empty */
               }
             }}
@@ -90,7 +90,7 @@ export function CloudflareTurnstile({
               setVerified(false);
               try {
                 turnstile.reset();
-              } catch (_error) {
+              } catch {
                 /* empty */
               }
             }}

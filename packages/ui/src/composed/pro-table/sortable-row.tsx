@@ -5,8 +5,8 @@ import { GripVertical } from "lucide-react";
 import type React from "react";
 
 interface SortableRowProps {
-  id: string;
   children: React.ReactNode;
+  id: string;
   isSortable: boolean;
 }
 

@@ -29,11 +29,11 @@ import { z } from "zod";
 import { useSubscribe } from "@/stores/subscribe";
 
 interface Props {
-  trigger: ReactNode;
-  title: string;
-  loading?: boolean;
   initialData?: API.UserSubscribe;
+  loading?: boolean;
   onSubmit: (values: any) => Promise<boolean>;
+  title: string;
+  trigger: ReactNode;
 }
 
 const formSchema = z.object({

@@ -275,7 +275,10 @@ export default function Content() {
                   <CardTitle className="font-medium">
                     {item.subscribe.name}
                     <p className="mt-1 text-foreground/50 text-sm">
-                      {formatDate(item.start_time)}
+                      {t("expireAt", "Expires At")}:{" "}
+                      {item.expire_time
+                        ? formatDate(item.expire_time)
+                        : t("noLimit", "No Limit")}
                     </p>
                   </CardTitle>
                   {item.status !== 4 && (
@@ -322,7 +325,7 @@ export default function Content() {
                         id={item.id}
                         replacement={item.subscribe.replacement}
                       />
-                      {item.expire_time !== 0 && (
+                      {item.expire_time !== 0 && item.subscribe.sell && (
                         <Renewal id={item.id} subscribe={item.subscribe} />
                       )}
                       <Unsubscribe
@@ -447,6 +450,18 @@ export default function Content() {
                                         url,
                                         application.scheme
                                       );
+
+                                      // Check if the generated link is a plain HTTP/HTTPS URL
+                                      // If so, only copy to clipboard without triggering redirect
+                                      const isPlainHttpUrl = /^https?:/; //i.test(href);
+
+                                      if (isPlainHttpUrl) {
+                                        toast.success(
+                                          t("copySuccess", "Copy Success")
+                                        );
+                                        return;
+                                      }
+
                                       const showSuccessMessage = () => {
                                         toast.success(
                                           <>

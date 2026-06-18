@@ -54,12 +54,12 @@ export type PaymentFormValues = {
 };
 
 interface PaymentFormProps<T extends { platform?: string }> {
-  trigger: React.ReactNode;
-  title: string;
-  loading?: boolean;
   initialValues?: T;
-  onSubmit: (values: T) => Promise<boolean>;
   isEdit?: boolean;
+  loading?: boolean;
+  onSubmit: (values: T) => Promise<boolean>;
+  title: string;
+  trigger: React.ReactNode;
 }
 
 export default function PaymentForm<T extends { platform?: string }>({

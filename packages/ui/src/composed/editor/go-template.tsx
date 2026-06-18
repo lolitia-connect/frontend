@@ -14,23 +14,23 @@ import { useEffect, useRef } from "react";
 type SchemaType = "string" | "number" | "boolean" | "object" | "array" | "null";
 
 interface SchemaProperty {
-  type: SchemaType;
+  description?: string;
   items?: SchemaProperty;
   properties?: Record<string, SchemaProperty>;
-  description?: string;
+  type: SchemaType;
 }
 
 export interface GoTemplateEditorProps
   extends Omit<MonacoEditorProps, "language"> {
-  schema?: Record<string, SchemaProperty> | Record<string, unknown>;
   enableSprig?: boolean;
+  schema?: Record<string, SchemaProperty> | Record<string, unknown>;
 }
 
 interface CompletionItem {
-  label: string;
-  kind: number;
-  insertText: string;
   documentation: string;
+  insertText: string;
+  kind: number;
+  label: string;
   sortText: string;
 }
 
@@ -845,7 +845,7 @@ export function GoTemplateEditor({
 
             const fullText = model.getValue();
             const currentPosition = model.getOffsetAt(position);
-            const textBeforePosition = fullText.substring(0, currentPosition);
+            const textBeforePosition = fullText.slice(0, currentPosition);
 
             const rangeMatches = [
               ...textBeforePosition.matchAll(
@@ -928,14 +928,14 @@ export function GoTemplateEditor({
               Math.max(templateStartNormal, templateStartTrim) +
               (templateStartTrim > templateStartNormal ? 3 : 2);
             const actualStart = Math.max(wordStart, templateStart);
-            const currentWord = textUntilPosition.substring(actualStart);
+            const currentWord = textUntilPosition.slice(actualStart);
             const currentWordTrimmed = currentWord.trim();
 
             let dotMatches = currentWordTrimmed.match(
               REGEX_PATTERNS.NESTED_DOT
             );
             if (!dotMatches) {
-              const beforeCursor = textUntilPosition.substring(
+              const beforeCursor = textUntilPosition.slice(
                 Math.max(templateStart, 0)
               );
               dotMatches =
@@ -1146,7 +1146,7 @@ export function GoTemplateEditor({
                   let startColumn = actualStart;
 
                   const templateContent =
-                    textUntilPosition.substring(templateStart);
+                    textUntilPosition.slice(templateStart);
 
                   if (isNestedField) {
                     startColumn = position.column;

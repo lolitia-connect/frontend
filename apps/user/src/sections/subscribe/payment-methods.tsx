@@ -13,15 +13,17 @@ import { memo, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
 interface PaymentMethodsProps {
-  value: string;
-  onChange: (value: string) => void;
   balance?: boolean;
+  onAvailableMethodsChange?: (count: number) => void;
+  onChange: (value: string) => void;
+  value: string;
 }
 
 const PaymentMethods: React.FC<PaymentMethodsProps> = ({
   value,
   onChange,
   balance = true,
+  onAvailableMethodsChange,
 }) => {
   const { t } = useTranslation("subscribe");
 
@@ -45,6 +47,11 @@ const PaymentMethods: React.FC<PaymentMethodsProps> = ({
     const preferred = data.find((m) => m.id !== "-1")?.id ?? data[0]!.id;
     onChange(preferred);
   }, [data, onChange, value]);
+
+  useEffect(() => {
+    onAvailableMethodsChange?.(data?.length ?? 0);
+  }, [data, onAvailableMethodsChange]);
+
   return (
     <>
       <div className="font-semibold">
@@ -52,7 +59,7 @@ const PaymentMethods: React.FC<PaymentMethodsProps> = ({
       </div>
       <RadioGroup
         className="grid grid-cols-2 gap-2 md:grid-cols-5"
-        onValueChange={onChange}
+        onValueChange={(v) => onChange(v)}
         value={String(value)}
       >
         {data?.map((item) => (
@@ -64,8 +71,10 @@ const PaymentMethods: React.FC<PaymentMethodsProps> = ({
             />
             <Label
               className={cn(
-                "flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover py-2 hover:bg-accent hover:text-accent-foreground",
-                String(value) === String(item.id) ? "border-primary" : ""
+                "flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover py-2 text-popover-foreground hover:bg-accent hover:text-accent-foreground",
+                String(value) === String(item.id)
+                  ? "border-primary bg-primary/10 text-foreground"
+                  : ""
               )}
               htmlFor={String(item.id)}
             >

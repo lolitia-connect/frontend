@@ -19,8 +19,8 @@ import { Display } from "@/components/display";
 import { useGlobalStore } from "@/stores/global";
 
 interface UnsubscribeProps {
-  id: string;
   allowDeduction?: boolean;
+  id: string;
   onSuccess?: () => void;
 }
 
@@ -56,7 +56,7 @@ export default function Unsubscribe({
       await getUserInfo();
       onSuccess?.();
       setOpen(false);
-    } catch (_error) {
+    } catch {
       toast.error(t("unsubscribe.failed", "Unsubscribe failed"));
     }
   };

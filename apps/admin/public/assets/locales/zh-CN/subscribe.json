@@ -2,7 +2,9 @@
   "actions": {
     "add": "添加",
     "batchDelete": "批量删除",
+    "batchDeleteSuccess_one": "成功删除 {count} 个客户端",
     "batchDeleteSuccess_other": "成功删除 {count} 个客户端",
+    "batchDeleteWarning_one": "确定要删除选中的 {count} 个客户端吗？",
     "batchDeleteWarning_other": "确定要删除选中的 {count} 个客户端吗？",
     "cancel": "取消",
     "confirm": "确认",
@@ -22,6 +24,8 @@
     "description": "管理订阅系统设置",
     "singleSubscriptionMode": "单一订阅模式",
     "singleSubscriptionModeDescription": "限制用户只能有一个活跃订阅。现有订阅不受影响",
+    "showTutorial": "显示教程板块",
+    "showTutorialDescription": "在用户文档页显示客户端教程板块",
     "subscriptionDomain": "订阅域名",
     "subscriptionDomainDescription": "订阅链接的自定义域名",
     "subscriptionDomainPlaceholder": "输入订阅域名，每行一个",

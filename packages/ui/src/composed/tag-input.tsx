@@ -6,12 +6,12 @@ import type React from "react";
 import { useEffect, useRef, useState } from "react";
 
 interface TagInputProps {
-  value?: string[];
+  className?: string;
   onChange?: (tags: string[]) => void;
+  options?: string[];
   placeholder?: string;
   separator?: string;
-  className?: string;
-  options?: string[];
+  value?: string[];
 }
 
 export function TagInput({

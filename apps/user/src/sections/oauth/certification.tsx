@@ -7,8 +7,8 @@ import { useGlobalStore } from "@/stores/global";
 import { getRedirectUrl, setAuthorization } from "@/utils/common";
 
 interface CertificationProps {
-  platform: string;
   children: React.ReactNode;
+  platform: string;
 }
 
 export default function Certification({

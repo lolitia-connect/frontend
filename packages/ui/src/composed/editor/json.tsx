@@ -8,10 +8,10 @@ import { useMemo } from "react";
 
 interface JSONEditorProps
   extends Omit<MonacoEditorProps, "placeholder" | "value" | "onChange"> {
-  schema?: Record<string, unknown>;
-  placeholder?: Record<string, unknown>;
-  value?: Record<string, unknown> | string;
   onChange?: (value: Record<string, unknown> | string | undefined) => void;
+  placeholder?: Record<string, unknown>;
+  schema?: Record<string, unknown>;
+  value?: Record<string, unknown> | string;
 }
 
 export function JSONEditor(props: JSONEditorProps) {
@@ -96,7 +96,7 @@ const generateSchema = (
 
 type SchemaType = "string" | "number" | "boolean" | "object" | "array" | "null";
 interface SchemaProperty {
-  type: SchemaType;
   items?: SchemaProperty;
   properties?: Record<string, SchemaProperty>;
+  type: SchemaType;
 }

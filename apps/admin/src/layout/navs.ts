@@ -2,11 +2,11 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
 export interface NavItem {
-  title: string;
-  url?: string;
+  defaultOpen?: boolean;
   icon?: string;
   items?: NavItem[];
-  defaultOpen?: boolean;
+  title: string;
+  url?: string;
 }
 
 export function useNavs() {

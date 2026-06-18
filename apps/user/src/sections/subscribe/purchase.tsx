@@ -23,8 +23,8 @@ import { SubscribeBilling } from "./billing";
 import { SubscribeDetail } from "./detail";
 
 interface PurchaseProps {
-  subscribe?: API.Subscribe;
   setSubscribe: (subscribe?: API.Subscribe) => void;
+  subscribe?: API.Subscribe;
 }
 
 export default function Purchase({
@@ -37,7 +37,7 @@ export default function Purchase({
   const [params, setParams] = useState<Partial<API.PurchaseOrderRequest>>({
     quantity: 1,
     subscribe_id: "",
-    payment: "",
+    payment: "-1",
     coupon: "",
   });
   const [loading, startTransition] = useTransition();
@@ -105,7 +105,7 @@ export default function Purchase({
           getUserInfo();
           router.navigate({ to: "/payment", search: { order_no: orderNo } });
         }
-      } catch (_error) {
+      } catch {
         /* empty */
       }
     });
@@ -161,7 +161,7 @@ export default function Purchase({
                 onChange={(value) => {
                   handleChange("payment", value);
                 }}
-                value={params.payment ?? ""}
+                value={params.payment ?? "-1"}
               />
             </div>
             <Button

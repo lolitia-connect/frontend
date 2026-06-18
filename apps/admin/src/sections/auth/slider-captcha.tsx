@@ -24,14 +24,14 @@ export interface SliderCaptchaRef {
 }
 
 interface SliderCaptchaProps {
-  value?: string;
   onChange?: (value: string) => void;
+  value?: string;
 }
 
 interface TrailPoint {
+  t: number;
   x: number;
   y: number;
-  t: number;
 }
 
 const BLOCK_SIZE = 100;
@@ -109,16 +109,16 @@ const SliderCaptcha = forwardRef<SliderCaptchaRef, SliderCaptchaProps>(
       (e.target as HTMLElement).setPointerCapture(e.pointerId);
       e.preventDefault();
 
-      const { w, h } = getContainerSize();
-      const scaleX = BG_NATURAL_WIDTH / w;
-      const scaleY = BG_NATURAL_HEIGHT / h;
+      // const { w, h } = getContainerSize();
+      // const scaleX = BG_NATURAL_WIDTH / w;
+      // const scaleY = BG_NATURAL_HEIGHT / h;
       trail.current.push({
         x: Math.round(startBlock.current.x),
         y: Math.round(startBlock.current.y),
         t: 0,
       });
-      void scaleX;
-      void scaleY;
+      // void scaleX;
+      // void scaleY;
     };
 
     const onPointerMove = (e: React.PointerEvent) => {

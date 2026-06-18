@@ -31,11 +31,11 @@ const formSchema = z.object({
 });
 
 interface AnnouncementFormProps<T> {
-  onSubmit: (data: T) => Promise<boolean> | boolean;
   initialValues?: T;
   loading?: boolean;
-  trigger: string;
+  onSubmit: (data: T) => Promise<boolean> | boolean;
   title: string;
+  trigger: string;
 }
 
 export default function AnnouncementForm<T extends Record<string, any>>({

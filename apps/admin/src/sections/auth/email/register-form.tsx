@@ -89,7 +89,7 @@ export default function RegisterForm({
   const handleSubmit = form.handleSubmit((data) => {
     try {
       onSubmit(data);
-    } catch (_error) {
+    } catch {
       turnstile.current?.reset();
     }
   });

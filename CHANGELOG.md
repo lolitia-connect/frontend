@@ -19,6 +19,171 @@ This document records all notable changes to ShadCN Admin.
 ---
 
 
+## [1.7.4](https://github.com/perfect-panel/frontend/compare/v1.7.3...v1.7.4) (2026-06-11)
+
+### 🐛 Bug Fixes / 问题修复
+
+* **user:** prevent redirect when import button generates plain HTTP URLs ([7a7658a](https://github.com/perfect-panel/frontend/commit/7a7658a1fac3016690555a059a19da8c58f1aef9)), closes [#82](https://github.com/perfect-panel/frontend/issues/82)
+
+## [1.7.3](https://github.com/perfect-panel/frontend/compare/v1.7.2...v1.7.3) (2026-06-10)
+
+### 🐛 Bug Fixes / 问题修复
+
+* **user:** disable recharge when no payment methods available ([7961408](https://github.com/perfect-panel/frontend/commit/796140809d01e7b5f4e28cb66cd5d03368f47f85)), closes [#79](https://github.com/perfect-panel/frontend/issues/79)
+
+## [1.7.2](https://github.com/perfect-panel/frontend/compare/v1.7.1...v1.7.2) (2026-06-09)
+
+### 🐛 Bug Fixes / 问题修复
+
+* **user:** use avatar field instead of email for avatar image src ([5e9127e](https://github.com/perfect-panel/frontend/commit/5e9127ed0b674591097751f2f4789a8c9122d0c9))
+
+## [1.7.1](https://github.com/perfect-panel/frontend/compare/v1.7.0...v1.7.1) (2026-06-09)
+
+### 🐛 Bug Fixes / 问题修复
+
+* **user:** remove non-existent menu namespace from sidebar i18n ([f920d9f](https://github.com/perfect-panel/frontend/commit/f920d9f220fc000c4ca59bfc9fe4e091d7195d91)), closes [#78](https://github.com/perfect-panel/frontend/issues/78)
+
+## [1.7.0](https://github.com/perfect-panel/frontend/compare/v1.6.5...v1.7.0) (2026-06-08)
+
+### ✨ Features / 新功能
+
+* **subscribe:** admin toggle to show/hide the user tutorial section ([#75](https://github.com/perfect-panel/frontend/issues/75)) ([b1ad250](https://github.com/perfect-panel/frontend/commit/b1ad25075de08126dbbe5c5b99401cd9e1d097ae)), closes [perfect-panel/server#151](https://github.com/perfect-panel/server/issues/151)
+
+### 🐛 Bug Fixes / 问题修复
+
+* **user:** add clearUserLoading to GlobalStore interface ([dcdd984](https://github.com/perfect-panel/frontend/commit/dcdd984073c9c489d8a6704dc105984335abfbee))
+* **user:** properly handle user loading state for navigation ([d826e4a](https://github.com/perfect-panel/frontend/commit/d826e4af638238301e90ccf44617825933319264)), closes [#74](https://github.com/perfect-panel/frontend/issues/74)
+
+### 🔧 Chores / 其他变更
+
+* **release:** Release 1.6.4-dev.1 / 发布版本 1.6.4-dev.1 [skip ci] ([a087bae](https://github.com/perfect-panel/frontend/commit/a087bae953449df3dfd3326881590e5a989120f6))
+
+## [1.6.5](https://github.com/perfect-panel/frontend/compare/v1.6.4...v1.6.5) (2026-06-08)
+
+### 🐛 Bug Fixes / 问题修复
+
+* **user:** wait for user info to load before redirecting ([58266bf](https://github.com/perfect-panel/frontend/commit/58266bf0828ec4c07e06ac667e89196f20d64781)), closes [#74](https://github.com/perfect-panel/frontend/issues/74)
+
+## [1.6.4](https://github.com/perfect-panel/frontend/compare/v1.6.3...v1.6.4) (2026-06-04)
+
+### 🐛 Bug Fixes / 问题修复
+
+* use relative path for locale files to support non-root base paths ([593d038](https://github.com/perfect-panel/frontend/commit/593d038becde535fec20b27e53bfdd2af6b6ba49)), closes [#72](https://github.com/perfect-panel/frontend/issues/72)
+
+### 👷 Continuous Integration / CI/CD
+
+* add weekly auto-merge develop into main workflow ([b689e8b](https://github.com/perfect-panel/frontend/commit/b689e8bd64f819122b42684697dcd86b7baac277))
+* resolve conflicts with develop strategy on weekly merge ([cbd4847](https://github.com/perfect-panel/frontend/commit/cbd484746a3e7bb7a0806f6c2d9e8d42d3487852))
+* sync main into develop before weekly merge ([d99a6bc](https://github.com/perfect-panel/frontend/commit/d99a6bcaf45ade9790118cea273c20bc419d217f))
+
+### 🔧 Chores / 其他变更
+
+* trigger release ([a66dfcb](https://github.com/perfect-panel/frontend/commit/a66dfcb13be389287fefbc034e8c3c48ae17cc32))
+
+## [1.6.2](https://github.com/perfect-panel/frontend/compare/v1.6.1...v1.6.2) (2026-05-21)
+
+### 🐛 Bug Fixes / 问题修复
+
+* **server:** disable retry on node config fetch and show inline error ([#62](https://github.com/perfect-panel/frontend/issues/62)) ([819a4ac](https://github.com/perfect-panel/frontend/commit/819a4ac9e2deef632f8e2e84ac221aa25d7df4ff)), closes [#61](https://github.com/perfect-panel/frontend/issues/61)
+
+## [1.6.1](https://github.com/perfect-panel/frontend/compare/v1.6.0...v1.6.1) (2026-05-21)
+
+### 🐛 Bug Fixes / 问题修复
+
+* **user:** complete auth i18n ([#60](https://github.com/perfect-panel/frontend/issues/60)) ([0f99b06](https://github.com/perfect-panel/frontend/commit/0f99b0638125142e8f44bee9c6007e95a181e67e))
+
+## [1.6.0](https://github.com/perfect-panel/frontend/compare/v1.5.2...v1.6.0) (2026-05-20)
+
+### ✨ Features / 新功能
+
+* add per-node config UI and structured outbound form ([#59](https://github.com/perfect-panel/frontend/issues/59)) ([23fe0d3](https://github.com/perfect-panel/frontend/commit/23fe0d3dcb4571431446b505a92bd4143c48dad5))
+
+## [1.5.2](https://github.com/perfect-panel/frontend/compare/v1.5.1...v1.5.2) (2026-05-19)
+
+### 🐛 Bug Fixes / 问题修复
+
+* **admin:** remove custom_html injection from admin panel root ([0277e4a](https://github.com/perfect-panel/frontend/commit/0277e4ae3882b17ab45fcbec27c18c38d92f023c)), closes [#56](https://github.com/perfect-panel/frontend/issues/56)
+* **announcement:** remove incorrect pinned/popup false filters on announcement list page ([7dac476](https://github.com/perfect-panel/frontend/commit/7dac476b99d01a46e918c4fdbd4d8377a04885f6)), closes [#49](https://github.com/perfect-panel/frontend/issues/49)
+* **nodes:** normalize null tags to [] in node-form to prevent Invalid input error ([33ad713](https://github.com/perfect-panel/frontend/commit/33ad713f25b9e1193462ae641d4c6e97f4056dbd)), closes [#51](https://github.com/perfect-panel/frontend/issues/51)
+* **nodes:** reset edit form with initial values on open ([b8e19b5](https://github.com/perfect-panel/frontend/commit/b8e19b5fca9a0007fbb99c4e4929ba3080bd1f7e)), closes [#51](https://github.com/perfect-panel/frontend/issues/51)
+* resolve TypeScript generics incompatibility in node-form ([e6d6c68](https://github.com/perfect-panel/frontend/commit/e6d6c68596f216781946010627b7b02286445329))
+* show error toast on auth form submission failure ([a40d109](https://github.com/perfect-panel/frontend/commit/a40d109a3cb664864811973a651e12256f5968cc)), closes [#57](https://github.com/perfect-panel/frontend/issues/57)
+* **types:** make pinned and popup optional in QueryAnnouncementParams ([eae4334](https://github.com/perfect-panel/frontend/commit/eae4334d5f77be339d64f6f4290a5604256aa7c4))
+
+## [1.5.1](https://github.com/perfect-panel/frontend/compare/v1.5.0...v1.5.1) (2026-05-19)
+
+### 🐛 Bug Fixes / 问题修复
+
+* **auth:** use enable_reset_password_verify for cf_token schema in reset forms ([b0cfc8c](https://github.com/perfect-panel/frontend/commit/b0cfc8c1102c14a24540159f2d5c586cf3592502)), closes [#57](https://github.com/perfect-panel/frontend/issues/57)
+
+## [1.5.0](https://github.com/perfect-panel/frontend/compare/v1.4.2...v1.5.0) (2026-05-11)
+
+### ✨ Features / 新功能
+
+* **ci:** add issue triage automation workflow ([1624303](https://github.com/perfect-panel/frontend/commit/1624303b84fca99237f16c71e6d14b03682ec326))
+* **ci:** also trigger triage on new issue comments ([ec2bc9a](https://github.com/perfect-panel/frontend/commit/ec2bc9ac827cae7fe3b8e0e472b6a18b122818ea))
+* **triage:** include comment data in context for issue_comment events ([c5cc754](https://github.com/perfect-panel/frontend/commit/c5cc754ede249d022563fa2afb728690b16a6eee))
+
+### 🐛 Bug Fixes / 问题修复
+
+* **ui:** remove hardcoded Aceternity placeholder text from Timeline component ([d61bcde](https://github.com/perfect-panel/frontend/commit/d61bcde7bfd22611fb6014aaf7106721133e26a1))
+
+### 📚 Documentation / 文档更新
+
+* **zh-CN:** align clone directory with frontend repo name ([c8f35d9](https://github.com/perfect-panel/frontend/commit/c8f35d922c2b5a4de00973cb5875c17fb512c885))
+
+### 👷 Continuous Integration / CI/CD
+
+* add workflow_dispatch trigger to triage-automation ([e8fa276](https://github.com/perfect-panel/frontend/commit/e8fa276385f12378896a6a6e6b4532881ea8edfe))
+
+## [1.4.2](https://github.com/perfect-panel/frontend/compare/v1.4.1...v1.4.2) (2026-04-06)
+
+### 🐛 Bug Fixes / 问题修复
+
+* **i18n:** remove affiliate namespace from eager preload to prevent retry loops ([af8f09e](https://github.com/perfect-panel/frontend/commit/af8f09e28029bec9a3077fb4779d3212361e6ba2)), closes [#31](https://github.com/perfect-panel/frontend/issues/31)
+
+## [1.4.1](https://github.com/perfect-panel/frontend/compare/v1.4.0...v1.4.1) (2026-03-30)
+
+### 🐛 Bug Fixes / 问题修复
+
+* **ui:** improve text contrast on renew and purchasing pages ([#30](https://github.com/perfect-panel/frontend/issues/30)) ([2f9eac2](https://github.com/perfect-panel/frontend/commit/2f9eac27606a61cbd0e3f53b23023aad93d6c073))
+
+## [1.4.0](https://github.com/perfect-panel/frontend/compare/v1.3.15...v1.4.0) (2026-03-13)
+
+### ✨ Features / 新功能
+
+* **servers:** add Reality support for anytls; fix vless flow ([be24ba0](https://github.com/perfect-panel/frontend/commit/be24ba03f564181d2bd6bc611917004d24e21aee))
+
+## [1.3.15](https://github.com/perfect-panel/frontend/compare/v1.3.14...v1.3.15) (2026-03-12)
+
+### 🐛 Bug Fixes / 问题修复
+
+* **ci:** remove deprecated forwardRef usage in turnstile components ([89ece6e](https://github.com/perfect-panel/frontend/commit/89ece6e959892808c3a67ffb43612c9b90f1e38a))
+
+## [1.3.14](https://github.com/perfect-panel/frontend/compare/v1.3.13...v1.3.14) (2026-03-11)
+
+### 🐛 Bug Fixes / 问题修复
+
+* improve renewal button readability on subscription card ([#25](https://github.com/perfect-panel/frontend/issues/25)) ([ced5c1d](https://github.com/perfect-panel/frontend/commit/ced5c1d24e5af26ff8fdf700fd2b9b864706694a))
+
+## [1.3.13](https://github.com/perfect-panel/frontend/compare/v1.3.12...v1.3.13) (2026-03-07)
+
+### 🐛 Bug Fixes / 问题修复
+
+* **user:** show expire time & improve renewal dialog on mobile ([#22](https://github.com/perfect-panel/frontend/issues/22)) ([889dbf9](https://github.com/perfect-panel/frontend/commit/889dbf97736252d54d3e1d7ed0622e91ee4e8a1e))
+
+## [1.3.12](https://github.com/perfect-panel/frontend/compare/v1.3.11...v1.3.12) (2026-02-26)
+
+### 🐛 Bug Fixes / 问题修复
+
+* **admin:** prioritize follow-up tickets ([#18](https://github.com/perfect-panel/frontend/issues/18)) ([a07d1ca](https://github.com/perfect-panel/frontend/commit/a07d1ca48e6471077f2ec86e55e967c7d1aa8acd))
+
+## [1.3.11](https://github.com/perfect-panel/frontend/compare/v1.3.10...v1.3.11) (2026-02-21)
+
+### 🐛 Bug Fixes / 问题修复
+
+* **admin:** stabilize node sorting with duplicate sort values ([15fc37d](https://github.com/perfect-panel/frontend/commit/15fc37db9eae389644c287763b09c88eed9e2f75))
+
 ## [1.3.10](https://github.com/perfect-panel/frontend/compare/v1.3.9...v1.3.10) (2026-02-10)
 
 ### 🐛 Bug Fixes / 问题修复

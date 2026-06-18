@@ -18,10 +18,10 @@ import { getTutorial } from "@/sections/user/document/tutorial";
 import { CloseIcon } from "./close-icon";
 
 interface Item {
+  icon?: string;
   path: string;
   title: string;
   updated_at?: string;
-  icon?: string;
 }
 export function TutorialButton({ items }: { items: Item[] }) {
   const { t } = useTranslation("document");

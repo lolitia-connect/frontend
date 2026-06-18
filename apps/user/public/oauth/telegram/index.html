@@ -2,9 +2,9 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <title>OAuth Redirect</title>
-    <meta http-equiv="refresh" content="0; url=/#/auth">
+    <meta content="0; url=/#/auth" http-equiv="refresh">
     <script>
     "use strict";
 
@@ -25,7 +25,7 @@
           try {
             window.opener.postMessage(payload, window.location.origin);
             window.opener.focus();
-          } catch (_messageError) {
+          } catch {
             // ignore opener message errors
           }
 
@@ -40,7 +40,7 @@
         }
 
         window.location.replace(target);
-      } catch (_e) {
+      } catch {
         window.location.replace("/#/auth");
       }
     })();

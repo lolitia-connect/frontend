@@ -19,8 +19,8 @@ import { formatDate } from "@/utils/common";
 
 interface RedemptionRecordsProps {
   codeId: string | null;
-  open: boolean;
   onOpenChange: (open: boolean) => void;
+  open: boolean;
 }
 
 export default function RedemptionRecords({
@@ -126,6 +126,7 @@ export default function RedemptionRecords({
                       onClick={() =>
                         setPagination((p) => ({ ...p, page: p.page - 1 }))
                       }
+                      type="button"
                     >
                       {t("previous", "Previous")}
                     </button>
@@ -135,6 +136,7 @@ export default function RedemptionRecords({
                       onClick={() =>
                         setPagination((p) => ({ ...p, page: p.page + 1 }))
                       }
+                      type="button"
                     >
                       {t("next", "Next")}
                     </button>

@@ -159,9 +159,9 @@ export default function GroupConfig() {
           {/* Mode Selection */}
           {config.enabled && (
             <div className="space-y-2">
-              <label className="font-medium">
+              <span className="block font-medium">
                 {t("groupingMode", "Grouping Mode")}
-              </label>
+              </span>
               <div className="grid grid-cols-3 gap-4">
                 <button
                   className={`rounded-lg border p-4 text-left transition-colors ${

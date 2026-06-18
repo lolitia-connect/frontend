@@ -43,7 +43,7 @@ export default function Coupon() {
                 ref.current?.refresh();
                 setLoading(false);
                 return true;
-              } catch (_error) {
+              } catch {
                 setLoading(false);
                 return false;
               }
@@ -202,7 +202,7 @@ export default function Coupon() {
                 ref.current?.refresh();
                 setLoading(false);
                 return true;
-              } catch (_error) {
+              } catch {
                 setLoading(false);
                 return false;
               }

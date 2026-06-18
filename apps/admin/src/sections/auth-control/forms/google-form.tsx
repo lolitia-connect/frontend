@@ -88,7 +88,7 @@ export default function GoogleForm() {
       toast.success(t("common.saveSuccess", "Saved successfully"));
       refetch();
       setOpen(false);
-    } catch (_error) {
+    } catch {
       toast.error(t("common.saveFailed", "Save failed"));
     } finally {
       setLoading(false);

@@ -60,11 +60,11 @@ const getFormSchema = (t: (key: string, defaultValue: string) => string) =>
   });
 
 interface RedemptionFormProps<T> {
-  onSubmit: (data: T) => Promise<boolean> | boolean;
   initialValues?: T;
   loading?: boolean;
-  trigger: string;
+  onSubmit: (data: T) => Promise<boolean> | boolean;
   title: string;
+  trigger: string;
 }
 
 export default function RedemptionForm<T extends Record<string, any>>({

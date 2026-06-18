@@ -414,7 +414,30 @@ declare namespace API {
     protocol: string;
     address: string;
     port: number;
+    user?: string;
     password: string;
+    uuid?: string;
+    cipher?: string;
+    security?: string;
+    sni?: string;
+    allow_insecure?: boolean;
+    fingerprint?: string;
+    transport?: string;
+    host?: string;
+    path?: string;
+    service_name?: string;
+    flow?: string;
+    uot?: boolean;
+    uot_version?: number;
+    congestion_controller?: string;
+    udp_stream?: boolean;
+    reduce_rtt?: boolean;
+    heartbeat?: number;
+    reality_public_key?: string;
+    reality_short_id?: string;
+    spider_x?: string;
+    settings?: string;
+    stream_settings?: string;
     rules: string[];
   };
 
@@ -674,8 +697,8 @@ declare namespace API {
   type QueryAnnouncementParams = {
     page: number;
     size: number;
-    pinned: boolean;
-    popup: boolean;
+    pinned?: boolean;
+    popup?: boolean;
   };
 
   type QueryAnnouncementRequest = {
@@ -976,7 +999,7 @@ declare namespace API {
     speed_limit: number;
     device_limit: number;
     quota: number;
-    nodes: number[];
+    nodes: string[];
     node_tags: string[];
     show: boolean;
     sell: boolean;
@@ -997,6 +1020,7 @@ declare namespace API {
     pan_domain: boolean;
     user_agent_limit: boolean;
     user_agent_list: string;
+    show_tutorial?: boolean;
   };
 
   type SubscribeDiscount = {

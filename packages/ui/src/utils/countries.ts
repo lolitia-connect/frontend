@@ -1,11 +1,11 @@
 export interface ICountry {
-  name: string;
   alpha2: string;
   alpha3?: string | null;
-  numeric?: string | null;
-  phone?: string | null;
   lang?: string | null;
   langs: string[];
+  name: string;
+  numeric?: string | null;
+  phone?: string | null;
 }
 
 export const countries: ICountry[] = [

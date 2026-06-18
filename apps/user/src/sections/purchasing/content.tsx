@@ -38,7 +38,7 @@ export default function Content({
   const [params, setParams] = useState<API.PortalPurchaseRequest>({
     quantity: 1,
     subscribe_id: "",
-    payment: "",
+    payment: "-1",
     coupon: "",
     auth_type: "email",
     identifier: "",

@@ -9,8 +9,8 @@ import {
 } from "recharts";
 
 interface TrafficRatioChartProps {
-  upload: number;
   download: number;
+  upload: number;
 }
 
 export default function TrafficRatioChart({

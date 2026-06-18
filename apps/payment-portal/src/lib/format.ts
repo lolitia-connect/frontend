@@ -13,7 +13,7 @@ export function formatCurrency(
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     }).format(amount);
-  } catch (_error) {
+  } catch {
     return new Intl.NumberFormat(language, {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,

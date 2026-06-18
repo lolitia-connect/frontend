@@ -1,15 +1,6 @@
 import { userLogin } from "@workspace/ui/services/common/auth";
 import { getGlobalConfig } from "@workspace/ui/services/common/common";
-import {
-  queryOrderDetail,
-  queryOrderList,
-  recharge,
-} from "@workspace/ui/services/user/order";
-import {
-  getAvailablePaymentMethods,
-  purchaseCheckout,
-} from "@workspace/ui/services/user/portal";
-import { queryUserInfo } from "@workspace/ui/services/user/user";
+import { queryOrderDetail, recharge } from "@workspace/ui/services/user/order";
 import {
   useCallback,
   useEffect,
@@ -35,118 +26,34 @@ import {
 } from "@/lib/auth";
 import type { FeeBreakdown } from "@/lib/fees";
 import { toMinorUnits } from "@/lib/fees";
-import type {
-  ActiveOrder,
-  CheckoutInfo,
-  CurrentUserSummary,
-  PaymentMethod,
-  PortalVerifyConfig,
-  RechargeRecord,
-} from "@/types";
-
-function mapPaymentMethod(item: any): PaymentMethod {
-  return {
-    id: Number(item?.id || 0),
-    name: String(item?.name || ""),
-    platform: String(item?.platform || ""),
-    description: item?.description ? String(item.description) : "",
-    icon: item?.icon ? String(item.icon) : "",
-    fee_mode: Number(item?.fee_mode || 0),
-    fee_percent: Number(item?.fee_percent || 0),
-    fee_amount: Number(item?.fee_amount || 0),
-  };
-}
-
-function mapRechargeRecord(item: any): RechargeRecord {
-  return {
-    id: Number(item?.id || 0),
-    orderNo: String(item?.order_no || ""),
-    tradeNo: String(item?.trade_no || ""),
-    type: Number(item?.type || 0),
-    amount: Number(item?.price || item?.amount || 0) / 100,
-    createdAt: Number(item?.created_at || 0),
-    status: Number(item?.status || 0),
-    paymentName: item?.payment?.name ? String(item.payment.name) : "",
-  };
-}
-
-function mapCurrentUser(item: any): CurrentUserSummary {
-  const authMethods = Array.isArray(item?.auth_methods)
-    ? item.auth_methods
-    : [];
-  const emailMethod = authMethods.find(
-    (method: any) =>
-      String(method?.auth_type || "").toLowerCase() === "email" &&
-      method?.auth_identifier
-  );
-
-  return {
-    balance: Number(item?.balance || 0) / 100,
-    email: emailMethod?.auth_identifier
-      ? String(emailMethod.auth_identifier)
-      : "",
-  };
-}
-
-function mapCheckoutInfo(item: any): CheckoutInfo | undefined {
-  if (!item?.type) return;
-
-  return {
-    type: String(item.type),
-    checkoutUrl: item.checkout_url ? String(item.checkout_url) : undefined,
-    stripe: item?.stripe
-      ? {
-          method: String(item.stripe.method || ""),
-          client_secret: String(item.stripe.client_secret || ""),
-          publishable_key: String(item.stripe.publishable_key || ""),
-        }
-      : undefined,
-  };
-}
-
-function mapActiveOrder(item: any, checkout?: CheckoutInfo): ActiveOrder {
-  return {
-    id: Number(item?.id || 0),
-    orderNo: String(item?.order_no || ""),
-    tradeNo: String(item?.trade_no || ""),
-    rechargeAmount: Number(item?.price || item?.amount || 0) / 100,
-    amount: Number(item?.amount || 0) / 100,
-    createdAt: Number(item?.created_at || 0),
-    status: Number(item?.status || 0),
-    paymentId: Number(item?.payment?.id || 0),
-    paymentName: item?.payment?.name
-      ? String(item.payment.name)
-      : String(item?.payment?.platform || ""),
-    checkout,
-  };
-}
-
-const defaultVerifyConfig: PortalVerifyConfig = {
-  turnstile_site_key: "",
-  captcha_type: "turnstile",
-  enable_user_login_captcha: false,
-};
-
-function mapOrderBreakdown(detail: any): FeeBreakdown {
-  const orderAmount = Number(detail?.amount || 0) / 100;
-  const orderPrice = Number(detail?.price || 0) / 100;
-  const feeAmount = Number(detail?.fee_amount || 0) / 100;
-
-  return {
-    amount: orderPrice || orderAmount,
-    fee: feeAmount,
-    total: orderAmount,
-  };
-}
+import { usePortalStore } from "@/stores/global";
 
 export default function App() {
   const { t, i18n } = useTranslation("app");
+  const {
+    paymentMethods,
+    records,
+    activeOrder,
+    userBalance,
+    userEmail,
+    selectedMethodId,
+    selectedAmount,
+    customAmountEnabled,
+    customAmountInput,
+    loadingPortal,
+    refreshPortal,
+    refreshActiveOrder,
+    setSelectedMethodId,
+    setSelectedAmount,
+    setCustomAmountEnabled,
+    setCustomAmountInput,
+    setActiveOrder,
+    reset,
+    common,
+  } = usePortalStore();
+
   const [account, setAccount] = useState("");
   const [password, setPassword] = useState("");
-  const [siteName, setSiteName] = useState("");
-  const [siteLogo, setSiteLogo] = useState("");
-  const [verifyConfig, setVerifyConfig] =
-    useState<PortalVerifyConfig>(defaultVerifyConfig);
   const [configLoading, setConfigLoading] = useState(true);
   const [captchaValue, setCaptchaValue] = useState("");
   const [captchaId, setCaptchaId] = useState("");
@@ -154,48 +61,30 @@ export default function App() {
   const [authenticated, setAuthenticated] = useState(
     Boolean(getAuthorization())
   );
-  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
-  const [records, setRecords] = useState<RechargeRecord[]>([]);
-  const [userBalance, setUserBalance] = useState<number | null>(null);
-  const [userEmail, setUserEmail] = useState("");
-  const [selectedMethodId, setSelectedMethodId] = useState<number | null>(null);
-  const [selectedAmount, setSelectedAmount] = useState(
-    portalConfig.rechargeAmounts[0] || 10
-  );
-  const [customAmountEnabled, setCustomAmountEnabled] = useState(false);
-  const [customAmountInput, setCustomAmountInput] = useState("");
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [confirmOrderNo, setConfirmOrderNo] = useState("");
   const [confirmBreakdown, setConfirmBreakdown] = useState<FeeBreakdown | null>(
     null
   );
   const [confirmPaymentName, setConfirmPaymentName] = useState("");
-  const [activeOrder, setActiveOrder] = useState<ActiveOrder | null>(null);
   const [stripeDialogOpen, setStripeDialogOpen] = useState(false);
-  const [loadingPortal, setLoadingPortal] = useState(false);
   const [loginPending, startLoginTransition] = useTransition();
   const [submitPending, startSubmitTransition] = useTransition();
   const configLoadedRef = useRef(false);
   const portalBootstrappedRef = useRef(false);
   const completedOrderNoticeRef = useRef("");
 
+  const { site, verify } = common;
   const currentLanguage = i18n.resolvedLanguage || i18n.language || "en-US";
   const minimumCustomAmount = portalConfig.minCustomAmount;
-  const selectedMethod = useMemo(
-    () =>
-      paymentMethods.find((method) => method.id === selectedMethodId) || null,
-    [paymentMethods, selectedMethodId]
-  );
-  const epayCustomAmountEnabled = selectedMethod?.platform
-    ?.toLowerCase()
-    .includes("epay");
+
   const isCurrentSelectionPendingOrder =
     Number(activeOrder?.status) === 1 &&
     activeOrder?.paymentId === selectedMethodId &&
     Math.abs((activeOrder?.rechargeAmount || 0) - selectedAmount) < 0.0001;
 
-  const captchaEnabled = verifyConfig.enable_user_login_captcha;
-  const captchaType = verifyConfig.captcha_type;
+  const captchaEnabled = verify.enable_user_login_captcha;
+  const captchaType = verify.captcha_type;
 
   const resetCaptcha = () => {
     setCaptchaValue("");
@@ -203,125 +92,7 @@ export default function App() {
     setCaptchaResetKey((value) => value + 1);
   };
 
-  const refreshPortal = useCallback(async () => {
-    if (!getAuthorization()) {
-      setAuthenticated(false);
-      return;
-    }
-
-    setLoadingPortal(true);
-    try {
-      const [userResponse, methodsResponse, ordersResponse] = await Promise.all(
-        [
-          queryUserInfo(),
-          getAvailablePaymentMethods(),
-          queryOrderList({ page: 1, size: 20 }),
-        ]
-      );
-
-      const userSummary = mapCurrentUser(userResponse.data?.data);
-      setUserBalance(userSummary.balance);
-      setUserEmail(userSummary.email);
-
-      const methods = ((methodsResponse.data.data?.list || []) as any[])
-        .filter((item) => Number(item?.id) !== -1)
-        .map(mapPaymentMethod);
-
-      setPaymentMethods(methods);
-      setSelectedMethodId((current) => {
-        if (current && methods.some((item) => item.id === current))
-          return current;
-        return methods[0]?.id ?? null;
-      });
-
-      const rechargeOrderItems = (
-        (ordersResponse.data.data?.list || []) as any[]
-      )
-        .filter((item) => Number(item?.type) === 4)
-        .sort(
-          (a, b) => Number(b?.created_at || 0) - Number(a?.created_at || 0)
-        );
-      const rechargeRecords = rechargeOrderItems.map(mapRechargeRecord);
-
-      setRecords(rechargeRecords);
-
-      const pendingRechargeOrder = rechargeOrderItems.find(
-        (item) => Number(item?.status) === 1
-      );
-
-      if (pendingRechargeOrder?.order_no) {
-        const orderNo = String(pendingRechargeOrder.order_no);
-        const detailResponse = await queryOrderDetail({ order_no: orderNo });
-        const detail = detailResponse.data.data;
-        if (detail) {
-          let checkout: CheckoutInfo | undefined;
-          try {
-            const checkoutResponse = await purchaseCheckout({
-              orderNo,
-              returnUrl: window.location.href,
-            });
-            checkout = mapCheckoutInfo(checkoutResponse.data.data);
-          } catch (_error) {
-            checkout = undefined;
-          }
-
-          setActiveOrder(mapActiveOrder(detail, checkout));
-        }
-      }
-    } finally {
-      setLoadingPortal(false);
-    }
-  }, []);
-
-  const refreshActiveOrder = useCallback(
-    async (
-      orderNo: string,
-      options?: {
-        autoOpenPayment?: boolean;
-        requestCheckout?: boolean;
-      }
-    ) => {
-      if (!orderNo) return;
-      const autoOpenPayment = Boolean(options?.autoOpenPayment);
-      const requestCheckout = Boolean(options?.requestCheckout);
-
-      const detailResponse = await queryOrderDetail({ order_no: orderNo });
-      const detail = detailResponse.data.data;
-      if (!detail) return;
-
-      let checkout: CheckoutInfo | undefined;
-      if (requestCheckout && Number(detail.status) === 1) {
-        try {
-          const checkoutResponse = await purchaseCheckout({
-            orderNo,
-            returnUrl: window.location.href,
-          });
-          checkout = mapCheckoutInfo(checkoutResponse.data.data);
-        } catch (_error) {
-          checkout = undefined;
-        }
-      }
-
-      setActiveOrder((current) =>
-        mapActiveOrder(
-          detail,
-          checkout ||
-            (Number(detail.status) === 1 && current?.orderNo === orderNo
-              ? current.checkout
-              : undefined)
-        )
-      );
-
-      if (autoOpenPayment && checkout?.type === "url" && checkout.checkoutUrl) {
-        window.open(checkout.checkoutUrl, "_blank", "noopener,noreferrer");
-      }
-      if (autoOpenPayment && checkout?.type === "stripe" && checkout.stripe) {
-        setStripeDialogOpen(true);
-      }
-    },
-    []
-  );
-
+  // Load config on mount
   useEffect(() => {
     if (configLoadedRef.current) return;
     configLoadedRef.current = true;
@@ -330,53 +101,45 @@ export default function App() {
       setConfigLoading(true);
       try {
         const response = await getGlobalConfig();
-        const site = response.data?.data?.site;
-        const verify = response.data?.data?.verify;
-        if (site) {
-          setSiteName(String(site.site_name || ""));
-          setSiteLogo(String(site.site_logo || ""));
+        if (response.data?.data) {
+          usePortalStore.getState().setCommon(response.data.data);
         }
-        if (verify) {
-          setVerifyConfig({
-            turnstile_site_key: String(verify.turnstile_site_key || ""),
-            captcha_type: String(verify.captcha_type || "turnstile"),
-            enable_user_login_captcha: Boolean(
-              verify.enable_user_login_captcha
-            ),
-          });
-        }
-      } catch (_error) {
-        setVerifyConfig(defaultVerifyConfig);
+      } catch {
+        // Keep default common config on error
       } finally {
         setConfigLoading(false);
       }
     };
 
-    void loadConfig();
+    loadConfig();
   }, []);
 
+  // Reset captcha when type changes
   useEffect(() => {
     resetCaptcha();
   }, [captchaType]);
 
+  // Bootstrap portal when authenticated
   useEffect(() => {
     if (!authenticated) return;
     if (portalBootstrappedRef.current) return;
     portalBootstrappedRef.current = true;
-    void refreshPortal();
+    refreshPortal();
   }, [authenticated, refreshPortal]);
 
+  // Poll active order
   useEffect(() => {
     if (!activeOrder?.orderNo) return;
     if (Number(activeOrder.status) !== 1) return;
 
     const timer = window.setInterval(() => {
-      void refreshActiveOrder(activeOrder.orderNo);
+      refreshActiveOrder(activeOrder.orderNo);
     }, 3000);
 
     return () => window.clearInterval(timer);
   }, [activeOrder?.orderNo, activeOrder?.status, refreshActiveOrder]);
 
+  // Handle completed order
   useEffect(() => {
     if (!activeOrder?.orderNo) return;
     if (![2, 5].includes(Number(activeOrder.status))) return;
@@ -387,17 +150,18 @@ export default function App() {
     toast.success(
       t("dashboard.paymentSuccess", "支付成功，余额和订单记录已更新")
     );
-    void refreshPortal();
+    refreshPortal();
   }, [activeOrder?.orderNo, activeOrder?.status, refreshPortal, t]);
 
+  // Close stripe dialog when order is not pending
   useEffect(() => {
     if (!activeOrder?.orderNo || Number(activeOrder.status) !== 1) {
       setStripeDialogOpen(false);
     }
   }, [activeOrder?.orderNo, activeOrder?.status]);
 
+  // Reset custom amount when not enabled and selected amount is not in preset list
   useEffect(() => {
-    if (epayCustomAmountEnabled) return;
     if (
       !customAmountEnabled &&
       portalConfig.rechargeAmounts.includes(selectedAmount)
@@ -405,25 +169,20 @@ export default function App() {
       return;
     }
 
-    setCustomAmountEnabled(false);
-    setCustomAmountInput("");
-    if (!portalConfig.rechargeAmounts.includes(selectedAmount)) {
-      setSelectedAmount(portalConfig.rechargeAmounts[0] || 10);
+    if (!customAmountEnabled) {
+      setCustomAmountEnabled(false);
+      setCustomAmountInput("");
+      if (!portalConfig.rechargeAmounts.includes(selectedAmount)) {
+        setSelectedAmount(portalConfig.rechargeAmounts[0] || 1000);
+      }
     }
-  }, [customAmountEnabled, epayCustomAmountEnabled, selectedAmount]);
+  }, [customAmountEnabled, selectedAmount]);
 
-  const changeLanguage = async (language: string) => {
-    await i18n.changeLanguage(language);
-  };
-
-  const handleLogout = () => {
+  const handleLogout = useCallback(() => {
     clearAuthorization();
     portalBootstrappedRef.current = false;
     setAuthenticated(false);
-    setPaymentMethods([]);
-    setRecords([]);
-    setUserBalance(null);
-    setUserEmail("");
+    reset();
     setCustomAmountEnabled(false);
     setCustomAmountInput("");
     setActiveOrder(null);
@@ -433,9 +192,9 @@ export default function App() {
     setConfirmBreakdown(null);
     setConfirmPaymentName("");
     completedOrderNoticeRef.current = "";
-  };
+  }, [reset, setCustomAmountEnabled, setCustomAmountInput, setActiveOrder]);
 
-  const handleLogin = () => {
+  const handleLogin = useCallback(() => {
     if (!(account.trim() && password.trim())) {
       toast.error(
         t("errors.missingCredentials", "请输入账号和密码后再继续登录。")
@@ -475,7 +234,6 @@ export default function App() {
         }
 
         const response = await userLogin(payload as any);
-
         const token = response.data.data?.token;
         if (!token) {
           toast.error(t("errors.loginFailed", "登录失败，请稍后重试。"));
@@ -487,13 +245,24 @@ export default function App() {
         await refreshPortal();
         setAuthenticated(true);
         toast.success(t("login.success", "登录成功"));
-      } catch (_error) {
+      } catch {
         resetCaptcha();
       }
     });
-  };
+  }, [
+    account,
+    password,
+    configLoading,
+    captchaEnabled,
+    captchaValue,
+    captchaType,
+    captchaId,
+    captchaEnabled,
+    t,
+    refreshPortal,
+  ]);
 
-  const handleOpenConfirm = () => {
+  const handleOpenConfirm = useCallback(() => {
     if (isCurrentSelectionPendingOrder) {
       toast.error(
         t("errors.pendingOrder", "当前已有待支付订单，请先完成支付。")
@@ -506,11 +275,7 @@ export default function App() {
       return;
     }
 
-    if (
-      epayCustomAmountEnabled &&
-      customAmountEnabled &&
-      selectedAmount < minimumCustomAmount
-    ) {
+    if (customAmountEnabled && selectedAmount < minimumCustomAmount) {
       setCustomAmountInput(String(minimumCustomAmount));
       setSelectedAmount(minimumCustomAmount);
       toast.error(
@@ -540,97 +305,142 @@ export default function App() {
           return;
         }
 
+        const orderAmount = Number(detail?.amount || 0) / 100;
+        const orderPrice = Number(detail?.price || 0) / 100;
+        const feeAmount = Number(detail?.fee_amount || 0) / 100;
+
         setConfirmOrderNo(String(orderNo));
-        setConfirmBreakdown(mapOrderBreakdown(detail));
+        setConfirmBreakdown({
+          amount: orderPrice || orderAmount,
+          fee: feeAmount,
+          total: orderAmount,
+        });
         setConfirmPaymentName(
           detail?.payment?.name
             ? String(detail.payment.name)
             : String(detail?.payment?.platform || "")
         );
         completedOrderNoticeRef.current = "";
-        setActiveOrder(mapActiveOrder(detail));
+        refreshPortal();
         setConfirmOpen(true);
-        await refreshPortal();
-      } catch (_error) {
+      } catch {
         /* request.ts handles the error toast */
       }
     });
-  };
+  }, [
+    isCurrentSelectionPendingOrder,
+    selectedMethodId,
+    selectedAmount,
+    customAmountEnabled,
+    minimumCustomAmount,
+    t,
+    refreshPortal,
+    setCustomAmountInput,
+    setSelectedAmount,
+  ]);
 
-  const handleCreateOrder = () => {
+  const handleCreateOrder = useCallback(() => {
     if (!confirmOrderNo) return;
 
     startSubmitTransition(async () => {
       try {
         setConfirmOpen(false);
-        toast.success(t("dialog.success", "订单已确认，正在拉起支付"));
+        toast.success(
+          t("dialog.success", "订单已确认，请点击支付按钮完成付款")
+        );
         await refreshPortal();
-        await refreshActiveOrder(confirmOrderNo, {
-          autoOpenPayment: true,
-          requestCheckout: true,
-        });
-      } catch (_error) {
+        await refreshActiveOrder(confirmOrderNo);
+      } catch {
         /* request.ts handles the error toast */
       }
     });
-  };
+  }, [confirmOrderNo, t, refreshPortal, refreshActiveOrder]);
 
-  const handleContinuePayment = () => {
-    if (
-      activeOrder?.checkout?.type === "stripe" &&
-      activeOrder.checkout.stripe
-    ) {
-      setStripeDialogOpen(true);
-      return;
-    }
+  const handleContinuePayment = useCallback(() => {
+    if (!activeOrder?.orderNo) return;
 
-    const checkoutUrl = activeOrder?.checkout?.checkoutUrl;
-    if (!checkoutUrl) return;
-    window.open(checkoutUrl, "_blank", "noopener,noreferrer");
-  };
+    // Request checkout first, then open payment
+    refreshActiveOrder(activeOrder.orderNo, {
+      requestCheckout: true,
+    }).then(() => {
+      const updatedOrder = usePortalStore.getState().activeOrder;
+      if (
+        updatedOrder?.checkout?.type === "stripe" &&
+        updatedOrder.checkout.stripe
+      ) {
+        setStripeDialogOpen(true);
+      } else if (
+        updatedOrder?.checkout?.type === "url" &&
+        updatedOrder.checkout.checkoutUrl
+      ) {
+        window.open(
+          updatedOrder.checkout.checkoutUrl,
+          "_blank",
+          "noopener,noreferrer"
+        );
+      } else if (
+        updatedOrder?.checkout?.type === "qr" &&
+        updatedOrder.checkout.checkoutUrl
+      ) {
+        // QR code is already shown in the UI, no need to open anything
+      }
+    });
+  }, [activeOrder, refreshActiveOrder]);
 
-  const handleAmountSelect = (value: string) => {
-    if (value === "custom") {
-      setCustomAmountEnabled(true);
-      const parsed = Number(customAmountInput || minimumCustomAmount);
-      const normalizedAmount =
-        Number.isFinite(parsed) && parsed >= minimumCustomAmount
-          ? parsed
-          : minimumCustomAmount;
-      setCustomAmountInput(String(normalizedAmount));
-      setSelectedAmount(normalizedAmount);
-      return;
-    }
+  const handleAmountSelect = useCallback(
+    (value: string) => {
+      if (value === "custom") {
+        setCustomAmountEnabled(true);
+        const parsed = Number(customAmountInput || minimumCustomAmount);
+        const normalizedAmount =
+          Number.isFinite(parsed) && parsed >= minimumCustomAmount
+            ? parsed
+            : minimumCustomAmount;
+        setCustomAmountInput(String(normalizedAmount));
+        setSelectedAmount(normalizedAmount);
+        return;
+      }
 
-    setCustomAmountEnabled(false);
-    setSelectedAmount(Number(value));
-  };
+      setCustomAmountEnabled(false);
+      setSelectedAmount(Number(value));
+    },
+    [
+      customAmountInput,
+      minimumCustomAmount,
+      setCustomAmountEnabled,
+      setCustomAmountInput,
+      setSelectedAmount,
+    ]
+  );
 
-  const handleCustomAmountChange = (value: string) => {
-    if (value && !/^\d*(\.\d{0,2})?$/.test(value)) return;
+  const handleCustomAmountChange = useCallback(
+    (value: string) => {
+      if (value && !/^\d*(\.\d{0,2})?$/.test(value)) return;
 
-    if (!value) {
-      setCustomAmountInput("");
-      setSelectedAmount(0);
-      return;
-    }
+      if (!value) {
+        setCustomAmountInput("");
+        setSelectedAmount(0);
+        return;
+      }
 
-    const parsed = Number(value);
-    if (Number.isFinite(parsed) && parsed < minimumCustomAmount) {
-      setCustomAmountInput(String(minimumCustomAmount));
-      setSelectedAmount(minimumCustomAmount);
-      return;
-    }
+      const parsed = Number(value);
+      if (Number.isFinite(parsed) && parsed < minimumCustomAmount) {
+        setCustomAmountInput(String(minimumCustomAmount));
+        setSelectedAmount(minimumCustomAmount);
+        return;
+      }
 
-    setCustomAmountInput(value);
+      setCustomAmountInput(value);
 
-    if (!Number.isFinite(parsed) || parsed <= 0) {
-      setSelectedAmount(0);
-      return;
-    }
+      if (!Number.isFinite(parsed) || parsed <= 0) {
+        setSelectedAmount(0);
+        return;
+      }
 
-    setSelectedAmount(parsed);
-  };
+      setSelectedAmount(parsed);
+    },
+    [minimumCustomAmount, setCustomAmountInput, setSelectedAmount]
+  );
 
   useEffect(() => {
     document.title = t("meta.title", "Payment Portal");
@@ -645,7 +455,7 @@ export default function App() {
           language={currentLanguage}
           onChange={setCaptchaValue}
           resetKey={captchaResetKey}
-          siteKey={verifyConfig.turnstile_site_key}
+          siteKey={verify.turnstile_site_key}
           value={captchaValue}
         />
       );
@@ -679,7 +489,7 @@ export default function App() {
     captchaType,
     captchaValue,
     currentLanguage,
-    verifyConfig.turnstile_site_key,
+    verify.turnstile_site_key,
   ]);
 
   if (!authenticated) {
@@ -688,16 +498,13 @@ export default function App() {
         account={account}
         captchaSlot={captchaSlot}
         configLoading={configLoading}
-        currentLanguage={currentLanguage}
         loading={loginPending}
-        newsItems={portalConfig.newsItems}
         onAccountChange={setAccount}
-        onLanguageChange={changeLanguage}
         onPasswordChange={setPassword}
         onSubmit={handleLogin}
         password={password}
-        siteLogo={siteLogo}
-        siteName={siteName}
+        siteLogo={site.site_logo}
+        siteName={site.site_name}
       />
     );
   }
@@ -707,11 +514,8 @@ export default function App() {
       <RechargeScreen
         activeOrder={activeOrder}
         amounts={portalConfig.rechargeAmounts}
-        currency={portalConfig.currency}
-        currentLanguage={currentLanguage}
         customAmountEnabled={customAmountEnabled}
         customAmountInput={customAmountInput}
-        epayCustomAmountEnabled={Boolean(epayCustomAmountEnabled)}
         hasPendingOrder={isCurrentSelectionPendingOrder}
         loadingData={loadingPortal}
         methods={paymentMethods}
@@ -719,18 +523,15 @@ export default function App() {
         onAmountSelect={handleAmountSelect}
         onContinuePayment={handleContinuePayment}
         onCustomAmountChange={handleCustomAmountChange}
-        onLanguageChange={changeLanguage}
         onLogout={handleLogout}
         onMethodSelect={setSelectedMethodId}
         onOpenConfirm={handleOpenConfirm}
         onRefresh={() => {
-          void refreshPortal();
-          if (activeOrder?.orderNo)
-            void refreshActiveOrder(activeOrder.orderNo);
+          refreshPortal();
+          if (activeOrder?.orderNo) refreshActiveOrder(activeOrder.orderNo);
         }}
         onRefreshOrder={() => {
-          if (activeOrder?.orderNo)
-            void refreshActiveOrder(activeOrder.orderNo);
+          if (activeOrder?.orderNo) refreshActiveOrder(activeOrder.orderNo);
         }}
         records={records}
         selectedAmount={selectedAmount}
@@ -742,8 +543,6 @@ export default function App() {
 
       <ConfirmRechargeDialog
         breakdown={confirmBreakdown}
-        currency={portalConfig.currency}
-        language={currentLanguage}
         loading={submitPending}
         onClose={() => {
           setConfirmOpen(false);

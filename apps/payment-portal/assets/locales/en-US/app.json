@@ -2,19 +2,13 @@
   "meta": {
     "title": "Payment Portal"
   },
-  "news": {
-    "title": "Rolling News",
-    "subtitle": "Payment updates, configuration changes, and recharge reminders scroll here."
-  },
   "login": {
     "badge": "Independent Payment Portal",
     "title": "Sign in to continue",
-    "description": "Authentication reuses the current backend login API. After signing in, you can select a recharge method and a preset amount.",
     "accountLabel": "Account / Email",
     "accountPlaceholder": "Enter your existing system account or email",
     "passwordLabel": "Password",
     "passwordPlaceholder": "Enter your password",
-    "helper": "This frontend does not maintain a separate user system. It reuses the current backend authentication and payment APIs.",
     "loadingConfig": "Loading config...",
     "submit": "Sign In",
     "submitting": "Signing in...",
@@ -31,7 +25,7 @@
     "selectAmountTitle": "Preset Recharge Amounts",
     "selectAmountHint": "Preset recharge amounts come from this frontend project's .env file.",
     "customAmountOption": "Custom Amount",
-    "customAmountHint": "The epay payment method supports a custom recharge amount, with a minimum of {{amount}}.",
+    "customAmountHint": "Supports custom recharge amount, with a minimum of {{amount}}.",
     "customAmountPlaceholder": "Enter a custom amount",
     "amountLabel": "Amount",
     "methods": "Payment Method",

@@ -1,3 +1,4 @@
+import { Button } from "@workspace/ui/components/button";
 import {
   Dialog,
   DialogContent,
@@ -8,19 +9,20 @@ import {
   generateCaptcha,
   verifyCaptchaSlider,
 } from "@workspace/ui/services/common/auth";
+import { CheckCircle, RefreshCw } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 interface SliderCaptchaProps {
-  value: string;
-  resetKey: number;
   onChange: (value: string) => void;
+  resetKey: number;
+  value: string;
 }
 
 interface TrailPoint {
+  t: number;
   x: number;
   y: number;
-  t: number;
 }
 
 const BLOCK_SIZE = 100;
@@ -69,7 +71,7 @@ export function SliderCaptcha({
         setBgImage(String(data.image || ""));
         setBlockImage(String(data.block_image || ""));
       }
-    } catch (_error) {
+    } catch {
       setCaptchaId("");
       setBgImage("");
       setBlockImage("");
@@ -95,7 +97,7 @@ export function SliderCaptcha({
     setShaking(true);
     window.setTimeout(() => {
       setShaking(false);
-      void fetchCaptcha();
+      fetchCaptcha();
     }, 800);
   };
 
@@ -186,7 +188,7 @@ export function SliderCaptcha({
         return;
       }
       triggerFail();
-    } catch (_error) {
+    } catch {
       triggerFail();
     }
   };
@@ -198,29 +200,27 @@ export function SliderCaptcha({
 
   return (
     <>
-      <button
-        className={`portal-captcha-trigger ${verified ? "is-verified" : ""}`}
+      <Button
+        className="w-full"
         onClick={() => {
           if (verified) return;
           setOpen(true);
-          void fetchCaptcha();
+          fetchCaptcha();
         }}
         type="button"
+        variant={verified ? "default" : "outline"}
       >
-        <span className="portal-captcha-indicator" />
-        <span>
-          {verified
-            ? t("captcha.slider.verified", "验证已通过")
-            : t("captcha.slider.action", "点击完成滑块验证")}
-        </span>
-      </button>
+        {verified ? (
+          <>
+            <CheckCircle className="mr-2 h-4 w-4" />
+            {t("captcha.slider.verified", "验证已通过")}
+          </>
+        ) : (
+          t("captcha.slider.action", "点击完成滑块验证")
+        )}
+      </Button>
 
-      <Dialog
-        onOpenChange={(nextOpen) => {
-          setOpen(nextOpen);
-        }}
-        open={open}
-      >
+      <Dialog onOpenChange={setOpen} open={open}>
         <DialogContent className="p-6 sm:max-w-md">
           <DialogHeader>
             <DialogTitle>{t("captcha.slider.title", "滑块验证")}</DialogTitle>
@@ -237,7 +237,7 @@ export function SliderCaptcha({
           >
             <div className="absolute inset-0">
               {loading ? (
-                <div className="flex h-full items-center justify-center text-slate-500 text-sm">
+                <div className="flex h-full items-center justify-center text-muted-foreground text-sm">
                   {t("captcha.loading", "加载中...")}
                 </div>
               ) : bgImage ? (
@@ -266,7 +266,7 @@ export function SliderCaptcha({
                       }}
                     />
                   ) : null}
-                  {status === "idle" ? null : (
+                  {status !== "idle" && (
                     <div
                       className={`absolute inset-0 flex items-center justify-center font-medium text-sm ${
                         status === "success"
@@ -288,16 +288,16 @@ export function SliderCaptcha({
             {t("captcha.slider.hint", "拖动拼图块完成验证")}
           </p>
 
-          <button
-            className="portal-secondary-btn w-full"
+          <Button
+            className="w-full"
             disabled={loading}
-            onClick={() => {
-              void fetchCaptcha();
-            }}
+            onClick={fetchCaptcha}
             type="button"
+            variant="outline"
           >
+            <RefreshCw className="mr-2 h-4 w-4" />
             {t("captcha.slider.refresh", "刷新验证")}
-          </button>
+          </Button>
         </DialogContent>
       </Dialog>
     </>

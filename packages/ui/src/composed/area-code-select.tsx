@@ -21,11 +21,11 @@ import { BoxIcon, Check, ChevronsUpDown } from "lucide-react";
 import { useEffect, useState } from "react";
 
 interface AreaCodeSelectProps {
-  value?: string;
-  onChange?: (value: ICountry) => void;
   className?: string;
+  onChange?: (value: ICountry) => void;
   placeholder?: string;
   simple?: boolean;
+  value?: string;
   whitelist?: string[];
 }
 

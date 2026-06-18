@@ -91,7 +91,7 @@ export default function VerifyConfig() {
       toast.success(t("verify.saveSuccess", "Save Successful"));
       refetch();
       setOpen(false);
-    } catch (_error) {
+    } catch {
       toast.error(t("verify.saveFailed", "Save Failed"));
     } finally {
       setLoading(false);

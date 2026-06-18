@@ -1,55 +1,55 @@
 export interface PaymentMethod {
-  id: number;
-  name: string;
-  platform: string;
   description?: string;
-  icon?: string;
+  fee_amount: number;
   fee_mode: number;
   fee_percent: number;
-  fee_amount: number;
+  icon?: string;
+  id: string;
+  name: string;
+  platform: string;
 }
 
 export interface CurrentUserSummary {
-  email: string;
   balance: number;
+  email: string;
 }
 
 export interface RechargeRecord {
-  id: number;
-  orderNo: string;
-  tradeNo: string;
-  type: number;
   amount: number;
   createdAt: number;
-  status: number;
+  id: number;
+  orderNo: string;
   paymentName?: string;
+  status: number;
+  tradeNo: string;
+  type: number;
 }
 
 export interface CheckoutInfo {
-  type: string;
   checkoutUrl?: string;
   stripe?: {
     method: string;
     client_secret: string;
     publishable_key: string;
   };
+  type: string;
 }
 
 export interface ActiveOrder {
+  amount: number;
+  checkout?: CheckoutInfo;
+  createdAt: number;
   id: number;
   orderNo: string;
-  tradeNo: string;
-  rechargeAmount: number;
-  amount: number;
-  createdAt: number;
-  status: number;
-  paymentId: number;
+  paymentId: string;
   paymentName: string;
-  checkout?: CheckoutInfo;
+  rechargeAmount: number;
+  status: number;
+  tradeNo: string;
 }
 
 export interface PortalVerifyConfig {
-  turnstile_site_key: string;
   captcha_type: string;
   enable_user_login_captcha: boolean;
+  turnstile_site_key: string;
 }

@@ -15,8 +15,8 @@ import remarkToc from "remark-toc";
 import { copyText } from "../utils/clipboard";
 
 interface CodeBlockProps {
-  className?: string;
   children?: React.ReactNode;
+  className?: string;
   [key: string]: unknown;
 }
 

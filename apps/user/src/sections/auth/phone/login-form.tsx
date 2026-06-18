@@ -85,7 +85,7 @@ export default function LoginForm({
         (data as any).captcha_id = captchaId;
       }
       onSubmit(data);
-    } catch (_error) {
+    } catch {
       turnstile.current?.reset();
       localCaptcha.current?.reset();
       sliderCaptcha.current?.reset();
@@ -120,7 +120,7 @@ export default function LoginForm({
                                 }
                               }}
                               placeholder={t(
-                                "register.areaCodePlaceholder",
+                                "placeholders.areaCode",
                                 "Area code..."
                               )}
                               simple
@@ -134,7 +134,7 @@ export default function LoginForm({
                     <Input
                       className="rounded-l-none"
                       placeholder={t(
-                        "register.telephonePlaceholder",
+                        "placeholders.telephone",
                         "Enter your telephone..."
                       )}
                       type="tel"
@@ -157,11 +157,8 @@ export default function LoginForm({
                     <Input
                       placeholder={
                         mode === "code"
-                          ? t("register.codePlaceholder", "Enter code...")
-                          : t(
-                              "login.passwordPlaceholder",
-                              "Enter your password..."
-                            )
+                          ? t("placeholders.code", "Enter code...")
+                          : t("placeholders.password", "Enter your password...")
                       }
                       type={mode === "code" ? "text" : "password"}
                       {...field}

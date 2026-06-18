@@ -10,9 +10,9 @@ export interface LocalCaptchaRef {
 }
 
 interface LocalCaptchaProps {
-  value?: string | null;
-  onChange?: (value: string) => void;
   onCaptchaIdChange?: (id: string) => void;
+  onChange?: (value: string) => void;
+  value?: string | null;
 }
 
 const LocalCaptcha = forwardRef<LocalCaptchaRef, LocalCaptchaProps>(

@@ -29,10 +29,10 @@ import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
 interface BindNodeGroupsDialogProps {
-  userGroupIds: number[];
-  userGroupNames: string[];
   onOpenChange?: (open: boolean) => void;
   onSuccess?: () => void;
+  userGroupIds: number[];
+  userGroupNames: string[];
 }
 
 export default function BindNodeGroupsDialog({
@@ -142,7 +142,7 @@ export default function BindNodeGroupsDialog({
               </Label>
               <Select
                 onValueChange={(val) =>
-                  setSelectedNodeGroupId(Number.parseInt(val) || undefined)
+                  setSelectedNodeGroupId(Number.parseInt(val, 10) || undefined)
                 }
                 value={selectedNodeGroupId?.toString() || ""}
               >

@@ -71,8 +71,8 @@ export default function Nodes() {
     };
 
     if (isFrontNode) {
-      delete payload.server_id;
-      delete payload.protocol;
+      payload.server_id = undefined;
+      payload.protocol = undefined;
       return payload;
     }
 

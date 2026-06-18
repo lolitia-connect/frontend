@@ -508,7 +508,7 @@ declare namespace API {
   };
 
   type PaymentMethod = {
-    id: number;
+    id: string;
     name: string;
     platform: string;
     description: string;
@@ -547,7 +547,7 @@ declare namespace API {
     auth_type: string;
     identifier: string;
     password?: string;
-    payment: number;
+    payment: string;
     subscribe_id: string;
     quantity: number;
     coupon?: string;
@@ -570,7 +570,7 @@ declare namespace API {
   };
 
   type PrePurchaseOrderRequest = {
-    payment?: number;
+    payment?: string;
     subscribe_id: string;
     quantity: number;
     coupon?: string;
@@ -686,7 +686,7 @@ declare namespace API {
   type PurchaseOrderRequest = {
     subscribe_id: string;
     quantity: number;
-    payment?: number;
+    payment?: string;
     coupon?: string;
   };
 
@@ -861,7 +861,7 @@ declare namespace API {
 
   type RechargeOrderRequest = {
     amount: number;
-    payment: number;
+    payment: string;
   };
 
   type RechargeOrderResponse = {
@@ -882,7 +882,7 @@ declare namespace API {
   type RenewalOrderRequest = {
     user_subscribe_id: string;
     quantity: number;
-    payment: number;
+    payment: string;
     coupon?: string;
   };
 
@@ -900,7 +900,7 @@ declare namespace API {
 
   type ResetTrafficOrderRequest = {
     user_subscribe_id: string;
-    payment: number;
+    payment: string;
   };
 
   type ResetTrafficOrderResponse = {
@@ -999,7 +999,7 @@ declare namespace API {
     speed_limit: number;
     device_limit: number;
     quota: number;
-    nodes: number[];
+    nodes: string[];
     node_tags: string[];
     show: boolean;
     sell: boolean;

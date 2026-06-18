@@ -32,12 +32,12 @@ interface RechargeScreenProps {
   customAmountEnabled: boolean;
   customAmountInput: string;
   epayCustomAmountEnabled: boolean;
-  selectedMethodId: number | null;
+  selectedMethodId: string | null;
   loadingData: boolean;
   submitting: boolean;
   onAmountSelect: (value: string) => void;
   onCustomAmountChange: (value: string) => void;
-  onMethodSelect: (value: number) => void;
+  onMethodSelect: (value: string) => void;
   onLanguageChange: (value: string) => void;
   onRefresh: () => void;
   onLogout: () => void;
@@ -130,7 +130,7 @@ export function RechargeScreen({
                     {t("dashboard.methods", "支付方式")}
                   </span>
                   <Select
-                    onValueChange={(value) => onMethodSelect(Number(value))}
+                    onValueChange={(value) => onMethodSelect(value)}
                     value={
                       selectedMethodId == null
                         ? undefined

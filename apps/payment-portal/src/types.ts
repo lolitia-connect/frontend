@@ -1,5 +1,5 @@
 export interface PaymentMethod {
-  id: number;
+  id: string;
   name: string;
   platform: string;
   description?: string;
@@ -43,7 +43,7 @@ export interface ActiveOrder {
   amount: number;
   createdAt: number;
   status: number;
-  paymentId: number;
+  paymentId: string;
   paymentName: string;
   checkout?: CheckoutInfo;
 }

@@ -31,7 +31,7 @@ export default function ResetTraffic({
   const navigate = useNavigate();
   const [open, setOpen] = useState<boolean>(false);
   const [params, setParams] = useState<API.ResetTrafficOrderRequest>({
-    payment: 0,
+    payment: "-1",
     user_subscribe_id: id,
   });
   const [loading, startTransition] = useTransition();

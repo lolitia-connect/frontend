@@ -1,0 +1,151 @@
+{
+  "meta": {
+    "title": "決済ポータル"
+  },
+  "news": {
+    "title": "ローリングニュース",
+    "subtitle": "決済の更新、設定の変更、チャージのリマインダーがここにスクロール表示されます。"
+  },
+  "login": {
+    "badge": "独立決済フロント",
+    "title": "ログインして続行",
+    "description": "認証は既存のバックエンドログインAPIを再利用します。ログイン後、チャージ方法とプリセット金額を選択できます。",
+    "accountLabel": "アカウント / メールアドレス",
+    "accountPlaceholder": "既存のシステムアカウントまたはメールアドレスを入力",
+    "passwordLabel": "パスワード",
+    "passwordPlaceholder": "パスワードを入力",
+    "helper": "このフロントエンドは独立したユーザーシステムを維持せず、既存のバックエンド認証と決済APIを再利用します。",
+    "loadingConfig": "設定を読み込み中...",
+    "submit": "ログイン",
+    "submitting": "ログイン中...",
+    "success": "ログイン成功"
+  },
+  "dashboard": {
+    "badge": "チャージワークスペース",
+    "title": "チャージセンター",
+    "description": "有効な決済方法とプリセットチャージ金額を選択し、手数料を確認してからチャージオーダーを作成します。",
+    "refresh": "更新",
+    "logout": "ログアウト",
+    "email": "メールアドレス",
+    "amounts": "チャージ金額",
+    "selectAmountTitle": "プリセットチャージ金額",
+    "selectAmountHint": "チャージ金額はこのフロントエンドプロジェクトの.envファイルから取得されます。",
+    "customAmountOption": "カスタム金額",
+    "customAmountHint": "epay決済方法はカスタムチャージ金額をサポートしており、最低金額は{{amount}}です。",
+    "customAmountPlaceholder": "カスタム金額を入力",
+    "amountLabel": "金額",
+    "methods": "決済方法",
+    "selectMethodTitle": "有効な決済方法",
+    "selectionReady": "両方選択後、確認をクリックして手数料の内訳を確認してからオーダーを作成します。",
+    "loading": "決済データを読み込み中...",
+    "submit": "チャージ確認",
+    "creating": "オーダー作成中...",
+    "pendingOrder": "決済保留中",
+    "pendingHint": "保留中の決済オーダーが既にあります。システムはステータスを継続的に確認するため、重複しないでください。",
+    "currentOrder": "現在のオーダー",
+    "currentOrderTitle": "決済ステータス",
+    "noCurrentOrder": "まだアクティブなチャージオーダーがありません。作成後、最新のステータスがここに表示されます。",
+    "reloadOrder": "オーダーを更新",
+    "paymentNow": "決済ページへ",
+    "paymentHint": "決済ページが既に開かれている場合は、在那里で完了してからここに戻ってステータスを更新してください。",
+    "paymentSuccess": "決済完了。残高と記録が更新されました。",
+    "paymentSuccessTitle": "決済完了",
+    "paymentSuccessHint": "このオーダーは正常に支払われました。システムは残高とチャージ記録を更新します。",
+    "scanToPay": "スキャンして決済を続行",
+    "unsupportedStripe": "このスタンドアロンポータルでは組み込みStripeカード決済はまだ実装されていません。既存の決済ページから続行してください。",
+    "records": "チャージ記録",
+    "recordsTitle": "最近のチャージオーダー",
+    "recordsHint": "記録は既存のオーダーリストAPIから読み込まれ、チャージタイプのオーダーにフィルタリングされます。",
+    "empty": "チャージ記録はまだありません"
+  },
+  "dialog": {
+    "badge": "確認情報",
+    "title": "チャージ確認",
+    "description": "請求額はバックエンドのオーダー詳細から取得されます。確認後に実際の決済が開始されます。",
+    "method": "決済方法",
+    "amount": "チャージ金額",
+    "fee": "手数料",
+    "total": "合計",
+    "cancel": "キャンセル",
+    "confirm": "確認して支払う",
+    "confirming": "処理中...",
+    "success": "オーダー確認完了。支払いページにリダイレクト中"
+  },
+  "stripeDialog": {
+    "title": "Stripe決済",
+    "description": "このダイアログでStripe決済を完了してください。閉じても、決済ステータスセクションから再度開くことができます。"
+  },
+  "order": {
+    "id": "ID",
+    "number": "オーダー番号",
+    "tradeNo": "取引オーダー番号",
+    "type": "タイプ",
+    "amount": "金額",
+    "time": "チャージ時間",
+    "method": "決済方法",
+    "status": "ステータス",
+    "action": "操作"
+  },
+  "type": {
+    "recharge": "チャージ",
+    "unknown": "不明なタイプ"
+  },
+  "status": {
+    "1": "保留中",
+    "2": "支払済み",
+    "3": "キャンセル済み",
+    "4": "クローズ済み",
+    "5": "完了",
+    "unknown": "不明なステータス"
+  },
+  "errors": {
+    "missingCredentials": "ログインする前にアカウントとパスワードを両方入力してください。",
+    "missingCaptcha": "まず認証を完了してください。",
+    "loginFailed": "ログインに失敗しました。後でもう一度お試しください。",
+    "missingSelection": "まず決済方法とチャージ金額の両方を選択してください。",
+    "invalidCustomAmount": "カスタムチャージ金額は最低金額を下回ることができません。",
+    "orderFailed": "チャージオーダーの作成に失敗しました。",
+    "pendingOrder": "保留中のオーダーが既にあります。まず支払いを完了してください。"
+  },
+  "captcha": {
+    "loading": "読み込み中...",
+    "local": {
+      "label": "画像認証コード",
+      "placeholder": "認証コードを入力",
+      "refresh": "認証コードを更新"
+    },
+    "turnstile": {
+      "title": "セキュリティ認証",
+      "action": "クリックして認証",
+      "verified": "認証完了"
+    },
+    "slider": {
+      "title": "スライダー認証",
+      "action": "クリックしてスライダー認証を完了",
+      "verified": "認証完了",
+      "retry": "もう一度お試しください",
+      "hint": "パズルピースを正しい位置にドラッグ",
+      "refresh": "認証を更新"
+    }
+  },
+  "stripe": {
+    "loading": "Stripeを読み込み中...",
+    "nameRequired": "カード名義人の名前は必須です",
+    "elementError": "カード情報をすべて入力してください",
+    "paymentFailed": "支払いに失敗しました",
+    "processing": "支払い処理中...",
+    "successTitle": "支払い成功",
+    "successMessage": "ありがとうございます。支払いが正常に完了しました。",
+    "cardName": "カード名義人",
+    "namePlaceholder": "カードに記載の氏名",
+    "cardNumber": "カード番号",
+    "expiryDate": "有効期限",
+    "cvc": "セキュリティコード",
+    "processingButton": "処理中...",
+    "payButton": "今すぐ支払う",
+    "secureNotice": "支払いは安全に暗号化されます",
+    "error": "支払い中にエラーが発生しました",
+    "alipayHint": "Alipayでスキャンして支払い",
+    "wechatHint": "WeChatでスキャンして支払い"
+  }
+}

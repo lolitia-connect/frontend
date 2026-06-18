@@ -92,7 +92,7 @@ export default function RegisterConfig() {
       toast.success(t("register.saveSuccess", "Save Successful"));
       refetch();
       setOpen(false);
-    } catch (_error) {
+    } catch {
       toast.error(t("register.saveFailed", "Save Failed"));
     } finally {
       setLoading(false);

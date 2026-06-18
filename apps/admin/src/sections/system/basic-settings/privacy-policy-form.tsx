@@ -73,7 +73,7 @@ export default function PrivacyPolicyConfig() {
       toast.success(t("common.saveSuccess", "Save Successful"));
       refetch();
       setOpen(false);
-    } catch (_error) {
+    } catch {
       toast.error(t("common.saveFailed", "Save Failed"));
     } finally {
       setLoading(false);

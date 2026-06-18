@@ -38,7 +38,7 @@ export function CloudflareTurnstile({
     setVerified(false);
     try {
       turnstile.reset();
-    } catch (_error) {
+    } catch {
       /* empty */
     }
   }, [resetKey, turnstile]);
@@ -81,7 +81,7 @@ export function CloudflareTurnstile({
               setVerified(false);
               try {
                 turnstile.reset();
-              } catch (_error) {
+              } catch {
                 /* empty */
               }
             }}
@@ -90,7 +90,7 @@ export function CloudflareTurnstile({
               setVerified(false);
               try {
                 turnstile.reset();
-              } catch (_error) {
+              } catch {
                 /* empty */
               }
             }}

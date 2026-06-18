@@ -87,7 +87,7 @@ export default function ConfigForm() {
       toast.success(t("config.updateSuccess", "Settings updated successfully"));
       refetch();
       setOpen(false);
-    } catch (_error) {
+    } catch {
       toast.error(t("config.updateError", "Update failed"));
     } finally {
       setLoading(false);

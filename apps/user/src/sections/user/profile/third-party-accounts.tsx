@@ -78,7 +78,7 @@ function MobileBindDialog({
       toast.success(t("thirdParty.bindSuccess", "Successfully connected"));
       onSuccess();
       setOpen(false);
-    } catch (_error) {
+    } catch {
       toast.error(t("thirdParty.bindFailed", "Failed to connect"));
     }
   };
@@ -279,7 +279,7 @@ export default function ThirdPartyAccounts() {
         }
 
         window.location.href = redirectUrl;
-      } catch (_error) {
+      } catch {
         toast.error(t("thirdParty.bindFailed", "Failed to connect"));
       }
     }

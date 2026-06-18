@@ -122,7 +122,7 @@ export default function RegisterForm({
         (data as any).captcha_id = captchaId;
       }
       onSubmit(data);
-    } catch (_error) {
+    } catch {
       turnstile.current?.reset();
       localCaptcha.current?.reset();
       sliderCaptcha.current?.reset();

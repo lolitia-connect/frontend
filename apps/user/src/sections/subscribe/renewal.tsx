@@ -64,7 +64,7 @@ export default function Renewal({ id, subscribe }: Readonly<RenewalProps>) {
           lastSuccessOrderRef.current = result;
         }
         return result;
-      } catch (_error) {
+      } catch {
         if (lastSuccessOrderRef.current) {
           return lastSuccessOrderRef.current;
         }
@@ -106,7 +106,7 @@ export default function Renewal({ id, subscribe }: Readonly<RenewalProps>) {
           getUserInfo();
           navigate({ to: "/payment", search: { order_no: String(orderNo) } });
         }
-      } catch (_error) {
+      } catch {
         /* empty */
       }
     });

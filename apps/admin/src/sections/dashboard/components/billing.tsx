@@ -36,7 +36,7 @@ async function getBillingURL() {
     );
     url.pathname += `@${version}/billing/index.json`;
     return url.toString();
-  } catch (_error) {
+  } catch {
     return "https://cdn.jsdmirror.com/gh/perfect-panel/ppanel-assets/billing/index.json";
   }
 }

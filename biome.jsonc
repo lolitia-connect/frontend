@@ -34,7 +34,8 @@
         "useFocusableInteractive": "off",
         "useKeyWithClickEvents": "off",
         "noNoninteractiveElementInteractions": "off",
-        "noStaticElementInteractions": "off"
+        "noStaticElementInteractions": "off",
+        "noSvgWithoutTitle": "off"
       },
       "performance": {
         "noNamespaceImport": "off",
@@ -50,7 +51,8 @@
         "useAwait": "off",
         "noAlert": "off",
         "noTemplateCurlyInString": "off",
-        "noShadow": "off"
+        "noShadow": "off",
+        "noUndeclaredEnvVars": "off"
       },
       "nursery": {},
       "complexity": {

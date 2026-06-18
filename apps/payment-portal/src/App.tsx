@@ -104,7 +104,7 @@ export default function App() {
         if (response.data?.data) {
           usePortalStore.getState().setCommon(response.data.data);
         }
-      } catch (_error) {
+      } catch {
         // Keep default common config on error
       } finally {
         setConfigLoading(false);
@@ -245,7 +245,7 @@ export default function App() {
         await refreshPortal();
         setAuthenticated(true);
         toast.success(t("login.success", "登录成功"));
-      } catch (_error) {
+      } catch {
         resetCaptcha();
       }
     });
@@ -323,7 +323,7 @@ export default function App() {
         completedOrderNoticeRef.current = "";
         refreshPortal();
         setConfirmOpen(true);
-      } catch (_error) {
+      } catch {
         /* request.ts handles the error toast */
       }
     });
@@ -350,7 +350,7 @@ export default function App() {
         );
         await refreshPortal();
         await refreshActiveOrder(confirmOrderNo);
-      } catch (_error) {
+      } catch {
         /* request.ts handles the error toast */
       }
     });

@@ -52,7 +52,7 @@ export const useNodeStore = create<NodeState>((set, get) => ({
         nodes: data?.data?.list || [],
         loaded: true,
       });
-    } catch (_error) {
+    } catch {
       // Handle error silently
       set({ loaded: true });
     } finally {
@@ -70,7 +70,7 @@ export const useNodeStore = create<NodeState>((set, get) => ({
         tags: data?.data?.tags || [],
         loadedTags: true,
       });
-    } catch (_error) {
+    } catch {
       // Handle error silently
       set({ loadedTags: true });
     } finally {

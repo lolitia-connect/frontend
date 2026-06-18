@@ -2785,18 +2785,6 @@ declare namespace API {
     updated_at: number;
   };
 
-  type Subscribe = {
-    id: string;
-    name: string;
-    unit_price: number;
-    unit_time: number;
-    show?: boolean;
-    sell?: boolean;
-    sort: number;
-    created_at: number;
-    updated_at: number;
-  };
-
   type SubscribeGroupMapping = {
     subscribe_id: string;
     user_group_id: string;

@@ -34,7 +34,7 @@ export default function Recharge(
 
   const [params, setParams] = useState<API.RechargeOrderRequest>({
     amount: 0,
-    payment: 0,
+    payment: "-1",
   });
 
   const hasNoPaymentMethods = availableMethodsCount === 0;
@@ -95,7 +95,7 @@ export default function Recharge(
             )}
           </div>
           <Button
-            className="fixed bottom-0 left-0 w-full rounded-none md:relative md:mt-6"
+            className="fixed bottom-0 left-0 w-full md:relative md:mt-6"
             disabled={isButtonDisabled}
             onClick={() => {
               startTransition(async () => {

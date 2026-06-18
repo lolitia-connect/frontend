@@ -37,7 +37,7 @@ export default function Renewal({ id, subscribe }: Readonly<RenewalProps>) {
     Partial<API.RenewalOrderRequest> & { subscribe_id?: string }
   >({
     quantity: 1,
-    payment: 0,
+    payment: "-1",
     coupon: "",
     user_subscribe_id: id,
   });

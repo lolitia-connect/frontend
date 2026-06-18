@@ -46,7 +46,7 @@ import type {
 
 function mapPaymentMethod(item: any): PaymentMethod {
   return {
-    id: Number(item?.id || 0),
+    id: String(item?.id || ""),
     name: String(item?.name || ""),
     platform: String(item?.platform || ""),
     description: item?.description ? String(item.description) : "",
@@ -113,7 +113,7 @@ function mapActiveOrder(item: any, checkout?: CheckoutInfo): ActiveOrder {
     amount: Number(item?.amount || 0) / 100,
     createdAt: Number(item?.created_at || 0),
     status: Number(item?.status || 0),
-    paymentId: Number(item?.payment?.id || 0),
+    paymentId: String(item?.payment?.id || ""),
     paymentName: item?.payment?.name
       ? String(item.payment.name)
       : String(item?.payment?.platform || ""),
@@ -158,7 +158,7 @@ export default function App() {
   const [records, setRecords] = useState<RechargeRecord[]>([]);
   const [userBalance, setUserBalance] = useState<number | null>(null);
   const [userEmail, setUserEmail] = useState("");
-  const [selectedMethodId, setSelectedMethodId] = useState<number | null>(null);
+  const [selectedMethodId, setSelectedMethodId] = useState<string | null>(null);
   const [selectedAmount, setSelectedAmount] = useState(
     portalConfig.rechargeAmounts[0] || 10
   );
@@ -224,7 +224,7 @@ export default function App() {
       setUserEmail(userSummary.email);
 
       const methods = ((methodsResponse.data.data?.list || []) as any[])
-        .filter((item) => Number(item?.id) !== -1)
+        .filter((item) => item?.id !== "-1")
         .map(mapPaymentMethod);
 
       setPaymentMethods(methods);

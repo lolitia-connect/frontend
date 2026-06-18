@@ -13,8 +13,8 @@ import { memo, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
 interface PaymentMethodsProps {
-  value: number;
-  onChange: (value: number) => void;
+  value: string;
+  onChange: (value: string) => void;
   onAvailableMethodsChange?: (count: number) => void;
   balance?: boolean;
 }
@@ -32,7 +32,7 @@ const PaymentMethods: React.FC<PaymentMethodsProps> = ({
     queryFn: async () => {
       const { data } = await getAvailablePaymentMethods();
       const list = data.data?.list || [];
-      return balance ? list : list.filter((item) => item.id !== -1);
+      return balance ? list : list.filter((item) => item.id !== "-1");
     },
   });
 
@@ -41,10 +41,10 @@ const PaymentMethods: React.FC<PaymentMethodsProps> = ({
   // Prefer non-balance methods when possible.
   useEffect(() => {
     if (!data || data.length === 0) return;
-    const valid = data.some((m) => m.id === value);
+    const valid = data.some((m) => String(m.id) === String(value));
     if (valid) return;
 
-    const preferred = data.find((m) => m.id !== -1)?.id ?? data[0]!.id;
+    const preferred = data.find((m) => m.id !== "-1")?.id ?? data[0]!.id;
     onChange(preferred);
   }, [data, onChange, value]);
 
@@ -59,7 +59,7 @@ const PaymentMethods: React.FC<PaymentMethodsProps> = ({
       </div>
       <RadioGroup
         className="grid grid-cols-2 gap-2 md:grid-cols-5"
-        onValueChange={(v) => onChange(Number(v))}
+        onValueChange={(v) => onChange(v)}
         value={String(value)}
       >
         {data?.map((item) => (

@@ -33,7 +33,7 @@ function parseNews(value?: string): string[] {
 }
 
 export const fallbackLng = "en-US";
-export const supportedLngs = ["en-US", "zh-CN"] as const;
+export const supportedLngs = ["en-US", "zh-CN", "zh-TW", "zh-HK", "ja-JP"] as const;
 
 export const portalConfig = {
   currency: import.meta.env.VITE_PAYMENT_PORTAL_CURRENCY,

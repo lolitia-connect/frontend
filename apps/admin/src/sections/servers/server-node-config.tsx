@@ -205,14 +205,14 @@ export default function ServerNodeConfig({ server }: { server: API.Server }) {
           {t("server_node_config.trigger", "Node Config")}
         </Button>
       </SheetTrigger>
-      <SheetContent className="w-[700px] max-w-full gap-0 md:max-w-3xl">
+      <SheetContent className="w-[700px] max-w-full md:max-w-3xl">
         <SheetHeader>
           <SheetTitle>
             {t("server_node_config.title", "Node Config")} - {server.name}
           </SheetTitle>
         </SheetHeader>
 
-        <ScrollArea className="h-[calc(100vh-8rem)] pr-3">
+        <ScrollArea className="h-[calc(100dvh-48px-36px-60px-env(safe-area-inset-top))] px-6">
           {isError && (
             <div className="mt-4 rounded-md border border-destructive/30 bg-destructive/10 px-4 py-3 text-destructive text-sm">
               {t(

@@ -379,6 +379,9 @@ declare namespace API {
     fee_amount?: number;
     sort?: number;
     enable: boolean;
+    currency_unit?: string;
+    exchange_rate?: number;
+    bill_desc?: string;
   };
 
   type CreateQuotaTaskRequest = {
@@ -1612,6 +1615,9 @@ declare namespace API {
     fee_amount?: number;
     sort?: number;
     enable: boolean;
+    currency_unit?: string;
+    exchange_rate?: number;
+    bill_desc?: string;
   };
 
   type PaymentMethod = {
@@ -1623,6 +1629,9 @@ declare namespace API {
     fee_mode: number;
     fee_percent: number;
     fee_amount: number;
+    currency_unit?: string;
+    exchange_rate?: number;
+    bill_desc?: string;
   };
 
   type PaymentMethodDetail = {
@@ -1639,6 +1648,9 @@ declare namespace API {
     sort?: number;
     enable: boolean;
     notify_url: string;
+    currency_unit?: string;
+    exchange_rate?: number;
+    bill_desc?: string;
   };
 
   type PlatformInfo = {
@@ -2460,6 +2472,9 @@ declare namespace API {
     fee_amount?: number;
     sort?: number;
     enable: boolean;
+    currency_unit?: string;
+    exchange_rate?: number;
+    bill_desc?: string;
   };
 
   type UpdateServerRequest = {

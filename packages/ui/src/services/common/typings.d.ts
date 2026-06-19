@@ -519,6 +519,9 @@ declare namespace API {
     fee_percent?: number;
     fee_amount?: number;
     enable: boolean;
+    currency_unit?: string;
+    exchange_rate?: number;
+    bill_desc?: string;
   };
 
   type PaymentMethod = {
@@ -530,6 +533,9 @@ declare namespace API {
     fee_mode: number;
     fee_percent: number;
     fee_amount: number;
+    currency_unit?: string;
+    exchange_rate?: number;
+    bill_desc?: string;
   };
 
   type PaymentMethodDetail = {
@@ -545,6 +551,9 @@ declare namespace API {
     fee_amount: number;
     enable: boolean;
     notify_url: string;
+    currency_unit?: string;
+    exchange_rate?: number;
+    bill_desc?: string;
   };
 
   type PlatformInfo = {

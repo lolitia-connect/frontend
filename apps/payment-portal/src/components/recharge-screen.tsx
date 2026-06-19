@@ -32,6 +32,7 @@ interface RechargeScreenProps {
   onMethodSelect: (value: string) => void;
   onOpenConfirm: () => void;
   onRefresh: () => void;
+  onRefreshCheckout: () => void;
   onRefreshOrder: () => void;
   records: RechargeRecord[];
   selectedAmount: number;
@@ -71,6 +72,7 @@ export function RechargeScreen({
   onRefresh,
   onLogout,
   onOpenConfirm,
+  onRefreshCheckout,
   onRefreshOrder,
   onContinuePayment,
 }: Readonly<RechargeScreenProps>) {
@@ -358,8 +360,17 @@ export function RechargeScreen({
                         {t("dashboard.payNow", "立即支付")}
                       </Button>
                     )}
+                    {Number(activeOrder.status) === 1 && (
+                      <Button
+                        onClick={onRefreshCheckout}
+                        title={t("dashboard.refreshCheckout", "刷新支付链接")}
+                        variant="outline"
+                      >
+                        <RefreshCw className="h-4 w-4" />
+                      </Button>
+                    )}
                     <Button onClick={onRefreshOrder} variant="outline">
-                      <RefreshCw className="h-4 w-4" />
+                      {t("dashboard.refreshStatus", "刷新状态")}
                     </Button>
                   </div>
                 </CardContent>

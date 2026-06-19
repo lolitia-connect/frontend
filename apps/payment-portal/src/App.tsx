@@ -49,6 +49,7 @@ export default function App() {
     setCustomAmountInput,
     setActiveOrder,
     reset,
+    resetCheckoutFlag,
     common,
   } = usePortalStore();
 
@@ -73,6 +74,7 @@ export default function App() {
   const configLoadedRef = useRef(false);
   const portalBootstrappedRef = useRef(false);
   const completedOrderNoticeRef = useRef("");
+  const checkoutRequestedRef = useRef<string | null>(null);
 
   const { site, verify } = common;
   const currentLanguage = i18n.resolvedLanguage || i18n.language || "en-US";
@@ -181,6 +183,7 @@ export default function App() {
   const handleLogout = useCallback(() => {
     clearAuthorization();
     portalBootstrappedRef.current = false;
+    checkoutRequestedRef.current = null;
     setAuthenticated(false);
     reset();
     setCustomAmountEnabled(false);
@@ -321,6 +324,7 @@ export default function App() {
             : String(detail?.payment?.platform || "")
         );
         completedOrderNoticeRef.current = "";
+        checkoutRequestedRef.current = null; // Reset for new order
         refreshPortal();
         setConfirmOpen(true);
       } catch {
@@ -359,7 +363,32 @@ export default function App() {
   const handleContinuePayment = useCallback(() => {
     if (!activeOrder?.orderNo) return;
 
-    // Request checkout first, then open payment
+    // Check if checkout was already requested for this order (using ref for immediate check)
+    if (checkoutRequestedRef.current === activeOrder.orderNo) {
+      // Already requested, just open the payment dialog
+      const currentOrder = usePortalStore.getState().activeOrder;
+      if (
+        currentOrder?.checkout?.type === "stripe" &&
+        currentOrder.checkout.stripe
+      ) {
+        setStripeDialogOpen(true);
+      } else if (
+        currentOrder?.checkout?.type === "url" &&
+        currentOrder.checkout.checkoutUrl
+      ) {
+        window.open(
+          currentOrder.checkout.checkoutUrl,
+          "_blank",
+          "noopener,noreferrer"
+        );
+      }
+      return;
+    }
+
+    // Mark checkout as requested immediately (before async call)
+    checkoutRequestedRef.current = activeOrder.orderNo;
+
+    // Request checkout (will only call API if not already done for this order)
     refreshActiveOrder(activeOrder.orderNo, {
       requestCheckout: true,
     }).then(() => {
@@ -386,6 +415,35 @@ export default function App() {
       }
     });
   }, [activeOrder, refreshActiveOrder]);
+
+  const handleRefreshCheckout = useCallback(() => {
+    if (!activeOrder?.orderNo) return;
+
+    // Reset checkout flag and request fresh checkout
+    checkoutRequestedRef.current = null;
+    resetCheckoutFlag();
+    refreshActiveOrder(activeOrder.orderNo, {
+      requestCheckout: true,
+    }).then(() => {
+      checkoutRequestedRef.current = activeOrder.orderNo;
+      const updatedOrder = usePortalStore.getState().activeOrder;
+      if (
+        updatedOrder?.checkout?.type === "stripe" &&
+        updatedOrder.checkout.stripe
+      ) {
+        setStripeDialogOpen(true);
+      } else if (
+        updatedOrder?.checkout?.type === "url" &&
+        updatedOrder.checkout.checkoutUrl
+      ) {
+        window.open(
+          updatedOrder.checkout.checkoutUrl,
+          "_blank",
+          "noopener,noreferrer"
+        );
+      }
+    });
+  }, [activeOrder, refreshActiveOrder, resetCheckoutFlag]);
 
   const handleAmountSelect = useCallback(
     (value: string) => {
@@ -530,6 +588,7 @@ export default function App() {
           refreshPortal();
           if (activeOrder?.orderNo) refreshActiveOrder(activeOrder.orderNo);
         }}
+        onRefreshCheckout={handleRefreshCheckout}
         onRefreshOrder={() => {
           if (activeOrder?.orderNo) refreshActiveOrder(activeOrder.orderNo);
         }}

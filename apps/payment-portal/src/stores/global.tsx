@@ -97,6 +97,8 @@ export interface PortalStore {
   activeOrder: ActiveOrder | null;
   // Global config
   common: API.GetGlobalConfigResponse;
+  // Checkout tracking - prevents duplicate checkout requests
+  checkoutRequestedForOrderNo: string | null;
   customAmountEnabled: boolean;
   customAmountInput: string;
   // Loading states
@@ -111,6 +113,7 @@ export interface PortalStore {
   // Actions
   refreshPortal: () => Promise<void>;
   reset: () => void;
+  resetCheckoutFlag: () => void;
   selectedAmount: number;
   // Selection state
   selectedMethodId: string | null;
@@ -209,6 +212,7 @@ export const usePortalStore = create<PortalStore>((set, get) => ({
   paymentMethods: [],
   records: [],
   activeOrder: null,
+  checkoutRequestedForOrderNo: null,
   selectedMethodId: null,
   selectedAmount: 10,
   customAmountEnabled: false,
@@ -284,14 +288,23 @@ export const usePortalStore = create<PortalStore>((set, get) => ({
     const detail = detailResponse.data.data;
     if (!detail) return;
 
+    // Only request checkout if explicitly requested AND not already done for this order
     let checkout: CheckoutInfo | undefined;
-    if (requestCheckout && Number(detail.status) === 1) {
+    const alreadyRequestedForThisOrder =
+      get().checkoutRequestedForOrderNo === orderNo;
+    if (
+      requestCheckout &&
+      Number(detail.status) === 1 &&
+      !alreadyRequestedForThisOrder
+    ) {
       try {
         const checkoutResponse = await purchaseCheckout({
           orderNo,
           returnUrl: window.location.href,
         });
         checkout = mapCheckoutInfo(checkoutResponse.data.data);
+        // Mark checkout as requested for this order
+        set({ checkoutRequestedForOrderNo: orderNo });
       } catch {
         checkout = undefined;
       }
@@ -322,6 +335,8 @@ export const usePortalStore = create<PortalStore>((set, get) => ({
   setCustomAmountInput: (input) => set({ customAmountInput: input }),
   setActiveOrder: (order) => set({ activeOrder: order }),
 
+  resetCheckoutFlag: () => set({ checkoutRequestedForOrderNo: null }),
+
   reset: () =>
     set({
       userBalance: null,
@@ -329,6 +344,7 @@ export const usePortalStore = create<PortalStore>((set, get) => ({
       paymentMethods: [],
       records: [],
       activeOrder: null,
+      checkoutRequestedForOrderNo: null,
       selectedMethodId: null,
       selectedAmount: 10,
       customAmountEnabled: false,

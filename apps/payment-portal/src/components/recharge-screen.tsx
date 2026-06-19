@@ -10,6 +10,7 @@ import { Label } from "@workspace/ui/components/label";
 import { LanguageSwitch } from "@workspace/ui/composed/language-switch";
 import { ThemeSwitch } from "@workspace/ui/composed/theme-switch";
 import { formatDate } from "@workspace/ui/utils/formatting";
+import { Badge } from "@workspace/ui/components/badge";
 import { LoaderCircle, RefreshCw } from "lucide-react";
 import { QRCodeCanvas } from "qrcode.react";
 import { useTranslation } from "react-i18next";
@@ -156,7 +157,7 @@ export function RechargeScreen({
             <div className="grid grid-cols-2 gap-2 md:grid-cols-5">
               {methods.map((method) => (
                 <button
-                  className={`flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover py-2 text-popover-foreground transition-colors hover:bg-accent hover:text-accent-foreground ${
+                  className={`relative flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover py-2 text-popover-foreground transition-colors hover:bg-accent hover:text-accent-foreground ${
                     String(selectedMethodId) === String(method.id)
                       ? "border-primary bg-primary/10 text-foreground"
                       : ""
@@ -165,6 +166,20 @@ export function RechargeScreen({
                   onClick={() => onMethodSelect(String(method.id))}
                   type="button"
                 >
+                  {method.fee_mode === 1 && method.fee_percent > 0 && (
+                    <Badge
+                      className="absolute -top-2 -right-2 border-amber-200 bg-amber-100 px-1.5 py-0 text-[10px] text-amber-700 dark:border-amber-800 dark:bg-amber-900 dark:text-amber-300"
+                    >
+                      {method.fee_percent}%
+                    </Badge>
+                  )}
+                  {method.fee_mode === 2 && method.fee_amount > 0 && (
+                    <Badge
+                      className="absolute -top-2 -right-2 border-amber-200 bg-amber-100 px-1.5 py-0 text-[10px] text-amber-700 dark:border-amber-800 dark:bg-amber-900 dark:text-amber-300"
+                    >
+                      +<Display type="currency" value={method.fee_amount} />
+                    </Badge>
+                  )}
                   <div className="flex size-12 items-center justify-center">
                     {method.icon ? (
                       <img

@@ -238,7 +238,10 @@ export function BasicInfoForm({
                     <FormControl>
                       <EnhancedInput
                         onValueChange={(value) => {
-                          form.setValue(field.name, value as string);
+                          form.setValue(
+                            field.name,
+                            String(value)
+                          );
                         }}
                         type="number"
                         value={field.value}

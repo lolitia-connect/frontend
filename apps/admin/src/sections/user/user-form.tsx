@@ -206,7 +206,10 @@ export default function UserForm<T extends Record<string, any>>({
                         )}
                         {...field}
                         onValueChange={(value) => {
-                          form.setValue(field.name, value);
+                          form.setValue(
+                            field.name,
+                            String(value)
+                          );
                         }}
                         type="number"
                       />

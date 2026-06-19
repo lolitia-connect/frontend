@@ -9,7 +9,7 @@
   "status": "Status",
   "location": "Location",
   "memory": "Memory",
-  "onlineUsers": "Online",
+  "onlineUsers": "Online Clients",
   "ratio": "Ratio",
   "protocols": "Protocols"
 }

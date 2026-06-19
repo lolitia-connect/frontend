@@ -109,7 +109,7 @@ export default function ServiceMonitoring() {
                     <li>
                       <span className="flex items-center gap-1 text-muted-foreground">
                         <Icon className="size-3.5" icon="uil:users-alt" />
-                        {t("onlineUsers", "Online")}
+                        {t("onlineUsers", "Online Clients")}
                       </span>
                       <span>{server.online_users}</span>
                     </li>

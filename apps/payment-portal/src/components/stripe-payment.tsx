@@ -19,6 +19,7 @@ import { CheckCircle } from "lucide-react";
 import type React from "react";
 import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
 
 interface StripePaymentProps {
   client_secret: string;
@@ -238,8 +239,7 @@ export function StripePayment({
   );
 
   const handleError = useCallback((message: string) => {
-    // Error is already shown by the form
-    console.error("Stripe error:", message);
+    toast.error(message);
   }, []);
 
   return (

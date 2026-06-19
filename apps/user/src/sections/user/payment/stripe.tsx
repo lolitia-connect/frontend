@@ -21,6 +21,7 @@ import { QRCodeCanvas } from "qrcode.react";
 import type React from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
 
 interface StripePaymentProps {
   client_secret: string;
@@ -289,6 +290,7 @@ const CheckoutForm: React.FC<Omit<StripePaymentProps, "publishable_key">> = ({
   const handleError = useCallback((message: string) => {
     setErrorMessage(message);
     setIsSubmitted(false);
+    toast.error(message);
   }, []);
 
   const confirmPayment =

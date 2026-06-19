@@ -62,8 +62,8 @@ export default function Affiliate() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center justify-between">
-            <code className="rounded bg-muted px-2 py-1 font-bold text-2xl">
+          <div className="flex flex-wrap items-center gap-2">
+            <code className="min-w-0 truncate rounded bg-muted px-2 py-1 font-bold text-lg sm:text-2xl">
               {user?.refer_code}
             </code>
             <CopyToClipboard
@@ -74,7 +74,7 @@ export default function Affiliate() {
               }}
               text={`${location?.origin}/#/auth?invite=${user?.refer_code}`}
             >
-              <Button className="gap-2" size="sm" variant="secondary">
+              <Button className="shrink-0 gap-2" size="sm" variant="secondary">
                 <Copy className="h-4 w-4" />
                 {t("copyInviteLink", "Copy Invite Link")}
               </Button>

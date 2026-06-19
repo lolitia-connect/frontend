@@ -36,6 +36,7 @@
   "redeemCode": "兌換 CDK",
   "redeemCodeTitle": "CDK 兌換",
   "redeemCodeDescription": "輸入兌換碼以獲取訂閱套餐",
+  "redemptionCode": "兌換碼",
   "enterRedemptionCode": "請輸入兌換碼",
   "redeemButton": "立即兌換",
   "redeeming": "兌換中...",

@@ -33,12 +33,13 @@
   "totalTraffic": "総トラフィック",
   "unknown": "不明",
   "used": "使用済み",
-  "redeemCode": "CDK兑换",
-  "redeemCodeTitle": "CDK兑换",
-  "redeemCodeDescription": "兑换コードを入力してサブスクリプションプランを取得",
-  "enterRedemptionCode": "兑换コードを入力してください",
-  "redeemButton": "今すぐ兑换",
-  "redeeming": "兑换中...",
-  "redeemSuccess": "兑换成功！サブスクリプションが有効になりました。",
-  "redeemFailed": "兑换に失敗しました"
+  "redeemCode": "CDK交換",
+  "redeemCodeTitle": "CDK交換",
+  "redeemCodeDescription": "交換コードを入力してサブスクリプションプランを取得",
+  "redemptionCode": "交換コード",
+  "enterRedemptionCode": "交換コードを入力してください",
+  "redeemButton": "今すぐ交換",
+  "redeeming": "交換中...",
+  "redeemSuccess": "交換成功！サブスクリプションが有効になりました。",
+  "redeemFailed": "交換に失敗しました"
 }

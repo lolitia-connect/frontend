@@ -42,7 +42,7 @@ export default function RedeemCode({ onSuccess }: RedeemCodeProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!code.trim()) {
-      toast.error(t("pleaseEnterCode", "请输入兑换码"));
+      toast.error(t("enterRedemptionCode", "请输入兑换码"));
       return;
     }
     redeemMutation.mutate(code.trim());
@@ -51,7 +51,7 @@ export default function RedeemCode({ onSuccess }: RedeemCodeProps) {
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle>{t("redeemCode", "CDK 兑换")}</CardTitle>
+        <CardTitle>{t("redeemCodeTitle", "CDK 兑换")}</CardTitle>
         <CardDescription>
           {t("redeemCodeDescription", "输入兑换码即可兑换对应的订阅套餐")}
         </CardDescription>
@@ -75,7 +75,7 @@ export default function RedeemCode({ onSuccess }: RedeemCodeProps) {
               >
                 {redeemMutation.isPending
                   ? t("redeeming", "兑换中...")
-                  : t("redeem", "兑换")}
+                  : t("redeemButton", "兑换")}
               </Button>
             </div>
           </div>

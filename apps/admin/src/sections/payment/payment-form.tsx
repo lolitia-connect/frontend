@@ -51,6 +51,9 @@ export type PaymentFormValues = {
   fee_amount?: number;
   description?: string;
   sort?: number;
+  currency_unit?: string;
+  exchange_rate?: number;
+  bill_desc?: string;
 };
 
 interface PaymentFormProps<T extends { platform?: string }> {
@@ -94,6 +97,9 @@ export default function PaymentForm<T extends { platform?: string }>({
     fee_amount: z.number().optional(),
     description: z.string().optional(),
     sort: z.number().optional(),
+    currency_unit: z.string().optional(),
+    exchange_rate: z.number().optional(),
+    bill_desc: z.string().optional(),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -107,6 +113,7 @@ export default function PaymentForm<T extends { platform?: string }>({
       fee_mode: 0,
       fee_percent: 0,
       fee_amount: 0,
+      exchange_rate: 1,
       sort: 0,
       ...(initialValues as any),
     },
@@ -367,6 +374,100 @@ export default function PaymentForm<T extends { platform?: string }>({
                     />
                   </div>
                 )}
+              </div>
+
+              <div className="space-y-4">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <FormField
+                    control={form.control}
+                    name="currency_unit"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          {t("currencyUnit", "Payment Currency")}
+                        </FormLabel>
+                        <FormControl>
+                          <EnhancedInput
+                            onValueChange={(value) =>
+                              form.setValue(
+                                "currency_unit",
+                                (value as string).toUpperCase()
+                              )
+                            }
+                            placeholder={t(
+                              "currencyUnitPlaceholder",
+                              "e.g. USD, CNY, EUR"
+                            )}
+                            value={field.value ?? ""}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="exchange_rate"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          {t("exchangeRate", "Exchange Rate")}
+                        </FormLabel>
+                        <FormControl>
+                          <EnhancedInput
+                            onValueChange={(value) =>
+                              form.setValue(
+                                "exchange_rate",
+                                Number.parseFloat(String(value)) || 1
+                              )
+                            }
+                            placeholder={t(
+                              "exchangeRatePlaceholder",
+                              "Rate from system currency"
+                            )}
+                            step="0.00000001"
+                            type="number"
+                            value={field.value ?? 1}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <FormField
+                  control={form.control}
+                  name="bill_desc"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        {t("billDesc", "Billing Description")}
+                      </FormLabel>
+                      <FormControl>
+                        <EnhancedInput
+                          onValueChange={(value) =>
+                            form.setValue("bill_desc", value as string)
+                          }
+                          placeholder={t(
+                            "billDescPlaceholder",
+                            "e.g. {item_name} - {order_no}"
+                          )}
+                          value={field.value ?? ""}
+                        />
+                      </FormControl>
+                      <div className="text-muted-foreground text-xs">
+                        {t(
+                          "billDescHelp",
+                          "Variables: {order_no}, {item_name}, {amount}, {trade_no}"
+                        )}
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
 
               <div className="space-y-4">

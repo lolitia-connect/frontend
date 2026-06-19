@@ -219,6 +219,26 @@ export default function PaymentTable() {
             return "--";
           },
         },
+        {
+          accessorKey: "currency_unit",
+          header: t("currency", "Currency"),
+          cell: ({ row }) => {
+            const currencyUnit = row.original.currency_unit;
+            if (!currencyUnit) {
+              return <Badge variant="outline">--</Badge>;
+            }
+            return (
+              <div className="flex flex-col gap-0.5">
+                <Badge>{currencyUnit}</Badge>
+                {(row.original.exchange_rate ?? 0) > 0 && (
+                  <span className="text-muted-foreground text-xs">
+                    {t("rate", "Rate")}: {row.original.exchange_rate}
+                  </span>
+                )}
+              </div>
+            );
+          },
+        },
       ]}
       header={{
         title: t("paymentManagement", "Payment Management"),

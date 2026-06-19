@@ -23,7 +23,7 @@ const allLanguages = [
   {
     code: "zh-TW",
     name: "繁體中文（台灣）",
-    flag: "🇹🇼",
+    flag: "🇨🇳",
   },
   {
     code: "zh-HK",

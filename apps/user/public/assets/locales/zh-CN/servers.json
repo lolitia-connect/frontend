@@ -9,7 +9,7 @@
   "status": "状态",
   "location": "位置",
   "memory": "内存",
-  "onlineUsers": "在线",
+  "onlineUsers": "在线客户端",
   "ratio": "倍率",
   "protocols": "协议"
 }

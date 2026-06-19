@@ -9,7 +9,7 @@
   "status": "状態",
   "location": "場所",
   "memory": "メモリ",
-  "onlineUsers": "オンライン",
+  "onlineUsers": "オンラインクライアント",
   "ratio": "倍率",
   "protocols": "プロトコル"
 }

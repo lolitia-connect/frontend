@@ -68,12 +68,8 @@ export default function PhoneAuthForm() {
             setType("login");
             break;
         }
-      } catch (error: any) {
-        toast.error(
-          error?.response?.data?.message ||
-            error?.message ||
-            "An error occurred"
-        );
+      } catch {
+        // Error is already handled by the global request interceptor
       }
     });
   };

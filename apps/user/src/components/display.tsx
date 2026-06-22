@@ -25,11 +25,7 @@ export function Display<T extends number | undefined | null>({
     return formattedValue;
   }
 
-  if (
-    ["traffic", "trafficSpeed", "number"].includes(type) &&
-    unlimited &&
-    !value
-  ) {
+  if (["traffic", "trafficSpeed", "number"].includes(type) && unlimited) {
     return t("unlimited");
   }
 

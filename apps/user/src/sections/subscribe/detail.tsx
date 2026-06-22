@@ -34,7 +34,11 @@ export function SubscribeDetail({ subscribe }: Readonly<SubscribeDetailProps>) {
             {t("detail.availableTraffic", "Available Traffic")}
           </span>
           <span>
-            <Display type="traffic" unlimited value={subscribe?.traffic} />
+            <Display
+              type="traffic"
+              unlimited={subscribe?.traffic_unlimited}
+              value={subscribe?.traffic}
+            />
           </span>
         </li>
         <li>
@@ -44,7 +48,7 @@ export function SubscribeDetail({ subscribe }: Readonly<SubscribeDetailProps>) {
           <span>
             <Display
               type="trafficSpeed"
-              unlimited
+              unlimited={!subscribe?.speed_limit}
               value={subscribe?.speed_limit}
             />
           </span>
@@ -54,7 +58,11 @@ export function SubscribeDetail({ subscribe }: Readonly<SubscribeDetailProps>) {
             {t("detail.connectedDevices", "Connected Devices")}
           </span>
           <span>
-            <Display type="number" unlimited value={subscribe?.device_limit} />
+            <Display
+              type="number"
+              unlimited={!subscribe?.device_limit}
+              value={subscribe?.device_limit}
+            />
           </span>
         </li>
       </ul>

@@ -145,21 +145,26 @@ export default function UserSubscription({
           accessorKey: "traffic",
           header: t("totalTraffic", "Total Traffic"),
           cell: ({ row }) => (
-            <Display type="traffic" unlimited value={row.getValue("traffic")} />
+            <Display
+              type="traffic"
+              unlimited={row.original.traffic_unlimited}
+              value={row.getValue("traffic")}
+            />
           ),
         },
         {
           id: "remaining_traffic",
           header: t("remainingTraffic", "Remaining Traffic"),
           cell: ({ row }) => {
+            if (row.original.traffic_unlimited) {
+              return <Display type="traffic" unlimited />;
+            }
             const upload = row.original.upload || 0;
             const download = row.original.download || 0;
             const totalTraffic = row.original.traffic || 0;
             const remainingTraffic =
               totalTraffic > 0 ? totalTraffic - upload - download : 0;
-            return (
-              <Display type="traffic" unlimited value={remainingTraffic} />
-            );
+            return <Display type="traffic" value={remainingTraffic} />;
           },
         },
         {
@@ -175,7 +180,7 @@ export default function UserSubscription({
           header: t("deviceLimit", "Device Limit"),
           cell: ({ row }) => {
             const limit = row.original?.subscribe?.device_limit;
-            return <Display type="number" unlimited value={limit} />;
+            return <Display type="number" unlimited={!limit} value={limit} />;
           },
         },
         {

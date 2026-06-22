@@ -17,12 +17,13 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@workspace/ui/components/sheet";
+import { Switch } from "@workspace/ui/components/switch";
 import { Combobox } from "@workspace/ui/composed/combobox";
 import { DatePicker } from "@workspace/ui/composed/date-picker";
 import { EnhancedInput } from "@workspace/ui/composed/enhanced-input";
 import { Icon } from "@workspace/ui/composed/icon";
 import { unitConversion } from "@workspace/ui/utils/unit-conversions";
-import { type ReactNode, useState } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
@@ -39,6 +40,7 @@ interface Props {
 const formSchema = z.object({
   subscribe_id: z.string().optional(),
   traffic: z.number().optional(),
+  traffic_unlimited: z.boolean().optional(),
   speed_limit: z.number().optional(),
   device_limit: z.number().optional(),
   expired_at: z.number().nullish().optional(),
@@ -59,17 +61,29 @@ export function SubscriptionForm({
   const { t } = useTranslation("user");
   const [open, setOpen] = useState(false);
 
+  const [unlimitedTraffic, setUnlimitedTraffic] = useState(
+    !!initialData?.traffic_unlimited
+  );
+
   const form = useForm<SubscriptionFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       subscribe_id: initialData?.subscribe_id || "",
       traffic: initialData?.traffic || 0,
+      traffic_unlimited: initialData?.traffic_unlimited,
       upload: initialData?.upload || 0,
       download: initialData?.download || 0,
       expired_at: initialData?.expire_time || 0,
       ...(initialData && { id: initialData.id }),
     },
   });
+
+  useEffect(() => {
+    form.setValue("traffic_unlimited", unlimitedTraffic);
+    if (unlimitedTraffic) {
+      form.setValue("traffic", 0);
+    }
+  }, [unlimitedTraffic, form]);
 
   const handleSubmit = async (values: SubscriptionFormValues) => {
     const success = await onSubmit(values);
@@ -132,11 +146,23 @@ export function SubscriptionForm({
                   name="traffic"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>
-                        {t("trafficLimit", "Traffic Limit")}
-                      </FormLabel>
+                      <div className="flex items-center justify-between">
+                        <FormLabel>
+                          {t("trafficLimit", "Traffic Limit")}
+                        </FormLabel>
+                        <div className="flex items-center gap-2">
+                          <span className="text-muted-foreground text-sm">
+                            {t("unlimited", "Unlimited")}
+                          </span>
+                          <Switch
+                            checked={unlimitedTraffic}
+                            onCheckedChange={setUnlimitedTraffic}
+                          />
+                        </div>
+                      </div>
                       <FormControl>
                         <EnhancedInput
+                          disabled={unlimitedTraffic}
                           placeholder={t("unlimited", "Unlimited")}
                           type="number"
                           {...field}

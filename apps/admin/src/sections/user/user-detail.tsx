@@ -57,7 +57,12 @@ export function UserSubscribeDetail({
 
   const usedTraffic = data ? data.upload + data.download : 0;
   const totalTraffic = data?.traffic || 0;
-  const remainingTraffic = totalTraffic > 0 ? totalTraffic - usedTraffic : 0;
+  const isTrafficUnlimited = data?.traffic_unlimited ?? false;
+  const remainingTraffic = isTrafficUnlimited
+    ? 0
+    : totalTraffic > 0
+      ? totalTraffic - usedTraffic
+      : 0;
 
   // Get user group info from data.user
   // const userGroupId = typeof data?.user?.user_group_id === 'number' ? data?.user?.user_group_id : 0;
@@ -96,7 +101,7 @@ export function UserSubscribeDetail({
               <span className="text-muted-foreground">{t("trafficUsage")}</span>
               <span>
                 {data
-                  ? totalTraffic === 0
+                  ? isTrafficUnlimited
                     ? `${formatBytes(usedTraffic)} / ${t("unlimited")}`
                     : `${formatBytes(usedTraffic)} / ${formatBytes(totalTraffic)}`
                   : "--"}
@@ -108,7 +113,7 @@ export function UserSubscribeDetail({
               </span>
               <span>
                 {data
-                  ? totalTraffic === 0
+                  ? isTrafficUnlimited
                     ? t("unlimited")
                     : formatBytes(remainingTraffic)
                   : "--"}

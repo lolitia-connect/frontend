@@ -230,6 +230,7 @@ export default function QuotaBroadcastForm() {
                               <div className="text-muted-foreground text-xs">
                                 <Display
                                   type="traffic"
+                                  unlimited={subscribe.traffic_unlimited}
                                   value={subscribe.traffic || 0}
                                 />{" "}
                                 /{" "}

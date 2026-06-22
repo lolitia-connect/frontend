@@ -324,6 +324,7 @@ export default function Content() {
                       <ResetTraffic
                         id={item.id}
                         replacement={item.subscribe.replacement}
+                        trafficUnlimited={item.traffic_unlimited}
                       />
                       {item.expire_time !== 0 && item.subscribe.sell && (
                         <Renewal id={item.id} subscribe={item.subscribe} />
@@ -345,7 +346,7 @@ export default function Content() {
                       <span className="font-bold text-2xl">
                         <Display
                           type="traffic"
-                          unlimited={!item.traffic}
+                          unlimited={item.traffic_unlimited}
                           value={item.upload + item.download}
                         />
                       </span>
@@ -357,7 +358,7 @@ export default function Content() {
                       <span className="font-bold text-2xl">
                         <Display
                           type="traffic"
-                          unlimited={!item.traffic}
+                          unlimited={item.traffic_unlimited}
                           value={item.traffic}
                         />
                       </span>

@@ -74,6 +74,7 @@ const defaultValues = {
   speed_limit: 0,
   device_limit: 0,
   traffic: 0,
+  traffic_unlimited: false,
   quota: 0,
   discount: [],
   language: "",
@@ -127,6 +128,9 @@ export default function SubscribeForm<T extends Record<string, any>>({
 
   const { t } = useTranslation("product");
   const [open, setOpen] = useState(false);
+  const [unlimitedTraffic, setUnlimitedTraffic] = useState(
+    initialValues?.traffic_unlimited ?? false
+  );
   const updateTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const formSchema = z.object({
@@ -147,6 +151,7 @@ export default function SubscribeForm<T extends Record<string, any>>({
     speed_limit: z.number().optional(),
     device_limit: z.number().optional(),
     traffic: z.number().optional(),
+    traffic_unlimited: z.boolean().optional(),
     quota: z.number().optional(),
     language: z.string().optional(),
     node_tags: z.array(z.string()).optional(),
@@ -308,11 +313,19 @@ export default function SubscribeForm<T extends Record<string, any>>({
     }
 
     form?.reset(processedValues);
+    setUnlimitedTraffic(processedValues.traffic_unlimited ?? false);
     const discount = form.getValues("discount") || [];
     if (discount.length > 0) {
       debouncedCalculateDiscount(discount, "discount");
     }
   }, [form, initialValues, open]);
+
+  useEffect(() => {
+    if (unlimitedTraffic) {
+      form.setValue("traffic", 0);
+    }
+    form.setValue("traffic_unlimited", unlimitedTraffic);
+  }, [unlimitedTraffic, form]);
 
   useEffect(
     () => () => {
@@ -507,9 +520,26 @@ export default function SubscribeForm<T extends Record<string, any>>({
                         name="traffic"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>{t("form.traffic")}</FormLabel>
+                            <div className="flex items-center justify-between">
+                              <FormLabel>{t("form.traffic")}</FormLabel>
+                              <div className="flex items-center gap-2">
+                                <span className="text-muted-foreground text-sm">
+                                  {t("form.unlimited", "Unlimited")}
+                                </span>
+                                <Switch
+                                  checked={unlimitedTraffic}
+                                  onCheckedChange={(checked) => {
+                                    setUnlimitedTraffic(checked);
+                                    if (checked) {
+                                      form.setValue("traffic", 0);
+                                    }
+                                  }}
+                                />
+                              </div>
+                            </div>
                             <FormControl>
                               <EnhancedInput
+                                disabled={unlimitedTraffic}
                                 placeholder={t("form.noLimit")}
                                 type="number"
                                 {...field}

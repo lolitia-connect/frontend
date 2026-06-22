@@ -65,12 +65,13 @@ function UserSubscribeInfo({
 
     case "trafficUsage": {
       const usedTraffic = data.upload + data.download;
-      const totalTraffic = data.traffic || 0;
+      const isUnlimited = data.traffic_unlimited;
       return (
         <div className="min-w-0 text-sm">
           <div className="wrap-break-word">
-            {formatBytes(usedTraffic)} /{" "}
-            {totalTraffic > 0 ? formatBytes(totalTraffic) : unlimitedText}
+            {isUnlimited
+              ? `${formatBytes(usedTraffic)} / ${unlimitedText}`
+              : `${formatBytes(usedTraffic)} / ${formatBytes(data.traffic || 0)}`}
           </div>
         </div>
       );

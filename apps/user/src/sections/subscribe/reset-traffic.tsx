@@ -21,10 +21,12 @@ import PaymentMethods from "./payment-methods";
 interface ResetTrafficProps {
   id: string;
   replacement?: number;
+  trafficUnlimited?: boolean;
 }
 export default function ResetTraffic({
   id,
   replacement,
+  trafficUnlimited,
 }: Readonly<ResetTrafficProps>) {
   const { t } = useTranslation("subscribe");
   const { getUserInfo } = useGlobalStore();
@@ -45,7 +47,7 @@ export default function ResetTraffic({
     }
   }, [id]);
 
-  if (!replacement) return;
+  if (!replacement || trafficUnlimited) return;
 
   return (
     <Dialog onOpenChange={setOpen} open={open}>

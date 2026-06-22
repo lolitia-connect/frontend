@@ -247,7 +247,11 @@ export default function SubscribeTable() {
           accessorKey: "traffic",
           header: t("traffic"),
           cell: ({ row }) => (
-            <Display type="traffic" unlimited value={row.getValue("traffic")} />
+            <Display
+              type="traffic"
+              unlimited={row.original.traffic_unlimited}
+              value={row.getValue("traffic")}
+            />
           ),
         },
         {
@@ -279,7 +283,11 @@ export default function SubscribeTable() {
           accessorKey: "quota",
           header: t("quota"),
           cell: ({ row }) => (
-            <Display type="number" unlimited value={row.getValue("quota")} />
+            <Display
+              type="number"
+              unlimited={!row.getValue("quota")}
+              value={row.getValue("quota")}
+            />
           ),
         },
         {

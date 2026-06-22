@@ -431,6 +431,7 @@ declare namespace API {
     replacement: number;
     inventory: number;
     traffic: number;
+    traffic_unlimited: boolean;
     speed_limit: number;
     device_limit: number;
     quota: number;
@@ -479,6 +480,7 @@ declare namespace API {
     user_id: string;
     expired_at: number;
     traffic: number;
+    traffic_unlimited: boolean;
     subscribe_id: string;
   };
 
@@ -2184,6 +2186,7 @@ declare namespace API {
     replacement: number;
     inventory: number;
     traffic: number;
+    traffic_unlimited: boolean;
     speed_limit: number;
     device_limit: number;
     quota: number;
@@ -2252,6 +2255,7 @@ declare namespace API {
     replacement?: number;
     inventory?: number;
     traffic?: number;
+    traffic_unlimited?: boolean;
     speed_limit?: number;
     device_limit?: number;
     quota?: number;
@@ -2529,6 +2533,7 @@ declare namespace API {
     replacement: number;
     inventory: number;
     traffic: number;
+    traffic_unlimited: boolean;
     speed_limit: number;
     device_limit: number;
     quota: number;
@@ -2583,6 +2588,7 @@ declare namespace API {
     user_subscribe_id: string;
     subscribe_id: string;
     traffic: number;
+    traffic_unlimited: boolean;
     expired_at: number;
     upload: number;
     download: number;
@@ -2673,6 +2679,7 @@ declare namespace API {
     finished_at: number;
     reset_time: number;
     traffic: number;
+    traffic_unlimited: boolean;
     download: number;
     upload: number;
     token: string;
@@ -2693,6 +2700,7 @@ declare namespace API {
     expire_time: number;
     reset_time: number;
     traffic: number;
+    traffic_unlimited: boolean;
     download: number;
     upload: number;
     token: string;

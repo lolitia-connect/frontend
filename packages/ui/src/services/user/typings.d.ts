@@ -1005,6 +1005,7 @@ declare namespace API {
     replacement: number;
     inventory: number;
     traffic: number;
+    traffic_unlimited: boolean;
     speed_limit: number;
     device_limit: number;
     quota: number;
@@ -1227,6 +1228,7 @@ declare namespace API {
     finished_at: number;
     reset_time: number;
     traffic: number;
+    traffic_unlimited: boolean;
     download: number;
     upload: number;
     token: string;

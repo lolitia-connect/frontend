@@ -6,9 +6,9 @@ import {
   DialogTitle,
 } from "@workspace/ui/components/dialog";
 import { CheckCircle } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import Turnstile, { useTurnstile } from "react-turnstile";
+import Turnstile from "react-turnstile";
 
 interface CloudflareTurnstileProps {
   language: string;
@@ -26,7 +26,7 @@ export function CloudflareTurnstile({
   onChange,
 }: Readonly<CloudflareTurnstileProps>) {
   const { t } = useTranslation("app");
-  const turnstile = useTurnstile();
+  const widgetRef = useRef<{ reset: () => void } | null>(null);
   const [open, setOpen] = useState(false);
   const [verified, setVerified] = useState(Boolean(value));
 
@@ -37,11 +37,11 @@ export function CloudflareTurnstile({
   useEffect(() => {
     setVerified(false);
     try {
-      turnstile.reset();
+      widgetRef.current?.reset();
     } catch {
-      /* empty */
+      /* widget not yet loaded */
     }
-  }, [resetKey, turnstile]);
+  }, [resetKey]);
 
   if (!siteKey) return null;
 
@@ -76,11 +76,14 @@ export function CloudflareTurnstile({
           <Turnstile
             fixedSize
             language={language.toLowerCase()}
+            onLoad={(_widgetId, boundTurnstile) => {
+              widgetRef.current = boundTurnstile;
+            }}
             onExpire={() => {
               onChange("");
               setVerified(false);
               try {
-                turnstile.reset();
+                widgetRef.current?.reset();
               } catch {
                 /* empty */
               }
@@ -89,7 +92,7 @@ export function CloudflareTurnstile({
               onChange("");
               setVerified(false);
               try {
-                turnstile.reset();
+                widgetRef.current?.reset();
               } catch {
                 /* empty */
               }

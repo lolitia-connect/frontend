@@ -13,10 +13,11 @@ import {
   type RefObject,
   useEffect,
   useImperativeHandle,
+  useRef,
   useState,
 } from "react";
 import { useTranslation } from "react-i18next";
-import Turnstile, { useTurnstile } from "react-turnstile";
+import Turnstile from "react-turnstile";
 import { useGlobalStore } from "@/stores/global";
 
 export type TurnstileRef = {
@@ -39,7 +40,7 @@ const CloudFlareTurnstile = function CloudFlareTurnstile({
   const { resolvedTheme } = useTheme();
   const { i18n, t } = useTranslation("auth");
   const locale = i18n.language;
-  const turnstile = useTurnstile();
+  const widgetRef = useRef<{ reset: () => void } | null>(null);
   const [open, setOpen] = useState(false);
   const [verified, setVerified] = useState(false);
 
@@ -49,18 +50,26 @@ const CloudFlareTurnstile = function CloudFlareTurnstile({
       reset: () => {
         setVerified(false);
         onChange("");
-        turnstile.reset();
+        try {
+          widgetRef.current?.reset();
+        } catch {
+          /* widget not yet loaded */
+        }
       },
     }),
-    [turnstile, onChange]
+    [onChange]
   );
 
   useEffect(() => {
     if (value === "") {
       setVerified(false);
-      turnstile.reset();
+      try {
+        widgetRef.current?.reset();
+      } catch {
+        /* widget not yet loaded */
+      }
     }
-  }, [turnstile, value]);
+  }, [value]);
 
   const handleOpen = () => {
     if (verified) return;
@@ -122,13 +131,24 @@ const CloudFlareTurnstile = function CloudFlareTurnstile({
             fixedSize
             id={id}
             language={locale.toLowerCase()}
+            onLoad={(_widgetId, boundTurnstile) => {
+              widgetRef.current = boundTurnstile;
+            }}
             onExpire={() => {
               onChange("");
-              turnstile.reset();
+              try {
+                widgetRef.current?.reset();
+              } catch {
+                /* empty */
+              }
             }}
             onTimeout={() => {
               onChange("");
-              turnstile.reset();
+              try {
+                widgetRef.current?.reset();
+              } catch {
+                /* empty */
+              }
             }}
             onVerify={(token) => {
               setVerified(true);

@@ -52,7 +52,7 @@ export default function ResetForm({
     password: z.string(),
     code: auth?.email?.enable_verify ? z.string() : z.string().nullish(),
     cf_token:
-      verify.enable_reset_password_verify && verify.turnstile_site_key
+      captchaEnabled && isTurnstile && verify.turnstile_site_key
         ? z.string()
         : z.string().nullish(),
     captcha_code:

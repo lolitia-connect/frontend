@@ -1,18 +1,9 @@
-import { Button } from "@workspace/ui/components/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@workspace/ui/components/dialog";
-import { Icon } from "@workspace/ui/composed/icon";
 import { useTheme } from "next-themes";
 import {
   type RefObject,
   useEffect,
   useImperativeHandle,
   useRef,
-  useState,
 } from "react";
 import { useTranslation } from "react-i18next";
 import Turnstile from "react-turnstile";
@@ -37,17 +28,14 @@ const CloudFlareTurnstile = function CloudFlareTurnstile({
   const { common } = useGlobalStore();
   const { verify } = common;
   const { resolvedTheme } = useTheme();
-  const { i18n, t } = useTranslation("auth");
+  const { i18n } = useTranslation("auth");
   const locale = i18n.language;
   const widgetRef = useRef<{ reset: () => void } | null>(null);
-  const [open, setOpen] = useState(false);
-  const [verified, setVerified] = useState(false);
 
   useImperativeHandle(
     ref,
     () => ({
       reset: () => {
-        setVerified(false);
         onChange("");
         try {
           widgetRef.current?.reset();
@@ -61,7 +49,6 @@ const CloudFlareTurnstile = function CloudFlareTurnstile({
 
   useEffect(() => {
     if (value === "") {
-      setVerified(false);
       try {
         widgetRef.current?.reset();
       } catch {
@@ -70,105 +57,40 @@ const CloudFlareTurnstile = function CloudFlareTurnstile({
     }
   }, [value]);
 
-  const handleOpen = () => {
-    if (verified) return;
-    setOpen(true);
-  };
-
   if (!verify.turnstile_site_key) return null;
 
   return (
-    <>
-      {/* Trigger button */}
-      <button
-        className={`relative flex w-full items-center gap-3 rounded-md border px-4 py-3 text-sm transition-colors ${
-          verified
-            ? "border-green-400 bg-green-50 text-green-700 dark:bg-green-950/30"
-            : "border-input bg-background hover:bg-muted"
-        }`}
-        onClick={handleOpen}
-        type="button"
-      >
-        <span
-          className={`relative flex h-5 w-5 shrink-0 items-center justify-center rounded-full ${
-            verified ? "bg-green-500" : "bg-primary"
-          }`}
-        >
-          {verified ? (
-            <Icon className="text-white text-xs" icon="mdi:check" />
-          ) : (
-            <>
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-60" />
-              <span className="relative inline-flex h-3 w-3 rounded-full bg-primary" />
-            </>
-          )}
-        </span>
-        <span className={verified ? "font-medium" : "text-muted-foreground"}>
-          {verified
-            ? t("captcha.turnstile.success", "Verified")
-            : t("captcha.turnstile.clickToVerify", "Click to verify")}
-        </span>
-        {verified && (
-          <Icon className="ml-auto text-green-500" icon="mdi:check-circle" />
-        )}
-      </button>
-
-      {/* Turnstile dialog */}
-      <Dialog
-        onOpenChange={(o) => {
-          if (!o) setOpen(false);
+    <div className="w-full">
+      <Turnstile
+        id={id}
+        language={locale.toLowerCase()}
+        onLoad={(_widgetId, boundTurnstile) => {
+          widgetRef.current = boundTurnstile;
         }}
-        open={open}
-      >
-        <DialogContent className="flex w-auto flex-col items-center gap-4 p-6">
-          <DialogHeader>
-            <DialogTitle>
-              {t("captcha.turnstile.title", "Security Verification")}
-            </DialogTitle>
-          </DialogHeader>
-          <Turnstile
-            fixedSize
-            id={id}
-            language={locale.toLowerCase()}
-            onLoad={(_widgetId, boundTurnstile) => {
-              widgetRef.current = boundTurnstile;
-            }}
-            onExpire={() => {
-              onChange("");
-              try {
-                widgetRef.current?.reset();
-              } catch {
-                /* empty */
-              }
-            }}
-            onTimeout={() => {
-              onChange("");
-              try {
-                widgetRef.current?.reset();
-              } catch {
-                /* empty */
-              }
-            }}
-            onVerify={(token) => {
-              setVerified(true);
-              onChange(token);
-              setTimeout(() => setOpen(false), 400);
-            }}
-            sitekey={verify.turnstile_site_key}
-            theme={resolvedTheme as "light" | "dark"}
-          />
-          <Button
-            className="w-full"
-            onClick={() => setOpen(false)}
-            size="sm"
-            type="button"
-            variant="ghost"
-          >
-            {t("captcha.turnstile.cancel", "Cancel")}
-          </Button>
-        </DialogContent>
-      </Dialog>
-    </>
+        onExpire={() => {
+          onChange("");
+          try {
+            widgetRef.current?.reset();
+          } catch {
+            /* empty */
+          }
+        }}
+        onTimeout={() => {
+          onChange("");
+          try {
+            widgetRef.current?.reset();
+          } catch {
+            /* empty */
+          }
+        }}
+        onVerify={(token) => {
+          onChange(token);
+        }}
+        sitekey={verify.turnstile_site_key}
+        size="flexible"
+        theme={resolvedTheme as "light" | "dark"}
+      />
+    </div>
   );
 };
 

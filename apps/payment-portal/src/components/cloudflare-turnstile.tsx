@@ -1,13 +1,4 @@
-import { Button } from "@workspace/ui/components/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@workspace/ui/components/dialog";
-import { CheckCircle } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
-import { useTranslation } from "react-i18next";
+import { useEffect, useRef } from "react";
 import Turnstile from "react-turnstile";
 
 interface CloudflareTurnstileProps {
@@ -15,27 +6,17 @@ interface CloudflareTurnstileProps {
   onChange: (value: string) => void;
   resetKey: number;
   siteKey: string;
-  value: string;
 }
 
 export function CloudflareTurnstile({
   language,
   siteKey,
-  value,
   resetKey,
   onChange,
 }: Readonly<CloudflareTurnstileProps>) {
-  const { t } = useTranslation("app");
   const widgetRef = useRef<{ reset: () => void } | null>(null);
-  const [open, setOpen] = useState(false);
-  const [verified, setVerified] = useState(Boolean(value));
 
   useEffect(() => {
-    setVerified(Boolean(value));
-  }, [value]);
-
-  useEffect(() => {
-    setVerified(false);
     try {
       widgetRef.current?.reset();
     } catch {
@@ -46,67 +27,35 @@ export function CloudflareTurnstile({
   if (!siteKey) return null;
 
   return (
-    <>
-      <Button
-        className="w-full"
-        onClick={() => {
-          if (!verified) setOpen(true);
+    <div className="w-full">
+      <Turnstile
+        language={language.toLowerCase()}
+        onLoad={(_widgetId, boundTurnstile) => {
+          widgetRef.current = boundTurnstile;
         }}
-        type="button"
-        variant={verified ? "default" : "outline"}
-      >
-        {verified ? (
-          <>
-            <CheckCircle className="mr-2 h-4 w-4" />
-            {t("captcha.turnstile.verified", "验证已通过")}
-          </>
-        ) : (
-          t("captcha.turnstile.action", "点击完成人机验证")
-        )}
-      </Button>
-
-      <Dialog onOpenChange={setOpen} open={open}>
-        <DialogContent className="flex w-auto flex-col items-center gap-4 p-6 sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>
-              {t("captcha.turnstile.title", "安全验证")}
-            </DialogTitle>
-          </DialogHeader>
-
-          <Turnstile
-            fixedSize
-            language={language.toLowerCase()}
-            onLoad={(_widgetId, boundTurnstile) => {
-              widgetRef.current = boundTurnstile;
-            }}
-            onExpire={() => {
-              onChange("");
-              setVerified(false);
-              try {
-                widgetRef.current?.reset();
-              } catch {
-                /* empty */
-              }
-            }}
-            onTimeout={() => {
-              onChange("");
-              setVerified(false);
-              try {
-                widgetRef.current?.reset();
-              } catch {
-                /* empty */
-              }
-            }}
-            onVerify={(token) => {
-              setVerified(true);
-              onChange(token);
-              window.setTimeout(() => setOpen(false), 300);
-            }}
-            sitekey={siteKey}
-            theme="light"
-          />
-        </DialogContent>
-      </Dialog>
-    </>
+        onExpire={() => {
+          onChange("");
+          try {
+            widgetRef.current?.reset();
+          } catch {
+            /* empty */
+          }
+        }}
+        onTimeout={() => {
+          onChange("");
+          try {
+            widgetRef.current?.reset();
+          } catch {
+            /* empty */
+          }
+        }}
+        onVerify={(token) => {
+          onChange(token);
+        }}
+        sitekey={siteKey}
+        size="flexible"
+        theme="light"
+      />
+    </div>
   );
 }

@@ -514,7 +514,6 @@ export default function App() {
           onChange={setCaptchaValue}
           resetKey={captchaResetKey}
           siteKey={verify.turnstile_site_key}
-          value={captchaValue}
         />
       );
     }

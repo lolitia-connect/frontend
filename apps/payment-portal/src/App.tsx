@@ -17,7 +17,7 @@ import { LocalCaptcha } from "@/components/local-captcha";
 import { LoginScreen } from "@/components/login-screen";
 import { RechargeScreen } from "@/components/recharge-screen";
 import { SliderCaptcha } from "@/components/slider-captcha";
-import { StripeCheckoutDialog } from "@/components/stripe-checkout-dialog";
+
 import { portalConfig } from "@/config";
 import {
   clearAuthorization,
@@ -68,7 +68,7 @@ export default function App() {
     null
   );
   const [confirmPaymentName, setConfirmPaymentName] = useState("");
-  const [stripeDialogOpen, setStripeDialogOpen] = useState(false);
+
   const [loginPending, startLoginTransition] = useTransition();
   const [submitPending, startSubmitTransition] = useTransition();
   const configLoadedRef = useRef(false);
@@ -148,19 +148,13 @@ export default function App() {
     if (completedOrderNoticeRef.current === activeOrder.orderNo) return;
 
     completedOrderNoticeRef.current = activeOrder.orderNo;
-    setStripeDialogOpen(false);
     toast.success(
       t("dashboard.paymentSuccess", "支付成功，余额和订单记录已更新")
     );
     refreshPortal();
   }, [activeOrder?.orderNo, activeOrder?.status, refreshPortal, t]);
 
-  // Close stripe dialog when order is not pending
-  useEffect(() => {
-    if (!activeOrder?.orderNo || Number(activeOrder.status) !== 1) {
-      setStripeDialogOpen(false);
-    }
-  }, [activeOrder?.orderNo, activeOrder?.status]);
+
 
   // Reset custom amount when not enabled and selected amount is not in preset list
   useEffect(() => {
@@ -189,7 +183,6 @@ export default function App() {
     setCustomAmountEnabled(false);
     setCustomAmountInput("");
     setActiveOrder(null);
-    setStripeDialogOpen(false);
     setConfirmOpen(false);
     setConfirmOrderNo("");
     setConfirmBreakdown(null);
@@ -365,14 +358,9 @@ export default function App() {
 
     // Check if checkout was already requested for this order (using ref for immediate check)
     if (checkoutRequestedRef.current === activeOrder.orderNo) {
-      // Already requested, just open the payment dialog
+      // Already requested, just open the payment URL
       const currentOrder = usePortalStore.getState().activeOrder;
       if (
-        currentOrder?.checkout?.type === "stripe" &&
-        currentOrder.checkout.stripe
-      ) {
-        setStripeDialogOpen(true);
-      } else if (
         currentOrder?.checkout?.type === "url" &&
         currentOrder.checkout.checkoutUrl
       ) {
@@ -394,11 +382,6 @@ export default function App() {
     }).then(() => {
       const updatedOrder = usePortalStore.getState().activeOrder;
       if (
-        updatedOrder?.checkout?.type === "stripe" &&
-        updatedOrder.checkout.stripe
-      ) {
-        setStripeDialogOpen(true);
-      } else if (
         updatedOrder?.checkout?.type === "url" &&
         updatedOrder.checkout.checkoutUrl
       ) {
@@ -428,11 +411,6 @@ export default function App() {
       checkoutRequestedRef.current = activeOrder.orderNo;
       const updatedOrder = usePortalStore.getState().activeOrder;
       if (
-        updatedOrder?.checkout?.type === "stripe" &&
-        updatedOrder.checkout.stripe
-      ) {
-        setStripeDialogOpen(true);
-      } else if (
         updatedOrder?.checkout?.type === "url" &&
         updatedOrder.checkout.checkoutUrl
       ) {
@@ -613,13 +591,7 @@ export default function App() {
         paymentMethodName={confirmPaymentName}
       />
 
-      <StripeCheckoutDialog
-        onOpenChange={setStripeDialogOpen}
-        open={stripeDialogOpen}
-        orderNo={activeOrder?.orderNo}
-        paymentMethodName={activeOrder?.paymentName}
-        stripe={activeOrder?.checkout?.stripe}
-      />
+
     </>
   );
 }

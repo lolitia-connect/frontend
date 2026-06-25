@@ -1,6 +1,6 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { getRouteApi, Link } from "@tanstack/react-router";
 import { Badge } from "@workspace/ui/components/badge";
 import { Button } from "@workspace/ui/components/button";
@@ -25,7 +25,6 @@ import { Display } from "@/components/display";
 import { SubscribeBilling } from "@/sections/subscribe/billing";
 import { SubscribeDetail } from "@/sections/subscribe/detail";
 import { useGlobalStore } from "@/stores/global";
-import StripePayment from "./stripe";
 
 const routeApi = getRouteApi("/(main)/payment");
 
@@ -34,12 +33,10 @@ export default function Page() {
   const { getUserInfo } = useGlobalStore();
   const { order_no } = routeApi.useSearch() as { order_no?: string };
   const [enabled, setEnabled] = useState<boolean>(!!order_no);
-  const [paymentOpened, setPaymentOpened] = useState<boolean>(false);
 
   useEffect(() => {
     if (order_no) {
       setEnabled(true);
-      setPaymentOpened(false);
     }
   }, [order_no]);
 
@@ -57,23 +54,26 @@ export default function Page() {
     refetchInterval: 3000,
   });
 
-  const { data: payment } = useQuery({
-    enabled: !!order_no && data?.status === 1,
-    queryKey: ["purchaseCheckout", order_no],
-    queryFn: async () => {
+  const [paymentType, setPaymentType] = useState<string>();
+  const [checkoutUrl, setCheckoutUrl] = useState<string>();
+
+  // Checkout is triggered manually by user click, not automatically
+  const checkoutMutation = useMutation({
+    mutationFn: async () => {
       const { data } = await purchaseCheckout({
         orderNo: order_no!,
         returnUrl: window.location.href,
       });
-      if (
-        data.data?.type === "url" &&
-        data.data.checkout_url &&
-        !paymentOpened
-      ) {
-        window.open(data.data.checkout_url, "_blank");
-        setPaymentOpened(true);
-      }
       return data?.data;
+    },
+    onSuccess: (result) => {
+      if (!result) return;
+      setPaymentType(result.type);
+      if (result.type === "url" && result.checkout_url) {
+        window.location.href = result.checkout_url;
+      } else if (result.checkout_url) {
+        setCheckoutUrl(result.checkout_url);
+      }
     },
   });
 
@@ -201,7 +201,7 @@ export default function Page() {
               </div>
             </div>
           )}
-          {data?.status === 1 && payment?.type === "url" && (
+          {data?.status === 1 && !paymentType && (
             <div className="flex flex-col items-center gap-8 text-center">
               <h3 className="font-bold text-2xl tracking-tight">
                 {t("waitingForPayment", "Waiting For Payment")}
@@ -215,24 +215,18 @@ export default function Page() {
               />
               <div className="flex gap-4">
                 <Button
-                  onClick={() => {
-                    if (payment?.checkout_url) {
-                      window.location.href = payment?.checkout_url;
-                    }
-                  }}
+                  disabled={checkoutMutation.isPending}
+                  onClick={() => checkoutMutation.mutate()}
                 >
-                  {t("goToPayment", "Go To Payment")}
-                </Button>
-                <Button variant="outline">
-                  <Link to="/subscribe">
-                    {t("productList", "Product List")}
-                  </Link>
+                  {checkoutMutation.isPending
+                    ? t("processing", "Processing...")
+                    : t("goToPayment", "Go To Payment")}
                 </Button>
               </div>
             </div>
           )}
 
-          {data?.status === 1 && payment?.type === "qr" && (
+          {data?.status === 1 && paymentType === "qr" && checkoutUrl && (
             <div className="flex flex-col items-center gap-8 text-center">
               <h3 className="font-bold text-2xl tracking-tight">
                 {t("scanToPay", "Scan To Pay")}
@@ -248,7 +242,7 @@ export default function Page() {
                   excavate: true,
                 }}
                 size={208}
-                value={payment?.checkout_url || ""}
+                value={checkoutUrl || ""}
               />
               <div className="flex gap-4">
                 <Button asChild>
@@ -263,25 +257,7 @@ export default function Page() {
             </div>
           )}
 
-          {data?.status === 1 && payment?.type === "stripe" && (
-            <div className="flex flex-col items-center gap-8 text-center">
-              <h3 className="font-bold text-2xl tracking-tight">
-                {t("waitingForPayment", "Waiting For Payment")}
-              </h3>
-              <p className="flex items-center font-bold text-3xl">
-                {countdownDisplay}
-              </p>
-              {payment.stripe && <StripePayment {...payment.stripe} />}
-              {/* <div className='flex gap-4'>
-                <Button asChild>
-                  <Link to='/subscribe'>{t('productList', 'Product List')}</Link>
-                </Button>
-                <Button asChild variant='outline'>
-                  <Link to='/order'>{t('orderList', 'Order List')}</Link>
-                </Button>
-              </div> */}
-            </div>
-          )}
+
 
           {data?.status && [3, 4].includes(data?.status) && (
             <div className="flex flex-col items-center gap-8 text-center">

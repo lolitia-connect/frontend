@@ -1331,32 +1331,42 @@ export default function SubscribeForm<T extends Record<string, any>>({
                                       </FormDescription>
                                       {/* Show nodes in the selected default node group */}
                                       {nodesInGroup.length > 0 && (
-                                        <>
-                                          <div className="mt-3 mb-2 text-muted-foreground text-xs">
-                                            {t(
-                                              "form.nodesInGroup",
-                                              "Nodes in this group:"
-                                            )}
-                                          </div>
-                                          <div className="grid grid-cols-1 gap-2">
-                                            {nodesInGroup.map((node) => (
-                                              <div
-                                                className="flex items-center justify-between rounded border bg-muted/30 p-2 text-sm"
-                                                key={node.id}
-                                              >
-                                                <span className="flex-1 font-medium">
-                                                  {node.name}
-                                                </span>
-                                                <span className="flex-1 text-muted-foreground">
-                                                  {node.address}:{node.port}
-                                                </span>
-                                                <span className="flex-1 text-right text-muted-foreground">
-                                                  {node.protocol}
-                                                </span>
+                                        <Accordion
+                                          className="mt-3"
+                                          collapsible
+                                          type="single"
+                                        >
+                                          <AccordionItem value="default-group-nodes">
+                                            <AccordionTrigger>
+                                              <span className="text-muted-foreground text-xs">
+                                                {t(
+                                                  "form.nodesInGroup",
+                                                  "Nodes in this group:"
+                                                )} ({nodesInGroup.length})
+                                              </span>
+                                            </AccordionTrigger>
+                                            <AccordionContent>
+                                              <div className="grid grid-cols-1 gap-2">
+                                                {nodesInGroup.map((node) => (
+                                                  <div
+                                                    className="flex items-center justify-between rounded border bg-muted/30 p-2 text-sm"
+                                                    key={node.id}
+                                                  >
+                                                    <span className="flex-1 font-medium">
+                                                      {node.name}
+                                                    </span>
+                                                    <span className="flex-1 text-muted-foreground">
+                                                      {node.address}:{node.port}
+                                                    </span>
+                                                    <span className="flex-1 text-right text-muted-foreground">
+                                                      {node.protocol}
+                                                    </span>
+                                                  </div>
+                                                ))}
                                               </div>
-                                            ))}
-                                          </div>
-                                        </>
+                                            </AccordionContent>
+                                          </AccordionItem>
+                                        </Accordion>
                                       )}
                                     </Card>
                                     <FormMessage />
@@ -1463,35 +1473,47 @@ export default function SubscribeForm<T extends Record<string, any>>({
 
                                               {/* Show nodes in this group */}
                                               {nodesInGroup.length > 0 && (
-                                                <div className="mt-3 ml-6">
-                                                  <div className="mb-2 text-muted-foreground text-xs">
-                                                    {t(
-                                                      "form.nodesInGroup",
-                                                      "Nodes in this group:"
-                                                    )}
-                                                  </div>
-                                                  <div className="grid grid-cols-1 gap-2">
-                                                    {nodesInGroup.map(
-                                                      (node) => (
-                                                        <div
-                                                          className="flex items-center justify-between rounded border bg-muted/30 p-2 text-sm"
-                                                          key={node.id}
-                                                        >
-                                                          <span className="flex-1 font-medium">
-                                                            {node.name}
-                                                          </span>
-                                                          <span className="flex-1 text-muted-foreground">
-                                                            {node.address}:
-                                                            {node.port}
-                                                          </span>
-                                                          <span className="flex-1 text-right text-muted-foreground">
-                                                            {node.protocol}
-                                                          </span>
-                                                        </div>
-                                                      )
-                                                    )}
-                                                  </div>
-                                                </div>
+                                                <Accordion
+                                                  className="mt-3 ml-6"
+                                                  collapsible
+                                                  type="single"
+                                                >
+                                                  <AccordionItem
+                                                    value={`backup-group-${g.id}-nodes`}
+                                                  >
+                                                    <AccordionTrigger>
+                                                      <span className="text-muted-foreground text-xs">
+                                                        {t(
+                                                          "form.nodesInGroup",
+                                                          "Nodes in this group:"
+                                                        )} ({nodesInGroup.length})
+                                                      </span>
+                                                    </AccordionTrigger>
+                                                    <AccordionContent>
+                                                      <div className="grid grid-cols-1 gap-2">
+                                                        {nodesInGroup.map(
+                                                          (node) => (
+                                                            <div
+                                                              className="flex items-center justify-between rounded border bg-muted/30 p-2 text-sm"
+                                                              key={node.id}
+                                                            >
+                                                              <span className="flex-1 font-medium">
+                                                                {node.name}
+                                                              </span>
+                                                              <span className="flex-1 text-muted-foreground">
+                                                                {node.address}:
+                                                                {node.port}
+                                                              </span>
+                                                              <span className="flex-1 text-right text-muted-foreground">
+                                                                {node.protocol}
+                                                              </span>
+                                                            </div>
+                                                          )
+                                                        )}
+                                                      </div>
+                                                    </AccordionContent>
+                                                  </AccordionItem>
+                                                </Accordion>
                                               )}
                                             </div>
                                           );
@@ -1609,32 +1631,44 @@ export default function SubscribeForm<T extends Record<string, any>>({
 
                                           {/* Show nodes in this group */}
                                           {nodesInGroup.length > 0 && (
-                                            <div className="mt-3 ml-6">
-                                              <div className="mb-2 text-muted-foreground text-xs">
-                                                {t(
-                                                  "form.nodesInGroup",
-                                                  "Nodes in this group:"
-                                                )}
-                                              </div>
-                                              <div className="grid grid-cols-1 gap-2">
-                                                {nodesInGroup.map((node) => (
-                                                  <div
-                                                    className="flex items-center justify-between rounded border bg-muted/30 p-2 text-sm"
-                                                    key={node.id}
-                                                  >
-                                                    <span className="flex-1 font-medium">
-                                                      {node.name}
-                                                    </span>
-                                                    <span className="flex-1 text-muted-foreground">
-                                                      {node.address}:{node.port}
-                                                    </span>
-                                                    <span className="flex-1 text-right text-muted-foreground">
-                                                      {node.protocol}
-                                                    </span>
+                                            <Accordion
+                                              className="mt-3 ml-6"
+                                              collapsible
+                                              type="single"
+                                            >
+                                              <AccordionItem
+                                                value={`all-group-${g.id}-nodes`}
+                                              >
+                                                <AccordionTrigger>
+                                                  <span className="text-muted-foreground text-xs">
+                                                    {t(
+                                                      "form.nodesInGroup",
+                                                      "Nodes in this group:"
+                                                    )} ({nodesInGroup.length})
+                                                  </span>
+                                                </AccordionTrigger>
+                                                <AccordionContent>
+                                                  <div className="grid grid-cols-1 gap-2">
+                                                    {nodesInGroup.map((node) => (
+                                                      <div
+                                                        className="flex items-center justify-between rounded border bg-muted/30 p-2 text-sm"
+                                                        key={node.id}
+                                                      >
+                                                        <span className="flex-1 font-medium">
+                                                          {node.name}
+                                                        </span>
+                                                        <span className="flex-1 text-muted-foreground">
+                                                          {node.address}:{node.port}
+                                                        </span>
+                                                        <span className="flex-1 text-right text-muted-foreground">
+                                                          {node.protocol}
+                                                        </span>
+                                                      </div>
+                                                    ))}
                                                   </div>
-                                                ))}
-                                              </div>
-                                            </div>
+                                                </AccordionContent>
+                                              </AccordionItem>
+                                            </Accordion>
                                           )}
                                         </div>
                                       );

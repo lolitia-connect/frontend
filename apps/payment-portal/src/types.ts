@@ -27,11 +27,6 @@ export interface RechargeRecord {
 
 export interface CheckoutInfo {
   checkoutUrl?: string;
-  stripe?: {
-    method: string;
-    client_secret: string;
-    publishable_key: string;
-  };
   type: string;
 }
 

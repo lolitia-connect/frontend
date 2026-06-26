@@ -66,13 +66,6 @@ function mapCheckoutInfo(item: any): CheckoutInfo | undefined {
   return {
     type: String(item.type),
     checkoutUrl: item.checkout_url ? String(item.checkout_url) : undefined,
-    stripe: item?.stripe
-      ? {
-          method: String(item.stripe.method || ""),
-          client_secret: String(item.stripe.client_secret || ""),
-          publishable_key: String(item.stripe.publishable_key || ""),
-        }
-      : undefined,
   };
 }
 
@@ -323,9 +316,6 @@ export const usePortalStore = create<PortalStore>((set, get) => ({
 
     if (autoOpenPayment && checkout?.type === "url" && checkout.checkoutUrl) {
       window.open(checkout.checkoutUrl, "_blank", "noopener,noreferrer");
-    }
-    if (autoOpenPayment && checkout?.type === "stripe" && checkout.stripe) {
-      // Handled by the component
     }
   },
 

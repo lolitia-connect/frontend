@@ -405,15 +405,20 @@ export default function SubscribeForm<T extends Record<string, any>>({
     }
   }, [node_group_id, form]);
 
-  // If node_group_id is empty or 0, automatically set it to the first item in node_group_ids
+  // Track previous node_group_ids length to only auto-set default when a new group is added
+  const prevGroupIdsLenRef = useRef(node_group_ids?.length || 0);
   useEffect(() => {
+    const currentLen = node_group_ids?.length || 0;
+    // Only auto-set when a new group is added (length increased) and no default is set
     if (
-      (!node_group_id || node_group_id === "0") &&
+      currentLen > prevGroupIdsLenRef.current &&
+      !node_group_id &&
       node_group_ids &&
       node_group_ids.length > 0
     ) {
       form.setValue("node_group_id", node_group_ids[0]);
     }
+    prevGroupIdsLenRef.current = currentLen;
   }, [node_group_ids, node_group_id, form]);
 
   return (

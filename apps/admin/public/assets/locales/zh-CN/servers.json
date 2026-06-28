@@ -154,6 +154,7 @@
   "server_key": "服务器密钥",
   "service_name": "服务名称",
   "sorted_success": "排序成功",
+  "sortByName": "按名称排序",
   "status": "状态",
   "subscribeId": "订阅 ID",
   "subscription": "订阅",

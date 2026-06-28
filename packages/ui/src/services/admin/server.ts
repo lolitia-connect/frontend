@@ -128,6 +128,17 @@ export async function resetSortWithNode(
   );
 }
 
+/** Sort nodes by name POST /v1/admin/server/node/sort-by-name */
+export async function sortNodeByName(options?: { [key: string]: any }) {
+  return request<API.Response & { data?: any }>(
+    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/server/node/sort-by-name`,
+    {
+      method: "POST",
+      ...(options || {}),
+    }
+  );
+}
+
 /** Toggle Node Status POST /v1/admin/server/node/status/toggle */
 export async function toggleNodeStatus(
   body: API.ToggleNodeStatusRequest,
@@ -246,6 +257,17 @@ export async function resetSortWithServer(
         "Content-Type": "application/json",
       },
       data: body,
+      ...(options || {}),
+    }
+  );
+}
+
+/** Sort servers by name POST /v1/admin/server/server/sort-by-name */
+export async function sortServerByName(options?: { [key: string]: any }) {
+  return request<API.Response & { data?: any }>(
+    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/server/server/sort-by-name`,
+    {
+      method: "POST",
       ...(options || {}),
     }
   );

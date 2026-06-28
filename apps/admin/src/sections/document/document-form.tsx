@@ -1,5 +1,6 @@
-import { zodResolver } from "@hookform/resolvers/zod";
+﻿import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@workspace/ui/components/button";
+import { Spinner } from "@workspace/ui/components/spinner";
 import {
   Form,
   FormControl,
@@ -19,7 +20,6 @@ import {
   SheetTrigger,
 } from "@workspace/ui/components/sheet";
 import { MarkdownEditor } from "@workspace/ui/composed/editor/markdown";
-import { Icon } from "@workspace/ui/composed/icon";
 import { TagInput } from "@workspace/ui/composed/tag-input";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -159,9 +159,7 @@ export default function DocumentForm<T extends Record<string, any>>({
             {t("form.cancel", "Cancel")}
           </Button>
           <Button disabled={loading} onClick={form.handleSubmit(handleSubmit)}>
-            {loading && (
-              <Icon className="mr-2 animate-spin" icon="mdi:loading" />
-            )}{" "}
+            {loading && <Spinner className="mr-2" />}{" "}
             {t("form.confirm", "Confirm")}
           </Button>
         </SheetFooter>

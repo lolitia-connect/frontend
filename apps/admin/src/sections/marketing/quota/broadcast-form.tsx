@@ -1,4 +1,4 @@
-import { zodResolver } from "@hookform/resolvers/zod";
+﻿import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@workspace/ui/components/button";
 import {
   Form,
@@ -22,6 +22,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@workspace/ui/components/sheet";
+import { Spinner } from "@workspace/ui/components/spinner";
 import { Switch } from "@workspace/ui/components/switch";
 import { Combobox } from "@workspace/ui/composed/combobox";
 import { EnhancedInput } from "@workspace/ui/composed/enhanced-input";
@@ -285,10 +286,7 @@ export default function QuotaBroadcastForm() {
                   </span>
                   <span className="font-medium text-lg text-primary">
                     {isCalculating ? (
-                      <Icon
-                        className="ml-2 h-4 w-4 animate-spin"
-                        icon="mdi:loading"
-                      />
+                      <Spinner className="ml-2" />
                     ) : (
                       recipients.toLocaleString()
                     )}
@@ -523,9 +521,7 @@ export default function QuotaBroadcastForm() {
             form="quota-broadcast-form"
             type="submit"
           >
-            {isSubmitting && (
-              <Icon className="mr-2 h-4 w-4 animate-spin" icon="mdi:loading" />
-            )}
+            {isSubmitting && <Spinner className="mr-2" />}
             {t("createQuotaTask", "Create Quota Task")}
           </Button>
         </SheetFooter>

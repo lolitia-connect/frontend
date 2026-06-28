@@ -1,5 +1,6 @@
-import { zodResolver } from "@hookform/resolvers/zod";
+﻿import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@workspace/ui/components/button";
+import { Spinner } from "@workspace/ui/components/spinner";
 import {
   Form,
   FormControl,
@@ -24,7 +25,6 @@ import {
 import { Combobox } from "@workspace/ui/composed/combobox";
 import { DatePicker } from "@workspace/ui/composed/date-picker";
 import { EnhancedInput } from "@workspace/ui/composed/enhanced-input";
-import { Icon } from "@workspace/ui/composed/icon";
 import { unitConversion } from "@workspace/ui/utils/unit-conversions";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -385,9 +385,7 @@ export default function CouponForm<T extends Record<string, any>>({
             {t("form.cancel", "Cancel")}
           </Button>
           <Button disabled={loading} onClick={form.handleSubmit(handleSubmit)}>
-            {loading && (
-              <Icon className="mr-2 animate-spin" icon="mdi:loading" />
-            )}{" "}
+            {loading && <Spinner className="mr-2" />}{" "}
             {t("form.confirm", "Confirm")}
           </Button>
         </SheetFooter>

@@ -11,8 +11,8 @@ import {
   DialogTitle,
 } from "@workspace/ui/components/dialog";
 import { Separator } from "@workspace/ui/components/separator";
+import { Spinner } from "@workspace/ui/components/spinner";
 import { preCreateOrder, purchase } from "@workspace/ui/services/user/order";
-import { LoaderCircle } from "lucide-react";
 import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import { useTranslation } from "react-i18next";
 import CouponInput from "@/sections/subscribe/coupon-input";
@@ -169,7 +169,7 @@ export default function Purchase({
               disabled={loading}
               onClick={handleSubmit}
             >
-              {loading && <LoaderCircle className="mr-2 animate-spin" />}
+              {loading && <Spinner className="mr-2" />}
               {t("buyNow", "Buy Now")}
             </Button>
           </div>

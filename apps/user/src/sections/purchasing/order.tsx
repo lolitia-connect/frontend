@@ -272,8 +272,6 @@ export default function Order() {
               </div>
             )}
 
-
-
             {data?.status && [3, 4].includes(data?.status) && (
               <div className="flex flex-col items-center gap-8 text-center">
                 <h3 className="font-bold text-2xl tracking-tight">

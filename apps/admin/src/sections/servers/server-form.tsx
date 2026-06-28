@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -8,6 +8,7 @@ import {
   AccordionTrigger,
 } from "@workspace/ui/components/accordion";
 import { Badge } from "@workspace/ui/components/badge";
+import { Spinner } from "@workspace/ui/components/spinner";
 import { Button } from "@workspace/ui/components/button";
 import {
   DropdownMenu,
@@ -812,9 +813,7 @@ export default function ServerForm(props: {
               return false;
             })}
           >
-            {loading && (
-              <Icon className="mr-2 animate-spin" icon="mdi:loading" />
-            )}
+            {loading && <Spinner className="mr-2" />}
             {t("confirm", "Confirm")}
           </Button>
         </SheetFooter>

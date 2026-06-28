@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
@@ -9,6 +9,7 @@ import {
   AccordionTrigger,
 } from "@workspace/ui/components/accordion";
 import { Badge } from "@workspace/ui/components/badge";
+import { Spinner } from "@workspace/ui/components/spinner";
 import { Button } from "@workspace/ui/components/button";
 import { Card } from "@workspace/ui/components/card";
 import { Checkbox } from "@workspace/ui/components/checkbox";
@@ -1347,7 +1348,8 @@ export default function SubscribeForm<T extends Record<string, any>>({
                                                 {t(
                                                   "form.nodesInGroup",
                                                   "Nodes in this group:"
-                                                )} ({nodesInGroup.length})
+                                                )}{" "}
+                                                ({nodesInGroup.length})
                                               </span>
                                             </AccordionTrigger>
                                             <AccordionContent>
@@ -1491,7 +1493,8 @@ export default function SubscribeForm<T extends Record<string, any>>({
                                                         {t(
                                                           "form.nodesInGroup",
                                                           "Nodes in this group:"
-                                                        )} ({nodesInGroup.length})
+                                                        )}{" "}
+                                                        ({nodesInGroup.length})
                                                       </span>
                                                     </AccordionTrigger>
                                                     <AccordionContent>
@@ -1649,27 +1652,31 @@ export default function SubscribeForm<T extends Record<string, any>>({
                                                     {t(
                                                       "form.nodesInGroup",
                                                       "Nodes in this group:"
-                                                    )} ({nodesInGroup.length})
+                                                    )}{" "}
+                                                    ({nodesInGroup.length})
                                                   </span>
                                                 </AccordionTrigger>
                                                 <AccordionContent>
                                                   <div className="grid grid-cols-1 gap-2">
-                                                    {nodesInGroup.map((node) => (
-                                                      <div
-                                                        className="flex items-center justify-between rounded border bg-muted/30 p-2 text-sm"
-                                                        key={node.id}
-                                                      >
-                                                        <span className="flex-1 font-medium">
-                                                          {node.name}
-                                                        </span>
-                                                        <span className="flex-1 text-muted-foreground">
-                                                          {node.address}:{node.port}
-                                                        </span>
-                                                        <span className="flex-1 text-right text-muted-foreground">
-                                                          {node.protocol}
-                                                        </span>
-                                                      </div>
-                                                    ))}
+                                                    {nodesInGroup.map(
+                                                      (node) => (
+                                                        <div
+                                                          className="flex items-center justify-between rounded border bg-muted/30 p-2 text-sm"
+                                                          key={node.id}
+                                                        >
+                                                          <span className="flex-1 font-medium">
+                                                            {node.name}
+                                                          </span>
+                                                          <span className="flex-1 text-muted-foreground">
+                                                            {node.address}:
+                                                            {node.port}
+                                                          </span>
+                                                          <span className="flex-1 text-right text-muted-foreground">
+                                                            {node.protocol}
+                                                          </span>
+                                                        </div>
+                                                      )
+                                                    )}
                                                   </div>
                                                 </AccordionContent>
                                               </AccordionItem>
@@ -1853,9 +1860,7 @@ export default function SubscribeForm<T extends Record<string, any>>({
               }
             })}
           >
-            {loading && (
-              <Icon className="mr-2 animate-spin" icon="mdi:loading" />
-            )}
+            {loading && <Spinner className="mr-2" />}
             {t("form.confirm")}
           </Button>
         </SheetFooter>

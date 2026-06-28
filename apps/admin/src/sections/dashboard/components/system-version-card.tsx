@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
@@ -12,6 +12,7 @@ import {
   AlertDialogTrigger,
 } from "@workspace/ui/components/alert-dialog";
 import { Badge } from "@workspace/ui/components/badge";
+import { Spinner } from "@workspace/ui/components/spinner";
 import { Button } from "@workspace/ui/components/button";
 import {
   Card,
@@ -165,9 +166,7 @@ export default function SystemVersionCard() {
                       setOpenRestart(false);
                     }}
                   >
-                    {isRestarting && (
-                      <Icon className="mr-2 animate-spin" icon="mdi:loading" />
-                    )}
+                    {isRestarting && <Spinner className="mr-2" />}
                     {isRestarting
                       ? t("rebooting", "Rebooting...")
                       : t("confirmReboot", "Confirm Reboot")}
@@ -226,9 +225,7 @@ export default function SystemVersionCard() {
                 <AlertDialogFooter>
                   <AlertDialogCancel>{t("cancel", "Cancel")}</AlertDialogCancel>
                   <Button disabled={isUpdatingWeb} onClick={handleUpdateWeb}>
-                    {isUpdatingWeb && (
-                      <Icon className="mr-2 animate-spin" icon="mdi:loading" />
-                    )}
+                    {isUpdatingWeb && <Spinner className="mr-2" />}
                     {t("confirmUpdate", "Confirm Update")}
                   </Button>
                 </AlertDialogFooter>
@@ -300,9 +297,7 @@ export default function SystemVersionCard() {
                       updateServerMutation.mutate(moduleConfig.service_name)
                     }
                   >
-                    {isUpdatingServer && (
-                      <Icon className="mr-2 animate-spin" icon="mdi:loading" />
-                    )}
+                    {isUpdatingServer && <Spinner className="mr-2" />}
                     {t("confirmUpdate", "Confirm Update")}
                   </Button>
                 </AlertDialogFooter>

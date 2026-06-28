@@ -1,5 +1,6 @@
 import { Button } from "@workspace/ui/components/button";
 import { Input } from "@workspace/ui/components/input";
+import { Spinner } from "@workspace/ui/components/spinner";
 import { Icon } from "@workspace/ui/composed/icon";
 import { generateCaptcha } from "@workspace/ui/services/common/auth";
 import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
@@ -59,7 +60,7 @@ const LocalCaptcha = forwardRef<LocalCaptchaRef, LocalCaptchaProps>(
         <div className="relative h-10 w-32 flex-shrink-0">
           {loading ? (
             <div className="flex h-full items-center justify-center bg-muted">
-              <Icon className="animate-spin" icon="mdi:loading" />
+              <Spinner className="size-4 text-muted-foreground" />
             </div>
           ) : captchaImage ? (
             <img

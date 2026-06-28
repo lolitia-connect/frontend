@@ -1,5 +1,6 @@
-import { zodResolver } from "@hookform/resolvers/zod";
+﻿import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@workspace/ui/components/button";
+import { Spinner } from "@workspace/ui/components/spinner";
 import {
   Form,
   FormControl,
@@ -21,7 +22,6 @@ import { Switch } from "@workspace/ui/components/switch";
 import { Combobox } from "@workspace/ui/composed/combobox";
 import { DatePicker } from "@workspace/ui/composed/date-picker";
 import { EnhancedInput } from "@workspace/ui/composed/enhanced-input";
-import { Icon } from "@workspace/ui/composed/icon";
 import { unitConversion } from "@workspace/ui/utils/unit-conversions";
 import { type ReactNode, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -278,9 +278,7 @@ export function SubscriptionForm({
             {t("cancel", "Cancel")}
           </Button>
           <Button disabled={loading} onClick={form.handleSubmit(handleSubmit)}>
-            {loading && (
-              <Icon className="mr-2 animate-spin" icon="mdi:loading" />
-            )}
+            {loading && <Spinner className="mr-2" />}
             {t("confirm", "Confirm")}
           </Button>
         </SheetFooter>

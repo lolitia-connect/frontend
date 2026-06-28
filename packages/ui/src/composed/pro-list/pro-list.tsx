@@ -14,6 +14,7 @@ import {
 } from "@workspace/ui/components/alert";
 import { Button } from "@workspace/ui/components/button";
 import { Checkbox } from "@workspace/ui/components/checkbox";
+import { Spinner } from "@workspace/ui/components/spinner";
 import Empty from "@workspace/ui/composed/empty";
 import {
   ColumnFilter,
@@ -21,7 +22,7 @@ import {
 } from "@workspace/ui/composed/pro-list/column-filter";
 import { Pagination } from "@workspace/ui/composed/pro-list/pagination";
 import { cn } from "@workspace/ui/lib/utils";
-import { ListRestart, Loader, RefreshCcw } from "lucide-react";
+import { ListRestart, RefreshCcw } from "lucide-react";
 import type React from "react";
 import { useEffect, useImperativeHandle, useRef, useState } from "react";
 
@@ -224,8 +225,10 @@ export function ProList<TData, TValue extends Record<string, unknown>>({
         </div>
 
         {loading && (
-          <div className="absolute top-0 z-20 flex h-full w-full items-center justify-center bg-muted/80">
-            <Loader className="h-4 w-4 animate-spin" />
+          <div className="absolute inset-0 z-20 flex items-center justify-center rounded-md bg-background/70 backdrop-blur-[1px]">
+            <div className="rounded-full border bg-background p-3 shadow-sm">
+              <Spinner className="size-5 text-muted-foreground" />
+            </div>
           </div>
         )}
       </div>

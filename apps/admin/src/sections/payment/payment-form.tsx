@@ -1,6 +1,7 @@
-import { zodResolver } from "@hookform/resolvers/zod";
+﻿import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@workspace/ui/components/button";
+import { Spinner } from "@workspace/ui/components/spinner";
 import {
   Form,
   FormControl,
@@ -594,9 +595,7 @@ export default function PaymentForm<T extends { platform?: string }>({
             {t("cancel", "Cancel")}
           </Button>
           <Button disabled={loading} onClick={form.handleSubmit(handleSubmit)}>
-            {loading && (
-              <Icon className="mr-2 animate-spin" icon="mdi:loading" />
-            )}
+            {loading && <Spinner className="mr-2" />}
             {t("submit", "Submit")}
           </Button>
         </SheetFooter>

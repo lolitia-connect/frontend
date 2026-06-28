@@ -154,8 +154,6 @@ export default function App() {
     refreshPortal();
   }, [activeOrder?.orderNo, activeOrder?.status, refreshPortal, t]);
 
-
-
   // Reset custom amount when not enabled and selected amount is not in preset list
   useEffect(() => {
     if (
@@ -590,8 +588,6 @@ export default function App() {
         open={confirmOpen}
         paymentMethodName={confirmPaymentName}
       />
-
-
     </>
   );
 }

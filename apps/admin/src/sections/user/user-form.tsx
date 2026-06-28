@@ -1,5 +1,6 @@
-import { zodResolver } from "@hookform/resolvers/zod";
+﻿import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@workspace/ui/components/button";
+import { Spinner } from "@workspace/ui/components/spinner";
 import {
   Form,
   FormControl,
@@ -20,7 +21,6 @@ import {
 import { Switch } from "@workspace/ui/components/switch";
 import { AreaCodeSelect } from "@workspace/ui/composed/area-code-select";
 import { EnhancedInput } from "@workspace/ui/composed/enhanced-input";
-import { Icon } from "@workspace/ui/composed/icon";
 import { unitConversion } from "@workspace/ui/utils/unit-conversions";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -206,10 +206,7 @@ export default function UserForm<T extends Record<string, any>>({
                         )}
                         {...field}
                         onValueChange={(value) => {
-                          form.setValue(
-                            field.name,
-                            String(value)
-                          );
+                          form.setValue(field.name, String(value));
                         }}
                         type="number"
                       />
@@ -407,10 +404,7 @@ export default function UserForm<T extends Record<string, any>>({
             {t("cancel", "Cancel")}
           </Button>
           <Button disabled={loading} onClick={form.handleSubmit(handleSubmit)}>
-            {loading && (
-              <Icon className="mr-2 animate-spin" icon="mdi:loading" />
-            )}{" "}
-            {t("confirm", "Confirm")}
+            {loading && <Spinner className="mr-2" />} {t("confirm", "Confirm")}
           </Button>
         </SheetFooter>
       </SheetContent>

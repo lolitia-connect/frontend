@@ -13,6 +13,7 @@ import {
   SelectValue,
 } from "@workspace/ui/components/select";
 import { Tabs, TabsList, TabsTrigger } from "@workspace/ui/components/tabs";
+import { BlockLoading } from "@workspace/ui/composed/block-loading";
 import { Icon } from "@workspace/ui/composed/icon";
 import { getUserTrafficStats } from "@workspace/ui/services/user/traffic";
 import { queryUserSubscribe } from "@workspace/ui/services/user/user";
@@ -112,9 +113,7 @@ export default function TrafficStatistics() {
           </CardHeader>
           <CardContent>
             {isLoading ? (
-              <div className="flex h-[300px] items-center justify-center">
-                <Icon className="size-8 animate-spin" icon="uil:spinner" />
-              </div>
+              <BlockLoading minHeight="300px" size="lg" />
             ) : trafficStats && trafficStats.list.length > 0 ? (
               <TrafficTrendChart data={trafficStats.list} />
             ) : (
@@ -134,9 +133,7 @@ export default function TrafficStatistics() {
           </CardHeader>
           <CardContent>
             {isLoading ? (
-              <div className="flex h-[300px] items-center justify-center">
-                <Icon className="size-8 animate-spin" icon="uil:spinner" />
-              </div>
+              <BlockLoading minHeight="300px" size="lg" />
             ) : trafficStats &&
               (trafficStats.total_upload > 0 ||
                 trafficStats.total_download > 0) ? (

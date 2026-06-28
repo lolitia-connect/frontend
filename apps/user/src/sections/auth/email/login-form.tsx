@@ -8,7 +8,7 @@ import {
   FormMessage,
 } from "@workspace/ui/components/form";
 import { Input } from "@workspace/ui/components/input";
-import { Icon } from "@workspace/ui/composed/icon";
+import { Spinner } from "@workspace/ui/components/spinner";
 import type { Dispatch, SetStateAction } from "react";
 import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -178,7 +178,7 @@ export default function LoginForm({
             />
           )}
           <Button disabled={loading} type="submit">
-            {loading && <Icon className="animate-spin" icon="mdi:loading" />}
+            {loading && <Spinner className="mr-2" />}
             {t("login.title", "Login")}
           </Button>
         </form>

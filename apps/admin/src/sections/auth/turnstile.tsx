@@ -1,10 +1,5 @@
 import { useTheme } from "next-themes";
-import {
-  type RefObject,
-  useEffect,
-  useImperativeHandle,
-  useRef,
-} from "react";
+import { type RefObject, useEffect, useImperativeHandle, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import Turnstile from "react-turnstile";
 

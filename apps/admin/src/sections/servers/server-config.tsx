@@ -1,8 +1,9 @@
-"use client";
+﻿"use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@workspace/ui/components/button";
+import { Spinner } from "@workspace/ui/components/spinner";
 import { Card, CardContent } from "@workspace/ui/components/card";
 import {
   Form,
@@ -540,10 +541,7 @@ export default function ServerConfig() {
             {t("actions.cancel", "Cancel")}
           </Button>
           <Button disabled={saving} form="server-config-form" type="submit">
-            <Icon
-              className={saving ? "mr-2 animate-spin" : "hidden"}
-              icon="mdi:loading"
-            />
+            {saving && <Spinner className="mr-2" />}
             {t("actions.save", "Save")}
           </Button>
         </SheetFooter>

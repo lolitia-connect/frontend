@@ -1,9 +1,11 @@
+import { PageLoading } from "@workspace/ui/composed/page-loading";
 import { useQuery } from "@tanstack/react-query";
 import { createLazyFileRoute } from "@tanstack/react-router";
 import { Markdown } from "@workspace/ui/composed/markdown";
 import { getPrivacyPolicy } from "@workspace/ui/services/common/common";
 
 export const Route = createLazyFileRoute("/(main)/privacy-policy")({
+  pendingComponent: PageLoading,
   component: () => {
     const { data = "" } = useQuery({
       queryKey: ["tos"],

@@ -11,9 +11,9 @@ import {
   DialogTrigger,
 } from "@workspace/ui/components/dialog";
 import { EnhancedInput } from "@workspace/ui/composed/enhanced-input";
+import { Spinner } from "@workspace/ui/components/spinner";
 import { recharge } from "@workspace/ui/services/user/order";
 import { unitConversion } from "@workspace/ui/utils/unit-conversions";
-import { LoaderCircle } from "lucide-react";
 import type React from "react";
 import { useState, useTransition } from "react";
 import { useTranslation } from "react-i18next";
@@ -115,7 +115,7 @@ export default function Recharge(
               });
             }}
           >
-            {loading && <LoaderCircle className="mr-2 animate-spin" />}
+            {loading && <Spinner className="mr-2" />}
             {t("rechargeNow", "Recharge Now")}
           </Button>
         </div>

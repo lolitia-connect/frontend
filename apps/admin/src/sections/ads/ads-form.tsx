@@ -1,5 +1,6 @@
-import { zodResolver } from "@hookform/resolvers/zod";
+﻿import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@workspace/ui/components/button";
+import { Spinner } from "@workspace/ui/components/spinner";
 import {
   Form,
   FormControl,
@@ -22,7 +23,6 @@ import {
   SheetTrigger,
 } from "@workspace/ui/components/sheet";
 import { EnhancedInput } from "@workspace/ui/composed/enhanced-input";
-import { Icon } from "@workspace/ui/composed/icon";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -316,9 +316,7 @@ export default function AdsForm<T extends Record<string, any>>({
             {t("form.cancel", "Cancel")}
           </Button>
           <Button disabled={loading} onClick={form.handleSubmit(handleSubmit)}>
-            {loading && (
-              <Icon className="mr-2 animate-spin" icon="mdi:loading" />
-            )}
+            {loading && <Spinner className="mr-2" />}
             {t("form.confirm", "Confirm")}
           </Button>
         </SheetFooter>

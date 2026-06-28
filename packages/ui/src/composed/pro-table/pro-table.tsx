@@ -19,6 +19,7 @@ import {
 } from "@workspace/ui/components/alert";
 import { Button } from "@workspace/ui/components/button";
 import { Checkbox } from "@workspace/ui/components/checkbox";
+import { Spinner } from "@workspace/ui/components/spinner";
 import {
   Table,
   TableBody,
@@ -39,7 +40,7 @@ import { SortableRow } from "@workspace/ui/composed/pro-table/sortable-row";
 import { ProTableWrapper } from "@workspace/ui/composed/pro-table/wrapper";
 import { cn } from "@workspace/ui/lib/utils";
 import { useSize } from "ahooks";
-import { GripVertical, ListRestart, Loader, RefreshCcw } from "lucide-react";
+import { GripVertical, ListRestart, RefreshCcw } from "lucide-react";
 import type React from "react";
 import {
   Fragment,
@@ -156,7 +157,7 @@ export function ProTable<
               id: "actions",
               header: texts?.actions,
               cell: ({ row }) => (
-                <div className="flex items-center justify-end gap-2">
+                <div className="flex items-center justify-end gap-2 whitespace-nowrap">
                   {actions?.render?.(row.original).map((item, index) => (
                     <Fragment key={index}>{item}</Fragment>
                   ))}
@@ -240,6 +241,10 @@ export function ProTable<
     .getSelectedRowModel()
     .flatRows.map((row) => row.original);
   const selectedCount = selectedRows.length;
+  const tableMinWidth = Math.max(
+    800,
+    table.getVisibleLeafColumns().length * 140
+  );
 
   return (
     <div className="flex flex-col gap-4" ref={ref}>
@@ -284,13 +289,13 @@ export function ProTable<
       )}
 
       <div
-        className="relative w-auto overflow-x-auto rounded-md border"
+        className="relative w-auto rounded-md border"
         style={{
           width: size?.width,
         }}
       >
         <ProTableWrapper data={data} onSort={onSort} setData={setData}>
-          <Table className="w-full">
+          <Table className="w-full" style={{ minWidth: tableMinWidth }}>
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
@@ -381,8 +386,10 @@ export function ProTable<
         </ProTableWrapper>
 
         {loading.current && (
-          <div className="absolute top-0 z-20 flex h-full w-full items-center justify-center bg-muted/80">
-            <Loader className="h-4 w-4 animate-spin" />
+          <div className="absolute inset-0 z-20 flex items-center justify-center rounded-md bg-background/70 backdrop-blur-[1px]">
+            <div className="rounded-full border bg-background p-3 shadow-sm">
+              <Spinner className="size-5 text-muted-foreground" />
+            </div>
           </div>
         )}
       </div>
@@ -418,20 +425,20 @@ function createSelectColumn<TData, TValue>(): ColumnDef<TData, TValue> {
 
 function getTableHeaderClass(columnId: string) {
   if (["sortable", "selected"].includes(columnId)) {
-    return "sticky left-0 z-10 bg-background shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)] [&:has([role=checkbox])]:pr-2";
+    return "bg-background [&:has([role=checkbox])]:pr-2 md:sticky md:left-0 md:z-10 md:shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]";
   }
   if (columnId === "actions") {
-    return "sticky right-0 z-10 text-right bg-background shadow-[-2px_0_5px_-2px_rgba(0,0,0,0.1)]";
+    return "bg-background text-right md:sticky md:right-0 md:z-10 md:shadow-[-2px_0_5px_-2px_rgba(0,0,0,0.1)]";
   }
-  return "truncate";
+  return "min-w-0 truncate";
 }
 
 function getTableCellClass(columnId: string) {
   if (["sortable", "selected"].includes(columnId)) {
-    return "sticky left-0 bg-background shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]";
+    return "bg-background md:sticky md:left-0 md:shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]";
   }
   if (columnId === "actions") {
-    return "sticky right-0 bg-background shadow-[-2px_0_5px_-2px_rgba(0,0,0,0.1)]";
+    return "bg-background md:sticky md:right-0 md:shadow-[-2px_0_5px_-2px_rgba(0,0,0,0.1)]";
   }
-  return "truncate";
+  return "max-w-[320px] truncate";
 }

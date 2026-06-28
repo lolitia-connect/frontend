@@ -1,8 +1,9 @@
-"use client";
+﻿"use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "@workspace/ui/components/badge";
+import { Spinner } from "@workspace/ui/components/spinner";
 import { Button } from "@workspace/ui/components/button";
 import {
   Form,
@@ -923,9 +924,7 @@ export function ProtocolForm() {
               {t("actions.cancel", "Cancel")}
             </Button>
             <Button disabled={loading} onClick={form.handleSubmit(onSubmit)}>
-              {loading && (
-                <Icon className="mr-2 animate-spin" icon="mdi:loading" />
-              )}
+              {loading && <Spinner className="mr-2" />}
               {editingClient
                 ? t("actions.update", "Update")
                 : t("actions.add", "Add")}

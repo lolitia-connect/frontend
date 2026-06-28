@@ -1,7 +1,8 @@
-"use client";
+﻿"use client";
 
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@workspace/ui/components/button";
+import { Spinner } from "@workspace/ui/components/spinner";
 import {
   Sheet,
   SheetContent,
@@ -98,7 +99,7 @@ export function TemplatePreview({
       <SheetContent className="w-[800px] max-w-[90vw] pt-10 md:max-w-screen-md">
         {isLoading ? (
           <div className="flex items-center justify-center">
-            <Icon className="h-6 w-6 animate-spin" icon="mdi:loading" />
+            <Spinner className="size-6" />
             <span className="ml-2">
               {t("templatePreview.loading", "Loading...")}
             </span>

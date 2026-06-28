@@ -1,5 +1,6 @@
-import { zodResolver } from "@hookform/resolvers/zod";
+﻿import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@workspace/ui/components/button";
+import { Spinner } from "@workspace/ui/components/spinner";
 import {
   Form,
   FormControl,
@@ -8,7 +9,6 @@ import {
   FormMessage,
 } from "@workspace/ui/components/form";
 import { Input } from "@workspace/ui/components/input";
-import { Icon } from "@workspace/ui/composed/icon";
 import type { Dispatch, SetStateAction } from "react";
 import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -212,7 +212,7 @@ export default function ResetForm({
             />
           )}
           <Button disabled={loading} type="submit">
-            {loading && <Icon className="animate-spin" icon="mdi:loading" />}
+            {loading && <Spinner />}
             {t("reset.title", "Reset Password")}
           </Button>
         </form>

@@ -1,4 +1,5 @@
-import { Button } from "@workspace/ui/components/button";
+﻿import { Button } from "@workspace/ui/components/button";
+import { Spinner } from "@workspace/ui/components/spinner";
 import {
   Dialog,
   DialogContent,
@@ -272,10 +273,7 @@ const SliderCaptcha = forwardRef<SliderCaptchaRef, SliderCaptchaProps>(
               <div className="absolute inset-0">
                 {loading ? (
                   <div className="flex h-full items-center justify-center">
-                    <Icon
-                      className="animate-spin text-2xl"
-                      icon="mdi:loading"
-                    />
+                    <Spinner className="size-6 text-muted-foreground" />
                   </div>
                 ) : bgImage ? (
                   <>

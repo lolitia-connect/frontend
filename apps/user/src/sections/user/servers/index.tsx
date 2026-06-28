@@ -7,6 +7,7 @@ import {
   CardTitle,
 } from "@workspace/ui/components/card";
 import { Progress } from "@workspace/ui/components/progress";
+import { BlockLoading } from "@workspace/ui/composed/block-loading";
 import { Icon } from "@workspace/ui/composed/icon";
 import { queryPublicServerList } from "@workspace/ui/services/user/server";
 import { useState } from "react";
@@ -49,9 +50,7 @@ export default function ServiceMonitoring() {
       </div>
 
       {isLoading ? (
-        <div className="flex h-[200px] items-center justify-center">
-          <Icon className="size-8 animate-spin" icon="uil:spinner" />
-        </div>
+        <BlockLoading minHeight="200px" size="lg" />
       ) : servers.length > 0 ? (
         <div className="grid grid-cols-1 gap-4">
           {servers.map((server: any) => {

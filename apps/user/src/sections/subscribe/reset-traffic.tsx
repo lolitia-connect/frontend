@@ -10,8 +10,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@workspace/ui/components/dialog";
+import { Spinner } from "@workspace/ui/components/spinner";
 import { resetTraffic } from "@workspace/ui/services/user/order";
-import { LoaderCircle } from "lucide-react";
 import { useEffect, useState, useTransition } from "react";
 import { useTranslation } from "react-i18next";
 import { Display } from "@/components/display";
@@ -102,7 +102,7 @@ export default function ResetTraffic({
               });
             }}
           >
-            {loading && <LoaderCircle className="mr-2 animate-spin" />}
+            {loading && <Spinner className="mr-2" />}
             {t("buyNow", "Buy Now")}
           </Button>
         </div>

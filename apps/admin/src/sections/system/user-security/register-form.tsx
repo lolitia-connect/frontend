@@ -1,6 +1,7 @@
-import { zodResolver } from "@hookform/resolvers/zod";
+﻿import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@workspace/ui/components/button";
+import { Spinner } from "@workspace/ui/components/spinner";
 import {
   Form,
   FormControl,
@@ -452,9 +453,7 @@ export default function RegisterConfig() {
             {t("common.cancel", "Cancel")}
           </Button>
           <Button disabled={loading} form="register-form" type="submit">
-            {loading && (
-              <Icon className="mr-2 animate-spin" icon="mdi:loading" />
-            )}
+            {loading && <Spinner className="mr-2" />}
             {t("common.save", "Save Settings")}
           </Button>
         </SheetFooter>

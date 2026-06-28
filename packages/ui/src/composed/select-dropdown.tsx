@@ -6,8 +6,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@workspace/ui/components/select";
+import { Spinner } from "@workspace/ui/components/spinner";
 import { cn } from "@workspace/ui/lib/utils";
-import { Loader } from "lucide-react";
 import type { ReactNode } from "react";
 
 type SelectDropdownProps = {
@@ -45,8 +45,7 @@ export function SelectDropdown({
         {isPending ? (
           <SelectItem className="h-14" disabled value="loading">
             <div className="flex items-center justify-center gap-2">
-              <Loader className="h-5 w-5 animate-spin" />
-              {"  "}
+              <Spinner className="size-5 text-muted-foreground" />
               Loading...
             </div>
           </SelectItem>

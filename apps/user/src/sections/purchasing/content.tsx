@@ -5,11 +5,11 @@ import { useNavigate } from "@tanstack/react-router";
 import { Button } from "@workspace/ui/components/button";
 import { Card, CardContent, CardHeader } from "@workspace/ui/components/card";
 import { Separator } from "@workspace/ui/components/separator";
+import { Spinner } from "@workspace/ui/components/spinner";
 import { EnhancedInput } from "@workspace/ui/composed/enhanced-input";
 import { Icon } from "@workspace/ui/composed/icon";
 import { cn } from "@workspace/ui/lib/utils";
 import { prePurchaseOrder, purchase } from "@workspace/ui/services/user/portal";
-import { LoaderCircle } from "lucide-react";
 import { useCallback, useEffect, useState, useTransition } from "react";
 import { useTranslation } from "react-i18next";
 import { SubscribeBilling } from "@/sections/subscribe/billing";
@@ -320,7 +320,7 @@ export default function Content({
           onClick={handleSubmit}
           size="lg"
         >
-          {loading && <LoaderCircle className="mr-2 animate-spin" />}
+          {loading && <Spinner className="mr-2" />}
           {t("buyNow", "Buy Now")}
         </Button>
       </div>

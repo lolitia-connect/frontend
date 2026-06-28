@@ -345,8 +345,6 @@ export default function Nodes() {
 
         if (sourceIndex === -1 || targetIndex === -1) return items;
 
-        const prevSortById = new Map(items.map((it) => [it.id, it.sort]));
-
         const next = items.slice();
         const [movedItem] = next.splice(sourceIndex, 1);
         next.splice(targetIndex, 0, movedItem!);
@@ -368,20 +366,15 @@ export default function Nodes() {
           sort: baseSort + index,
         }));
 
-        const changedItems = updatedItems.filter(
-          (item) => item.sort !== prevSortById.get(item.id)
-        );
-
-        if (changedItems.length > 0) {
-          await resetSortWithNode({
-            // Send all changed rows (within the current page) so backend can persist.
-            sort: changedItems.map((item) => ({
-              id: item.id,
-              sort: item.sort,
-            })) as API.SortItem[],
-          });
-          toast.success(t("sorted_success", "Sorted successfully"));
-        }
+        // Send ALL items on the current page (not just changed ones) so the
+        // backend can re-index globally and avoid cross-page sort conflicts.
+        await resetSortWithNode({
+          sort: updatedItems.map((item) => ({
+            id: item.id,
+            sort: item.sort,
+          })) as API.SortItem[],
+        });
+        toast.success(t("sorted_success", "Sorted successfully"));
 
         return updatedItems;
       }}

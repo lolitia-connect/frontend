@@ -13,6 +13,7 @@ import {
   deleteServer,
   filterServerList,
   resetSortWithServer,
+  sortServerByName,
   updateServer,
 } from "@workspace/ui/services/admin/server";
 import { useRef, useState } from "react";
@@ -20,6 +21,7 @@ import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { useNode } from "@/stores/node";
 import { useServer } from "@/stores/server";
+import { ArrowDownAZ } from "lucide-react";
 import DynamicMultiplier from "./dynamic-multiplier";
 import OnlineUsersCell from "./online-users-cell";
 import ServerConfig from "./server-config";
@@ -318,6 +320,17 @@ export default function Servers() {
           title: t("pageTitle", "Servers"),
           toolbar: (
             <div className="flex gap-2">
+              <Button
+                variant="outline"
+                onClick={async () => {
+                  await sortServerByName();
+                  toast.success(t("sorted_success", "Sorted successfully"));
+                  ref.current?.refresh();
+                }}
+              >
+                <ArrowDownAZ className="mr-1 h-4 w-4" />
+                {t("sortByName", "Sort by Name")}
+              </Button>
               <ServerForm
                 loading={loading}
                 onSubmit={async (values) => {
@@ -377,6 +390,11 @@ export default function Servers() {
             })) as API.SortItem[],
           });
           toast.success(t("sorted_success", "Sorted successfully"));
+
+          // Re-fetch from backend to ensure frontend sort values match the
+          // globally re-indexed state. Without this, subsequent drag-sorts
+          // would use stale baseSort values and cause items to jump.
+          ref.current?.refresh();
 
           return updatedItems;
         }}

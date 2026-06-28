@@ -18,12 +18,14 @@ import {
   deleteNode,
   filterNodeList,
   resetSortWithNode,
+  sortNodeByName,
   toggleNodeStatus,
   updateNode,
 } from "@workspace/ui/services/admin/server";
 import { useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
+import { ArrowDownAZ } from "lucide-react";
 import { useNode } from "@/stores/node";
 import { useServer } from "@/stores/server";
 import NodeForm, { type NodeFormValues } from "./node-form";
@@ -310,9 +312,21 @@ export default function Nodes() {
       header={{
         title: t("pageTitle", "Nodes"),
         toolbar: (
-          <NodeForm
-            loading={loading}
-            onSubmit={async (values) => {
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              onClick={async () => {
+                await sortNodeByName();
+                toast.success(t("sorted_success", "Sorted successfully"));
+                ref.current?.refresh();
+              }}
+            >
+              <ArrowDownAZ className="mr-1 h-4 w-4" />
+              {t("sortByName", "Sort by Name")}
+            </Button>
+            <NodeForm
+              loading={loading}
+              onSubmit={async (values) => {
               setLoading(true);
               try {
                 const body = buildNodePayload(values) as API.CreateNodeRequest;
@@ -331,6 +345,7 @@ export default function Nodes() {
             title={t("drawerCreateTitle", "Create Landing Node")}
             trigger={t("create", "Create Landing Node")}
           />
+          </div>
         ),
       }}
       onSort={async (source, target, items) => {
@@ -375,6 +390,11 @@ export default function Nodes() {
           })) as API.SortItem[],
         });
         toast.success(t("sorted_success", "Sorted successfully"));
+
+        // Re-fetch from backend to ensure frontend sort values match the
+        // globally re-indexed state. Without this, subsequent drag-sorts
+        // would use stale baseSort values and cause items to jump.
+        ref.current?.refresh();
 
         return updatedItems;
       }}

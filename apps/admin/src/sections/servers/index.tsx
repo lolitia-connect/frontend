@@ -13,6 +13,7 @@ import {
   deleteServer,
   filterServerList,
   resetSortWithServer,
+  sortServerByName,
   updateServer,
 } from "@workspace/ui/services/admin/server";
 import { useRef, useState } from "react";
@@ -20,6 +21,7 @@ import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { useNode } from "@/stores/node";
 import { useServer } from "@/stores/server";
+import { ArrowDownAZ } from "lucide-react";
 import DynamicMultiplier from "./dynamic-multiplier";
 import OnlineUsersCell from "./online-users-cell";
 import ServerConfig from "./server-config";
@@ -318,6 +320,17 @@ export default function Servers() {
           title: t("pageTitle", "Servers"),
           toolbar: (
             <div className="flex gap-2">
+              <Button
+                variant="outline"
+                onClick={async () => {
+                  await sortServerByName();
+                  toast.success(t("sorted_success", "Sorted successfully"));
+                  ref.current?.refresh();
+                }}
+              >
+                <ArrowDownAZ className="mr-1 h-4 w-4" />
+                {t("sortByName", "Sort by Name")}
+              </Button>
               <ServerForm
                 loading={loading}
                 onSubmit={async (values) => {
@@ -350,31 +363,39 @@ export default function Servers() {
             (item) => String(item.id) === target
           );
 
-          const originalSorts = items.map((item) => item.sort);
+          if (sourceIndex === -1 || targetIndex === -1) return items;
 
-          const [movedItem] = items.splice(sourceIndex, 1);
-          items.splice(targetIndex, 0, movedItem!);
+          const next = items.slice();
+          const [movedItem] = next.splice(sourceIndex, 1);
+          next.splice(targetIndex, 0, movedItem!);
 
-          const updatedItems = items.map((item, index) => {
-            const originalSort = originalSorts[index];
-            const newSort =
-              originalSort === undefined ? item.sort : originalSort;
-            return { ...item, sort: newSort };
+          // Re-index to a strictly increasing sequence to avoid duplicate
+          // sort values that cause random ordering after page refresh.
+          const numericSorts = items
+            .map((it) => (typeof it.sort === "number" ? it.sort : Number.NaN))
+            .filter((v) => Number.isFinite(v)) as number[];
+          const baseSort = numericSorts.length ? Math.min(...numericSorts) : 0;
+
+          const updatedItems = next.map((item, index) => ({
+            ...item,
+            sort: baseSort + index,
+          }));
+
+          // Send ALL items on the current page so the backend can re-index
+          // globally and avoid cross-page sort value conflicts.
+          await resetSortWithServer({
+            sort: updatedItems.map((item) => ({
+              id: item.id,
+              sort: item.sort,
+            })) as API.SortItem[],
           });
+          toast.success(t("sorted_success", "Sorted successfully"));
 
-          const changedItems = updatedItems.filter(
-            (item, index) => item.sort !== items[index]?.sort
-          );
+          // Re-fetch from backend to ensure frontend sort values match the
+          // globally re-indexed state. Without this, subsequent drag-sorts
+          // would use stale baseSort values and cause items to jump.
+          ref.current?.refresh();
 
-          if (changedItems.length > 0) {
-            resetSortWithServer({
-              sort: changedItems.map((item) => ({
-                id: item.id,
-                sort: item.sort,
-              })) as API.SortItem[],
-            });
-            toast.success(t("sorted_success", "Sorted successfully"));
-          }
           return updatedItems;
         }}
         params={[{ key: "search" }]}

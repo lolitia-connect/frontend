@@ -36,6 +36,7 @@
   "select_server": "Select server…",
   "server": "Server",
   "sorted_success": "Sorted successfully",
+  "sortByName": "Sort by Name",
   "tags": "Tags",
   "tags_description": "Permission grouping tag (incl. plan binding and delivery policies).",
   "tags_groupMode_description": "Optional tags for display and filtering (node group name will be used as tag if empty).",

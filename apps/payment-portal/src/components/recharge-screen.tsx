@@ -1,3 +1,4 @@
+import { Badge } from "@workspace/ui/components/badge";
 import { Button } from "@workspace/ui/components/button";
 import {
   Card,
@@ -7,11 +8,9 @@ import {
 } from "@workspace/ui/components/card";
 import { Input } from "@workspace/ui/components/input";
 import { Label } from "@workspace/ui/components/label";
-import { Spinner } from "@workspace/ui/components/spinner";
 import { LanguageSwitch } from "@workspace/ui/composed/language-switch";
 import { ThemeSwitch } from "@workspace/ui/composed/theme-switch";
 import { formatDate } from "@workspace/ui/utils/formatting";
-import { Badge } from "@workspace/ui/components/badge";
 import { RefreshCw } from "lucide-react";
 import { QRCodeCanvas } from "qrcode.react";
 import { useTranslation } from "react-i18next";
@@ -261,7 +260,6 @@ export function RechargeScreen({
                 }
                 onClick={onOpenConfirm}
               >
-                {submitting && <Spinner className="mr-2" />}
                 {hasPendingOrder
                   ? t("dashboard.pendingOrder", "订单支付中")
                   : submitting

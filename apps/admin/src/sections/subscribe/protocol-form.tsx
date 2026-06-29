@@ -1,9 +1,8 @@
-﻿"use client";
+"use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "@workspace/ui/components/badge";
-import { Spinner } from "@workspace/ui/components/spinner";
 import { Button } from "@workspace/ui/components/button";
 import {
   Form,
@@ -376,7 +375,7 @@ export function ProtocolForm() {
               }
               title={t("actions.confirmDelete", "Confirm Delete")}
               trigger={
-                <Button disabled={loading} variant="destructive">
+                <Button loading={loading} variant="destructive">
                   {t("actions.delete", "Delete")}
                 </Button>
               }
@@ -923,8 +922,7 @@ export function ProtocolForm() {
             <Button onClick={() => setOpen(false)} variant="outline">
               {t("actions.cancel", "Cancel")}
             </Button>
-            <Button disabled={loading} onClick={form.handleSubmit(onSubmit)}>
-              {loading && <Spinner className="mr-2" />}
+            <Button loading={loading} onClick={form.handleSubmit(onSubmit)}>
               {editingClient
                 ? t("actions.update", "Update")
                 : t("actions.add", "Add")}

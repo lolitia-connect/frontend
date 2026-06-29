@@ -10,6 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@workspace/ui/components/card";
+import { Spinner } from "@workspace/ui/components/spinner";
 import {
   Table,
   TableBody,
@@ -21,7 +22,6 @@ import {
   getSubscribeGroupMapping,
   recalculateGroup,
 } from "@workspace/ui/services/admin/group";
-import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
@@ -145,7 +145,7 @@ export default function SubscribeModeTab() {
         <CardContent>
           {mappingLoading ? (
             <div className="flex items-center justify-center py-8">
-              <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+              <Spinner className="size-6 text-muted-foreground" />
             </div>
           ) : (
             <Table>
@@ -205,7 +205,7 @@ export default function SubscribeModeTab() {
                 {t("currentStatus", "Current Status")}
               </span>
               {loadingStatus ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <Spinner className="size-4" />
               ) : status ? (
                 <Badge variant={getStateVariant(status.state) as any}>
                   {getStateLabel(status.state)}
@@ -254,12 +254,10 @@ export default function SubscribeModeTab() {
           {/* Recalculate Button */}
           <div className="flex justify-end">
             <Button
-              disabled={recalculating || status?.state === "running"}
+              disabled={status?.state === "running"}
+              loading={recalculating}
               onClick={handleRecalculate}
             >
-              {recalculating && (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              )}
               {t("recalculateAll", "Recalculate All Users")}
             </Button>
           </div>

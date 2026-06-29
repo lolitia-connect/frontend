@@ -9,7 +9,6 @@ import {
 } from "@workspace/ui/components/form";
 import { Input } from "@workspace/ui/components/input";
 import { AreaCodeSelect } from "@workspace/ui/composed/area-code-select";
-import { Spinner } from "@workspace/ui/components/spinner";
 import type { Dispatch, SetStateAction } from "react";
 import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -245,8 +244,7 @@ export default function ResetForm({
               )}
             />
           )}
-          <Button disabled={loading} type="submit">
-            {loading && <Spinner className="mr-2" />}
+          <Button loading={loading} type="submit">
             {t("reset.title", "Reset Password")}
           </Button>
         </form>

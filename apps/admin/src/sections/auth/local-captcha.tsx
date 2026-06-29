@@ -1,6 +1,6 @@
 ﻿import { Button } from "@workspace/ui/components/button";
-import { Spinner } from "@workspace/ui/components/spinner";
 import { Input } from "@workspace/ui/components/input";
+import { Spinner } from "@workspace/ui/components/spinner";
 import { Icon } from "@workspace/ui/composed/icon";
 import { adminGenerateCaptcha } from "@workspace/ui/services/admin/auth";
 import { forwardRef, useEffect, useImperativeHandle, useState } from "react";

@@ -1,6 +1,5 @@
-﻿import { zodResolver } from "@hookform/resolvers/zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@workspace/ui/components/button";
-import { Spinner } from "@workspace/ui/components/spinner";
 import {
   Form,
   FormControl,
@@ -653,8 +652,7 @@ export default function EmailBroadcastForm() {
           <Button onClick={() => setOpen(false)} variant="outline">
             {t("cancel", "Cancel")}
           </Button>
-          <Button disabled={loading} form="broadcast-form" type="submit">
-            {loading && <Spinner className="mr-2" />}
+          <Button form="broadcast-form" loading={loading} type="submit">
             {loading
               ? t("processing", "Processing...")
               : !form.watch("scheduled") ||

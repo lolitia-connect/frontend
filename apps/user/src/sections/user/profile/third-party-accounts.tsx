@@ -239,28 +239,39 @@ export default function ThirdPartyAccounts() {
   ].filter((account) => oauth_methods?.includes(account.id));
 
   const [editValues, setEditValues] = useState<Record<string, any>>({});
+  const [actionLoading, setActionLoading] = useState<string | null>(null);
 
   const handleBasicAccountUpdate = async (
     account: (typeof accounts)[0],
     value: string
   ) => {
-    if (account.id === "email") {
-      await updateBindEmail({ email: value });
-      await getUserInfo();
-      toast.success(t("thirdParty.updateSuccess", "Update Successful"));
+    if (actionLoading) return;
+    setActionLoading(account.id);
+    try {
+      if (account.id === "email") {
+        await updateBindEmail({ email: value });
+        await getUserInfo();
+        toast.success(t("thirdParty.updateSuccess", "Update Successful"));
+      }
+    } catch {
+      /* error handled by interceptor */
+    } finally {
+      setActionLoading(null);
     }
   };
 
   const handleAccountAction = async (account: (typeof accounts)[number]) => {
-    const isBound = user?.auth_methods?.find(
-      (auth) => auth.auth_type === account.id
-    )?.auth_identifier;
+    if (actionLoading) return;
+    setActionLoading(account.id);
+    try {
+      const isBound = user?.auth_methods?.find(
+        (auth) => auth.auth_type === account.id
+      )?.auth_identifier;
 
-    if (isBound) {
-      await unbindOAuth({ method: account.id });
-      await getUserInfo();
-    } else {
-      try {
+      if (isBound) {
+        await unbindOAuth({ method: account.id });
+        await getUserInfo();
+      } else {
         const res = await bindOAuth({
           method: account.id,
           redirect: `${window.location.origin}/bind/${account.id}/`,
@@ -279,9 +290,11 @@ export default function ThirdPartyAccounts() {
         }
 
         window.location.href = redirectUrl;
-      } catch {
-        toast.error(t("thirdParty.bindFailed", "Failed to connect"));
       }
+    } catch {
+      toast.error(t("thirdParty.bindFailed", "Failed to connect"));
+    } finally {
+      setActionLoading(null);
     }
   };
 
@@ -359,6 +372,7 @@ export default function ThirdPartyAccounts() {
                   ) : (
                     <Button
                       className="whitespace-nowrap"
+                      loading={actionLoading === account.id}
                       onClick={() =>
                         isEditing
                           ? handleBasicAccountUpdate(account, currentValue)

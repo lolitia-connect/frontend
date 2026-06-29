@@ -19,11 +19,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@workspace/ui/components/select";
+import { Spinner } from "@workspace/ui/components/spinner";
 import {
   bindNodeGroups,
   getNodeGroupList,
 } from "@workspace/ui/services/admin/group";
-import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
@@ -133,7 +133,7 @@ export default function BindNodeGroupsDialog({
         <div className="space-y-4 py-4">
           {isLoading ? (
             <div className="flex justify-center py-8">
-              <Loader2 className="h-6 w-6 animate-spin" />
+              <Spinner className="size-6" />
             </div>
           ) : (
             <div className="space-y-2">
@@ -169,7 +169,7 @@ export default function BindNodeGroupsDialog({
 
         <DialogFooter>
           <Button
-            disabled={saving}
+            loading={saving}
             onClick={() => {
               setOpen(false);
               onOpenChange?.(false);
@@ -179,10 +179,10 @@ export default function BindNodeGroupsDialog({
             {t("cancel", "Cancel")}
           </Button>
           <Button
-            disabled={saving || selectedNodeGroupId === undefined}
+            disabled={selectedNodeGroupId === undefined}
+            loading={saving}
             onClick={handleBind}
           >
-            {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {t("confirm", "Confirm")}
           </Button>
         </DialogFooter>

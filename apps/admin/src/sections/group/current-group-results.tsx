@@ -15,6 +15,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@workspace/ui/components/dialog";
+import { Spinner } from "@workspace/ui/components/spinner";
 import {
   Table,
   TableBody,
@@ -28,7 +29,6 @@ import {
   getGroupHistoryDetail,
   getNodeGroupList,
 } from "@workspace/ui/services/admin/group";
-import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -298,7 +298,7 @@ export default function CurrentGroupResults() {
 
             {detailsLoading ? (
               <div className="flex items-center justify-center py-8">
-                <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                <Spinner className="size-6 text-muted-foreground" />
                 <span className="ml-2 text-muted-foreground text-sm">
                   {t("loading", "Loading...")}
                 </span>
@@ -408,7 +408,7 @@ export default function CurrentGroupResults() {
           <div className="space-y-4">
             {userListLoading ? (
               <div className="flex items-center justify-center py-8">
-                <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                <Spinner className="size-6 text-muted-foreground" />
                 <span className="ml-2 text-muted-foreground text-sm">
                   {t("loading", "Loading...")}
                 </span>

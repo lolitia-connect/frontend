@@ -1,5 +1,5 @@
-import { PageLoading } from "@workspace/ui/composed/page-loading";
 import { createLazyFileRoute } from "@tanstack/react-router";
+import { PageLoading } from "@workspace/ui/composed/page-loading";
 import Servers from "@/sections/servers";
 
 export const Route = createLazyFileRoute("/dashboard/servers")({

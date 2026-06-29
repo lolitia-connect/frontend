@@ -54,7 +54,12 @@ export default function NotifySettings() {
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
           {t("notify.notificationSettings", "Notification Settings")}
-          <Button form="notify-form" size="sm" type="submit">
+          <Button
+            form="notify-form"
+            loading={form.formState.isSubmitting}
+            size="sm"
+            type="submit"
+          >
             {t("notify.save", "Save Changes")}
           </Button>
         </CardTitle>

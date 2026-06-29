@@ -1,6 +1,5 @@
-﻿import { zodResolver } from "@hookform/resolvers/zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@workspace/ui/components/button";
-import { Spinner } from "@workspace/ui/components/spinner";
 import {
   Form,
   FormControl,
@@ -376,7 +375,7 @@ export default function CouponForm<T extends Record<string, any>>({
         </ScrollArea>
         <SheetFooter className="flex-row justify-end gap-2 pt-3">
           <Button
-            disabled={loading}
+            loading={loading}
             onClick={() => {
               setOpen(false);
             }}
@@ -384,8 +383,8 @@ export default function CouponForm<T extends Record<string, any>>({
           >
             {t("form.cancel", "Cancel")}
           </Button>
-          <Button disabled={loading} onClick={form.handleSubmit(handleSubmit)}>
-            {loading && <Spinner className="mr-2" />}{" "}
+          <Button loading={loading} onClick={form.handleSubmit(handleSubmit)}>
+            {" "}
             {t("form.confirm", "Confirm")}
           </Button>
         </SheetFooter>

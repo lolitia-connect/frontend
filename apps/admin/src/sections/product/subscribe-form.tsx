@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
@@ -9,7 +9,6 @@ import {
   AccordionTrigger,
 } from "@workspace/ui/components/accordion";
 import { Badge } from "@workspace/ui/components/badge";
-import { Spinner } from "@workspace/ui/components/spinner";
 import { Button } from "@workspace/ui/components/button";
 import { Card } from "@workspace/ui/components/card";
 import { Checkbox } from "@workspace/ui/components/checkbox";
@@ -1836,7 +1835,7 @@ export default function SubscribeForm<T extends Record<string, any>>({
         </ScrollArea>
         <SheetFooter className="flex-row justify-end gap-2 pt-3">
           <Button
-            disabled={loading}
+            loading={loading}
             onClick={() => {
               setOpen(false);
             }}
@@ -1845,7 +1844,7 @@ export default function SubscribeForm<T extends Record<string, any>>({
             {t("form.cancel")}
           </Button>
           <Button
-            disabled={loading}
+            loading={loading}
             onClick={form.handleSubmit(handleSubmit, (errors) => {
               const keys = Object.keys(errors);
               for (const key of keys) {
@@ -1860,7 +1859,6 @@ export default function SubscribeForm<T extends Record<string, any>>({
               }
             })}
           >
-            {loading && <Spinner className="mr-2" />}
             {t("form.confirm")}
           </Button>
         </SheetFooter>

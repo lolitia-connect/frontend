@@ -11,7 +11,6 @@ import {
   DialogTitle,
 } from "@workspace/ui/components/dialog";
 import { Separator } from "@workspace/ui/components/separator";
-import { Spinner } from "@workspace/ui/components/spinner";
 import { preCreateOrder, purchase } from "@workspace/ui/services/user/order";
 import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import { useTranslation } from "react-i18next";
@@ -166,10 +165,9 @@ export default function Purchase({
             </div>
             <Button
               className="fixed bottom-0 left-0 w-full md:relative md:mt-6"
-              disabled={loading}
+              loading={loading}
               onClick={handleSubmit}
             >
-              {loading && <Spinner className="mr-2" />}
               {t("buyNow", "Buy Now")}
             </Button>
           </div>

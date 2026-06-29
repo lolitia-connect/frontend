@@ -8,7 +8,6 @@ import {
   FormMessage,
 } from "@workspace/ui/components/form";
 import { Input } from "@workspace/ui/components/input";
-import { Spinner } from "@workspace/ui/components/spinner";
 import type { Dispatch, SetStateAction } from "react";
 import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -124,7 +123,7 @@ export default function ResetForm({
                 <FormControl>
                   <div className="flex items-center gap-2">
                     <Input
-                      disabled={loading}
+                      loading={loading}
                       placeholder={t("reset.codePlaceholder", "Enter code...")}
                       type="text"
                       {...field}
@@ -212,8 +211,7 @@ export default function ResetForm({
               )}
             />
           )}
-          <Button disabled={loading} type="submit">
-            {loading && <Spinner className="mr-2" />}
+          <Button loading={loading} type="submit">
             {t("reset.title", "Reset Password")}
           </Button>
         </form>

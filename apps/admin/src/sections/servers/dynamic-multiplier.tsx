@@ -27,6 +27,7 @@ export default function DynamicMultiplier() {
   const { t } = useTranslation("servers");
   const [open, setOpen] = useState(false);
   const [timeSlots, setTimeSlots] = useState<API.TimePeriod[]>([]);
+  const [saving, setSaving] = useState(false);
 
   const { data: periodsResp, refetch: refetchPeriods } = useQuery({
     queryKey: ["getNodeMultiplier"],
@@ -44,10 +45,18 @@ export default function DynamicMultiplier() {
   }, [periodsResp]);
 
   async function savePeriods() {
-    await setNodeMultiplier({ periods: timeSlots });
-    await refetchPeriods();
-    toast.success(t("server_config.saveSuccess", "Saved successfully"));
-    setOpen(false);
+    if (saving) return;
+    setSaving(true);
+    try {
+      await setNodeMultiplier({ periods: timeSlots });
+      await refetchPeriods();
+      toast.success(t("server_config.saveSuccess", "Saved successfully"));
+      setOpen(false);
+    } catch {
+      /* error handled by interceptor */
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (
@@ -136,7 +145,9 @@ export default function DynamicMultiplier() {
             <Button onClick={() => setOpen(false)} variant="outline">
               {t("actions.cancel", "Cancel")}
             </Button>
-            <Button onClick={savePeriods}>{t("actions.save", "Save")}</Button>
+            <Button loading={saving} onClick={savePeriods}>
+              {t("actions.save", "Save")}
+            </Button>
           </div>
         </SheetFooter>
       </SheetContent>

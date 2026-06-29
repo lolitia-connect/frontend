@@ -2,7 +2,6 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@workspace/ui/components/button";
-import { Spinner } from "@workspace/ui/components/spinner";
 import {
   Sheet,
   SheetContent,
@@ -10,6 +9,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@workspace/ui/components/sheet";
+import { Spinner } from "@workspace/ui/components/spinner";
 import { MonacoEditor } from "@workspace/ui/composed/editor/monaco-editor";
 import { Icon } from "@workspace/ui/composed/icon";
 import { previewSubscribeTemplate } from "@workspace/ui/services/admin/application";

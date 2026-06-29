@@ -64,14 +64,14 @@ const PaymentMethods: React.FC<PaymentMethodsProps> = ({
         value={String(value)}
       >
         {data?.map((item) => (
-          <div className="relative" key={item.id}>
+          <div className="relative p-1" key={item.id}>
             {item.fee_mode === 1 && item.fee_percent > 0 && (
-              <Badge className="absolute -top-2 -right-2 z-20 border-amber-200 bg-amber-100 px-1.5 py-0 text-[10px] text-amber-700 dark:border-amber-800 dark:bg-amber-900 dark:text-amber-300">
+              <Badge className="absolute top-0 right-0 z-20 border-amber-200 bg-amber-100 px-1.5 py-0 text-[10px] text-amber-700 dark:border-amber-800 dark:bg-amber-900 dark:text-amber-300">
                 {item.fee_percent}%
               </Badge>
             )}
             {item.fee_mode === 2 && item.fee_amount > 0 && (
-              <Badge className="absolute -top-2 -right-2 z-20 border-amber-200 bg-amber-100 px-1.5 py-0 text-[10px] text-amber-700 dark:border-amber-800 dark:bg-amber-900 dark:text-amber-300">
+              <Badge className="absolute top-0 right-0 z-20 border-amber-200 bg-amber-100 px-1.5 py-0 text-[10px] text-amber-700 dark:border-amber-800 dark:bg-amber-900 dark:text-amber-300">
                 +{item.fee_amount}
               </Badge>
             )}

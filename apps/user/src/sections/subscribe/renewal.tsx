@@ -116,13 +116,13 @@ export default function Renewal({ id, subscribe }: Readonly<RenewalProps>) {
       <DialogTrigger asChild>
         <Button size="sm">{t("renew", "Renew")}</Button>
       </DialogTrigger>
-      <DialogContent className="flex h-full flex-col overflow-y-auto md:h-auto md:max-w-screen-lg">
-        <DialogHeader>
+      <DialogContent className="flex max-h-[calc(100dvh-2rem)] flex-col overflow-hidden p-0 md:max-h-none md:max-w-screen-lg">
+        <DialogHeader className="flex-none p-6 pb-0">
           <DialogTitle>
             {t("renewSubscription", "Renew Subscription")}
           </DialogTitle>
         </DialogHeader>
-        <div className="grid w-full gap-3 lg:grid-cols-2">
+        <div className="grid w-full flex-1 gap-3 overflow-y-auto p-6 pt-0 lg:grid-cols-2">
           <Card className="border-transparent shadow-none md:border-inherit md:shadow">
             <CardContent className="grid gap-3 p-0 text-sm md:p-6">
               <SubscribeDetail
@@ -143,7 +143,7 @@ export default function Renewal({ id, subscribe }: Readonly<RenewalProps>) {
             </CardContent>
           </Card>
           <div className="flex flex-col justify-between text-sm">
-            <div className="mb-6 grid gap-3">
+            <div className="grid gap-3">
               <DurationSelector
                 discounts={subscribe?.discount}
                 onChange={(value) => {
@@ -164,14 +164,16 @@ export default function Renewal({ id, subscribe }: Readonly<RenewalProps>) {
                 value={params.payment ?? "0"}
               />
             </div>
-            <Button
-              className="sticky bottom-0 left-0 w-full md:relative md:mt-6"
-              loading={loading}
-              onClick={handleSubmit}
-            >
-              {t("buyNow", "Buy Now")}
-            </Button>
           </div>
+        </div>
+        <div className="flex-none bg-background px-4 pb-[calc(1rem+env(safe-area-inset-bottom,0px))] md:px-4 md:pb-4">
+          <Button
+            className="w-full"
+            loading={loading}
+            onClick={handleSubmit}
+          >
+            {t("buyNow", "Buy Now")}
+          </Button>
         </div>
       </DialogContent>
     </Dialog>

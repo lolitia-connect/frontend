@@ -44,14 +44,14 @@ export default function Recharge(
       <DialogTrigger asChild>
         <Button {...props}>{t("recharge", "Recharge")}</Button>
       </DialogTrigger>
-      <DialogContent className="flex h-full flex-col overflow-hidden md:h-auto">
-        <DialogHeader>
+      <DialogContent className="flex max-h-[calc(100dvh-2rem)] flex-col overflow-hidden p-0 md:max-h-none">
+        <DialogHeader className="flex-none p-6 pb-0">
           <DialogTitle>{t("balanceRecharge", "Balance Recharge")}</DialogTitle>
           <DialogDescription>
             {t("rechargeDescription", "Recharge your account balance")}
           </DialogDescription>
         </DialogHeader>
-        <div className="flex flex-col justify-between text-sm">
+        <div className="flex-1 overflow-y-auto p-6 pt-0 text-sm">
           <div className="grid gap-3">
             <div className="font-semibold">
               {t("rechargeAmount", "Recharge Amount")}
@@ -93,8 +93,10 @@ export default function Recharge(
               </div>
             )}
           </div>
+        </div>
+        <div className="flex-none bg-background px-4 pb-[calc(1rem+env(safe-area-inset-bottom,0px))] md:px-4 md:pb-4">
           <Button
-            className="fixed bottom-0 left-0 w-full md:relative md:mt-6"
+            className="w-full"
             disabled={isButtonDisabled}
             onClick={() => {
               startTransition(async () => {

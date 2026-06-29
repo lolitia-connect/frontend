@@ -117,11 +117,11 @@ export default function Purchase({
       }}
       open={!!subscribe?.id}
     >
-      <DialogContent className="flex h-[calc(100dvh-2rem)] flex-col overflow-hidden border-none p-0 md:h-auto md:max-w-screen-lg">
+      <DialogContent className="flex max-h-[calc(100dvh-2rem)] flex-col overflow-hidden border-none p-0 md:max-h-none md:max-w-screen-lg">
         <DialogHeader className="flex-none p-6 pb-0">
           <DialogTitle>{t("buySubscription", "Buy Subscription")}</DialogTitle>
         </DialogHeader>
-        <div className="grid w-full flex-1 gap-3 overflow-auto p-6 pt-0 lg:grid-cols-2">
+        <div className="grid w-full flex-1 gap-3 overflow-y-auto p-6 pt-0 lg:grid-cols-2">
           <Card className="border-transparent shadow-none md:border-inherit md:shadow">
             <CardContent className="grid gap-3 text-sm">
               <SubscribeDetail

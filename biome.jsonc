@@ -20,7 +20,8 @@
   },
   "formatter": {
     "enabled": true,
-    "indentStyle": "space"
+    "indentStyle": "space",
+    "lineEnding": "lf"
   },
   "assist": { "actions": { "source": { "organizeImports": "on" } } },
   "linter": {

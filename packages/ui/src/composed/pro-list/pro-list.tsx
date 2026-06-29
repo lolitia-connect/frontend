@@ -151,38 +151,44 @@ export function ProList<TData, TValue extends Record<string, unknown>>({
 
   return (
     <div className="flex max-w-full flex-col gap-4 overflow-hidden">
-      <div className="flex flex-wrap-reverse items-center justify-between gap-4">
-        <div>
-          {params ? (
-            <ColumnFilter
-              filters={Object.fromEntries(
-                columnFilters.map((item) => [item.id, item.value])
-              )}
-              params={params}
-              table={table}
-            />
-          ) : (
-            header?.title
-          )}
+      {(params || header) && (
+        <div className="flex flex-wrap-reverse items-center justify-between gap-4">
+          <div>
+            {params ? (
+              <ColumnFilter
+                filters={Object.fromEntries(
+                  columnFilters.map((item) => [item.id, item.value])
+                )}
+                params={params}
+                table={table}
+              />
+            ) : (
+              header?.title
+            )}
+          </div>
+          <div className="flex flex-1 items-center justify-end gap-2">
+            {params && params?.length > 0 && (
+              <>
+                <RefreshButton
+                  className="h-8 w-8 p-2"
+                  onClick={fetchData}
+                  variant="outline"
+                >
+                  <RefreshCcw className="h-4 w-4" />
+                </RefreshButton>
+                <Button
+                  className="h-8 w-8 p-2"
+                  onClick={reset}
+                  variant="outline"
+                >
+                  <ListRestart className="h-4 w-4" />
+                </Button>
+              </>
+            )}
+            {header?.toolbar}
+          </div>
         </div>
-        <div className="flex flex-1 items-center justify-end gap-2">
-          {params && params?.length > 0 && (
-            <>
-              <RefreshButton
-                className="h-8 w-8 p-2"
-                onClick={fetchData}
-                variant="outline"
-              >
-                <RefreshCcw className="h-4 w-4" />
-              </RefreshButton>
-              <Button className="h-8 w-8 p-2" onClick={reset} variant="outline">
-                <ListRestart className="h-4 w-4" />
-              </Button>
-            </>
-          )}
-          {header?.toolbar}
-        </div>
-      </div>
+      )}
 
       {selectedCount > 0 && batchRender && (
         <Alert className="flex items-center justify-between">

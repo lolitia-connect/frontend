@@ -123,7 +123,7 @@ export default function ResetForm({
                 <FormControl>
                   <div className="flex items-center gap-2">
                     <Input
-                      loading={loading}
+                      disabled={loading}
                       placeholder={t("reset.codePlaceholder", "Enter code...")}
                       type="text"
                       {...field}

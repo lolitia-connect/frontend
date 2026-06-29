@@ -194,7 +194,7 @@ export default function RegisterForm({
                 <FormItem>
                   <FormControl>
                     <Input
-                      loading={loading}
+                      disabled={loading}
                       placeholder={t(
                         "placeholders.repeatPassword",
                         "Enter password again..."
@@ -215,7 +215,7 @@ export default function RegisterForm({
                   <FormControl>
                     <div className="flex items-center gap-2">
                       <Input
-                        loading={loading}
+                        disabled={loading}
                         placeholder={t("placeholders.code", "Enter code...")}
                         type="text"
                         {...field}
@@ -245,8 +245,7 @@ export default function RegisterForm({
                 <FormItem>
                   <FormControl>
                     <Input
-                      disabled={!!localStorage.getItem("invite")}
-                      loading={loading}
+                      disabled={!!localStorage.getItem("invite") || loading}
                       placeholder={t(
                         "register.invite",
                         "Invitation Code (Optional)"

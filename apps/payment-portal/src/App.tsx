@@ -251,7 +251,6 @@ export default function App() {
     captchaValue,
     captchaType,
     captchaId,
-    captchaEnabled,
     t,
     refreshPortal,
   ]);

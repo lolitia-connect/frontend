@@ -345,7 +345,7 @@ export default function Content() {
                       <span className="font-bold text-2xl">
                         <Display
                           type="traffic"
-                          unlimited={!item.traffic}
+                          unlimited={item.traffic_unlimited}
                           value={item.upload + item.download}
                         />
                       </span>
@@ -357,7 +357,7 @@ export default function Content() {
                       <span className="font-bold text-2xl">
                         <Display
                           type="traffic"
-                          unlimited={!item.traffic}
+                          unlimited={item.traffic_unlimited}
                           value={item.traffic}
                         />
                       </span>

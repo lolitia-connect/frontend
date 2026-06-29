@@ -29,6 +29,8 @@ const ss = z.object({
   obfs: z.enum(["none", "http", "tls"] as const).nullish(),
   obfs_host: nullableString,
   obfs_path: nullableString,
+  uot: nullableBool,
+  uot_version: z.number().int().min(1).max(2).nullish(),
   cert_mode: z.enum(CERT_MODES).nullish(),
   cert_dns_provider: nullableString,
   cert_dns_env: nullableString,
@@ -50,6 +52,8 @@ const vmess = z.object({
   cert_mode: z.enum(CERT_MODES).nullish(),
   cert_dns_provider: nullableString,
   cert_dns_env: nullableString,
+  ech_enable: z.boolean().nullish(),
+  ech_server_name: nullableString,
 });
 
 const vless = z.object({
@@ -84,6 +88,8 @@ const vless = z.object({
   cert_mode: z.enum(CERT_MODES).nullish(),
   cert_dns_provider: nullableString,
   cert_dns_env: nullableString,
+  ech_enable: z.boolean().nullish(),
+  ech_server_name: nullableString,
 });
 
 const trojan = z.object({
@@ -102,6 +108,8 @@ const trojan = z.object({
   cert_mode: z.enum(CERT_MODES).nullish(),
   cert_dns_provider: nullableString,
   cert_dns_env: nullableString,
+  ech_enable: z.boolean().nullish(),
+  ech_server_name: nullableString,
 });
 
 const hysteria = z.object({
@@ -122,6 +130,8 @@ const hysteria = z.object({
   cert_mode: z.enum(CERT_MODES).nullish(),
   cert_dns_provider: nullableString,
   cert_dns_env: nullableString,
+  ech_enable: z.boolean().nullish(),
+  ech_server_name: nullableString,
 });
 
 const tuic = z.object({
@@ -141,6 +151,8 @@ const tuic = z.object({
   cert_mode: z.enum(CERT_MODES).nullish(),
   cert_dns_provider: nullableString,
   cert_dns_env: nullableString,
+  ech_enable: z.boolean().nullish(),
+  ech_server_name: nullableString,
 });
 
 const anytls = z.object({
@@ -156,6 +168,8 @@ const anytls = z.object({
   cert_mode: z.enum(CERT_MODES).nullish(),
   cert_dns_provider: nullableString,
   cert_dns_env: nullableString,
+  ech_enable: z.boolean().nullish(),
+  ech_server_name: nullableString,
   reality_server_addr: nullableString,
   reality_server_port: nullablePort,
   reality_private_key: nullableString,
@@ -182,6 +196,8 @@ const naive = z.object({
   cert_mode: z.enum(CERT_MODES).nullish(),
   cert_dns_provider: nullableString,
   cert_dns_env: nullableString,
+  ech_enable: z.boolean().nullish(),
+  ech_server_name: nullableString,
 });
 
 const http = z.object({
@@ -196,6 +212,8 @@ const http = z.object({
   cert_mode: z.enum(CERT_MODES).nullish(),
   cert_dns_provider: nullableString,
   cert_dns_env: nullableString,
+  ech_enable: z.boolean().nullish(),
+  ech_server_name: nullableString,
 });
 
 const mieru = z.object({

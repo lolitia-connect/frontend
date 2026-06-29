@@ -199,7 +199,14 @@ export default function RegisterForm({
                   <FormControl>
                     <Input
                       disabled={loading || !!localStorage.getItem("invite")}
-                      placeholder={t("register.invite", "Invite Code")}
+                      placeholder={t(
+                        invite.forced_invite
+                          ? "register.inviteRequired"
+                          : "register.invite",
+                        invite.forced_invite
+                          ? "Invite Code"
+                          : "Invite Code (Optional)"
+                      )}
                       {...field}
                       value={field.value || ""}
                     />

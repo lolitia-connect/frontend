@@ -9,11 +9,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@workspace/ui/components/card";
+import { Spinner } from "@workspace/ui/components/spinner";
 import {
   getRecalculationStatus,
   recalculateGroup,
 } from "@workspace/ui/services/admin/group";
-import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
@@ -118,7 +118,7 @@ export default function GroupRecalculate() {
                 {t("currentStatus", "Current Status")}
               </span>
               {loadingStatus ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <Spinner className="size-4" />
               ) : status ? (
                 <Badge variant={getStateVariant(status.state) as any}>
                   {getStateLabel(status.state)}
@@ -174,15 +174,11 @@ export default function GroupRecalculate() {
                 </div>
                 <Button
                   className="w-full"
-                  disabled={
-                    recalculating === "average" || status?.state === "running"
-                  }
+                  disabled={status?.state === "running"}
+                  loading={recalculating === "average"}
                   onClick={() => handleRecalculate("average")}
                   variant="outline"
                 >
-                  {recalculating === "average" && (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  )}
                   {t("recalculate", "Recalculate")}
                 </Button>
               </div>
@@ -194,15 +190,11 @@ export default function GroupRecalculate() {
                 </div>
                 <Button
                   className="w-full"
-                  disabled={
-                    recalculating === "subscribe" || status?.state === "running"
-                  }
+                  disabled={status?.state === "running"}
+                  loading={recalculating === "subscribe"}
                   onClick={() => handleRecalculate("subscribe")}
                   variant="outline"
                 >
-                  {recalculating === "subscribe" && (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  )}
                   {t("recalculate", "Recalculate")}
                 </Button>
               </div>
@@ -214,15 +206,11 @@ export default function GroupRecalculate() {
                 </div>
                 <Button
                   className="w-full"
-                  disabled={
-                    recalculating === "traffic" || status?.state === "running"
-                  }
+                  disabled={status?.state === "running"}
+                  loading={recalculating === "traffic"}
                   onClick={() => handleRecalculate("traffic")}
                   variant="outline"
                 >
-                  {recalculating === "traffic" && (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  )}
                   {t("recalculate", "Recalculate")}
                 </Button>
               </div>

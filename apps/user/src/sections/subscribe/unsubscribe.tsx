@@ -34,6 +34,7 @@ export default function Unsubscribe({
   const single_model = common.subscribe.single_model;
 
   const [open, setOpen] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   const { data } = useQuery({
     enabled: Boolean(open && id && allowDeduction),
@@ -45,6 +46,8 @@ export default function Unsubscribe({
   });
 
   const handleSubmit = async () => {
+    if (submitting) return;
+    setSubmitting(true);
     try {
       await unsubscribe(
         { id },
@@ -58,6 +61,8 @@ export default function Unsubscribe({
       setOpen(false);
     } catch {
       toast.error(t("unsubscribe.failed", "Unsubscribe failed"));
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -93,10 +98,14 @@ export default function Unsubscribe({
           )}
         </p>
         <DialogFooter>
-          <Button onClick={() => setOpen(false)} variant="outline">
+          <Button
+            loading={submitting}
+            onClick={() => setOpen(false)}
+            variant="outline"
+          >
             {t("unsubscribe.cancel", "Cancel")}
           </Button>
-          <Button onClick={handleSubmit}>
+          <Button loading={submitting} onClick={handleSubmit}>
             {t("unsubscribe.confirm", "Confirm")}
           </Button>
         </DialogFooter>

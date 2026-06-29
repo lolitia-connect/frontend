@@ -26,13 +26,24 @@ export function AuthMethodsForm({
   const { t } = useTranslation("user");
 
   const [emailChanges, setEmailChanges] = useState<Record<string, string>>({});
+  const [removingAuth, setRemovingAuth] = useState<string | null>(null);
+  const [emailSaving, setEmailSaving] = useState(false);
 
   const handleRemoveAuth = async (authType: string) => {
-    await deleteUserAuthMethod({
-      user_id: user.id,
-      auth_type: authType,
-    });
-    toast.success(t("deleteSuccess", "Deleted successfully"));
+    if (removingAuth) return;
+    setRemovingAuth(authType);
+    try {
+      await deleteUserAuthMethod({
+        user_id: user.id,
+        auth_type: authType,
+      });
+      toast.success(t("deleteSuccess", "Deleted successfully"));
+      await refetch();
+    } catch {
+      /* error handled by interceptor */
+    } finally {
+      setRemovingAuth(null);
+    }
   };
 
   const handleUpdateEmail = async (email: string) => {
@@ -77,12 +88,20 @@ export function AuthMethodsForm({
   };
 
   const isEmailExists = !!emailMethod;
-  const handleEmailAction = () => {
+  const handleEmailAction = async () => {
     const email = emailChanges.email;
-    if (isEmailExists) {
-      handleUpdateEmail(email as string);
-    } else {
-      handleCreateEmail(email as string);
+    if (emailSaving) return;
+    setEmailSaving(true);
+    try {
+      if (isEmailExists) {
+        await handleUpdateEmail(email as string);
+      } else {
+        await handleCreateEmail(email as string);
+      }
+    } catch {
+      /* error handled by interceptor */
+    } finally {
+      setEmailSaving(false);
     }
   };
 
@@ -123,6 +142,7 @@ export function AuthMethodsForm({
                     (isEmailExists &&
                       emailChanges.email === defaultEmailMethod.auth_identifier)
                   }
+                  loading={emailSaving}
                   onClick={handleEmailAction}
                 >
                   {isEmailExists ? t("update", "Update") : t("add", "Add")}
@@ -151,6 +171,7 @@ export function AuthMethodsForm({
                     </div>
                   </div>
                   <Button
+                    loading={removingAuth === method.auth_type}
                     onClick={() => handleRemoveAuth(method.auth_type)}
                     size="sm"
                     variant="destructive"

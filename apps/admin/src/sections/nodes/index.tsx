@@ -22,10 +22,10 @@ import {
   toggleNodeStatus,
   updateNode,
 } from "@workspace/ui/services/admin/server";
+import { ArrowDownAZ } from "lucide-react";
 import { useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
-import { ArrowDownAZ } from "lucide-react";
 import { useNode } from "@/stores/node";
 import { useServer } from "@/stores/server";
 import NodeForm, { type NodeFormValues } from "./node-form";
@@ -314,12 +314,12 @@ export default function Nodes() {
         toolbar: (
           <div className="flex gap-2">
             <Button
-              variant="outline"
               onClick={async () => {
                 await sortNodeByName();
                 toast.success(t("sorted_success", "Sorted successfully"));
                 ref.current?.refresh();
               }}
+              variant="outline"
             >
               <ArrowDownAZ className="mr-1 h-4 w-4" />
               {t("sortByName", "Sort by Name")}
@@ -327,24 +327,26 @@ export default function Nodes() {
             <NodeForm
               loading={loading}
               onSubmit={async (values) => {
-              setLoading(true);
-              try {
-                const body = buildNodePayload(values) as API.CreateNodeRequest;
-                await createNode(body);
-                toast.success(t("created", "Created"));
-                ref.current?.refresh();
-                fetchNodes();
-                fetchTags();
-                setLoading(false);
-                return true;
-              } catch {
-                setLoading(false);
-                return false;
-              }
-            }}
-            title={t("drawerCreateTitle", "Create Landing Node")}
-            trigger={t("create", "Create Landing Node")}
-          />
+                setLoading(true);
+                try {
+                  const body = buildNodePayload(
+                    values
+                  ) as API.CreateNodeRequest;
+                  await createNode(body);
+                  toast.success(t("created", "Created"));
+                  ref.current?.refresh();
+                  fetchNodes();
+                  fetchTags();
+                  setLoading(false);
+                  return true;
+                } catch {
+                  setLoading(false);
+                  return false;
+                }
+              }}
+              title={t("drawerCreateTitle", "Create Landing Node")}
+              trigger={t("create", "Create Landing Node")}
+            />
           </div>
         ),
       }}

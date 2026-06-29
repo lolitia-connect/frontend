@@ -1,7 +1,6 @@
-﻿import { zodResolver } from "@hookform/resolvers/zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@workspace/ui/components/button";
-import { Spinner } from "@workspace/ui/components/spinner";
 import {
   Form,
   FormControl,
@@ -373,14 +372,13 @@ export default function VerifyConfig() {
         </ScrollArea>
         <SheetFooter className="flex-row justify-end gap-2 pt-3">
           <Button
-            disabled={loading}
+            loading={loading}
             onClick={() => setOpen(false)}
             variant="outline"
           >
             {t("common.cancel", "Cancel")}
           </Button>
-          <Button disabled={loading} form="verify-form" type="submit">
-            {loading && <Spinner className="mr-2" />}
+          <Button form="verify-form" loading={loading} type="submit">
             {t("common.save", "Save Settings")}
           </Button>
         </SheetFooter>

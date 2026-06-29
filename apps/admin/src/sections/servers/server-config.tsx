@@ -1,9 +1,8 @@
-﻿"use client";
+"use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@workspace/ui/components/button";
-import { Spinner } from "@workspace/ui/components/spinner";
 import { Card, CardContent } from "@workspace/ui/components/card";
 import {
   Form,
@@ -534,14 +533,13 @@ export default function ServerConfig() {
 
         <SheetFooter className="flex-row justify-end gap-2 pt-3">
           <Button
-            disabled={saving}
+            loading={saving}
             onClick={() => setOpen(false)}
             variant="outline"
           >
             {t("actions.cancel", "Cancel")}
           </Button>
-          <Button disabled={saving} form="server-config-form" type="submit">
-            {saving && <Spinner className="mr-2" />}
+          <Button form="server-config-form" loading={saving} type="submit">
             {t("actions.save", "Save")}
           </Button>
         </SheetFooter>

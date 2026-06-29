@@ -30,9 +30,6 @@ export function CloudflareTurnstile({
     <div className="w-full">
       <Turnstile
         language={language.toLowerCase()}
-        onLoad={(_widgetId, boundTurnstile) => {
-          widgetRef.current = boundTurnstile;
-        }}
         onExpire={() => {
           onChange("");
           try {
@@ -40,6 +37,9 @@ export function CloudflareTurnstile({
           } catch {
             /* empty */
           }
+        }}
+        onLoad={(_widgetId, boundTurnstile) => {
+          widgetRef.current = boundTurnstile;
         }}
         onTimeout={() => {
           onChange("");

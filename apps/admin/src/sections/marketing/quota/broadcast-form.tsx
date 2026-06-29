@@ -1,4 +1,4 @@
-﻿import { zodResolver } from "@hookform/resolvers/zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@workspace/ui/components/button";
 import {
   Form,
@@ -521,7 +521,6 @@ export default function QuotaBroadcastForm() {
             form="quota-broadcast-form"
             type="submit"
           >
-            {isSubmitting && <Spinner className="mr-2" />}
             {t("createQuotaTask", "Create Quota Task")}
           </Button>
         </SheetFooter>

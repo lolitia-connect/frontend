@@ -38,9 +38,10 @@ import { ColumnToggle } from "@workspace/ui/composed/pro-table/column-toggle";
 import { Pagination } from "@workspace/ui/composed/pro-table/pagination";
 import { SortableRow } from "@workspace/ui/composed/pro-table/sortable-row";
 import { ProTableWrapper } from "@workspace/ui/composed/pro-table/wrapper";
+import { RefreshButton } from "@workspace/ui/composed/refresh-button";
 import { cn } from "@workspace/ui/lib/utils";
 import { useSize } from "ahooks";
-import { GripVertical, ListRestart, RefreshCcw } from "lucide-react";
+import { GripVertical, ListRestart } from "lucide-react";
 import type React from "react";
 import {
   Fragment,
@@ -126,7 +127,8 @@ export function ProTable<
     pageIndex: 0,
     pageSize: 10,
   });
-  const loading = useRef(false);
+  const loadingRef = useRef(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const table = useReactTable({
     data,
@@ -192,8 +194,9 @@ export function ProTable<
   });
 
   const fetchData = async () => {
-    if (loading.current) return;
-    loading.current = true;
+    if (loadingRef.current) return;
+    loadingRef.current = true;
+    setIsLoading(true);
     try {
       const response = await request(
         {
@@ -209,7 +212,8 @@ export function ProTable<
     } catch (error) {
       console.log("Fetch data error:", error);
     } finally {
-      loading.current = false;
+      loadingRef.current = false;
+      setIsLoading(false);
     }
   };
   const reset = async () => {
@@ -264,9 +268,7 @@ export function ProTable<
             )}
           </div>
           <div className="flex flex-1 items-center justify-end gap-2">
-            <Button onClick={fetchData} size="icon" variant="outline">
-              <RefreshCcw />
-            </Button>
+            <RefreshButton onClick={fetchData} size="icon" variant="outline" />
             <ColumnToggle table={table} />
             <Button onClick={reset} size="icon" variant="outline">
               <ListRestart />
@@ -385,10 +387,10 @@ export function ProTable<
           </Table>
         </ProTableWrapper>
 
-        {loading.current && (
+        {isLoading && (
           <div className="absolute inset-0 z-20 flex items-center justify-center rounded-md bg-background/70 backdrop-blur-[1px]">
             <div className="rounded-full border bg-background p-3 shadow-sm">
-              <Spinner className="size-5 text-muted-foreground" />
+              <Spinner className="size-6 text-muted-foreground" />
             </div>
           </div>
         )}

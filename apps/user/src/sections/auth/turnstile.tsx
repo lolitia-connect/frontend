@@ -60,9 +60,6 @@ const CloudFlareTurnstile = function CloudFlareTurnstile({
       <Turnstile
         id={id}
         language={locale.toLowerCase()}
-        onLoad={(_widgetId, boundTurnstile) => {
-          widgetRef.current = boundTurnstile;
-        }}
         onExpire={() => {
           onChange("");
           try {
@@ -70,6 +67,9 @@ const CloudFlareTurnstile = function CloudFlareTurnstile({
           } catch {
             /* empty */
           }
+        }}
+        onLoad={(_widgetId, boundTurnstile) => {
+          widgetRef.current = boundTurnstile;
         }}
         onTimeout={() => {
           onChange("");

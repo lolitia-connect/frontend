@@ -38,25 +38,25 @@
   <path d="M6.5 18.5h6v4.5h-6z" fill="#c8a964" rx="0.5" ry="0.5"></path>
   <path
     d="M6.5 19.75h6M6.5 21h6M9 18.5v4.5"
+    fill="none"
     stroke="#b8952e"
     stroke-width="0.3"
-    fill="none"
   ></path>
   <!-- Card number dots -->
-  <circle cx="8" cy="25" r="0.45" fill="#ffffffcc"></circle>
-  <circle cx="9.2" cy="25" r="0.45" fill="#ffffffcc"></circle>
-  <circle cx="10.4" cy="25" r="0.45" fill="#ffffffcc"></circle>
-  <circle cx="11.6" cy="25" r="0.45" fill="#ffffffcc"></circle>
-  <circle cx="13.6" cy="25" r="0.45" fill="#ffffffcc"></circle>
-  <circle cx="14.8" cy="25" r="0.45" fill="#ffffffcc"></circle>
-  <circle cx="16" cy="25" r="0.45" fill="#ffffffcc"></circle>
-  <circle cx="17.2" cy="25" r="0.45" fill="#ffffffcc"></circle>
+  <circle cx="8" cy="25" fill="#ffffffcc" r="0.45"></circle>
+  <circle cx="9.2" cy="25" fill="#ffffffcc" r="0.45"></circle>
+  <circle cx="10.4" cy="25" fill="#ffffffcc" r="0.45"></circle>
+  <circle cx="11.6" cy="25" fill="#ffffffcc" r="0.45"></circle>
+  <circle cx="13.6" cy="25" fill="#ffffffcc" r="0.45"></circle>
+  <circle cx="14.8" cy="25" fill="#ffffffcc" r="0.45"></circle>
+  <circle cx="16" cy="25" fill="#ffffffcc" r="0.45"></circle>
+  <circle cx="17.2" cy="25" fill="#ffffffcc" r="0.45"></circle>
   <!-- Stripe "S" brand mark -->
   <path
     d="M6.2 15.2c0-0.55 0.45-1 1-1h0.8c0.55 0 1 0.45 1 1v0.4c0 0.55-0.45 1-1 1h-0.4c-0.55 0-1 0.45-1 1v0.4c0 0.55 0.45 1 1 1h0.8c0.55 0 1-0.45 1-1"
-    stroke="#ffffffdd"
-    stroke-width="0.6"
     fill="none"
+    stroke="#ffffffdd"
     stroke-linecap="round"
+    stroke-width="0.6"
   ></path>
 </svg>

@@ -24,7 +24,6 @@ import {
   resetGroups,
   updateGroupConfig,
 } from "@workspace/ui/services/admin/group";
-import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
@@ -253,14 +252,14 @@ export default function GroupConfig() {
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel>{t("cancel", "Cancel")}</AlertDialogCancel>
+                  <AlertDialogCancel loading={resetting}>
+                    {t("cancel", "Cancel")}
+                  </AlertDialogCancel>
                   <AlertDialogAction
                     className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                    loading={resetting}
                     onClick={handleResetGroups}
                   >
-                    {resetting && (
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    )}
                     {t("confirm", "Confirm")}
                   </AlertDialogAction>
                 </AlertDialogFooter>

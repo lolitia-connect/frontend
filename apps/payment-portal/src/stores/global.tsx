@@ -88,10 +88,10 @@ function mapActiveOrder(item: any, checkout?: CheckoutInfo): ActiveOrder {
 
 export interface PortalStore {
   activeOrder: ActiveOrder | null;
-  // Global config
-  common: API.GetGlobalConfigResponse;
   // Checkout tracking - prevents duplicate checkout requests
   checkoutRequestedForOrderNo: string | null;
+  // Global config
+  common: API.GetGlobalConfigResponse;
   customAmountEnabled: boolean;
   customAmountInput: string;
   // Loading states

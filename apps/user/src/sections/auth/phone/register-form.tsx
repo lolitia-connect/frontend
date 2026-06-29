@@ -9,7 +9,6 @@ import {
 } from "@workspace/ui/components/form";
 import { Input } from "@workspace/ui/components/input";
 import { AreaCodeSelect } from "@workspace/ui/composed/area-code-select";
-import { Spinner } from "@workspace/ui/components/spinner";
 import { Markdown } from "@workspace/ui/composed/markdown";
 import type { Dispatch, SetStateAction } from "react";
 import { useRef, useState } from "react";
@@ -195,7 +194,7 @@ export default function RegisterForm({
                 <FormItem>
                   <FormControl>
                     <Input
-                      disabled={loading}
+                      loading={loading}
                       placeholder={t(
                         "placeholders.repeatPassword",
                         "Enter password again..."
@@ -216,7 +215,7 @@ export default function RegisterForm({
                   <FormControl>
                     <div className="flex items-center gap-2">
                       <Input
-                        disabled={loading}
+                        loading={loading}
                         placeholder={t("placeholders.code", "Enter code...")}
                         type="text"
                         {...field}
@@ -246,7 +245,8 @@ export default function RegisterForm({
                 <FormItem>
                   <FormControl>
                     <Input
-                      disabled={loading || !!localStorage.getItem("invite")}
+                      disabled={!!localStorage.getItem("invite")}
+                      loading={loading}
                       placeholder={t(
                         "register.invite",
                         "Invitation Code (Optional)"
@@ -309,8 +309,7 @@ export default function RegisterForm({
                 )}
               />
             )}
-            <Button disabled={loading} type="submit">
-              {loading && <Spinner className="mr-2" />}
+            <Button loading={loading} type="submit">
               {t("register.title", "Register")}
             </Button>
           </form>

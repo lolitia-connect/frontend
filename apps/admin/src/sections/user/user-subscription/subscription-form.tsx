@@ -1,6 +1,5 @@
-﻿import { zodResolver } from "@hookform/resolvers/zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@workspace/ui/components/button";
-import { Spinner } from "@workspace/ui/components/spinner";
 import {
   Form,
   FormControl,
@@ -269,7 +268,7 @@ export function SubscriptionForm({
         </ScrollArea>
         <SheetFooter className="flex-row justify-end gap-2 pt-3">
           <Button
-            disabled={loading}
+            loading={loading}
             onClick={() => {
               setOpen(false);
             }}
@@ -277,8 +276,7 @@ export function SubscriptionForm({
           >
             {t("cancel", "Cancel")}
           </Button>
-          <Button disabled={loading} onClick={form.handleSubmit(handleSubmit)}>
-            {loading && <Spinner className="mr-2" />}
+          <Button loading={loading} onClick={form.handleSubmit(handleSubmit)}>
             {t("confirm", "Confirm")}
           </Button>
         </SheetFooter>

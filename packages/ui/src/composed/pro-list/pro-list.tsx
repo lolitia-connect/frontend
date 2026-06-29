@@ -21,6 +21,7 @@ import {
   type IParams,
 } from "@workspace/ui/composed/pro-list/column-filter";
 import { Pagination } from "@workspace/ui/composed/pro-list/pagination";
+import { RefreshButton } from "@workspace/ui/composed/refresh-button";
 import { cn } from "@workspace/ui/lib/utils";
 import { ListRestart, RefreshCcw } from "lucide-react";
 import type React from "react";
@@ -167,13 +168,13 @@ export function ProList<TData, TValue extends Record<string, unknown>>({
         <div className="flex flex-1 items-center justify-end gap-2">
           {params && params?.length > 0 && (
             <>
-              <Button
+              <RefreshButton
                 className="h-8 w-8 p-2"
                 onClick={fetchData}
                 variant="outline"
               >
                 <RefreshCcw className="h-4 w-4" />
-              </Button>
+              </RefreshButton>
               <Button className="h-8 w-8 p-2" onClick={reset} variant="outline">
                 <ListRestart className="h-4 w-4" />
               </Button>
@@ -227,7 +228,7 @@ export function ProList<TData, TValue extends Record<string, unknown>>({
         {loading && (
           <div className="absolute inset-0 z-20 flex items-center justify-center rounded-md bg-background/70 backdrop-blur-[1px]">
             <div className="rounded-full border bg-background p-3 shadow-sm">
-              <Spinner className="size-5 text-muted-foreground" />
+              <Spinner className="size-6 text-muted-foreground" />
             </div>
           </div>
         )}

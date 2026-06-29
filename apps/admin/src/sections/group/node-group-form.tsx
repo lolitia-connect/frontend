@@ -17,9 +17,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@workspace/ui/components/select";
+import { Spinner } from "@workspace/ui/components/spinner";
 import { Switch } from "@workspace/ui/components/switch";
 import { Textarea } from "@workspace/ui/components/textarea";
-import { AlertCircle, Loader2 } from "lucide-react";
+import { AlertCircle } from "lucide-react";
 import { forwardRef, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -549,7 +550,7 @@ const NodeGroupForm = forwardRef<HTMLButtonElement, NodeGroupFormProps>(
                 disabled={submitting || loading || !!conflictError}
                 type="submit"
               >
-                {submitting && <Loader2 className="h-4 w-4 animate-spin" />}
+                {submitting && <Spinner className="size-4" />}
                 {t("save", "Save")}
               </button>
             </div>

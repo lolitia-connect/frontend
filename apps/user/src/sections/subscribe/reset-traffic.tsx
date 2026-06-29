@@ -10,7 +10,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@workspace/ui/components/dialog";
-import { Spinner } from "@workspace/ui/components/spinner";
 import { resetTraffic } from "@workspace/ui/services/user/order";
 import { useEffect, useState, useTransition } from "react";
 import { useTranslation } from "react-i18next";
@@ -83,7 +82,8 @@ export default function ResetTraffic({
           </div>
           <Button
             className="fixed bottom-0 left-0 w-full rounded-none md:relative md:mt-6"
-            disabled={loading || !params.payment}
+            disabled={!params.payment}
+            loading={loading}
             onClick={async () => {
               startTransition(async () => {
                 try {
@@ -102,7 +102,6 @@ export default function ResetTraffic({
               });
             }}
           >
-            {loading && <Spinner className="mr-2" />}
             {t("buyNow", "Buy Now")}
           </Button>
         </div>

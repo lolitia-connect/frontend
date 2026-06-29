@@ -113,7 +113,7 @@ export default function TrafficStatistics() {
           </CardHeader>
           <CardContent>
             {isLoading ? (
-              <BlockLoading minHeight="300px" size="lg" />
+              <BlockLoading minHeight="300px" />
             ) : trafficStats && trafficStats.list.length > 0 ? (
               <TrafficTrendChart data={trafficStats.list} />
             ) : (
@@ -133,7 +133,7 @@ export default function TrafficStatistics() {
           </CardHeader>
           <CardContent>
             {isLoading ? (
-              <BlockLoading minHeight="300px" size="lg" />
+              <BlockLoading minHeight="300px" />
             ) : trafficStats &&
               (trafficStats.total_upload > 0 ||
                 trafficStats.total_download > 0) ? (

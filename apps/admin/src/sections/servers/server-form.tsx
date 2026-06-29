@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -8,7 +8,6 @@ import {
   AccordionTrigger,
 } from "@workspace/ui/components/accordion";
 import { Badge } from "@workspace/ui/components/badge";
-import { Spinner } from "@workspace/ui/components/spinner";
 import { Button } from "@workspace/ui/components/button";
 import {
   DropdownMenu,
@@ -799,21 +798,20 @@ export default function ServerForm(props: {
         </ScrollArea>
         <SheetFooter className="flex-row justify-end gap-2 pt-3">
           <Button
-            disabled={loading}
+            loading={loading}
             onClick={() => setOpen(false)}
             variant="outline"
           >
             {t("cancel", "Cancel")}
           </Button>
           <Button
-            disabled={loading}
+            loading={loading}
             onClick={form.handleSubmit(handleSubmit, (errors) => {
               const key = Object.keys(errors)[0] as keyof typeof errors;
               if (key) toast.error(String(errors[key]?.message));
               return false;
             })}
           >
-            {loading && <Spinner className="mr-2" />}
             {t("confirm", "Confirm")}
           </Button>
         </SheetFooter>

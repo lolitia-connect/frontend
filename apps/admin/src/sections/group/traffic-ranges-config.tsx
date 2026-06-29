@@ -1,7 +1,7 @@
 "use client";
 
 import { Input } from "@workspace/ui/components/input";
-import { Loader2 } from "lucide-react";
+import { Spinner } from "@workspace/ui/components/spinner";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
@@ -251,7 +251,7 @@ export default function TrafficRangeConfig({
               />
               {isUpdating(nodeGroup.id) && (
                 <div className="absolute top-1/2 right-2 -translate-y-1/2">
-                  <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                  <Spinner className="h-4 w-4 animate-spin text-muted-foreground" />
                 </div>
               )}
             </div>
@@ -279,7 +279,7 @@ export default function TrafficRangeConfig({
               />
               {isUpdating(nodeGroup.id) && (
                 <div className="absolute top-1/2 right-2 -translate-y-1/2">
-                  <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                  <Spinner className="h-4 w-4 animate-spin text-muted-foreground" />
                 </div>
               )}
             </div>

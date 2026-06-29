@@ -5,7 +5,6 @@ import { useNavigate } from "@tanstack/react-router";
 import { Button } from "@workspace/ui/components/button";
 import { Card, CardContent, CardHeader } from "@workspace/ui/components/card";
 import { Separator } from "@workspace/ui/components/separator";
-import { Spinner } from "@workspace/ui/components/spinner";
 import { EnhancedInput } from "@workspace/ui/composed/enhanced-input";
 import { Icon } from "@workspace/ui/composed/icon";
 import { cn } from "@workspace/ui/lib/utils";
@@ -320,7 +319,6 @@ export default function Content({
           onClick={handleSubmit}
           size="lg"
         >
-          {loading && <Spinner className="mr-2" />}
           {t("buyNow", "Buy Now")}
         </Button>
       </div>

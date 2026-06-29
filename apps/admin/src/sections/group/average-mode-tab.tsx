@@ -12,13 +12,13 @@ import {
 } from "@workspace/ui/components/card";
 import { Input } from "@workspace/ui/components/input";
 import { Label } from "@workspace/ui/components/label";
+import { Spinner } from "@workspace/ui/components/spinner";
 import {
   getGroupConfig,
   getNodeGroupList,
   getRecalculationStatus,
   recalculateGroup,
 } from "@workspace/ui/services/admin/group";
-import { Loader2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
@@ -203,7 +203,7 @@ export default function AverageModeTab() {
                 {t("currentStatus", "Current Status")}
               </span>
               {loadingStatus ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <Spinner className="size-4" />
               ) : status ? (
                 <Badge variant={getStateVariant(status.state) as any}>
                   {getStateLabel(status.state)}
@@ -252,12 +252,10 @@ export default function AverageModeTab() {
           {/* Recalculate Button */}
           <div className="flex justify-end">
             <Button
-              disabled={recalculating || status?.state === "running"}
+              disabled={status?.state === "running"}
+              loading={recalculating}
               onClick={handleRecalculate}
             >
-              {recalculating && (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              )}
               {t("recalculateAll", "Recalculate All Users")}
             </Button>
           </div>

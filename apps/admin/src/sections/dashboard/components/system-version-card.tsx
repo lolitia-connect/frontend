@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
@@ -12,7 +12,6 @@ import {
   AlertDialogTrigger,
 } from "@workspace/ui/components/alert-dialog";
 import { Badge } from "@workspace/ui/components/badge";
-import { Spinner } from "@workspace/ui/components/spinner";
 import { Button } from "@workspace/ui/components/button";
 import {
   Card,
@@ -157,7 +156,7 @@ export default function SystemVersionCard() {
                 <AlertDialogFooter>
                   <AlertDialogCancel>{t("cancel", "Cancel")}</AlertDialogCancel>
                   <Button
-                    disabled={isRestarting}
+                    loading={isRestarting}
                     onClick={async () => {
                       setIsRestarting(true);
                       await restartSystem();
@@ -166,7 +165,6 @@ export default function SystemVersionCard() {
                       setOpenRestart(false);
                     }}
                   >
-                    {isRestarting && <Spinner className="mr-2" />}
                     {isRestarting
                       ? t("rebooting", "Rebooting...")
                       : t("confirmReboot", "Confirm Reboot")}
@@ -224,8 +222,7 @@ export default function SystemVersionCard() {
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>{t("cancel", "Cancel")}</AlertDialogCancel>
-                  <Button disabled={isUpdatingWeb} onClick={handleUpdateWeb}>
-                    {isUpdatingWeb && <Spinner className="mr-2" />}
+                  <Button loading={isUpdatingWeb} onClick={handleUpdateWeb}>
                     {t("confirmUpdate", "Confirm Update")}
                   </Button>
                 </AlertDialogFooter>
@@ -291,13 +288,13 @@ export default function SystemVersionCard() {
                 <AlertDialogFooter>
                   <AlertDialogCancel>{t("cancel", "Cancel")}</AlertDialogCancel>
                   <Button
-                    disabled={isUpdatingServer || !moduleConfig}
+                    disabled={!moduleConfig}
+                    loading={isUpdatingServer}
                     onClick={() =>
                       moduleConfig &&
                       updateServerMutation.mutate(moduleConfig.service_name)
                     }
                   >
-                    {isUpdatingServer && <Spinner className="mr-2" />}
                     {t("confirmUpdate", "Confirm Update")}
                   </Button>
                 </AlertDialogFooter>

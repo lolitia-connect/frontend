@@ -50,7 +50,7 @@ export default function ServiceMonitoring() {
       </div>
 
       {isLoading ? (
-        <BlockLoading minHeight="200px" size="lg" />
+        <BlockLoading minHeight="200px" />
       ) : servers.length > 0 ? (
         <div className="grid grid-cols-1 gap-4">
           {servers.map((server: any) => {

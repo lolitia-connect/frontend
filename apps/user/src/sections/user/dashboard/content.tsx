@@ -27,6 +27,7 @@ import {
 import { Separator } from "@workspace/ui/components/separator";
 import { Tabs, TabsList, TabsTrigger } from "@workspace/ui/components/tabs";
 import { Icon } from "@workspace/ui/composed/icon";
+import { RefreshButton } from "@workspace/ui/composed/refresh-button";
 import { cn } from "@workspace/ui/lib/utils";
 import { getClient, getStat } from "@workspace/ui/services/common/common";
 import {
@@ -63,11 +64,7 @@ export default function Content() {
 
   const [protocol, setProtocol] = useState("");
 
-  const {
-    data: userSubscribe = [],
-    refetch,
-    isLoading,
-  } = useQuery({
+  const { data: userSubscribe = [], refetch } = useQuery({
     queryKey: ["queryUserSubscribe"],
     queryFn: async () => {
       const { data } = await queryUserSubscribe();
@@ -147,16 +144,13 @@ export default function Content() {
               {t("mySubscriptions", "My Subscriptions")}
             </h2>
             <div className="flex gap-2">
-              <Button
-                className={isLoading ? "animate-pulse" : ""}
-                onClick={() => {
-                  refetch();
-                }}
+              <RefreshButton
+                onClick={() => refetch()}
                 size="sm"
                 variant="outline"
               >
                 <Icon icon="uil:sync" />
-              </Button>
+              </RefreshButton>
               <Button asChild size="sm">
                 <Link to="/subscribe">
                   {t("purchaseSubscription", "Purchase Subscription")}

@@ -36,6 +36,7 @@
   "select_server": "选择服务器…",
   "server": "服务器",
   "sorted_success": "排序成功",
+  "sortByName": "按名称排序",
   "tags": "标签",
   "tags_description": "权限分组标签（包含计划绑定和投递策略）。",
   "tags_groupMode_description": "可选标签，用于显示和过滤（如果为空，节点组名称将作为标签使用）。",

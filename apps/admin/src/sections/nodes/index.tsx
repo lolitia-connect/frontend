@@ -18,12 +18,14 @@ import {
   deleteNode,
   filterNodeList,
   resetSortWithNode,
+  sortNodeByName,
   toggleNodeStatus,
   updateNode,
 } from "@workspace/ui/services/admin/server";
 import { useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
+import { ArrowDownAZ } from "lucide-react";
 import { useNode } from "@/stores/node";
 import { useServer } from "@/stores/server";
 import NodeForm, { type NodeFormValues } from "./node-form";
@@ -310,9 +312,21 @@ export default function Nodes() {
       header={{
         title: t("pageTitle", "Nodes"),
         toolbar: (
-          <NodeForm
-            loading={loading}
-            onSubmit={async (values) => {
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              onClick={async () => {
+                await sortNodeByName();
+                toast.success(t("sorted_success", "Sorted successfully"));
+                ref.current?.refresh();
+              }}
+            >
+              <ArrowDownAZ className="mr-1 h-4 w-4" />
+              {t("sortByName", "Sort by Name")}
+            </Button>
+            <NodeForm
+              loading={loading}
+              onSubmit={async (values) => {
               setLoading(true);
               try {
                 const body = buildNodePayload(values) as API.CreateNodeRequest;
@@ -331,6 +345,7 @@ export default function Nodes() {
             title={t("drawerCreateTitle", "Create Landing Node")}
             trigger={t("create", "Create Landing Node")}
           />
+          </div>
         ),
       }}
       onSort={async (source, target, items) => {
@@ -344,8 +359,6 @@ export default function Nodes() {
         );
 
         if (sourceIndex === -1 || targetIndex === -1) return items;
-
-        const prevSortById = new Map(items.map((it) => [it.id, it.sort]));
 
         const next = items.slice();
         const [movedItem] = next.splice(sourceIndex, 1);
@@ -368,20 +381,20 @@ export default function Nodes() {
           sort: baseSort + index,
         }));
 
-        const changedItems = updatedItems.filter(
-          (item) => item.sort !== prevSortById.get(item.id)
-        );
+        // Send ALL items on the current page (not just changed ones) so the
+        // backend can re-index globally and avoid cross-page sort conflicts.
+        await resetSortWithNode({
+          sort: updatedItems.map((item) => ({
+            id: item.id,
+            sort: item.sort,
+          })) as API.SortItem[],
+        });
+        toast.success(t("sorted_success", "Sorted successfully"));
 
-        if (changedItems.length > 0) {
-          await resetSortWithNode({
-            // Send all changed rows (within the current page) so backend can persist.
-            sort: changedItems.map((item) => ({
-              id: item.id,
-              sort: item.sort,
-            })) as API.SortItem[],
-          });
-          toast.success(t("sorted_success", "Sorted successfully"));
-        }
+        // Re-fetch from backend to ensure frontend sort values match the
+        // globally re-indexed state. Without this, subsequent drag-sorts
+        // would use stale baseSort values and cause items to jump.
+        ref.current?.refresh();
 
         return updatedItems;
       }}

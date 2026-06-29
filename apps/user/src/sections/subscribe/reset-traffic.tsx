@@ -55,14 +55,14 @@ export default function ResetTraffic({
           {t("resetTraffic", "Reset Traffic")}
         </Button>
       </DialogTrigger>
-      <DialogContent className="flex h-full flex-col overflow-hidden md:h-auto">
-        <DialogHeader>
+      <DialogContent className="flex max-h-[calc(100dvh-2rem)] flex-col overflow-hidden p-0 md:max-h-none">
+        <DialogHeader className="flex-none p-6 pb-0">
           <DialogTitle>{t("resetTrafficTitle", "Reset Traffic")}</DialogTitle>
           <DialogDescription>
             {t("resetTrafficDescription", "Reset your subscription traffic")}
           </DialogDescription>
         </DialogHeader>
-        <div className="flex flex-col justify-between text-sm">
+        <div className="flex-1 overflow-y-auto p-6 pt-0 text-sm">
           <div className="grid gap-3">
             <div className="flex justify-between font-semibold">
               <span>{t("resetPrice", "Reset Price")}</span>
@@ -80,8 +80,10 @@ export default function ResetTraffic({
               value={params.payment}
             />
           </div>
+        </div>
+        <div className="flex-none bg-background px-4 pb-[calc(1rem+env(safe-area-inset-bottom,0px))] md:px-4 md:pb-4">
           <Button
-            className="fixed bottom-0 left-0 w-full rounded-none md:relative md:mt-6"
+            className="w-full"
             disabled={!params.payment}
             loading={loading}
             onClick={async () => {

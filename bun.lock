@@ -70,8 +70,6 @@
       "name": "ppanel-payment-portal",
       "dependencies": {
         "@hookform/resolvers": "^5.4.0",
-        "@stripe/react-stripe-js": "^5.4.0",
-        "@stripe/stripe-js": "^8.5.2",
         "@tailwindcss/vite": "^4.0.6",
         "@tanstack/react-query": "^5.101.0",
         "@workspace/ui": "workspace:*",
@@ -102,8 +100,8 @@
       "dependencies": {
         "@faker-js/faker": "^10.4.0",
         "@lottiefiles/dotlottie-react": "^0.17.15",
-        "@stripe/react-stripe-js": "^5.6.1",
-        "@stripe/stripe-js": "^8.11.0",
+        "@stripe/react-stripe-js": "^5.4.0",
+        "@stripe/stripe-js": "^8.5.2",
         "@tailwindcss/vite": "^4.2.2",
         "@tanstack/match-sorter-utils": "^8.19.4",
         "@tanstack/react-devtools": "^0.7.11",

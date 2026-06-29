@@ -19,6 +19,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@workspace/ui/components/card";
+import { Spinner } from "@workspace/ui/components/spinner";
 import {
   getGroupConfig,
   resetGroups,
@@ -252,14 +253,15 @@ export default function GroupConfig() {
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel loading={resetting}>
+                  <AlertDialogCancel disabled={resetting}>
                     {t("cancel", "Cancel")}
                   </AlertDialogCancel>
                   <AlertDialogAction
                     className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                    loading={resetting}
+                    disabled={resetting}
                     onClick={handleResetGroups}
                   >
+                    {resetting && <Spinner className="mr-2" />}
                     {t("confirm", "Confirm")}
                   </AlertDialogAction>
                 </AlertDialogFooter>

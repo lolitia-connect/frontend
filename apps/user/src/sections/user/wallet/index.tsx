@@ -45,7 +45,7 @@ export default function Wallet() {
   const totalAssets =
     (user?.balance || 0) + (user?.commission || 0) + (user?.gift_amount || 0);
   return (
-    <>
+    <div className="flex flex-col gap-4">
       <Card>
         <CardContent>
           <h2 className="mb-4 font-bold text-2xl text-foreground">
@@ -145,6 +145,6 @@ export default function Wallet() {
           };
         }}
       />
-    </>
+    </div>
   );
 }

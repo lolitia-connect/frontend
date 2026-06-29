@@ -117,11 +117,11 @@ export default function Purchase({
       }}
       open={!!subscribe?.id}
     >
-      <DialogContent className="flex h-full flex-col overflow-hidden border-none p-0 md:h-auto md:max-w-screen-lg">
-        <DialogHeader className="p-6 pb-0">
+      <DialogContent className="flex h-[calc(100dvh-2rem)] flex-col overflow-hidden border-none p-0 md:h-auto md:max-w-screen-lg">
+        <DialogHeader className="flex-none p-6 pb-0">
           <DialogTitle>{t("buySubscription", "Buy Subscription")}</DialogTitle>
         </DialogHeader>
-        <div className="grid w-full flex-grow gap-3 overflow-auto p-6 pt-0 lg:grid-cols-2">
+        <div className="grid w-full flex-1 gap-3 overflow-auto p-6 pt-0 lg:grid-cols-2">
           <Card className="border-transparent shadow-none md:border-inherit md:shadow">
             <CardContent className="grid gap-3 text-sm">
               <SubscribeDetail
@@ -142,7 +142,7 @@ export default function Purchase({
             </CardContent>
           </Card>
           <div className="flex flex-col justify-between text-sm">
-            <div className="mb-6 grid gap-3">
+            <div className="grid gap-3">
               <DurationSelector
                 discounts={subscribe?.discount}
                 onChange={(value) => {
@@ -163,14 +163,16 @@ export default function Purchase({
                 value={params.payment ?? "-1"}
               />
             </div>
-            <Button
-              className="fixed bottom-0 left-0 w-full md:relative md:mt-6"
-              loading={loading}
-              onClick={handleSubmit}
-            >
-              {t("buyNow", "Buy Now")}
-            </Button>
           </div>
+        </div>
+        <div className="flex-none bg-background px-4 pb-[calc(1rem+env(safe-area-inset-bottom,0px))] md:px-4 md:pb-4">
+          <Button
+            className="w-full"
+            loading={loading}
+            onClick={handleSubmit}
+          >
+            {t("buyNow", "Buy Now")}
+          </Button>
         </div>
       </DialogContent>
     </Dialog>

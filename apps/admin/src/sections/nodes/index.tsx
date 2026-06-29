@@ -365,7 +365,6 @@ export default function Nodes() {
         const next = items.slice();
         const [movedItem] = next.splice(sourceIndex, 1);
         next.splice(targetIndex, 0, movedItem!);
-
         // IMPORTANT:
         // Some installations have duplicate / empty `sort` values (commonly 0 or null)
         // which makes the order appear "random" after refresh and also makes
@@ -397,7 +396,6 @@ export default function Nodes() {
         // globally re-indexed state. Without this, subsequent drag-sorts
         // would use stale baseSort values and cause items to jump.
         ref.current?.refresh();
-
         return updatedItems;
       }}
       params={[

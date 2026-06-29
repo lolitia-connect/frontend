@@ -205,7 +205,7 @@ export default function ServerNodeConfig({ server }: { server: API.Server }) {
           {t("server_node_config.trigger", "Node Config")}
         </Button>
       </SheetTrigger>
-      <SheetContent className="w-[700px] max-w-full md:max-w-3xl">
+      <SheetContent className="w-[700px] max-w-full gap-0 md:max-w-3xl">
         <SheetHeader>
           <SheetTitle>
             {t("server_node_config.title", "Node Config")} - {server.name}

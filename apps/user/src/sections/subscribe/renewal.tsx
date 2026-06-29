@@ -167,11 +167,7 @@ export default function Renewal({ id, subscribe }: Readonly<RenewalProps>) {
           </div>
         </div>
         <div className="flex-none bg-background px-4 pb-[calc(1rem+env(safe-area-inset-bottom,0px))] md:px-4 md:pb-4">
-          <Button
-            className="w-full"
-            loading={loading}
-            onClick={handleSubmit}
-          >
+          <Button className="w-full" loading={loading} onClick={handleSubmit}>
             {t("buyNow", "Buy Now")}
           </Button>
         </div>

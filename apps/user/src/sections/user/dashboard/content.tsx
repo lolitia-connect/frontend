@@ -27,7 +27,6 @@ import {
 import { Separator } from "@workspace/ui/components/separator";
 import { Tabs, TabsList, TabsTrigger } from "@workspace/ui/components/tabs";
 import { Icon } from "@workspace/ui/composed/icon";
-import { RefreshButton } from "@workspace/ui/composed/refresh-button";
 import { cn } from "@workspace/ui/lib/utils";
 import { getClient, getStat } from "@workspace/ui/services/common/common";
 import {
@@ -64,7 +63,11 @@ export default function Content() {
 
   const [protocol, setProtocol] = useState("");
 
-  const { data: userSubscribe = [], refetch } = useQuery({
+  const {
+    data: userSubscribe = [],
+    refetch,
+    isLoading,
+  } = useQuery({
     queryKey: ["queryUserSubscribe"],
     queryFn: async () => {
       const { data } = await queryUserSubscribe();
@@ -144,13 +147,16 @@ export default function Content() {
               {t("mySubscriptions", "My Subscriptions")}
             </h2>
             <div className="flex gap-2">
-              <RefreshButton
-                onClick={() => refetch()}
+              <Button
+                className={isLoading ? "animate-pulse" : ""}
+                onClick={() => {
+                  refetch();
+                }}
                 size="sm"
                 variant="outline"
               >
                 <Icon icon="uil:sync" />
-              </RefreshButton>
+              </Button>
               <Button asChild size="sm">
                 <Link to="/subscribe">
                   {t("purchaseSubscription", "Purchase Subscription")}
@@ -318,7 +324,6 @@ export default function Content() {
                       <ResetTraffic
                         id={item.id}
                         replacement={item.subscribe.replacement}
-                        trafficUnlimited={item.traffic_unlimited}
                       />
                       {item.expire_time !== 0 && item.subscribe.sell && (
                         <Renewal id={item.id} subscribe={item.subscribe} />
@@ -340,7 +345,7 @@ export default function Content() {
                       <span className="font-bold text-2xl">
                         <Display
                           type="traffic"
-                          unlimited={item.traffic_unlimited}
+                          unlimited={!item.traffic}
                           value={item.upload + item.download}
                         />
                       </span>
@@ -352,7 +357,7 @@ export default function Content() {
                       <span className="font-bold text-2xl">
                         <Display
                           type="traffic"
-                          unlimited={item.traffic_unlimited}
+                          unlimited={!item.traffic}
                           value={item.traffic}
                         />
                       </span>
@@ -430,11 +435,19 @@ export default function Content() {
                               {applications
                                 ?.filter(
                                   (application) =>
-                                    !!application.download_link?.[platform]
+                                    !!(
+                                      application.download_link?.[platform] &&
+                                      application.scheme
+                                    )
                                 )
                                 .map((application) => {
                                   const downloadUrl =
                                     application.download_link?.[platform];
+
+                                  // Check if scheme template outputs the raw URL (which would be http(s)://)
+                                  // rather than the scheme prefix itself
+                                  const isHttpLink =
+                                    application.scheme?.startsWith("${url}");
 
                                   const handleCopy = (
                                     _: string,
@@ -448,7 +461,9 @@ export default function Content() {
 
                                       // Check if the generated link is a plain HTTP/HTTPS URL
                                       // If so, only copy to clipboard without triggering redirect
-                                      const isPlainHttpUrl = /^https?:/; //i.test(href);
+                                      const isPlainHttpUrl = /^https?:/i.test(
+                                        href
+                                      );
 
                                       if (isPlainHttpUrl) {
                                         toast.success(
@@ -474,7 +489,7 @@ export default function Content() {
                                         );
                                       };
 
-                                      if (isBrowser() && href) {
+                                      if (isBrowser() && href && !isHttpLink) {
                                         window.location.href = href;
                                         const checkRedirect = setTimeout(() => {
                                           if (window.location.href !== href) {
@@ -543,7 +558,12 @@ export default function Content() {
                                               }
                                               size="sm"
                                             >
-                                              {t("import", "Import")}
+                                              {isHttpLink
+                                                ? t(
+                                                    "clickToCopy",
+                                                    "Click to Copy"
+                                                  )
+                                                : t("import", "Import")}
                                             </Button>
                                           </CopyToClipboard>
                                         )}

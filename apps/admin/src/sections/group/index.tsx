@@ -26,7 +26,7 @@ export default function Group() {
       </h2>
 
       <Tabs defaultValue="config">
-        <TabsList className="flex flex-wrap gap-2">
+        <TabsList className="flex h-auto w-full flex-wrap gap-2">
           <TabsTrigger value="config">{t("config", "Config")}</TabsTrigger>
           {/* <TabsTrigger value="user">
             {t("userGroups", "User Groups")}

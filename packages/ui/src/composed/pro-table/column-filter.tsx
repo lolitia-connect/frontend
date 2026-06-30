@@ -3,6 +3,7 @@
 import type { Table } from "@tanstack/react-table";
 import { Input } from "@workspace/ui/components/input";
 import { Combobox } from "@workspace/ui/composed/combobox";
+import { cn } from "@workspace/ui/lib/utils";
 
 export interface IParams {
   key: string;
@@ -11,6 +12,7 @@ export interface IParams {
   type?: "text" | "select" | "date";
 }
 interface ColumnFilterProps<TData> {
+  className?: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   filters?: any;
   params: IParams[];
@@ -18,6 +20,7 @@ interface ColumnFilterProps<TData> {
 }
 
 export function ColumnFilter<TData>({
+  className,
   table,
   params,
   filters,
@@ -42,12 +45,12 @@ export function ColumnFilter<TData>({
   };
 
   return (
-    <div className="flex gap-2">
+    <div className={cn("flex flex-wrap gap-2", className)}>
       {params.map((param) => {
         if (param.options || param.type === "select") {
           return (
             <Combobox
-              className="min-w-32 max-w-48"
+              className="min-w-32 max-w-48 flex-1"
               key={param.key}
               onChange={(value) => {
                 updateFilter(param.key, value);
@@ -68,7 +71,7 @@ export function ColumnFilter<TData>({
                 : "";
           return (
             <Input
-              className="block min-w-32"
+              className="flex-1 min-w-32"
               key={param.key}
               onChange={(event) => {
                 const v = event.target.value;
@@ -82,7 +85,7 @@ export function ColumnFilter<TData>({
         }
         return (
           <Input
-            className="min-w-32"
+            className="flex-1 min-w-32"
             key={param.key}
             onChange={(event) => updateFilter(param.key, event.target.value)}
             placeholder={param.placeholder || "Search..."}

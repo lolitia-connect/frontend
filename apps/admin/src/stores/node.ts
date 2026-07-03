@@ -18,7 +18,7 @@ interface NodeState {
   getNodeTags: () => string[];
   isProtocolUsedInNodes: (
     serverId: string | number,
-    protocolType: string
+    protocolId: string
   ) => boolean;
   isServerReferencedByNodes: (serverId: string | number) => boolean;
   loaded: boolean;
@@ -82,11 +82,11 @@ export const useNodeStore = create<NodeState>((set, get) => ({
   getNodeById: (nodeId: string | number) =>
     get().nodes.find((n) => String(n.id) === String(nodeId)),
 
-  isProtocolUsedInNodes: (serverId: string | number, protocolType: string) =>
+  isProtocolUsedInNodes: (serverId: string | number, protocolId: string) =>
     get().nodes.some(
       (node) =>
         String(node.server_id) === String(serverId) &&
-        node.protocol === protocolType
+        (node.protocol_id || node.protocol) === protocolId
     ),
 
   isServerReferencedByNodes: (serverId: string | number) =>

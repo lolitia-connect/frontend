@@ -103,6 +103,8 @@ const buildSchema = (t: TFunction) =>
 
 export type NodeFormValues = z.infer<ReturnType<typeof buildSchema>>;
 
+type NodeSubmitValues = NodeFormValues & { protocol_id?: string };
+
 function normalizeValues(v?: Partial<NodeFormValues>): Partial<NodeFormValues> {
   if (!v) return {};
   return { ...v, tags: Array.isArray(v.tags) ? v.tags : [] };
@@ -113,7 +115,7 @@ export default function NodeForm(props: {
   title: string;
   loading?: boolean;
   initialValues?: Partial<NodeFormValues>;
-  onSubmit: (values: NodeFormValues) => Promise<boolean> | boolean;
+  onSubmit: (values: NodeSubmitValues) => Promise<boolean> | boolean;
 }) {
   const { trigger, title, loading, initialValues, onSubmit } = props;
   const { t } = useTranslation("nodes");
@@ -214,7 +216,11 @@ export default function NodeForm(props: {
       if (initialValues.name) resetValues.name = initialValues.name;
       if (initialValues.server_id)
         resetValues.server_id = initialValues.server_id;
-      if (initialValues.protocol) resetValues.protocol = initialValues.protocol;
+      if ((initialValues as any).protocol_id) {
+        resetValues.protocol = (initialValues as any).protocol_id;
+      } else if (initialValues.protocol) {
+        resetValues.protocol = initialValues.protocol;
+      }
       if (initialValues.address) resetValues.address = initialValues.address;
       if (initialValues.port) resetValues.port = initialValues.port;
       if (initialValues.tags) resetValues.tags = initialValues.tags;
@@ -277,7 +283,7 @@ export default function NodeForm(props: {
       firstProtocol &&
       (!currentValues.protocol || autoFilledFields.has("protocol"))
     ) {
-      form.setValue("protocol", firstProtocol.protocol, { shouldDirty: false });
+      form.setValue("protocol", firstProtocol.id, { shouldDirty: false });
       fieldsToFill.push("protocol");
 
       if (
@@ -302,11 +308,11 @@ export default function NodeForm(props: {
     removeAutoFilledField(fieldName);
   };
 
-  function handleProtocolChange(nextProto?: ProtocolName | null) {
-    const protocol = (nextProto || "") as ProtocolName | "";
-    form.setValue("protocol", protocol);
+  function handleProtocolChange(nextProto?: string | null) {
+    const protocolId = nextProto || "";
+    form.setValue("protocol", protocolId);
 
-    if (!(protocol && serverId)) {
+    if (!(protocolId && serverId)) {
       removeAutoFilledField("protocol");
       return;
     }
@@ -318,7 +324,7 @@ export default function NodeForm(props: {
 
     if (!currentValues.port || currentValues.port === 0 || isPortAutoFilled) {
       const protocolData = availableProtocols.find(
-        (p) => p.protocol === protocol
+        (p) => p.id === protocolId
       );
 
       if (protocolData) {
@@ -330,14 +336,22 @@ export default function NodeForm(props: {
   }
 
   async function handleSubmit(values: NodeFormValues) {
+    const selectedProtocol = availableProtocols.find(
+      (p) => p.id === values.protocol
+    );
     const normalizedValues =
       values.node_type === "front"
         ? {
             ...values,
             server_id: undefined,
             protocol: "",
+            protocol_id: "",
           }
-        : values;
+        : {
+            ...values,
+            protocol: selectedProtocol?.protocol || values.protocol,
+            protocol_id: selectedProtocol?.id || values.protocol,
+          };
 
     const result = await onSubmit(normalizedValues);
     if (result) {
@@ -443,11 +457,11 @@ export default function NodeForm(props: {
                       <FormControl>
                         <Combobox<string, false>
                           onChange={(v) =>
-                            handleProtocolChange((v as ProtocolName) || null)
+                            handleProtocolChange(v || null)
                           }
                           options={availableProtocols.map((p) => ({
-                            value: p.protocol,
-                            label: `${p.protocol}${p.port ? ` (${p.port})` : ""}`,
+                            value: p.id,
+                            label: `${p.name || p.id} / ${p.protocol}${p.port ? ` (${p.port})` : ""}`,
                           }))}
                           placeholder={t("select_protocol", "Select protocol…")}
                           value={field.value}

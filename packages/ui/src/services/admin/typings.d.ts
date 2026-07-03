@@ -344,6 +344,7 @@ declare namespace API {
     address: string;
     server_id?: string;
     protocol?: string;
+    protocol_id?: string;
     enabled?: boolean;
     node_type?: string;
     is_hidden?: boolean;
@@ -1467,6 +1468,7 @@ declare namespace API {
     address: string;
     server_id: string;
     protocol: string;
+    protocol_id?: string;
     enabled: boolean;
     node_type?: string;
     is_hidden?: boolean;
@@ -1702,6 +1704,10 @@ declare namespace API {
   };
 
   type Protocol = {
+    /** Stable protocol instance id. Not tied to display name. */
+    id?: string;
+    /** Optional display name. */
+    name?: string;
     type: string;
     port: number;
     enable: boolean;
@@ -2450,6 +2456,7 @@ declare namespace API {
     address: string;
     server_id?: string;
     protocol?: string;
+    protocol_id?: string;
     enabled?: boolean;
     node_type?: string;
     is_hidden?: boolean;

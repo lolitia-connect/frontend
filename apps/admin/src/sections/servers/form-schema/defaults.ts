@@ -5,6 +5,8 @@ export function getProtocolDefaultConfig(proto: ProtocolType) {
   switch (proto) {
     case "shadowsocks":
       return {
+        id: "",
+        name: "",
         type: "shadowsocks",
         enable: false,
         port: null,
@@ -24,6 +26,8 @@ export function getProtocolDefaultConfig(proto: ProtocolType) {
       } as any;
     case "vmess":
       return {
+        id: "",
+        name: "",
         type: "vmess",
         enable: false,
         host: null,
@@ -44,6 +48,8 @@ export function getProtocolDefaultConfig(proto: ProtocolType) {
       } as any;
     case "vless":
       return {
+        id: "",
+        name: "",
         type: "vless",
         enable: false,
         host: null,
@@ -80,6 +86,8 @@ export function getProtocolDefaultConfig(proto: ProtocolType) {
       } as any;
     case "trojan":
       return {
+        id: "",
+        name: "",
         type: "trojan",
         enable: false,
         host: null,
@@ -100,6 +108,8 @@ export function getProtocolDefaultConfig(proto: ProtocolType) {
       } as any;
     case "hysteria":
       return {
+        id: "",
+        name: "",
         type: "hysteria",
         enable: false,
         port: null,
@@ -122,6 +132,8 @@ export function getProtocolDefaultConfig(proto: ProtocolType) {
       } as any;
     case "tuic":
       return {
+        id: "",
+        name: "",
         type: "tuic",
         enable: false,
         port: null,
@@ -142,6 +154,8 @@ export function getProtocolDefaultConfig(proto: ProtocolType) {
       } as any;
     case "socks":
       return {
+        id: "",
+        name: "",
         type: "socks",
         enable: false,
         port: null,
@@ -149,6 +163,8 @@ export function getProtocolDefaultConfig(proto: ProtocolType) {
       } as any;
     case "naive":
       return {
+        id: "",
+        name: "",
         type: "naive",
         enable: false,
         port: null,
@@ -165,6 +181,8 @@ export function getProtocolDefaultConfig(proto: ProtocolType) {
       } as any;
     case "http":
       return {
+        id: "",
+        name: "",
         type: "http",
         enable: false,
         port: null,
@@ -181,6 +199,8 @@ export function getProtocolDefaultConfig(proto: ProtocolType) {
       } as any;
     case "mieru":
       return {
+        id: "",
+        name: "",
         type: "mieru",
         enable: false,
         port: null,
@@ -189,6 +209,8 @@ export function getProtocolDefaultConfig(proto: ProtocolType) {
       } as any;
     case "anytls":
       return {
+        id: "",
+        name: "",
         type: "anytls",
         enable: false,
         port: null,

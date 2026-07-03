@@ -75,11 +75,13 @@ export default function Nodes() {
     if (isFrontNode) {
       payload.server_id = undefined;
       payload.protocol = undefined;
+      payload.protocol_id = undefined;
       return payload;
     }
 
     payload.server_id = values.server_id;
     payload.protocol = values.protocol;
+    payload.protocol_id = values.protocol_id;
     return payload;
   };
 
@@ -139,7 +141,7 @@ export default function Nodes() {
         id: "protocol",
         header: ` ${t("protocol", "Protocol")}:${t("port", "Port")}`,
         cell: ({ row }: { row: any }) =>
-          `${row.original.protocol}:${getProtocolPort(row.original.server_id, row.original.protocol)}`,
+          `${row.original.protocol}:${row.original.protocol_id || "—"}:${getProtocolPort(row.original.server_id, row.original.protocol, row.original.protocol_id)}`,
       },
       {
         id: "tags",

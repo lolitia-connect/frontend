@@ -71,7 +71,7 @@ export function ColumnFilter<TData>({
                 : "";
           return (
             <Input
-              className="flex-1 min-w-32"
+              className="min-w-32 flex-1"
               key={param.key}
               onChange={(event) => {
                 const v = event.target.value;
@@ -85,7 +85,7 @@ export function ColumnFilter<TData>({
         }
         return (
           <Input
-            className="flex-1 min-w-32"
+            className="min-w-32 flex-1"
             key={param.key}
             onChange={(event) => updateFilter(param.key, event.target.value)}
             placeholder={param.placeholder || "Search..."}

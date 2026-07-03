@@ -81,6 +81,16 @@ function getVisibleRequiredFields(
   );
 }
 
+function nextProtocolId(protocols: any[], type: ProtocolType) {
+  const maxId = protocols
+    .filter((p) => p?.type === type)
+    .reduce((max, p) => {
+      const id = Number(p?.id || 0);
+      return Number.isFinite(id) && id > max ? id : max;
+    }, 0);
+  return String(maxId + 1);
+}
+
 function DynamicField({
   field,
   control,
@@ -412,6 +422,30 @@ export default function ServerForm(props: {
 
   const protocolsValues = useWatch({ control, name: "protocols" });
 
+  function addProtocolInstance(type: ProtocolType) {
+    const current = form.getValues("protocols") || [];
+    const id = nextProtocolId(current, type);
+    const next = {
+      ...getProtocolDefaultConfig(type),
+      id,
+      name: `${type} ${id}`,
+      type,
+      enable: true,
+    };
+    form.setValue("protocols", [...current, next], { shouldDirty: true });
+    setAccordionValue(`${type}:${id}:${current.length}`);
+  }
+
+  function removeProtocolInstance(index: number) {
+    const current = form.getValues("protocols") || [];
+    form.setValue(
+      "protocols",
+      current.filter((_: any, i: number) => i !== index),
+      { shouldDirty: true }
+    );
+    if (accordionValue) setAccordionValue(undefined);
+  }
+
   useEffect(() => {
     if (initialValues) {
       form.reset({
@@ -420,27 +454,23 @@ export default function ServerForm(props: {
         country: "",
         city: "",
         ...initialValues,
-        protocols: PROTOCOLS.map((type) => {
-          const existingProtocol = initialValues.protocols?.find(
-            (p) => p.type === type
-          );
-          const defaultConfig = getProtocolDefaultConfig(type);
-          return existingProtocol
-            ? { ...defaultConfig, ...existingProtocol }
-            : defaultConfig;
-        }),
+        protocols: (initialValues.protocols || []).map((protocol) => ({
+          ...getProtocolDefaultConfig(protocol.type as ProtocolType),
+          ...protocol,
+        })),
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialValues]);
 
   function validateEnabledProtocols(values: Record<string, any>) {
-    let firstInvalidProtocol: ProtocolType | undefined;
+    let firstInvalidProtocol: string | undefined;
 
     for (const [index, protocol] of (values?.protocols || []).entries()) {
       if (!protocol?.enable) continue;
 
       const protocolType = protocol.type as ProtocolType;
+      const protocolKey = `${protocolType}:${protocol.id || index}:${index}`;
       const fields = PROTOCOL_FIELDS[protocolType] || [];
       const requiredFields = getVisibleRequiredFields(fields, protocol);
 
@@ -470,7 +500,7 @@ export default function ServerForm(props: {
                 }
               ),
             });
-            firstInvalidProtocol ??= protocolType;
+            firstInvalidProtocol ??= protocolKey;
           }
           continue;
         }
@@ -489,7 +519,7 @@ export default function ServerForm(props: {
                 { field: field.label }
               ),
             });
-            firstInvalidProtocol ??= protocolType;
+            firstInvalidProtocol ??= protocolKey;
           }
           continue;
         }
@@ -506,7 +536,7 @@ export default function ServerForm(props: {
               field: field.label,
             }),
           });
-          firstInvalidProtocol ??= protocolType;
+          firstInvalidProtocol ??= protocolKey;
         }
       }
     }
@@ -562,13 +592,12 @@ export default function ServerForm(props: {
         <Button
           onClick={() => {
             if (!initialValues) {
-              const full = PROTOCOLS.map((t) => getProtocolDefaultConfig(t));
               form.reset({
                 name: "",
                 address: "",
                 country: "",
                 city: "",
-                protocols: full,
+                protocols: [],
               });
             }
             setOpen(true);
@@ -654,16 +683,36 @@ export default function ServerForm(props: {
                   )}
                 />
               </div>
-              <div className="my-3">
-                <h3 className="font-semibold text-foreground text-sm">
-                  {t("protocol_configurations", "Protocol Configurations")}
-                </h3>
-                <p className="mt-1 text-muted-foreground text-xs">
-                  {t(
-                    "protocol_configurations_desc",
-                    "Enable and configure the required protocol types"
-                  )}
-                </p>
+              <div className="my-3 flex items-start justify-between gap-3">
+                <div>
+                  <h3 className="font-semibold text-foreground text-sm">
+                    {t("protocol_configurations", "Protocol Configurations")}
+                  </h3>
+                  <p className="mt-1 text-muted-foreground text-xs">
+                    {t(
+                      "protocol_configurations_desc",
+                      "Enable and configure the required protocol types"
+                    )}
+                  </p>
+                </div>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button size="sm" type="button" variant="outline">
+                      <Icon icon="mdi:plus" />
+                      {t("add_protocol", "Add")}
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    {PROTOCOLS.map((type) => (
+                      <DropdownMenuItem
+                        key={type}
+                        onClick={() => addProtocolInstance(type)}
+                      >
+                        {type}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
 
               <Accordion
@@ -673,26 +722,34 @@ export default function ServerForm(props: {
                 type="single"
                 value={accordionValue}
               >
-                {PROTOCOLS.map((type) => {
-                  const i = Math.max(0, PROTOCOLS.indexOf(type));
+                {(protocolsValues || []).map((protocol, i) => {
+                  const type = protocol?.type as ProtocolType;
                   const current = (protocolsValues[i] || {}) as Record<
                     string,
                     any
                   >;
+                  if (!type) return null;
+                  const protoId = current.id || i + 1;
+                  const itemValue = `${type}:${protoId}:${i}`;
                   const isEnabled = current?.enable;
                   const fields = PROTOCOL_FIELDS[type] || [];
                   return (
                     <AccordionItem
                       className="mb-2 rounded-lg border"
-                      key={type}
-                      value={type}
+                      key={itemValue}
+                      value={itemValue}
                     >
                       <AccordionTrigger className="px-4 py-3 hover:no-underline">
                         <div className="flex w-full items-center justify-between">
                           <div className="flex flex-col items-start gap-1">
                             <div className="flex items-center gap-1">
-                              <span className="font-medium capitalize">
+                              <Badge className="text-xs" variant="secondary">
                                 {type}
+                              </Badge>
+                              <span className="font-medium">
+                                {current.name
+                                  ? `${current.name}#${protoId}`
+                                  : `#${protoId}`}
                               </span>
                               {current.transport && (
                                 <Badge className="text-xs" variant="secondary">
@@ -726,35 +783,91 @@ export default function ServerForm(props: {
                               </span>
                             </div>
                           </div>
-                          <Switch
+                          <div className="flex items-center gap-1">
+                            {!(
+                              initialValues?.id &&
+                              isProtocolUsedInNodes(
+                                initialValues.id,
+                                type,
+                                current.id
+                              ) &&
+                              isEnabled
+                            ) && (
+                              <Button
+                                className="h-7 w-7"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  removeProtocolInstance(i);
+                                }}
+                                size="icon"
+                                type="button"
+                                variant="ghost"
+                              >
+                                <Icon className="h-4 w-4" icon="mdi:close" />
+                              </Button>
+                            )}
+                            <Switch
                             checked={!!isEnabled}
                             className="mr-2"
                             disabled={Boolean(
                               initialValues?.id &&
                                 isProtocolUsedInNodes(
                                   initialValues?.id || 0,
-                                  type
+                                  type,
+                                  current.id
                                 ) &&
                                 isEnabled
                             )}
                             onCheckedChange={(checked) => {
                               form.setValue(`protocols.${i}.enable`, checked);
                               if (checked) {
-                                setAccordionValue(type);
+                                setAccordionValue(itemValue);
                                 return;
                               }
 
-                              if (accordionValue === type) {
+                              if (accordionValue === itemValue) {
                                 setAccordionValue(undefined);
                               }
                               form.clearErrors(`protocols.${i}` as any);
                             }}
                             onClick={(e) => e.stopPropagation()}
                           />
+                          </div>
                         </div>
                       </AccordionTrigger>
                       <AccordionContent className="px-4 pt-0 pb-4">
                         <div className="-mx-4 space-y-4 rounded-b-lg border-t px-4 pt-4">
+                          {/* ID (read-only) and name (editable) */}
+                          <div className="grid grid-cols-2 gap-4">
+                            <FormField
+                              control={control}
+                              name={`protocols.${i}.id`}
+                              render={({ field: fp }) => (
+                                <FormItem>
+                                  <FormLabel>ID</FormLabel>
+                                  <FormControl>
+                                    <EnhancedInput {...fp} disabled />
+                                  </FormControl>
+                                </FormItem>
+                              )}
+                            />
+                            <FormField
+                              control={control}
+                              name={`protocols.${i}.name`}
+                              render={({ field: fp }) => (
+                                <FormItem>
+                                  <FormLabel>{t("protocol_name", "Name")}</FormLabel>
+                                  <FormControl>
+                                    <EnhancedInput
+                                      {...fp}
+                                      onValueChange={(v) => fp.onChange(v)}
+                                      placeholder={t("protocol_name_placeholder", "Display name")}
+                                    />
+                                  </FormControl>
+                                </FormItem>
+                              )}
+                            />
+                          </div>
                           {renderGroupCard(
                             t("basic", "Basic Configuration"),
                             fields,

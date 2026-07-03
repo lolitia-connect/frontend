@@ -6,8 +6,12 @@ interface ServerState {
   fetchServers: () => Promise<void>;
   getAvailableProtocols: (
     serverId?: string | number
-  ) => Array<{ protocol: string; port: number }>;
-  getProtocolPort: (serverId?: string | number, protocol?: string) => string;
+  ) => Array<{ id: string; name?: string; protocol: string; port: number }>;
+  getProtocolPort: (
+    serverId?: string | number,
+    protocol?: string,
+    protocolId?: string
+  ) => string;
   getServerAddress: (serverId?: string | number) => string;
 
   // Getters
@@ -68,10 +72,18 @@ export const useServerStore = create<ServerState>((set, get) => ({
     return server?.protocols?.filter((p) => p.enable) || [];
   },
 
-  getProtocolPort: (serverId?: string | number, protocol?: string) => {
+  getProtocolPort: (
+    serverId?: string | number,
+    protocol?: string,
+    protocolId?: string
+  ) => {
     if (!(serverId && protocol)) return "—";
     const enabledProtocols = get().getServerEnabledProtocols(serverId);
-    const protocolConfig = enabledProtocols.find((p) => p.type === protocol);
+    const protocolConfig = enabledProtocols.find(
+      (p) =>
+        p.type === protocol &&
+        (!protocolId || String(p.id) === String(protocolId))
+    );
     return protocolConfig?.port ? String(protocolConfig.port) : "—";
   },
 
@@ -80,6 +92,8 @@ export const useServerStore = create<ServerState>((set, get) => ({
     return get()
       .getServerEnabledProtocols(serverId)
       .map((p) => ({
+        id: p.id || "",
+        name: p.name,
         protocol: p.type,
         port: p.port,
       }));

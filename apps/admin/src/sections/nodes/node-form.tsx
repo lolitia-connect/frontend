@@ -60,6 +60,7 @@ const buildSchema = (t: TFunction) =>
         .min(1, t("errors.nameRequired", "Please enter a name")),
       server_id: z.string().optional(),
       protocol: z.string().default(""),
+      protocol_id: z.string().default(""),
       address: z
         .string()
         .trim()
@@ -93,6 +94,14 @@ const buildSchema = (t: TFunction) =>
       }
 
       if (!values.protocol.trim()) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: t("errors.protocolRequired", "Please select a protocol"),
+          path: ["protocol"],
+        });
+      }
+
+      if (!values.protocol_id.trim()) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: t("errors.protocolRequired", "Please select a protocol"),
@@ -143,6 +152,7 @@ export default function NodeForm(props: {
       name: "",
       server_id: undefined,
       protocol: "",
+      protocol_id: "",
       address: "",
       port: 0,
       tags: [],
@@ -192,6 +202,7 @@ export default function NodeForm(props: {
 
     form.setValue("server_id", undefined, { shouldDirty: true });
     form.setValue("protocol", "", { shouldDirty: true });
+    form.setValue("protocol_id", "", { shouldDirty: true });
     removeAutoFilledField("protocol");
     form.clearErrors(["server_id", "protocol"]);
   }, [form, isFrontNode]);
@@ -202,6 +213,7 @@ export default function NodeForm(props: {
         name: "",
         server_id: undefined,
         protocol: "",
+        protocol_id: "",
         address: "",
         port: 0,
         tags: [],
@@ -215,6 +227,8 @@ export default function NodeForm(props: {
       if (initialValues.server_id)
         resetValues.server_id = initialValues.server_id;
       if (initialValues.protocol) resetValues.protocol = initialValues.protocol;
+      if ((initialValues as any).protocol_id)
+        resetValues.protocol_id = (initialValues as any).protocol_id;
       if (initialValues.address) resetValues.address = initialValues.address;
       if (initialValues.port) resetValues.port = initialValues.port;
       if (initialValues.tags) resetValues.tags = initialValues.tags;
@@ -278,6 +292,7 @@ export default function NodeForm(props: {
       (!currentValues.protocol || autoFilledFields.has("protocol"))
     ) {
       form.setValue("protocol", firstProtocol.protocol, { shouldDirty: false });
+      form.setValue("protocol_id", firstProtocol.id, { shouldDirty: false });
       fieldsToFill.push("protocol");
 
       if (
@@ -302,11 +317,16 @@ export default function NodeForm(props: {
     removeAutoFilledField(fieldName);
   };
 
-  function handleProtocolChange(nextProto?: ProtocolName | null) {
-    const protocol = (nextProto || "") as ProtocolName | "";
+  function handleProtocolChange(nextProtocolId?: string | null) {
+    const key = nextProtocolId || "";
+    const sep = key.indexOf(":");
+    const proto = sep >= 0 ? key.slice(0, sep) : "";
+    const id = sep >= 0 ? key.slice(sep + 1) : key;
+    const protocol = proto as ProtocolName | "";
     form.setValue("protocol", protocol);
+    form.setValue("protocol_id", id);
 
-    if (!(protocol && serverId)) {
+    if (!(protocol && id && serverId)) {
       removeAutoFilledField("protocol");
       return;
     }
@@ -316,16 +336,16 @@ export default function NodeForm(props: {
 
     removeAutoFilledField("protocol");
 
-    if (!currentValues.port || currentValues.port === 0 || isPortAutoFilled) {
-      const protocolData = availableProtocols.find(
-        (p) => p.protocol === protocol
-      );
-
-      if (protocolData) {
-        const port = protocolData.port || 0;
-        form.setValue("port", port, { shouldDirty: false });
-        addAutoFilledField("port");
-      }
+    const protocolData = availableProtocols.find(
+      (p) => p.protocol === protocol && String(p.id) === String(id)
+    );
+    if (
+      (!currentValues.port || currentValues.port === 0 || isPortAutoFilled) &&
+      protocolData
+    ) {
+      const port = protocolData.port || 0;
+      form.setValue("port", port, { shouldDirty: false });
+      addAutoFilledField("port");
     }
   }
 
@@ -336,6 +356,7 @@ export default function NodeForm(props: {
             ...values,
             server_id: undefined,
             protocol: "",
+            protocol_id: "",
           }
         : values;
 
@@ -355,6 +376,7 @@ export default function NodeForm(props: {
               name: "",
               server_id: undefined,
               protocol: "",
+              protocol_id: "",
               address: "",
               port: 0,
               tags: [],
@@ -437,20 +459,22 @@ export default function NodeForm(props: {
                 <FormField
                   control={form.control}
                   name="protocol"
-                  render={({ field }) => (
+                  render={() => (
                     <FormItem>
                       <FormLabel>{t("protocol", "Protocol")}</FormLabel>
                       <FormControl>
                         <Combobox<string, false>
-                          onChange={(v) =>
-                            handleProtocolChange((v as ProtocolName) || null)
-                          }
+                          onChange={(v) => handleProtocolChange(v || null)}
                           options={availableProtocols.map((p) => ({
-                            value: p.protocol,
-                            label: `${p.protocol}${p.port ? ` (${p.port})` : ""}`,
+                            value: `${p.protocol}:${p.id}`,
+                            label: `${p.name || p.protocol} / ${p.protocol}#${p.id}${p.port ? ` (${p.port})` : ""}`,
                           }))}
                           placeholder={t("select_protocol", "Select protocol…")}
-                          value={field.value}
+                          value={
+                            form.watch("protocol") && form.watch("protocol_id")
+                              ? `${form.watch("protocol")}:${form.watch("protocol_id")}`
+                              : ""
+                          }
                         />
                       </FormControl>
                       <FormMessage />

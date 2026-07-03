@@ -20,6 +20,8 @@ const nullablePort = z.number().int().min(0).max(65_535).nullish();
 const nullableRatio = z.number().min(0).nullish();
 
 const ss = z.object({
+  id: z.string().optional(),
+  name: z.string().optional(),
   ratio: nullableRatio,
   type: z.literal("shadowsocks"),
   enable: nullableBool,
@@ -37,6 +39,8 @@ const ss = z.object({
 });
 
 const vmess = z.object({
+  id: z.string().optional(),
+  name: z.string().optional(),
   ratio: nullableRatio,
   type: z.literal("vmess"),
   enable: nullableBool,
@@ -57,6 +61,8 @@ const vmess = z.object({
 });
 
 const vless = z.object({
+  id: z.string().optional(),
+  name: z.string().optional(),
   ratio: nullableRatio,
   type: z.literal("vless"),
   enable: nullableBool,
@@ -93,6 +99,8 @@ const vless = z.object({
 });
 
 const trojan = z.object({
+  id: z.string().optional(),
+  name: z.string().optional(),
   ratio: nullableRatio,
   type: z.literal("trojan"),
   enable: nullableBool,
@@ -113,6 +121,8 @@ const trojan = z.object({
 });
 
 const hysteria = z.object({
+  id: z.string().optional(),
+  name: z.string().optional(),
   ratio: nullableRatio,
   type: z.literal("hysteria"),
   enable: nullableBool,
@@ -135,6 +145,8 @@ const hysteria = z.object({
 });
 
 const tuic = z.object({
+  id: z.string().optional(),
+  name: z.string().optional(),
   ratio: nullableRatio,
   type: z.literal("tuic"),
   enable: nullableBool,
@@ -156,6 +168,8 @@ const tuic = z.object({
 });
 
 const anytls = z.object({
+  id: z.string().optional(),
+  name: z.string().optional(),
   ratio: nullableRatio,
   type: z.literal("anytls"),
   enable: nullableBool,
@@ -176,15 +190,17 @@ const anytls = z.object({
   reality_public_key: nullableString,
   reality_short_id: nullableString,
 });
-
 const socks = z.object({
+  id: z.string().optional(),
+  name: z.string().optional(),
   ratio: nullableRatio,
   type: z.literal("socks"),
   enable: nullableBool,
   port: nullablePort,
 });
-
 const naive = z.object({
+  id: z.string().optional(),
+  name: z.string().optional(),
   ratio: nullableRatio,
   type: z.literal("naive"),
   enable: nullableBool,
@@ -199,8 +215,9 @@ const naive = z.object({
   ech_enable: z.boolean().nullish(),
   ech_server_name: nullableString,
 });
-
 const http = z.object({
+  id: z.string().optional(),
+  name: z.string().optional(),
   ratio: nullableRatio,
   type: z.literal("http"),
   enable: nullableBool,
@@ -215,8 +232,9 @@ const http = z.object({
   ech_enable: z.boolean().nullish(),
   ech_server_name: nullableString,
 });
-
 const mieru = z.object({
+  id: z.string().optional(),
+  name: z.string().optional(),
   ratio: nullableRatio,
   type: z.literal("mieru"),
   enable: nullableBool,

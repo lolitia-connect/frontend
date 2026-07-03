@@ -416,15 +416,16 @@ export default function ServerForm(props: {
     (type: ProtocolType) => {
       const current = form.getValues("protocols") || [];
       const defaultConfig = getProtocolDefaultConfig(type);
-      // Find next available numeric ID
-      const existingIds = current
+      // Find next available ID for this type
+      const sameTypeIds = current
+        .filter((p: any) => p.type === type)
         .map((p: any) => parseInt(p.id, 10))
         .filter((n: number) => !isNaN(n));
-      const nextId = existingIds.length > 0 ? Math.max(...existingIds) + 1 : 1;
+      const nextId = sameTypeIds.length > 0 ? Math.max(...sameTypeIds) + 1 : 1;
       const autoName =
-        current.filter((p: any) => p.type === type).length === 0
+        sameTypeIds.length === 0
           ? type
-          : `${type}-${current.filter((p: any) => p.type === type).length + 1}`;
+          : `${type}-${sameTypeIds.length + 1}`;
       form.setValue("protocols", [
         ...current,
         { ...defaultConfig, id: String(nextId), name: autoName, enable: true },
@@ -560,10 +561,14 @@ export default function ServerForm(props: {
       return;
     }
 
+    // Group by type to assign IDs per type
+    const typeCounters: Record<string, number> = {};
     const filteredProtocols = (values?.protocols || [])
       .filter((protocol: any) => protocol?.enable)
-      .map((protocol: any, index: number) => {
-        const protocolId = protocol.id || String(index + 1);
+      .map((protocol: any) => {
+        const t = protocol.type;
+        typeCounters[t] = (typeCounters[t] || 0) + 1;
+        const protocolId = protocol.id || String(typeCounters[t]);
         if (protocol.ech_enable === true) {
           return { ...protocol, id: protocolId };
         }
@@ -871,11 +876,12 @@ export default function ServerForm(props: {
                                                   );
                                                 const currentList =
                                                   form.getValues("protocols") || [];
-                                                const existingIds = currentList
+                                                const sameTypeIds = currentList
+                                                  .filter((p: any) => p.type === v)
                                                   .map((p: any) => parseInt(p.id, 10))
                                                   .filter((n: number) => !isNaN(n));
-                                                const nextId = existingIds.length > 0
-                                                  ? String(Math.max(...existingIds) + 1)
+                                                const nextId = sameTypeIds.length > 0
+                                                  ? String(Math.max(...sameTypeIds) + 1)
                                                   : "1";
                                                 form.setValue(
                                                   `protocols.${i}`,

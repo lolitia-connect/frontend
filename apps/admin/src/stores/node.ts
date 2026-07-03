@@ -86,7 +86,7 @@ export const useNodeStore = create<NodeState>((set, get) => ({
     get().nodes.some(
       (node) =>
         String(node.server_id) === String(serverId) &&
-        (node.protocol_id || node.protocol) === protocolId
+        node.protocol_id === protocolId
     ),
 
   isServerReferencedByNodes: (serverId: string | number) =>

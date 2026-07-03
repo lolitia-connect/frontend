@@ -321,9 +321,7 @@ export default function NodeForm(props: {
     removeAutoFilledField("protocol");
 
     if (!currentValues.port || currentValues.port === 0 || isPortAutoFilled) {
-      const protocolData = availableProtocols.find(
-        (p) => p.id === protocolId
-      );
+      const protocolData = availableProtocols.find((p) => p.id === protocolId);
 
       if (protocolData) {
         const port = protocolData.port || 0;
@@ -334,9 +332,7 @@ export default function NodeForm(props: {
   }
 
   async function handleSubmit(values: NodeFormValues) {
-    const selectedProtocol = availableProtocols.find(
-      (p) => p.id === values.protocol
-    );
+    const selectedProtocol = availableProtocols.find((p) => p.id === values.protocol);
     const normalizedValues =
       values.node_type === "front"
         ? {

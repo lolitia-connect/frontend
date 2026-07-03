@@ -218,8 +218,6 @@ export default function NodeForm(props: {
         resetValues.server_id = initialValues.server_id;
       if ((initialValues as any).protocol_id) {
         resetValues.protocol = (initialValues as any).protocol_id;
-      } else if (initialValues.protocol) {
-        resetValues.protocol = initialValues.protocol;
       }
       if (initialValues.address) resetValues.address = initialValues.address;
       if (initialValues.port) resetValues.port = initialValues.port;
@@ -464,7 +462,7 @@ export default function NodeForm(props: {
                             label: `${p.protocol}${p.name ? `(${p.name})` : ""}${p.port ? ` :${p.port}` : ""}`,
                           }))}
                           placeholder={t("select_protocol", "Select protocol…")}
-                          value={availableProtocols.some((p) => p.id === field.value) ? field.value : (availableProtocols.find((p) => p.protocol === field.value)?.id ?? field.value)}
+                          value={field.value}
                         />
                       </FormControl>
                       <FormMessage />

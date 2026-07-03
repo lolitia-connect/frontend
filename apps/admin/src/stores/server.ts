@@ -7,7 +7,7 @@ interface ServerState {
   getAvailableProtocols: (
     serverId?: string | number
   ) => Array<{ id: string; name?: string; protocol: string; port: number }>;
-  getProtocolPort: (serverId?: string | number, protocol?: string) => string;
+  getProtocolPort: (serverId?: string | number, protocolId?: string) => string;
   getServerAddress: (serverId?: string | number) => string;
 
   // Getters
@@ -68,12 +68,10 @@ export const useServerStore = create<ServerState>((set, get) => ({
     return server?.protocols?.filter((p) => p.enable) || [];
   },
 
-  getProtocolPort: (serverId?: string | number, protocol?: string) => {
-    if (!(serverId && protocol)) return "—";
+  getProtocolPort: (serverId?: string | number, protocolId?: string) => {
+    if (!(serverId && protocolId)) return "—";
     const enabledProtocols = get().getServerEnabledProtocols(serverId);
-    const protocolConfig = enabledProtocols.find(
-      (p) => (p.id || p.type) === protocol || p.type === protocol
-    );
+    const protocolConfig = enabledProtocols.find((p) => p.id === protocolId);
     return protocolConfig?.port ? String(protocolConfig.port) : "—";
   },
 

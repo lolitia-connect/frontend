@@ -36,7 +36,7 @@ export default function Nodes() {
   const [loading, setLoading] = useState(false);
 
   // Use our zustand store for server data
-  const { getServerName, getServerAddress, getProtocolPort } = useServer();
+  const { getServerName, getServerAddress, getProtocolPort, fetchServers } = useServer();
   const { fetchNodes, fetchTags } = useNode();
 
   // Fetch node groups for display
@@ -102,6 +102,7 @@ export default function Nodes() {
               ref.current?.refresh();
               fetchNodes();
               fetchTags();
+              fetchServers();
             }}
           />
         ),
@@ -228,6 +229,7 @@ export default function Nodes() {
                 ref.current?.refresh();
                 fetchNodes();
                 fetchTags();
+                fetchServers();
                 setLoading(false);
                 return true;
               } catch {
@@ -252,6 +254,7 @@ export default function Nodes() {
               ref.current?.refresh();
               fetchNodes();
               fetchTags();
+              fetchServers();
             }}
             title={t("confirmDeleteTitle", "Delete this node?")}
             trigger={
@@ -276,6 +279,7 @@ export default function Nodes() {
               toast.success(t("copied", "Copied"));
               ref.current?.refresh();
               fetchNodes();
+              fetchServers();
               fetchTags();
             }}
             variant="outline"
@@ -300,6 +304,7 @@ export default function Nodes() {
                 toast.success(t("deleted", "Deleted"));
                 ref.current?.refresh();
                 fetchNodes();
+                fetchServers();
                 fetchTags();
               }}
               title={t("confirmDeleteTitle", "Delete this node?")}
@@ -338,6 +343,7 @@ export default function Nodes() {
                   toast.success(t("created", "Created"));
                   ref.current?.refresh();
                   fetchNodes();
+                  fetchServers();
                   fetchTags();
                   setLoading(false);
                   return true;

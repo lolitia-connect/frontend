@@ -380,6 +380,7 @@ export default function NodeForm(props: {
               address: "",
               port: 0,
               tags: [],
+              node_type: "landing",
               ...normalizeValues(initialValues),
             });
             setAutoFilledFields(new Set());

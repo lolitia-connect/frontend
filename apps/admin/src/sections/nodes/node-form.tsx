@@ -461,10 +461,10 @@ export default function NodeForm(props: {
                           }
                           options={availableProtocols.map((p) => ({
                             value: p.id,
-                            label: `${p.name || p.id} / ${p.protocol}${p.port ? ` (${p.port})` : ""}`,
+                            label: `${p.protocol}${p.name ? `(${p.name})` : ""}${p.port ? ` :${p.port}` : ""}`,
                           }))}
                           placeholder={t("select_protocol", "Select protocol…")}
-                          value={field.value}
+                          value={availableProtocols.some((p) => p.id === field.value) ? field.value : (availableProtocols.find((p) => p.protocol === field.value)?.id ?? field.value)}
                         />
                       </FormControl>
                       <FormMessage />

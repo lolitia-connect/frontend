@@ -249,7 +249,7 @@ export default function Servers() {
                       <div className="flex items-center gap-2" key={idx}>
                         <Badge variant="outline">{ratio.toFixed(2)}x</Badge>
                         <Badge variant="secondary">
-                          {p.name || p.type}
+                          {p.type}{p.name ? `-${p.name}` : ""}
                         </Badge>
                         <Badge variant="secondary">{p.port}</Badge>
                       </div>

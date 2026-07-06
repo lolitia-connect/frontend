@@ -90,7 +90,7 @@ export default function Order() {
           header: t("subscribe", "Subscribe"),
           cell: ({ row }) => {
             const order = row.original as API.Order;
-            if ([4, 5].includes(order.type)) {
+            if (order.type === 4) {
               const type = row.getValue("type") as number;
               return (
                 typeOptions.find((opt) => opt.value === type)?.label ||

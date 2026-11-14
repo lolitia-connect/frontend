@@ -63,5 +63,6 @@
   "validationFailed": "Validation failed",
   "validationPassed": "Validation passed",
   "version": "Version",
-  "yes": "Yes"
+  "yes": "Yes",
+  "running": "Running"
 }

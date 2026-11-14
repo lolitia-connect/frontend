@@ -53,11 +53,11 @@ import {
 } from "@workspace/ui/composed/pro-table/index";
 import { UploadImage } from "@workspace/ui/composed/upload-image";
 import {
-  createSubscribeApplication,
-  deleteSubscribeApplication,
-  getSubscribeApplicationList,
-  updateSubscribeApplication,
-} from "@workspace/ui/services/admin/application";
+  postApplication as createSubscribeApplication,
+  deleteApplicationSubscribeApplication as deleteSubscribeApplication,
+  getApplicationSubscribeApplicationList as getSubscribeApplicationList,
+  putApplicationSubscribeApplication as updateSubscribeApplication,
+} from "@workspace/ui/services/admin/admin";
 import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -82,6 +82,26 @@ const createClientFormSchema = (t: any) =>
     scheme: z.string().optional(),
     template: z.string(),
     output_format: z.string(),
+    default_params: z
+      .string()
+      .max(255)
+      .refine(
+        (value) => {
+          try {
+            for (const pair of value.split("&")) {
+              if (pair.includes(";")) return false;
+              decodeURIComponent(pair.replace(/\+/g, " "));
+            }
+            return true;
+          } catch {
+            return false;
+          }
+        },
+        t(
+          "subscribe:form.validation.invalidDefaultParams",
+          "Invalid query-string parameters"
+        )
+      ),
     download_link: z.object({
       windows: z.string().optional(),
       mac: z.string().optional(),
@@ -114,6 +134,7 @@ export function ProtocolForm() {
       scheme: "",
       template: "",
       output_format: "",
+      default_params: "",
       download_link: {
         windows: "",
         mac: "",
@@ -251,6 +272,7 @@ export function ProtocolForm() {
       scheme: "",
       template: "",
       output_format: "",
+      default_params: "",
       download_link: {
         windows: "",
         mac: "",
@@ -267,6 +289,7 @@ export function ProtocolForm() {
     setEditingClient(client);
     form.reset({
       ...client,
+      default_params: client.default_params || "",
       download_link: client.download_link || {
         windows: "",
         mac: "",
@@ -562,6 +585,24 @@ export function ProtocolForm() {
                   </TabsContent>
 
                   <TabsContent className="space-y-4" value="template">
+                    <FormField
+                      control={form.control}
+                      name="default_params"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>
+                            {t(
+                              "form.fields.defaultParams",
+                              "Default Parameters"
+                            )}
+                          </FormLabel>
+                          <FormControl>
+                            <Input {...field} placeholder="mode=rule&emoji=1" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                     <FormField
                       control={form.control}
                       name="output_format"

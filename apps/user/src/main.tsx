@@ -7,7 +7,7 @@ import {
   TanStackQueryContext,
   TanStackQueryProvider,
 } from "@workspace/ui/integrations/tanstack-query";
-import { StrictMode } from "react";
+import { StrictMode, Suspense } from "react";
 import ReactDOM from "react-dom/client";
 // Import the generated route tree
 import { routeTree } from "./routeTree.gen";
@@ -17,33 +17,26 @@ import { DirectionProvider } from "@workspace/ui/integrations/direction";
 import { LanguageProvider } from "@workspace/ui/integrations/language";
 import { ThemeProvider } from "@workspace/ui/integrations/theme";
 import { initializeI18n } from "@workspace/ui/lib/i18n";
-import { fallbackLng, supportedLngs } from "./config/index.ts";
+import {
+  fallbackLng,
+  getInitialI18nNamespaces,
+  supportedLngs,
+} from "./config/index.ts";
 // Report web vitals
 import reportWebVitals from "./reportWebVitals.ts";
+import { fetchInitialConfig } from "./utils/bootstrap";
 // Common utilities
 import { Logout } from "./utils/common.ts";
 
 initializeI18n({
   supportedLngs,
   fallbackLng,
-  ns: [
-    "auth",
-    "components",
-    "dashboard",
-    "document",
-    "layout",
-    "main",
-    "main_map",
-    "order",
-    "payment",
-    "profile",
-    "servers",
-    "subscribe",
-    "ticket",
-    "traffic",
-    "wallet",
-  ],
+  ns: getInitialI18nNamespaces(
+    window.location.hash.slice(1).split("?")[0] || "/"
+  ),
 });
+
+fetchInitialConfig();
 
 window.logout = Logout;
 
@@ -75,15 +68,17 @@ if (rootElement && !rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement);
   root.render(
     <StrictMode>
-      <TanStackQueryProvider {...TanStackQueryProviderContext}>
-        <LanguageProvider supportedLanguages={supportedLngs}>
-          <ThemeProvider>
-            <DirectionProvider>
-              <RouterProvider router={router} />
-            </DirectionProvider>
-          </ThemeProvider>
-        </LanguageProvider>
-      </TanStackQueryProvider>
+      <Suspense fallback={null}>
+        <TanStackQueryProvider {...TanStackQueryProviderContext}>
+          <LanguageProvider supportedLanguages={supportedLngs}>
+            <ThemeProvider>
+              <DirectionProvider>
+                <RouterProvider router={router} />
+              </DirectionProvider>
+            </ThemeProvider>
+          </LanguageProvider>
+        </TanStackQueryProvider>
+      </Suspense>
     </StrictMode>
   );
 }

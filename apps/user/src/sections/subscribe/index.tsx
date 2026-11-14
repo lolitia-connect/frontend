@@ -14,12 +14,14 @@ import { Icon } from "@workspace/ui/composed/icon";
 import { cn } from "@workspace/ui/lib/utils";
 import { querySubscribeList } from "@workspace/ui/services/user/subscribe";
 import { queryUserSubscribe } from "@workspace/ui/services/user/user";
+import { differenceInDays, formatDate } from "@workspace/ui/utils/formatting";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Display } from "@/components/display";
 import { SubscribeDetail } from "./detail";
 import Purchase from "./purchase";
 import RedeemCode from "./redeem-code";
+import Renewal from "./renewal";
 
 export default function Subscribe() {
   const { t, i18n } = useTranslation("subscribe");
@@ -60,11 +62,53 @@ export default function Subscribe() {
   const filteredData = subscribeList?.filter(
     (item) => item.show || purchasedPlanIds.has(item.id)
   );
+  const renewableSubscriptions = [...(userSubscriptions || [])]
+    .filter(
+      (entry) =>
+        entry.status !== 4 && entry.expire_time !== 0 && entry.subscribe?.sell
+    )
+    .sort((first, second) => first.expire_time - second.expire_time);
 
   return (
     <div className="flex min-h-[calc(100vh-64px-58px-32px-114px)] w-full flex-col gap-4 overflow-hidden">
       <RedeemCode />
       <div className="space-y-4">
+        {renewableSubscriptions.slice(0, 2).map((entry) => (
+          <div
+            className="flex flex-wrap items-center justify-between gap-4 border-b py-4"
+            key={entry.id}
+          >
+            <div className="space-y-1">
+              <p className="font-medium">{entry.subscribe.name}</p>
+              <p className="text-muted-foreground text-sm">
+                {t("expireAt", "Expires At")}: {formatDate(entry.expire_time)}
+              </p>
+              <p className="text-sm">
+                {entry.status === 3
+                  ? t("expired", "Expired")
+                  : t("expiresInDays", "{{days}} days left", {
+                      days: Math.max(
+                        0,
+                        differenceInDays(
+                          new Date(entry.expire_time),
+                          new Date()
+                        )
+                      ),
+                    })}
+              </p>
+            </div>
+            <Renewal id={entry.id} subscribe={entry.subscribe} />
+          </div>
+        ))}
+        {renewableSubscriptions.length > 2 && (
+          <p className="text-muted-foreground text-sm">
+            {t(
+              "moreRenewable",
+              "{{total}} more subscriptions can be renewed from the dashboard",
+              { total: renewableSubscriptions.length - 2 }
+            )}
+          </p>
+        )}
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
           {filteredData?.map((item) => (
             <Card className="relative flex flex-col" key={item.id}>

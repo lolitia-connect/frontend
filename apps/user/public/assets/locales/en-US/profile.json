@@ -26,6 +26,18 @@
     "title": "Third-party Accounts",
     "unbind": "Unbind",
     "update": "Update",
-    "updateSuccess": "Update successfully"
+    "updateSuccess": "Update successfully",
+    "bindEmail": "Connect Email"
+  },
+  "currentCredential": {
+    "code": "Code sent to {{email}}",
+    "codeRequired": "Enter the verification code",
+    "firstPassword": "Leave empty when setting your first password.",
+    "mobileNeedsPassword": "An account without a password needs to set one before changing its phone number.",
+    "password": "Current password",
+    "passwordRequired": "Enter your current password",
+    "signInAgain": "Updated. Please sign in again.",
+    "useCode": "No password set? Verify with a code sent to {{email}}",
+    "usePassword": "Use your current password"
   }
 }

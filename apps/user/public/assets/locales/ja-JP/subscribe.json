@@ -60,5 +60,10 @@
     "unsubscribe": "解約する",
     "unsubscribeDescription": "注意：今すぐ解約した場合、サブスクリプションの残額はアカウント残高に返金されます。次回の購入や更新にご利用いただけます。"
   },
-  "Year": "年"
+  "Year": "年",
+  "noPaymentMethodsAvailable": "チャージに利用できる決済方法がありません",
+  "expireAt": "有効期限",
+  "expired": "期限切れ",
+  "expiresInDays": "残り {{days}} 日",
+  "moreRenewable": "ダッシュボードで他の {{total}} 件のサブスクリプションを更新できます"
 }

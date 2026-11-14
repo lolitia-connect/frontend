@@ -3,5 +3,7 @@
   "noSubscription": "请购买订阅",
   "document": "文档",
   "read": "阅读",
-  "tutorial": "教程"
+  "tutorial": "教程",
+  "loadingSubscriptionConfig": "正在加载订阅配置...",
+  "subscriptionConfigUnavailable": "订阅配置暂不可用，请刷新后重试。"
 }

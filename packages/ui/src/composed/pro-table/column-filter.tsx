@@ -7,6 +7,7 @@ import { cn } from "@workspace/ui/lib/utils";
 
 export interface IParams {
   key: string;
+  label?: string;
   options?: { label: string; value: string }[];
   placeholder?: string;
   type?: "text" | "select" | "date";
@@ -71,6 +72,7 @@ export function ColumnFilter<TData>({
                 : "";
           return (
             <Input
+              aria-label={param.label || param.placeholder || param.key}
               className="min-w-32 flex-1"
               key={param.key}
               onChange={(event) => {

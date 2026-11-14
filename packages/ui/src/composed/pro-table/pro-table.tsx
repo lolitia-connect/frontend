@@ -65,6 +65,7 @@ export interface ProTableProps<TData, TValue> {
     hidden?: boolean;
   };
   initialFilters?: Record<string, unknown>;
+  onFiltersChange?: (filters: TValue) => void;
   onSort?: (
     sourceId: string | number,
     targetId: string | number | null,
@@ -108,6 +109,7 @@ export function ProTable<
   empty,
   onSort,
   initialFilters,
+  onFiltersChange,
 }: ProTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(() => {
@@ -173,7 +175,14 @@ export function ProTable<
     ] as ColumnDef<TData, TValue>[],
     onPaginationChange: setPagination,
     onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
+    onColumnFiltersChange: (updater) => {
+      setColumnFilters((previous) => {
+        const next =
+          typeof updater === "function" ? updater(previous) : updater;
+        return next;
+      });
+      setPagination((previous) => ({ ...previous, pageIndex: 0 }));
+    },
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -231,6 +240,14 @@ export function ProTable<
     refresh: fetchData,
     reset,
   }));
+
+  useEffect(() => {
+    onFiltersChange?.(
+      Object.fromEntries(
+        columnFilters.map((item) => [item.id, item.value])
+      ) as TValue
+    );
+  }, [JSON.stringify(columnFilters)]);
 
   useEffect(() => {
     fetchData();

@@ -7,5 +7,19 @@
   "inviteRecords": "邀請記錄",
   "registrationTime": "註冊時間",
   "totalCommission": "累計佣金",
-  "userIdentifier": "使用者標識"
+  "userIdentifier": "使用者標識",
+  "withdrawSuccess": "提領申請已送出",
+  "withdrawFailed": "提領申請送出失敗",
+  "invalidWithdrawAmount": "請輸入有效金額",
+  "withdrawAmountExceeds": "金額超過可用佣金",
+  "withdrawContentRequired": "請輸入提領資料",
+  "withdraw": "提領",
+  "withdrawCommission": "提領佣金",
+  "withdrawDescription": "送出佣金提領申請，等待管理員審核。",
+  "withdrawAmount": "提領金額",
+  "availableCommission": "可用佣金",
+  "withdrawInfo": "提領資料",
+  "withdrawInfoPlaceholder": "輸入收款帳號或提領說明",
+  "submitting": "送出中...",
+  "submitWithdraw": "送出提領申請"
 }

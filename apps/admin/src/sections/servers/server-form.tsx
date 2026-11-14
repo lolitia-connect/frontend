@@ -40,8 +40,10 @@ import {
   SheetTrigger,
 } from "@workspace/ui/components/sheet";
 import { Switch } from "@workspace/ui/components/switch";
+import { Textarea } from "@workspace/ui/components/textarea";
 import { EnhancedInput } from "@workspace/ui/composed/enhanced-input";
 import { Icon } from "@workspace/ui/composed/icon";
+import { TagInput } from "@workspace/ui/composed/tag-input";
 import { cn } from "@workspace/ui/lib/utils";
 import { useEffect, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
@@ -143,7 +145,8 @@ function DynamicField({
                               <DropdownMenuItem
                                 key={idx}
                                 onClick={async () => {
-                                  const result = await genFunc.function();
+                                  const result =
+                                    await genFunc.function(protocolData);
                                   if (typeof result === "string") {
                                     fieldProps.onChange(result);
                                   } else if (field.generate!.updateFields) {
@@ -169,7 +172,8 @@ function DynamicField({
                       ) : field.generate.function ? (
                         <Button
                           onClick={async () => {
-                            const result = await field.generate!.function!();
+                            const result =
+                              await field.generate!.function!(protocolData);
                             if (typeof result === "string") {
                               fieldProps.onChange(result);
                             } else if (field.generate!.updateFields) {
@@ -299,6 +303,26 @@ function DynamicField({
         />
       );
 
+    case "string-list":
+      return (
+        <FormField
+          {...commonProps}
+          render={({ field: fieldProps }) => (
+            <FormItem className="col-span-2">
+              <FormLabel>{getFieldLabel(field)}</FormLabel>
+              <FormControl>
+                <TagInput
+                  onChange={fieldProps.onChange}
+                  value={fieldProps.value || []}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      );
+
+    case "json":
     case "textarea":
       return (
         <FormField
@@ -307,9 +331,8 @@ function DynamicField({
             <FormItem className="col-span-2">
               <FormLabel>{getFieldLabel(field)}</FormLabel>
               <FormControl>
-                <textarea
+                <Textarea
                   {...fieldProps}
-                  className="flex min-h-20 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                   onChange={(e) => fieldProps.onChange(e.target.value)}
                   placeholder={field.placeholder}
                   value={fieldProps.value ?? ""}
@@ -423,6 +446,15 @@ export default function ServerForm(props: {
   const protocolsValues = useWatch({ control, name: "protocols" });
 
   function addProtocolInstance(type: ProtocolType) {
+    if (["shadowsocksr", "nowhere"].includes(type)) {
+      toast.error(
+        t(
+          "nodeProtocolUnavailable",
+          "This protocol requires a compatible node implementation."
+        )
+      );
+      return;
+    }
     const current = form.getValues("protocols") || [];
     const id = nextProtocolId(current, type);
     const next = {
@@ -556,20 +588,18 @@ export default function ServerForm(props: {
       return;
     }
 
-    const filteredProtocols = (values?.protocols || [])
-      .filter((protocol: any) => protocol?.enable)
-      .map((protocol: any) => {
-        if (protocol.ech_enable === true) {
-          return protocol;
-        }
+    const filteredProtocols = (values?.protocols || []).map((protocol: any) => {
+      if (protocol.ech_enable === true) {
+        return protocol;
+      }
 
-        const {
-          ech_enable: _ech_enable,
-          ech_server_name: _ech_server_name,
-          ...rest
-        } = protocol;
-        return rest;
-      });
+      const {
+        ech_enable: _ech_enable,
+        ech_server_name: _ech_server_name,
+        ...rest
+      } = protocol;
+      return rest;
+    });
 
     const result = {
       name: values.name,
@@ -807,37 +837,50 @@ export default function ServerForm(props: {
                               </Button>
                             )}
                             <Switch
-                            checked={!!isEnabled}
-                            className="mr-2"
-                            disabled={Boolean(
-                              initialValues?.id &&
-                                isProtocolUsedInNodes(
-                                  initialValues?.id || 0,
-                                  type,
-                                  current.id
-                                ) &&
-                                isEnabled
-                            )}
-                            onCheckedChange={(checked) => {
-                              form.setValue(`protocols.${i}.enable`, checked);
-                              if (checked) {
-                                setAccordionValue(itemValue);
-                                return;
+                              checked={!!isEnabled}
+                              className="mr-2"
+                              disabled={
+                                (["shadowsocksr", "nowhere"].includes(type) &&
+                                  !isEnabled) ||
+                                Boolean(
+                                  initialValues?.id &&
+                                    isProtocolUsedInNodes(
+                                      initialValues?.id || 0,
+                                      type,
+                                      current.id
+                                    ) &&
+                                    isEnabled
+                                )
                               }
+                              onCheckedChange={(checked) => {
+                                form.setValue(`protocols.${i}.enable`, checked);
+                                if (checked) {
+                                  setAccordionValue(itemValue);
+                                  return;
+                                }
 
-                              if (accordionValue === itemValue) {
-                                setAccordionValue(undefined);
-                              }
-                              form.clearErrors(`protocols.${i}` as any);
-                            }}
-                            onClick={(e) => e.stopPropagation()}
-                          />
+                                if (accordionValue === itemValue) {
+                                  setAccordionValue(undefined);
+                                }
+                                form.clearErrors(`protocols.${i}` as any);
+                              }}
+                              onClick={(e) => e.stopPropagation()}
+                            />
                           </div>
                         </div>
                       </AccordionTrigger>
                       <AccordionContent className="px-4 pt-0 pb-4">
                         <div className="-mx-4 space-y-4 rounded-b-lg border-t px-4 pt-4">
-                          {/* ID (read-only) and name (editable) */}
+                          {current.cert_pin_sha256 && (
+                            <div className="space-y-1 text-sm">
+                              <p>
+                                {t("certificatePin", "Certificate SHA-256 Pin")}
+                              </p>
+                              <code className="block break-all text-muted-foreground">
+                                {current.cert_pin_sha256}
+                              </code>
+                            </div>
+                          )}
                           <div className="grid grid-cols-2 gap-4">
                             <FormField
                               control={control}
@@ -856,12 +899,17 @@ export default function ServerForm(props: {
                               name={`protocols.${i}.name`}
                               render={({ field: fp }) => (
                                 <FormItem>
-                                  <FormLabel>{t("protocol_name", "Name")}</FormLabel>
+                                  <FormLabel>
+                                    {t("protocol_name", "Name")}
+                                  </FormLabel>
                                   <FormControl>
                                     <EnhancedInput
                                       {...fp}
                                       onValueChange={(v) => fp.onChange(v)}
-                                      placeholder={t("protocol_name_placeholder", "Display name")}
+                                      placeholder={t(
+                                        "protocol_name_placeholder",
+                                        "Display name"
+                                      )}
                                     />
                                   </FormControl>
                                 </FormItem>

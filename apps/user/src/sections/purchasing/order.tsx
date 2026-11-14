@@ -23,42 +23,60 @@ import { addMinutes, format } from "date-fns";
 import { QRCodeCanvas } from "qrcode.react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Display } from "@/components/display";
 import { SubscribeBilling } from "@/sections/subscribe/billing";
 import { SubscribeDetail } from "@/sections/subscribe/detail";
 
 import { useGlobalStore } from "@/stores/global";
-import { setAuthorization } from "@/utils/common";
+import { setAuthorization, setRedirectUrl } from "@/utils/common";
+import { clearCheckoutToken, getCheckoutToken } from "./checkout-token";
 
 export default function Order() {
   const { t } = useTranslation("order");
-  const { getUserInfo } = useGlobalStore();
+  const { getUserInfo, isLoadingUser } = useGlobalStore();
   const [orderNo, setOrderNo] = useState<string>();
   const [enabled, setEnabled] = useState<boolean>(false);
+  const [accessError, setAccessError] = useState(false);
   const search = useSearch({ from: "/(main)/purchasing/order/" });
 
-  const { data } = useQuery({
-    enabled,
+  const capability = orderNo ? getCheckoutToken(orderNo) : undefined;
+  const canQuery = Boolean(orderNo && capability);
+  const { data, refetch, isFetching } = useQuery({
+    enabled: enabled && canQuery,
     queryKey: ["queryPurchaseOrder", orderNo],
     queryFn: async () => {
       if (!orderNo) return;
-      const params = localStorage.getItem(orderNo);
-      const authParams = params ? JSON.parse(params) : {};
-      const { data } = await queryPurchaseOrder({
-        order_no: orderNo,
-        ...authParams,
-      });
-      if (data?.data?.status !== 1) {
-        setEnabled(false);
-        if (data?.data?.token) {
-          setAuthorization(data?.data?.token);
-          await new Promise((resolve) => setTimeout(resolve, 100));
-          await getUserInfo();
+      try {
+        const { data } = await queryPurchaseOrder(
+          {
+            order_no: orderNo,
+            checkout_token: getCheckoutToken(orderNo),
+          },
+          { skipErrorHandler: true }
+        );
+        if (data?.data?.status !== 1) {
+          setEnabled(false);
+          if (data?.data?.token) {
+            setAuthorization(data?.data?.token);
+            await getUserInfo();
+            clearCheckoutToken(orderNo);
+          }
+          if ([3, 4].includes(data?.data?.status ?? 0))
+            clearCheckoutToken(orderNo);
         }
+        setAccessError(false);
+        return data?.data;
+      } catch (error) {
+        setEnabled(false);
+        setAccessError(true);
+        throw error;
       }
-      return data?.data;
     },
-    refetchInterval: 3000,
+    retry: false,
+    refetchInterval: (query) =>
+      query.state.status === "error" ||
+      (query.state.data && query.state.data.status !== 1)
+        ? false
+        : 3000,
   });
 
   const [paymentType, setPaymentType] = useState<string>();
@@ -69,12 +87,17 @@ export default function Order() {
     mutationFn: async () => {
       const { data } = await purchaseCheckout({
         orderNo: orderNo || "",
+        checkout_token: orderNo ? getCheckoutToken(orderNo) : undefined,
         returnUrl: window.location.href,
       });
       return data?.data;
     },
     onSuccess: (result) => {
       if (!result) return;
+      if (result.type === "balance") {
+        refetch();
+        return;
+      }
       setPaymentType(result.type);
       if (result.type === "url" && result.checkout_url) {
         window.location.href = result.checkout_url;
@@ -88,6 +111,7 @@ export default function Order() {
     if (search.order_no) {
       setOrderNo(search.order_no);
       setEnabled(true);
+      setAccessError(false);
     }
   }, [search]);
 
@@ -109,6 +133,43 @@ export default function Order() {
     ) : (
       t("timeExpired", "Time Expired")
     );
+
+  if (accessError || !(isLoadingUser || canQuery || data)) {
+    return (
+      <main className="container py-12">
+        <div className="mx-auto max-w-lg space-y-4" role="alert">
+          <h1 className="font-semibold text-xl">
+            {t("orderUnavailable", "Order unavailable")}
+          </h1>
+          <p className="text-muted-foreground">
+            {t(
+              "orderAccessRequired",
+              "The order access token is missing or no longer valid. Sign in to the account used for this order."
+            )}
+          </p>
+          <div className="flex gap-2">
+            {canQuery && (
+              <Button
+                disabled={isFetching}
+                onClick={() => {
+                  setAccessError(false);
+                  setEnabled(true);
+                  refetch();
+                }}
+              >
+                {t("retry", "Retry")}
+              </Button>
+            )}
+            <Button asChild variant="outline">
+              <Link onClick={() => setRedirectUrl("/order")} to="/auth">
+                {t("signIn", "Sign in")}
+              </Link>
+            </Button>
+          </div>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="container lg:mt-16">
@@ -138,48 +199,13 @@ export default function Order() {
             </dl>
             <Separator />
 
-            {data?.status && [1, 2].includes(data.status) && (
+            {data && (
               <SubscribeDetail
                 subscribe={{
                   ...data?.subscribe,
                   quantity: data?.quantity,
                 }}
               />
-            )}
-            {data?.status === 3 && (
-              <>
-                <div className="font-semibold">
-                  {t("resetTraffic", "Reset Traffic")}
-                </div>
-                <ul className="grid grid-cols-2 gap-3 *:flex *:items-center *:justify-between lg:grid-cols-1">
-                  <li className="flex items-center justify-between">
-                    <span className="line-clamp-2 flex-1 text-muted-foreground">
-                      {t("resetPrice", "Reset Price")}
-                    </span>
-                    <span>
-                      <Display type="currency" value={data.amount} />
-                    </span>
-                  </li>
-                </ul>
-              </>
-            )}
-
-            {data?.status === 4 && (
-              <>
-                <div className="font-semibold">
-                  {t("balanceRecharge", "Balance Recharge")}
-                </div>
-                <ul className="grid grid-cols-2 gap-3 *:flex *:items-center *:justify-between lg:grid-cols-1">
-                  <li className="flex items-center justify-between">
-                    <span className="line-clamp-2 flex-1 text-muted-foreground">
-                      {t("rechargeAmount", "Recharge Amount")}
-                    </span>
-                    <span>
-                      <Display type="currency" value={data.amount} />
-                    </span>
-                  </li>
-                </ul>
-              </>
             )}
             <Separator />
             <SubscribeBilling

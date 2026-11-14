@@ -90,7 +90,8 @@
     "unitPrice": "单价",
     "unitTime": "时间单位",
     "unlimitedInventory": "无限制（输入 -1）",
-    "Year": "年"
+    "Year": "年",
+    "unlimited": "无限"
   },
   "groupMapping": "分组映射",
   "groupMappingTitle": "分组映射",

@@ -90,5 +90,8 @@
     "system": "系统",
     "toggle": "切换主题"
   },
-  "unlimited": "无限制"
+  "unlimited": "无限制",
+  "table": {
+    "columns": "选择列"
+  }
 }

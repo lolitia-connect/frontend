@@ -9,15 +9,15 @@ import {
   ProTable,
   type ProTableActions,
 } from "@workspace/ui/composed/pro-table/pro-table";
-import { getNodeGroupList } from "@workspace/ui/services/admin/group";
 import {
-  batchDeleteSubscribe,
-  createSubscribe,
+  deleteSubscribeBatch as batchDeleteSubscribe,
+  postSubscribe as createSubscribe,
   deleteSubscribe,
   getSubscribeList,
-  subscribeSort,
-  updateSubscribe,
-} from "@workspace/ui/services/admin/subscribe";
+  postSubscribeSort as subscribeSort,
+  putSubscribe as updateSubscribe,
+} from "@workspace/ui/services/admin/admin";
+import { getNodeGroupList } from "@workspace/ui/services/admin/group";
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";

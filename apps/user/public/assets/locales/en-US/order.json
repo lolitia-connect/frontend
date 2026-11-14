@@ -36,5 +36,10 @@
     "4": "Recharge"
   },
   "viewDocument": "View Document",
-  "waitingForPayment": "Waiting for Payment"
+  "waitingForPayment": "Waiting for Payment",
+  "orderUnavailable": "Order unavailable",
+  "orderAccessRequired": "The order access token is missing or no longer valid. Sign in to the account used for this order.",
+  "retry": "Retry",
+  "signIn": "Sign in",
+  "processing": "Processing..."
 }

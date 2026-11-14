@@ -8,6 +8,9 @@ import {
   multiplexLevels,
   SECURITY,
   SS_CIPHERS,
+  SSR_CIPHERS,
+  SSR_OBFS,
+  SSR_PROTOCOLS,
   TRANSPORTS,
   TUIC_CONGESTION,
   TUIC_UDP_RELAY_MODES,
@@ -124,7 +127,7 @@ const hysteria = z.object({
   id: z.string().optional(),
   name: z.string().optional(),
   ratio: nullableRatio,
-  type: z.literal("hysteria"),
+  type: z.enum(["hysteria", "hysteria2"]),
   enable: nullableBool,
   hop_ports: nullableString,
   hop_interval: z.number().nullish(),
@@ -243,19 +246,112 @@ const mieru = z.object({
   transport: z.enum(TRANSPORTS.mieru).nullish(),
 });
 
-export const protocolApiScheme = z.discriminatedUnion("type", [
-  ss,
-  vmess,
-  vless,
-  trojan,
-  hysteria,
-  tuic,
-  anytls,
-  socks,
-  naive,
-  http,
-  mieru,
-]);
+const shadowsocksr = z.object({
+  id: z.string().optional(),
+  name: z.string().optional(),
+  type: z.literal("shadowsocksr"),
+  ratio: nullableRatio,
+  enable: nullableBool,
+  port: nullablePort,
+  transport: z.enum(["", "both", "tcp", "udp"]).nullish(),
+  cipher: z.enum(SSR_CIPHERS).nullish(),
+  server_key: nullableString,
+  ssr_protocol: z.enum(SSR_PROTOCOLS).nullish(),
+  protocol_param: nullableString,
+  obfs: z.enum(SSR_OBFS).nullish(),
+  obfs_param: nullableString,
+});
+
+const nowhere = z.object({
+  id: z.string().optional(),
+  name: z.string().optional(),
+  type: z.literal("nowhere"),
+  ratio: nullableRatio,
+  enable: nullableBool,
+  port: nullablePort,
+  version: z.literal(1).default(1),
+  network: z.enum(["mix", "tcp", "udp"]).default("mix"),
+  alpn: z.array(z.string().min(1).max(255)).length(1).default(["now/1"]),
+  security: z.literal("tls").default("tls"),
+  sni: nullableString,
+  cert_mode: z.enum(CERT_MODES).nullish(),
+  cert_dns_provider: nullableString,
+  cert_dns_env: nullableString,
+});
+
+export const protocolApiScheme = z
+  .discriminatedUnion("type", [
+    ss.passthrough(),
+    vmess.passthrough(),
+    vless.passthrough(),
+    trojan.passthrough(),
+    hysteria.passthrough(),
+    tuic.passthrough(),
+    anytls.passthrough(),
+    socks.passthrough(),
+    naive.passthrough(),
+    http.passthrough(),
+    mieru.passthrough(),
+    shadowsocksr.passthrough(),
+    nowhere.passthrough(),
+  ])
+  .superRefine((protocol, context) => {
+    const issue = (field: string, message: string) =>
+      context.addIssue({ code: "custom", path: [field], message });
+    if (protocol.type === "hysteria" || protocol.type === "hysteria2") {
+      const ports = protocol.hop_ports?.trim();
+      if (Boolean(ports) !== Boolean(protocol.hop_interval))
+        issue("hop_ports", "Configure hop ports and interval together");
+      if (
+        ports &&
+        !ports.split(",").every((part) => {
+          const bounds = part.trim().split("-");
+          return (
+            bounds.length <= 2 &&
+            bounds.every(
+              (value) =>
+                /^\d+$/.test(value) &&
+                Number(value) >= 1 &&
+                Number(value) <= 65_535
+            ) &&
+            (bounds.length === 1 || Number(bounds[0]) <= Number(bounds[1]))
+          );
+        })
+      )
+        issue("hop_ports", "Invalid port range");
+    }
+    if (!protocol.enable) return;
+    if (!protocol.port) issue("port", "Port is required");
+    if (protocol.type === "shadowsocksr") {
+      if (!protocol.cipher) issue("cipher", "Cipher is required");
+      if (!protocol.server_key) issue("server_key", "Server key is required");
+      if (!protocol.ssr_protocol)
+        issue("ssr_protocol", "SSR protocol is required");
+      if (
+        protocol.transport === "udp" &&
+        protocol.obfs &&
+        protocol.obfs !== "plain"
+      )
+        issue("obfs", "UDP requires plain obfuscation");
+    }
+    if (
+      protocol.security === "tls" &&
+      [
+        "vmess",
+        "vless",
+        "trojan",
+        "hysteria",
+        "hysteria2",
+        "tuic",
+        "anytls",
+        "nowhere",
+      ].includes(protocol.type)
+    ) {
+      if (!protocol.sni) issue("sni", "SNI is required");
+      if (!protocol.cert_mode || protocol.cert_mode === "none")
+        issue("cert_mode", "Certificate mode is required");
+    }
+  });
 
 export const formSchema = z.object({
   name: z.string().min(1),

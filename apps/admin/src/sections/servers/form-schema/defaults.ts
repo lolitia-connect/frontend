@@ -106,11 +106,12 @@ export function getProtocolDefaultConfig(proto: ProtocolType) {
         cert_dns_env: null,
         ratio: 1,
       } as any;
+    case "hysteria2":
     case "hysteria":
       return {
         id: "",
         name: "",
-        type: "hysteria",
+        type: proto,
         enable: false,
         port: null,
         hop_ports: null,
@@ -231,6 +232,35 @@ export function getProtocolDefaultConfig(proto: ProtocolType) {
         reality_short_id: null,
         ratio: 1,
       } as any;
+    case "shadowsocksr":
+      return {
+        id: "",
+        name: "",
+        type: proto,
+        enable: false,
+        ratio: 1,
+        port: null,
+        transport: "both",
+        cipher: "aes-256-cfb",
+        server_key: "",
+        ssr_protocol: "auth_chain_a",
+        obfs: "plain",
+      };
+    case "nowhere":
+      return {
+        id: "",
+        name: "",
+        type: proto,
+        enable: false,
+        ratio: 1,
+        port: null,
+        security: "tls",
+        version: 1,
+        network: "mix",
+        alpn: ["now/1"],
+        cert_mode: "self",
+        sni: "",
+      };
     default:
       return {} as any;
   }

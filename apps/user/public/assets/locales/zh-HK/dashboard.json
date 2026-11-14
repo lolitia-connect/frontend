@@ -41,5 +41,12 @@
   "redeemButton": "立即兌換",
   "redeeming": "兌換中...",
   "redeemSuccess": "兌換成功！",
-  "redeemFailed": "兌換失敗"
+  "redeemFailed": "兌換失敗",
+  "resetSubscriptionTitle": "重設後請在所有用戶端重新加入訂閱",
+  "resetSubscriptionDescription": "舊連結和已匯入節點將失效。請在所有用戶端刪除舊訂閱，再加入新連結；計劃、到期時間和已用流量不受影響。",
+  "expiredDays": "已過期天數",
+  "remainingDays": "剩餘天數",
+  "loadingSubscriptionConfig": "正在載入訂閱設定...",
+  "subscriptionConfigUnavailable": "訂閱設定暫時無法使用，請重新整理後再試。",
+  "clickToCopy": "按此複製"
 }

@@ -44,6 +44,10 @@ import { toast } from "sonner";
 import { Display } from "@/components/display";
 import { useGlobalStore } from "@/stores/global";
 import { getPlatform } from "@/utils/common";
+import {
+  getSubscriptionUrlAvailability,
+  isExpiredSubscription,
+} from "@/utils/subscription";
 import Subscribe from "../../subscribe";
 import Renewal from "../../subscribe/renewal";
 import ResetTraffic from "../../subscribe/reset-traffic";
@@ -60,7 +64,8 @@ const platforms: (keyof API.DownloadLink)[] = [
 
 export default function Content() {
   const { t } = useTranslation("dashboard");
-  const { getUserSubscribe, getAppSubLink } = useGlobalStore();
+  const { getUserSubscribe, getAppSubLink, commonError, isLoadingCommon } =
+    useGlobalStore();
 
   const [protocol, setProtocol] = useState("");
 
@@ -214,8 +219,17 @@ export default function Content() {
           </div>
           {userSubscribe.map((item) => {
             // 如果过期时间为0，说明是永久订阅，不应该显示过期状态
-            const isActuallyExpired =
-              item.status === 3 && item.expire_time !== 0;
+            const isActuallyExpired = isExpiredSubscription(item);
+            const subscriptionUrls = getUserSubscribe(
+              item.short,
+              item.token,
+              protocol
+            );
+            const subscriptionUrlAvailability = getSubscriptionUrlAvailability({
+              error: Boolean(commonError),
+              isLoading: isLoadingCommon,
+              urls: subscriptionUrls,
+            });
             const shouldShowWatermark =
               item.status === 2 || item.status === 4 || isActuallyExpired;
 
@@ -277,49 +291,56 @@ export default function Content() {
                   </CardTitle>
                   {item.status !== 4 && (
                     <div className="flex flex-wrap gap-2">
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button size="sm" variant="destructive">
-                            {t("resetSubscription", "Reset Subscription")}
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>
-                              {t("prompt", "Prompt")}
-                            </AlertDialogTitle>
-                            <AlertDialogDescription>
-                              {t(
-                                "confirmResetSubscription",
-                                "Are you sure you want to reset your subscription?"
-                              )}
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>
-                              {t("cancel", "Cancel")}
-                            </AlertDialogCancel>
-                            <AlertDialogAction
-                              onClick={async () => {
-                                await resetUserSubscribeToken({
-                                  user_subscribe_id: item.id,
-                                });
-                                await refetch();
-                                toast.success(
-                                  t("resetSuccess", "Reset Success")
-                                );
-                              }}
-                            >
-                              {t("confirm", "Confirm")}
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                      <ResetTraffic
-                        id={item.id}
-                        replacement={item.subscribe.replacement}
-                        trafficUnlimited={item.traffic_unlimited}
-                      />
+                      {!isActuallyExpired && (
+                        <>
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button size="sm" variant="destructive">
+                                {t("resetSubscription", "Reset Subscription")}
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>
+                                  {t(
+                                    "resetSubscriptionTitle",
+                                    "After resetting, re-add your subscription in every app"
+                                  )}
+                                </AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  {t(
+                                    "resetSubscriptionDescription",
+                                    "The old link and imported nodes stop working. Delete the old subscription in every app, then add the new link. Your plan, expiry date and used traffic are not affected."
+                                  )}
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>
+                                  {t("cancel", "Cancel")}
+                                </AlertDialogCancel>
+                                <AlertDialogAction
+                                  onClick={async () => {
+                                    await resetUserSubscribeToken({
+                                      user_subscribe_id: item.id,
+                                    });
+                                    await refetch();
+                                    toast.success(
+                                      t("resetSuccess", "Reset Success")
+                                    );
+                                  }}
+                                >
+                                  {t("confirm", "Confirm")}
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                          <ResetTraffic
+                            id={item.id}
+                            replacement={item.subscribe.replacement}
+                            trafficUnlimited={item.traffic_unlimited}
+                          />
+                        </>
+                      )}
                       {item.expire_time !== 0 && item.subscribe.sell && (
                         <Renewal id={item.id} subscribe={item.subscribe} />
                       )}
@@ -372,217 +393,225 @@ export default function Content() {
                     </li>
                     <li>
                       <span className="text-muted-foreground">
-                        {t("expirationDays", "Expiration Days")}
+                        {isActuallyExpired
+                          ? t("expiredDays", "Days Expired")
+                          : t("remainingDays", "Remaining Days")}
                       </span>
                       <span className="font-semibold text-2xl">
-                        {}
                         {item.expire_time
-                          ? differenceInDays(
-                              new Date(item.expire_time),
-                              new Date()
-                            ) || t("unknown", "Unknown")
+                          ? Math.abs(
+                              differenceInDays(
+                                new Date(item.expire_time),
+                                new Date()
+                              )
+                            )
                           : t("noLimit", "No Limit")}
                       </span>
                     </li>
                   </ul>
                   <Separator className="mt-4" />
+                  {subscriptionUrlAvailability !== "ready" && (
+                    <p className="py-4 text-center text-muted-foreground text-sm">
+                      {subscriptionUrlAvailability === "loading"
+                        ? t(
+                            "loadingSubscriptionConfig",
+                            "Loading subscription configuration..."
+                          )
+                        : t(
+                            "subscriptionConfigUnavailable",
+                            "Subscription configuration is unavailable. Please refresh and try again."
+                          )}
+                    </p>
+                  )}
                   <Accordion
                     className="w-full"
                     collapsible
                     defaultValue="0"
                     type="single"
                   >
-                    {getUserSubscribe(item.short, item.token, protocol)?.map(
-                      (url, index) => (
-                        <AccordionItem key={url} value={String(index)}>
-                          <AccordionTrigger className="hover:no-underline">
-                            <div className="flex w-full flex-row items-center justify-between">
-                              <CardTitle className="font-medium text-sm">
-                                {t("subscriptionUrl", "Subscription URL")}{" "}
-                                {index + 1}
-                              </CardTitle>
+                    {subscriptionUrls.map((url, index) => (
+                      <AccordionItem key={url} value={String(index)}>
+                        <AccordionTrigger className="hover:no-underline">
+                          <div className="flex w-full flex-row items-center justify-between">
+                            <CardTitle className="font-medium text-sm">
+                              {t("subscriptionUrl", "Subscription URL")}{" "}
+                              {index + 1}
+                            </CardTitle>
 
-                              <CopyToClipboard
-                                onCopy={(_, result) => {
-                                  if (result) {
-                                    toast.success(
-                                      t("copySuccess", "Copy Success")
-                                    );
-                                  }
-                                }}
-                                text={url}
+                            <CopyToClipboard
+                              onCopy={(_, result) => {
+                                if (result) {
+                                  toast.success(
+                                    t("copySuccess", "Copy Success")
+                                  );
+                                }
+                              }}
+                              text={url}
+                            >
+                              <span
+                                className="mr-4 flex cursor-pointer rounded p-2 text-primary text-sm hover:bg-accent"
+                                onClick={(e) => e.stopPropagation()}
                               >
-                                <span
-                                  className="mr-4 flex cursor-pointer rounded p-2 text-primary text-sm hover:bg-accent"
-                                  onClick={(e) => e.stopPropagation()}
-                                >
-                                  <Icon
-                                    className="mr-2 size-5"
-                                    icon="uil:copy"
-                                  />
-                                  {t("copy", "Copy")}
-                                </span>
-                              </CopyToClipboard>
-                            </div>
-                          </AccordionTrigger>
-                          <AccordionContent>
-                            <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
-                              {applications
-                                ?.filter(
-                                  (application) =>
-                                    !!(
-                                      application.download_link?.[platform] &&
+                                <Icon className="mr-2 size-5" icon="uil:copy" />
+                                {t("copy", "Copy")}
+                              </span>
+                            </CopyToClipboard>
+                          </div>
+                        </AccordionTrigger>
+                        <AccordionContent>
+                          <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
+                            {applications
+                              ?.filter(
+                                (application) =>
+                                  !!(
+                                    application.download_link?.[platform] &&
+                                    application.scheme
+                                  )
+                              )
+                              .map((application) => {
+                                const downloadUrl =
+                                  application.download_link?.[platform];
+
+                                // Check if scheme template outputs the raw URL (which would be http(s)://)
+                                // rather than the scheme prefix itself
+                                const isHttpLink =
+                                  application.scheme?.startsWith("${url}");
+
+                                const handleCopy = (
+                                  _: string,
+                                  result: boolean
+                                ) => {
+                                  if (result) {
+                                    const href = getAppSubLink(
+                                      url,
                                       application.scheme
-                                    )
-                                )
-                                .map((application) => {
-                                  const downloadUrl =
-                                    application.download_link?.[platform];
+                                    );
 
-                                  // Check if scheme template outputs the raw URL (which would be http(s)://)
-                                  // rather than the scheme prefix itself
-                                  const isHttpLink =
-                                    application.scheme?.startsWith("${url}");
+                                    // Check if the generated link is a plain HTTP/HTTPS URL
+                                    // If so, only copy to clipboard without triggering redirect
+                                    const isPlainHttpUrl = /^https?:/i.test(
+                                      href
+                                    );
 
-                                  const handleCopy = (
-                                    _: string,
-                                    result: boolean
-                                  ) => {
-                                    if (result) {
-                                      const href = getAppSubLink(
-                                        url,
-                                        application.scheme
+                                    if (isPlainHttpUrl) {
+                                      toast.success(
+                                        t("copySuccess", "Copy Success")
                                       );
-
-                                      // Check if the generated link is a plain HTTP/HTTPS URL
-                                      // If so, only copy to clipboard without triggering redirect
-                                      const isPlainHttpUrl = /^https?:/i.test(
-                                        href
-                                      );
-
-                                      if (isPlainHttpUrl) {
-                                        toast.success(
-                                          t("copySuccess", "Copy Success")
-                                        );
-                                        return;
-                                      }
-
-                                      const showSuccessMessage = () => {
-                                        toast.success(
-                                          <>
-                                            <p>
-                                              {t("copySuccess", "Copy Success")}
-                                            </p>
-                                            <br />
-                                            <p>
-                                              {t(
-                                                "manualImportMessage",
-                                                "Please import manually"
-                                              )}
-                                            </p>
-                                          </>
-                                        );
-                                      };
-
-                                      if (isBrowser() && href && !isHttpLink) {
-                                        window.location.href = href;
-                                        const checkRedirect = setTimeout(() => {
-                                          if (window.location.href !== href) {
-                                            showSuccessMessage();
-                                          }
-                                          clearTimeout(checkRedirect);
-                                        }, 1000);
-                                        return;
-                                      }
-
-                                      showSuccessMessage();
+                                      return;
                                     }
-                                  };
 
-                                  return (
-                                    <div
-                                      className="flex size-full flex-col items-center justify-between gap-2 text-muted-foreground text-xs"
-                                      key={application.name}
-                                    >
-                                      <span>{application.name}</span>
+                                    const showSuccessMessage = () => {
+                                      toast.success(
+                                        <>
+                                          <p>
+                                            {t("copySuccess", "Copy Success")}
+                                          </p>
+                                          <br />
+                                          <p>
+                                            {t(
+                                              "manualImportMessage",
+                                              "Please import manually"
+                                            )}
+                                          </p>
+                                        </>
+                                      );
+                                    };
 
-                                      {application.icon && (
-                                        <img
-                                          alt={application.name}
-                                          className="p-1"
-                                          height={64}
-                                          src={application.icon}
-                                          width={64}
-                                        />
+                                    if (isBrowser() && href && !isHttpLink) {
+                                      window.location.href = href;
+                                      const checkRedirect = setTimeout(() => {
+                                        if (window.location.href !== href) {
+                                          showSuccessMessage();
+                                        }
+                                        clearTimeout(checkRedirect);
+                                      }, 1000);
+                                      return;
+                                    }
+
+                                    showSuccessMessage();
+                                  }
+                                };
+
+                                return (
+                                  <div
+                                    className="flex size-full flex-col items-center justify-between gap-2 text-muted-foreground text-xs"
+                                    key={application.name}
+                                  >
+                                    <span>{application.name}</span>
+
+                                    {application.icon && (
+                                      <img
+                                        alt={application.name}
+                                        className="p-1"
+                                        height={64}
+                                        src={application.icon}
+                                        width={64}
+                                      />
+                                    )}
+                                    <div className="flex">
+                                      {downloadUrl && (
+                                        <Button
+                                          asChild
+                                          className={
+                                            application.scheme
+                                              ? "rounded-r-none px-1.5"
+                                              : "px-1.5"
+                                          }
+                                          size="sm"
+                                          variant="secondary"
+                                        >
+                                          <a
+                                            href={downloadUrl}
+                                            rel="noopener noreferrer"
+                                            target="_blank"
+                                          >
+                                            {t("download", "Download")}
+                                          </a>
+                                        </Button>
                                       )}
-                                      <div className="flex">
-                                        {downloadUrl && (
+
+                                      {application.scheme && (
+                                        <CopyToClipboard
+                                          onCopy={handleCopy}
+                                          text={url}
+                                        >
                                           <Button
-                                            asChild
                                             className={
-                                              application.scheme
-                                                ? "rounded-r-none px-1.5"
-                                                : "px-1.5"
+                                              downloadUrl
+                                                ? "rounded-l-none p-2"
+                                                : "p-2"
                                             }
                                             size="sm"
-                                            variant="secondary"
                                           >
-                                            <a
-                                              href={downloadUrl}
-                                              rel="noopener noreferrer"
-                                              target="_blank"
-                                            >
-                                              {t("download", "Download")}
-                                            </a>
+                                            {isHttpLink
+                                              ? t(
+                                                  "clickToCopy",
+                                                  "Click to Copy"
+                                                )
+                                              : t("import", "Import")}
                                           </Button>
-                                        )}
-
-                                        {application.scheme && (
-                                          <CopyToClipboard
-                                            onCopy={handleCopy}
-                                            text={getAppSubLink(
-                                              url,
-                                              application.scheme
-                                            )}
-                                          >
-                                            <Button
-                                              className={
-                                                downloadUrl
-                                                  ? "rounded-l-none p-2"
-                                                  : "p-2"
-                                              }
-                                              size="sm"
-                                            >
-                                              {isHttpLink
-                                                ? t(
-                                                    "clickToCopy",
-                                                    "Click to Copy"
-                                                  )
-                                                : t("import", "Import")}
-                                            </Button>
-                                          </CopyToClipboard>
-                                        )}
-                                      </div>
+                                        </CopyToClipboard>
+                                      )}
                                     </div>
-                                  );
-                                })}
-                              <div className="hidden size-full flex-col items-center justify-between gap-2 text-muted-foreground text-sm lg:flex">
-                                <span>{t("qrCode", "QR Code")}</span>
-                                <QRCodeCanvas
-                                  bgColor="transparent"
-                                  fgColor="rgb(59, 130, 246)"
-                                  size={80}
-                                  value={url}
-                                />
-                                <span className="text-center">
-                                  {t("scanToSubscribe", "Scan to Subscribe")}
-                                </span>
-                              </div>
+                                  </div>
+                                );
+                              })}
+                            <div className="hidden size-full flex-col items-center justify-between gap-2 text-muted-foreground text-sm lg:flex">
+                              <span>{t("qrCode", "QR Code")}</span>
+                              <QRCodeCanvas
+                                bgColor="transparent"
+                                fgColor="rgb(59, 130, 246)"
+                                size={80}
+                                value={url}
+                              />
+                              <span className="text-center">
+                                {t("scanToSubscribe", "Scan to Subscribe")}
+                              </span>
                             </div>
-                          </AccordionContent>
-                        </AccordionItem>
-                      )
-                    )}
+                          </div>
+                        </AccordionContent>
+                      </AccordionItem>
+                    ))}
                   </Accordion>
                 </CardContent>
               </Card>

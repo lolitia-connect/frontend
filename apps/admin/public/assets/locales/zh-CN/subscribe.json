@@ -41,7 +41,11 @@
     "userAgentListDescription": "允许访问订阅的 {{userAgent}}，每行一个。已配置的应用程序 {{userAgent}} 将自动包含",
     "userAgentListPlaceholder": "输入允许的 {{userAgent}}，每行一个",
     "wildcardResolution": "泛域名解析",
-    "wildcardResolutionDescription": "为订阅启用泛域名解析"
+    "wildcardResolutionDescription": "为订阅启用泛域名解析",
+    "profileUpdateInterval": "订阅更新间隔",
+    "profileUpdateIntervalDescription": "设置 profile-update-interval 响应头，单位为小时；0 表示不发送此响应头。",
+    "profileWebPageUrl": "订阅主页地址",
+    "profileWebPageUrlDescription": "设置 profile-web-page-url 响应头；留空表示不发送此响应头。"
   },
   "form": {
     "addTitle": "添加客户端",
@@ -82,12 +86,16 @@
       "name": "名称",
       "outputFormat": "输出格式",
       "scheme": "URL Scheme",
-      "template": "订阅文件模板"
+      "template": "订阅文件模板",
+      "defaultParams": "默认参数"
     },
     "tabs": {
       "basic": "基本信息",
       "download": "下载",
       "template": "模板"
+    },
+    "validation": {
+      "invalidDefaultParams": "查询字符串参数格式无效"
     }
   },
   "outputFormats": {

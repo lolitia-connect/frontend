@@ -90,5 +90,8 @@
     "system": "System",
     "toggle": "Toggle theme"
   },
-  "unlimited": "unlimited"
+  "unlimited": "unlimited",
+  "table": {
+    "columns": "Choose columns"
+  }
 }

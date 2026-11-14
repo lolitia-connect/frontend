@@ -7,5 +7,19 @@
   "inviteRecords": "招待履歴",
   "registrationTime": "登録日時",
   "totalCommission": "累計報酬",
-  "userIdentifier": "ユーザー識別子"
+  "userIdentifier": "ユーザー識別子",
+  "withdrawSuccess": "出金申請を送信しました",
+  "withdrawFailed": "出金申請を送信できませんでした",
+  "invalidWithdrawAmount": "有効な金額を入力してください",
+  "withdrawAmountExceeds": "利用可能な報酬額を超えています",
+  "withdrawContentRequired": "出金情報を入力してください",
+  "withdraw": "出金",
+  "withdrawCommission": "報酬の出金",
+  "withdrawDescription": "報酬の出金申請を送信し、管理者の承認をお待ちください。",
+  "withdrawAmount": "出金額",
+  "availableCommission": "利用可能な報酬",
+  "withdrawInfo": "出金情報",
+  "withdrawInfoPlaceholder": "受取口座または出金に関する情報を入力",
+  "submitting": "送信中...",
+  "submitWithdraw": "出金を申請"
 }

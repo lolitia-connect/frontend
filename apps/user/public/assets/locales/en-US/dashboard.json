@@ -1,7 +1,7 @@
 {
   "cancel": "Cancel",
   "confirm": "Confirm",
-  "confirmResetSubscription": "Are you sure you want to reset your subscription?",
+  "confirmResetSubscription": "Confirm Reset Subscription",
   "copy": "Copy",
   "copySuccess": "Copy Success",
   "deducted": "Deducted",
@@ -41,5 +41,14 @@
   "redeemButton": "Redeem Now",
   "redeeming": "Redeeming...",
   "redeemSuccess": "Redemption successful! Subscription has been activated.",
-  "redeemFailed": "Redemption failed"
+  "redeemFailed": "Redemption failed",
+  "expiredDays": "Days Expired",
+  "remainingDays": "Remaining Days",
+  "resetSubscriptionDescription": "The link for this subscription stops working immediately, and the nodes already imported into your apps will all fail to connect within a few minutes.",
+  "resetSubscriptionSteps": "In every app, delete the old subscription, then add the new link shown on this page. Refreshing the old subscription will not help.",
+  "resetSubscriptionTitle": "After resetting, re-add your subscription in every app",
+  "resetSubscriptionUnaffected": "Your plan, expiry date and used traffic are not affected.",
+  "loadingSubscriptionConfig": "Loading subscription configuration...",
+  "subscriptionConfigUnavailable": "Subscription configuration is unavailable. Please refresh and try again.",
+  "clickToCopy": "Click to Copy"
 }

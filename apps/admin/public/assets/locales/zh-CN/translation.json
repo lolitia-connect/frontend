@@ -7,10 +7,10 @@
     "serverRequired": "请选择服务器"
   },
   "form": {
-    "quantityRequired": "",
-    "subscribePlanRequired": "",
-    "totalCountRequired": "",
-    "unitTimeRequired": "",
+    "quantityRequired": "请填写数量",
+    "subscribePlanRequired": "请选择订阅套餐",
+    "totalCountRequired": "请填写总次数",
+    "unitTimeRequired": "请选择时间单位",
     "validation": {
       "nameRequired": "客户端名称必填",
       "userAgentRequiredSuffix": "是必填项"

@@ -1,8 +1,8 @@
 "use client";
 
 import { useRouter, useSearch } from "@tanstack/react-router";
-import { oAuthLoginGetToken } from "@workspace/ui/services/common/oauth";
-import { useEffect } from "react";
+import { postAuthOauthLoginToken as oAuthLoginGetToken } from "@workspace/ui/services/common/common";
+import { useEffect, useRef } from "react";
 import { useGlobalStore } from "@/stores/global";
 import { getRedirectUrl, setAuthorization } from "@/utils/common";
 
@@ -20,10 +20,12 @@ export default function Certification({
     strict: false,
     structuralSharing: false,
   }) as Record<string, unknown>;
-  const { getUserInfo } = useGlobalStore();
+  const getUserInfo = useGlobalStore((state) => state.getUserInfo);
+  const submitted = useRef(false);
 
   useEffect(() => {
-    const inviteCode = localStorage.getItem("invite") || "";
+    if (submitted.current) return;
+    submitted.current = true;
     const callback =
       platform === "telegram" && typeof searchParams.tgAuthResult === "string"
         ? { tgAuthResult: searchParams.tgAuthResult }
@@ -32,7 +34,6 @@ export default function Certification({
     oAuthLoginGetToken({
       method: platform,
       callback,
-      ...(inviteCode && { invite: inviteCode }),
     } as API.OAuthLoginGetTokenRequest)
       .then(async (res) => {
         const token = res?.data?.data?.token;

@@ -41,5 +41,12 @@
   "redeemButton": "今すぐ交換",
   "redeeming": "交換中...",
   "redeemSuccess": "交換成功！サブスクリプションが有効になりました。",
-  "redeemFailed": "交換に失敗しました"
+  "redeemFailed": "交換に失敗しました",
+  "resetSubscriptionTitle": "リセット後、すべてのアプリでサブスクリプションを再登録してください",
+  "resetSubscriptionDescription": "以前のリンクとインポート済みノードは利用できなくなります。各アプリで古い登録を削除し、新しいリンクを追加してください。プラン、有効期限、使用済み通信量は変わりません。",
+  "expiredDays": "期限超過日数",
+  "remainingDays": "残り日数",
+  "loadingSubscriptionConfig": "サブスクリプション設定を読み込み中...",
+  "subscriptionConfigUnavailable": "サブスクリプション設定を取得できません。ページを更新して再試行してください。",
+  "clickToCopy": "クリックしてコピー"
 }

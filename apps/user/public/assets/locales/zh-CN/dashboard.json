@@ -1,7 +1,7 @@
 {
   "cancel": "取消",
   "confirm": "确认",
-  "confirmResetSubscription": "您确定要重置订阅吗？",
+  "confirmResetSubscription": "确认重置订阅",
   "copy": "复制",
   "copySuccess": "复制成功",
   "deducted": "已扣除",
@@ -42,5 +42,13 @@
   "redeemButton": "立即兑换",
   "redeeming": "兑换中...",
   "redeemSuccess": "兑换成功！",
-  "redeemFailed": "兑换失败"
+  "redeemFailed": "兑换失败",
+  "expiredDays": "已过期天数",
+  "remainingDays": "剩余天数",
+  "resetSubscriptionDescription": "这条订阅的链接会立即失效，客户端里已导入的节点也会在几分钟内全部连不上。",
+  "resetSubscriptionSteps": "请在所有客户端里删除旧订阅，再用本页新的订阅链接重新添加。只刷新订阅没有用。",
+  "resetSubscriptionTitle": "重置订阅后所有客户端都要重新添加",
+  "resetSubscriptionUnaffected": "套餐、到期时间和已用流量不受影响。",
+  "loadingSubscriptionConfig": "正在加载订阅配置...",
+  "subscriptionConfigUnavailable": "订阅配置暂不可用，请刷新后重试。"
 }

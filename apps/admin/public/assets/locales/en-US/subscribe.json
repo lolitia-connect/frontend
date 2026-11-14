@@ -41,7 +41,11 @@
     "userAgentListDescription": "Allowed {{userAgent}} for subscription access, one per line. Configured application {{userAgent}} will be automatically included",
     "userAgentListPlaceholder": "Enter allowed {{userAgent}}, one per line",
     "wildcardResolution": "Wildcard Resolution",
-    "wildcardResolutionDescription": "Enable wildcard domain resolution for subscriptions"
+    "wildcardResolutionDescription": "Enable wildcard domain resolution for subscriptions",
+    "profileUpdateInterval": "Profile Update Interval",
+    "profileUpdateIntervalDescription": "Set the profile-update-interval response header in hours. 0 disables this header.",
+    "profileWebPageUrl": "Profile Web Page URL",
+    "profileWebPageUrlDescription": "Set the profile-web-page-url response header. Leave blank to disable this header."
   },
   "form": {
     "addTitle": "Add Client",
@@ -82,12 +86,16 @@
       "name": "Name",
       "outputFormat": "Output Format",
       "scheme": "URL Scheme",
-      "template": "Subscription File Template"
+      "template": "Subscription File Template",
+      "defaultParams": "Default Parameters"
     },
     "tabs": {
       "basic": "Basic Info",
       "download": "Downloads",
       "template": "Templates"
+    },
+    "validation": {
+      "invalidDefaultParams": "Invalid query-string parameters"
     }
   },
   "outputFormats": {

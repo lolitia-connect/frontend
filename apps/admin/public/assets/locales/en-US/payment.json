@@ -36,5 +36,14 @@
   "selectPlatform": "Select Platform",
   "sort": "Sort",
   "submit": "Submit",
-  "updateSuccess": "Updated successfully"
+  "updateSuccess": "Updated successfully",
+  "currency": "Currency",
+  "rate": "Rate",
+  "currencyUnit": "Payment Currency",
+  "currencyUnitPlaceholder": "e.g. USD, CNY, EUR",
+  "exchangeRate": "Exchange Rate",
+  "exchangeRatePlaceholder": "Rate from system currency",
+  "billDesc": "Billing Description",
+  "billDescPlaceholder": "e.g. {item_name} - {order_no}",
+  "billDescHelp": "Variables: {order_no}, {item_name}, {amount}, {trade_no}"
 }

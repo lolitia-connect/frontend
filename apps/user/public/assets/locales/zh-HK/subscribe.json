@@ -60,5 +60,10 @@
     "unsubscribe": "取消訂閱",
     "unsubscribeDescription": "請注意：如果您現在取消訂閱，訂閱的剩餘價值將退還到您的帳戶餘額中，可用於您下次的訂閱購買或續訂。"
   },
-  "Year": "年"
+  "Year": "年",
+  "noPaymentMethodsAvailable": "暫無可用的增值付款方式",
+  "expireAt": "到期時間",
+  "expired": "已過期",
+  "expiresInDays": "剩餘 {{days}} 天",
+  "moreRenewable": "另有 {{total}} 個訂閱可在儀表板續費"
 }

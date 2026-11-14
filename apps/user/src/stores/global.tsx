@@ -1,15 +1,19 @@
 import { queryUserInfo } from "@workspace/ui/services/user/user";
 import { isBrowser } from "@workspace/ui/utils/index";
 import { create } from "zustand";
+import { buildUserSubscribeUrls } from "@/utils/subscription";
 
 export interface GlobalStore {
   clearUserLoading: () => void;
   common: API.GetGlobalConfigResponse;
+  commonError?: string;
   getAppSubLink: (url: string, schema?: string) => string;
   getUserInfo: () => Promise<void>;
   getUserSubscribe: (short: string, token: string, type?: string) => string[];
+  isLoadingCommon: boolean;
   isLoadingUser: boolean;
   setCommon: (common: Partial<API.GetGlobalConfigResponse>) => void;
+  setCommonError: (error: string) => void;
   setUser: (user?: API.User) => void;
   user?: API.User;
 }
@@ -111,6 +115,8 @@ export const useGlobalStore = create<GlobalStore>((set, get) => ({
     web_ad: false,
   },
   user: undefined,
+  commonError: undefined,
+  isLoadingCommon: true,
   isLoadingUser: true,
   setCommon: (common) =>
     set((state) => ({
@@ -118,7 +124,10 @@ export const useGlobalStore = create<GlobalStore>((set, get) => ({
         ...state.common,
         ...common,
       },
+      commonError: undefined,
+      isLoadingCommon: false,
     })),
+  setCommonError: (commonError) => set({ commonError, isLoadingCommon: false }),
   setUser: (user) => set({ user }),
   getUserInfo: async () => {
     set({ isLoadingUser: true });
@@ -134,24 +143,14 @@ export const useGlobalStore = create<GlobalStore>((set, get) => ({
   clearUserLoading: () => {
     set({ isLoadingUser: false });
   },
-  getUserSubscribe: (short: string, token: string, type?: string) => {
-    const { pan_domain, subscribe_domain, subscribe_path } =
-      get().common.subscribe || {};
-    const domains = subscribe_domain
-      ? subscribe_domain.split("\n")
-      : [extractDomain(window.location.origin, pan_domain)];
-
-    return domains.map((domain) => {
-      if (pan_domain) {
-        if (type)
-          return `https://${short}.${type}.${domain}${subscribe_path}?token=${token}&type=${type}`;
-        return `https://${short}.${domain}${subscribe_path}?token=${token}`;
-      }
-      if (type)
-        return `https://${domain}${subscribe_path}?token=${token}&type=${type}`;
-      return `https://${domain}${subscribe_path}?token=${token}`;
-    });
-  },
+  getUserSubscribe: (short: string, token: string, type?: string) =>
+    buildUserSubscribeUrls({
+      origin: window.location.origin,
+      short,
+      token,
+      type,
+      subscribe: get().common.subscribe || {},
+    }),
   getAppSubLink: (url: string, schema?: string) => {
     const name = get().common?.site?.site_name || "";
 

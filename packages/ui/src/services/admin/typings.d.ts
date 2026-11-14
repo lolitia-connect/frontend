@@ -1,4 +1,25 @@
 declare namespace API {
+  type AdminActionLog = {
+    action: string;
+    client_ip: string;
+    created_at: number;
+    detail: string;
+    id: number;
+    ip_as_organization: string;
+    ip_asn: number;
+    ip_city: string;
+    ip_country: string;
+    ip_country_code: string;
+    ip_region: string;
+    object: string;
+    object_id: number;
+    source: string;
+    telegram_sender_id: number;
+    timestamp: number;
+    user_agent: string;
+    user_id: number;
+  };
+
   type Ads = {
     id: string;
     title: string;
@@ -13,10 +34,6 @@ declare namespace API {
     updated_at: number;
   };
 
-  type AlipayNotifyResponse = {
-    return_code: string;
-  };
-
   type Announcement = {
     id: string;
     title: string;
@@ -26,91 +43,6 @@ declare namespace API {
     popup: boolean;
     created_at: number;
     updated_at: number;
-  };
-
-  type AnyTLS = {
-    port: number;
-    security_config: SecurityConfig;
-  };
-
-  type Application = {
-    id: string;
-    icon: string;
-    name: string;
-    description: string;
-    subscribe_type: string;
-  };
-
-  type ApplicationPlatform = {
-    ios?: ApplicationVersion[];
-    macos?: ApplicationVersion[];
-    linux?: ApplicationVersion[];
-    android?: ApplicationVersion[];
-    windows?: ApplicationVersion[];
-    harmony?: ApplicationVersion[];
-  };
-
-  type ApplicationResponse = {
-    applications: ApplicationResponseInfo[];
-  };
-
-  type ApplicationResponseInfo = {
-    id: string;
-    name: string;
-    icon: string;
-    description: string;
-    subscribe_type: string;
-    platform: ApplicationPlatform;
-  };
-
-  type ApplicationVersion = {
-    id: string;
-    url: string;
-    version: string;
-    description: string;
-    is_default: boolean;
-  };
-
-  type AppUserSubcbribe = {
-    id: string;
-    name: string;
-    upload: number;
-    traffic: number;
-    download: number;
-    device_limit: number;
-    start_time: string;
-    expire_time: string;
-    list: AppUserSubscbribeNode[];
-  };
-
-  type AppUserSubscbribeNode = {
-    id: string;
-    name: string;
-    uuid: string;
-    protocol: string;
-    relay_mode: string;
-    relay_node: string;
-    server_addr: string;
-    speed_limit: number;
-    tags: string[];
-    traffic: number;
-    traffic_ratio: number;
-    upload: number;
-    config: string;
-    country: string;
-    city: string;
-    latitude: string;
-    longitude: string;
-    created_at: number;
-    download: number;
-    port: number;
-  };
-
-  type AuthConfig = {
-    mobile: MobileAuthenticateConfig;
-    email: EmailAuthticateConfig;
-    device: DeviceAuthticateConfig;
-    register: PubilcRegisterConfig;
   };
 
   type AuthMethodConfig = {
@@ -127,6 +59,15 @@ declare namespace API {
     order_no?: string;
     balance: number;
     timestamp: number;
+    actor_id?: number;
+    client_ip?: string;
+    ip_as_organization?: string;
+    ip_asn?: number;
+    ip_city?: string;
+    ip_country?: string;
+    ip_country_code?: string;
+    ip_region?: string;
+    user_agent?: string;
   };
 
   type BatchDeleteCouponRequest = {
@@ -167,21 +108,7 @@ declare namespace API {
     current: number;
     created_at: number;
     updated_at: number;
-  };
-
-  type CheckoutOrderRequest = {
-    orderNo: string;
-    returnUrl?: string;
-  };
-
-  type CheckoutOrderResponse = {
-    type: string;
-    checkout_url?: string;
-    stripe?: StripePayment;
-  };
-
-  type CloseOrderRequest = {
-    orderNo: string;
+    recipient_count?: number;
   };
 
   type CommissionLog = {
@@ -190,6 +117,15 @@ declare namespace API {
     amount: number;
     order_no: string;
     timestamp: number;
+    actor_id?: number;
+    client_ip?: string;
+    ip_as_organization?: string;
+    ip_asn?: number;
+    ip_city?: string;
+    ip_country?: string;
+    ip_country_code?: string;
+    ip_region?: string;
+    user_agent?: string;
   };
 
   type Coupon = {
@@ -251,85 +187,6 @@ declare namespace API {
     enable?: boolean;
   };
 
-  type CreateRedemptionCodeRequest = {
-    total_count: number;
-    subscribe_plan: string;
-    unit_time: string;
-    quantity: number;
-    batch_count: number;
-  };
-
-  type UpdateRedemptionCodeRequest = {
-    id: string;
-    total_count?: number;
-    subscribe_plan?: string;
-    unit_time?: string;
-    quantity?: number;
-    status?: number;
-  };
-
-  type ToggleRedemptionCodeStatusRequest = {
-    id: string;
-    status: number;
-  };
-
-  type DeleteRedemptionCodeRequest = {
-    id: string;
-  };
-
-  type BatchDeleteRedemptionCodeRequest = {
-    ids: string[];
-  };
-
-  type GetRedemptionCodeListRequest = {
-    page: number;
-    size: number;
-    subscribe_plan?: string;
-    unit_time?: string;
-    code?: string;
-  };
-
-  type GetRedemptionCodeListResponse = {
-    total: number;
-    list: RedemptionCode[];
-  };
-
-  type GetRedemptionRecordListRequest = {
-    page: number;
-    size: number;
-    user_id?: string;
-    code_id?: string;
-  };
-
-  type GetRedemptionRecordListResponse = {
-    total: number;
-    list: RedemptionRecord[];
-  };
-
-  type RedemptionCode = {
-    id: string;
-    code: string;
-    total_count: number;
-    used_count: number;
-    subscribe_plan: string;
-    unit_time: string;
-    quantity: number;
-    status: number;
-    created_at: number;
-    updated_at: number;
-  };
-
-  type RedemptionRecord = {
-    id: string;
-    redemption_code_id: string;
-    user_id: string;
-    subscribe_id: string;
-    unit_time: string;
-    quantity: number;
-    redeemed_at: number;
-    created_at: number;
-  };
-
   type CreateDocumentRequest = {
     title: string;
     content: string;
@@ -366,6 +223,7 @@ declare namespace API {
     trade_no?: string;
     status?: number;
     subscribe_id?: string;
+    user_subscribe_id?: number;
   };
 
   type CreatePaymentMethodRequest = {
@@ -415,6 +273,7 @@ declare namespace API {
     template: string;
     output_format: string;
     download_link: DownloadLink;
+    default_params?: string;
   };
 
   type CreateSubscribeGroupRequest = {
@@ -540,19 +399,8 @@ declare namespace API {
     id: string;
   };
 
-  type DeleteUserParams = {
-    id: string;
-  };
-
   type DeleteUserSubscribeRequest = {
     user_subscribe_id: string;
-  };
-
-  type DeviceAuthticateConfig = {
-    enable: boolean;
-    show_ads: boolean;
-    enable_security: boolean;
-    only_real_device: boolean;
   };
 
   type Document = {
@@ -574,40 +422,9 @@ declare namespace API {
     harmony?: string;
   };
 
-  type EmailAuthticateConfig = {
-    enable: boolean;
-    enable_verify: boolean;
-    enable_domain_suffix: boolean;
-    domain_suffix_list: string;
-  };
-
-  type EPayNotifyRequest = {
-    pid: number;
-    trade_no: string;
-    out_trade_no: string;
-    type: string;
-    name: string;
-    money: string;
-    trade_status: string;
-    param: string;
-    sign: string;
-    sign_type: string;
-  };
-
-  type FilterBalanceLogParams = {
-    page: number;
-    size: number;
-    date?: string;
-    search?: string;
-    user_id?: string;
-  };
-
-  type FilterBalanceLogRequest = {
-    page?: number;
-    size?: number;
-    date?: string;
-    search?: string;
-    user_id?: string;
+  type FilterAdminActionLogResponse = {
+    list: AdminActionLog[];
+    total: number;
   };
 
   type FilterBalanceLogResponse = {
@@ -615,32 +432,9 @@ declare namespace API {
     list: BalanceLog[];
   };
 
-  type FilterCommissionLogParams = {
-    page: number;
-    size: number;
-    date?: string;
-    search?: string;
-    user_id?: string;
-  };
-
-  type FilterCommissionLogRequest = {
-    page?: number;
-    size?: number;
-    date?: string;
-    search?: string;
-    user_id?: string;
-  };
-
   type FilterCommissionLogResponse = {
     total: number;
     list: CommissionLog[];
-  };
-
-  type FilterEmailLogParams = {
-    page: number;
-    size: number;
-    date?: string;
-    search?: string;
   };
 
   type FilterEmailLogResponse = {
@@ -648,41 +442,9 @@ declare namespace API {
     list: MessageLog[];
   };
 
-  type FilterGiftLogParams = {
-    page: number;
-    size: number;
-    date?: string;
-    search?: string;
-    user_id?: string;
-  };
-
-  type FilterGiftLogRequest = {
-    page?: number;
-    size?: number;
-    date?: string;
-    search?: string;
-    user_id?: string;
-  };
-
   type FilterGiftLogResponse = {
     total: number;
     list: GiftLog[];
-  };
-
-  type FilterLoginLogParams = {
-    page: number;
-    size: number;
-    date?: string;
-    search?: string;
-    user_id?: string;
-  };
-
-  type FilterLoginLogRequest = {
-    page?: number;
-    size?: number;
-    date?: string;
-    search?: string;
-    user_id?: string;
   };
 
   type FilterLoginLogResponse = {
@@ -690,37 +452,9 @@ declare namespace API {
     list: LoginLog[];
   };
 
-  type FilterLogParams = {
-    page: number;
-    size: number;
-    date?: string;
-    search?: string;
-  };
-
-  type FilterMobileLogParams = {
-    page: number;
-    size: number;
-    date?: string;
-    search?: string;
-  };
-
   type FilterMobileLogResponse = {
     total: number;
     list: MessageLog[];
-  };
-
-  type FilterNodeListParams = {
-    page: number;
-    size: number;
-    search?: string;
-    node_group_id?: string;
-  };
-
-  type FilterNodeListRequest = {
-    page: number;
-    size: number;
-    search?: string;
-    node_group_id?: string;
   };
 
   type FilterNodeListResponse = {
@@ -728,20 +462,9 @@ declare namespace API {
     list: Node[];
   };
 
-  type FilterRegisterLogParams = {
-    page: number;
-    size: number;
-    date?: string;
-    search?: string;
-    user_id?: string;
-  };
-
-  type FilterRegisterLogRequest = {
-    page?: number;
-    size?: number;
-    date?: string;
-    search?: string;
-    user_id?: string;
+  type FilterOrderLogResponse = {
+    list: OrderLog[];
+    total: number;
   };
 
   type FilterRegisterLogResponse = {
@@ -749,37 +472,9 @@ declare namespace API {
     list: RegisterLog[];
   };
 
-  type FilterResetSubscribeLogParams = {
-    page: number;
-    size: number;
-    date?: string;
-    search?: string;
-    user_subscribe_id?: string;
-  };
-
-  type FilterResetSubscribeLogRequest = {
-    page?: number;
-    size?: number;
-    date?: string;
-    search?: string;
-    user_subscribe_id?: string;
-  };
-
   type FilterResetSubscribeLogResponse = {
     total: number;
     list: ResetSubscribeLog[];
-  };
-
-  type FilterServerListParams = {
-    page: number;
-    size: number;
-    search?: string;
-  };
-
-  type FilterServerListRequest = {
-    page: number;
-    size: number;
-    search?: string;
   };
 
   type FilterServerListResponse = {
@@ -787,43 +482,9 @@ declare namespace API {
     list: Server[];
   };
 
-  type FilterServerTrafficLogParams = {
-    page: number;
-    size: number;
-    date?: string;
-    search?: string;
-    server_id?: string;
-  };
-
-  type FilterServerTrafficLogRequest = {
-    page?: number;
-    size?: number;
-    date?: string;
-    search?: string;
-    server_id?: string;
-  };
-
   type FilterServerTrafficLogResponse = {
     total: number;
     list: ServerTrafficLog[];
-  };
-
-  type FilterSubscribeLogParams = {
-    page: number;
-    size: number;
-    date?: string;
-    search?: string;
-    user_id?: string;
-    user_subscribe_id?: string;
-  };
-
-  type FilterSubscribeLogRequest = {
-    page?: number;
-    size?: number;
-    date?: string;
-    search?: string;
-    user_id?: string;
-    user_subscribe_id?: string;
   };
 
   type FilterSubscribeLogResponse = {
@@ -831,38 +492,9 @@ declare namespace API {
     list: SubscribeLog[];
   };
 
-  type FilterSubscribeTrafficRequest = {
-    page?: number;
-    size?: number;
-    date?: string;
-    search?: string;
-    user_id?: string;
-    user_subscribe_id?: string;
-  };
-
   type FilterSubscribeTrafficResponse = {
     total: number;
     list: UserSubscribeTrafficLog[];
-  };
-
-  type FilterTrafficLogDetailsParams = {
-    page: number;
-    size: number;
-    date?: string;
-    search?: string;
-    server_id?: string;
-    subscribe_id?: string;
-    user_id?: string;
-  };
-
-  type FilterTrafficLogDetailsRequest = {
-    page?: number;
-    size?: number;
-    date?: string;
-    search?: string;
-    server_id?: string;
-    subscribe_id?: string;
-    user_id?: string;
   };
 
   type FilterTrafficLogDetailsResponse = {
@@ -870,13 +502,9 @@ declare namespace API {
     list: TrafficLogDetails[];
   };
 
-  type FilterUserSubscribeTrafficLogParams = {
-    page: number;
-    size: number;
-    date?: string;
-    search?: string;
-    user_id?: string;
-    user_subscribe_id?: string;
+  type FilterUnmatchedPaymentLogResponse = {
+    list: UnmatchedPaymentLog[];
+    total: number;
   };
 
   type Follow = {
@@ -888,26 +516,15 @@ declare namespace API {
     created_at: number;
   };
 
-  type GetAdsDetailParams = {
-    id: string;
+  type getAdsDetailParams = {
+    id?: number;
   };
 
-  type GetAdsDetailRequest = {
-    id: string;
-  };
-
-  type GetAdsListParams = {
+  type getAdsListParams = {
     page: number;
+    search?: string;
     size: number;
     status?: number;
-    search?: string;
-  };
-
-  type GetAdsListRequest = {
-    page: number;
-    size: number;
-    status?: number;
-    search?: string;
   };
 
   type GetAdsListResponse = {
@@ -915,22 +532,17 @@ declare namespace API {
     list: Ads[];
   };
 
-  type GetAnnouncementListParams = {
-    page: number;
-    size: number;
-    show?: boolean;
-    pinned?: boolean;
-    popup?: boolean;
-    search?: string;
+  type getAnnouncementDetailParams = {
+    id: number;
   };
 
-  type GetAnnouncementListRequest = {
+  type getAnnouncementListParams = {
     page: number;
-    size: number;
-    show?: boolean;
     pinned?: boolean;
     popup?: boolean;
     search?: string;
+    show?: boolean;
+    size: number;
   };
 
   type GetAnnouncementListResponse = {
@@ -938,42 +550,21 @@ declare namespace API {
     list: Announcement[];
   };
 
-  type GetAnnouncementParams = {
-    id: string;
+  type getApplicationPreviewParams = {
+    id?: string | number;
   };
 
-  type GetAnnouncementRequest = {
-    id: string;
+  type getApplicationSubscribeApplicationListParams = {
+    page: number;
+    size: number;
   };
 
-  type GetAuthMethodConfigParams = {
-    method: string;
-  };
-
-  type GetAuthMethodConfigRequest = {
-    method: string;
+  type getAuthMethodConfigParams = {
+    method?: string;
   };
 
   type GetAuthMethodListResponse = {
     list: AuthMethodConfig[];
-  };
-
-  type GetAvailablePaymentMethodsResponse = {
-    list: PaymentMethod[];
-  };
-
-  type GetBatchSendEmailTaskListParams = {
-    page: number;
-    size: number;
-    scope?: number;
-    status?: number;
-  };
-
-  type GetBatchSendEmailTaskListRequest = {
-    page: number;
-    size: number;
-    scope?: number;
-    status?: number;
   };
 
   type GetBatchSendEmailTaskListResponse = {
@@ -992,18 +583,11 @@ declare namespace API {
     errors: string;
   };
 
-  type GetCouponListParams = {
+  type getCouponListParams = {
     page: number;
+    search?: string;
     size: number;
     subscribe?: number;
-    search?: string;
-  };
-
-  type GetCouponListRequest = {
-    page: number;
-    size: number;
-    subscribe?: number;
-    search?: string;
   };
 
   type GetCouponListResponse = {
@@ -1015,22 +599,15 @@ declare namespace API {
     id: string;
   };
 
-  type GetDocumentDetailRequest = {
-    id: string;
+  type getDocumentDetailParams = {
+    id: number;
   };
 
-  type GetDocumentListParams = {
+  type getDocumentListParams = {
     page: number;
+    search?: string;
     size: number;
     tag?: string;
-    search?: string;
-  };
-
-  type GetDocumentListRequest = {
-    page: number;
-    size: number;
-    tag?: string;
-    search?: string;
   };
 
   type GetDocumentListResponse = {
@@ -1038,18 +615,178 @@ declare namespace API {
     list: Document[];
   };
 
-  type GetMessageLogListParams = {
+  type getLogAdminListParams = {
+    date?: string;
+    end_date?: string;
     page: number;
-    size: number;
-    type: number;
     search?: string;
+    size: number;
+    start_date?: string;
+    /** UserId narrows the trail to one administrator. */
+    user_id?: number;
   };
 
-  type GetMessageLogListRequest = {
+  type getLogBalanceListParams = {
+    date?: string;
+    end_date?: string;
     page: number;
-    size: number;
-    type: number;
     search?: string;
+    size: number;
+    start_date?: string;
+    user_id?: number;
+  };
+
+  type getLogCommissionListParams = {
+    date?: string;
+    end_date?: string;
+    page: number;
+    search?: string;
+    size: number;
+    start_date?: string;
+    user_id?: number;
+  };
+
+  type getLogEmailListParams = {
+    date?: string;
+    end_date?: string;
+    page: number;
+    search?: string;
+    size: number;
+    start_date?: string;
+  };
+
+  type getLogGiftListParams = {
+    date?: string;
+    end_date?: string;
+    page: number;
+    search?: string;
+    size: number;
+    start_date?: string;
+    user_id?: number;
+  };
+
+  type getLogLoginListParams = {
+    date?: string;
+    end_date?: string;
+    page: number;
+    search?: string;
+    size: number;
+    start_date?: string;
+    user_id?: number;
+  };
+
+  type getLogMessageListParams = {
+    page: number;
+    search?: string;
+    size: number;
+    type: 10 | 11;
+  };
+
+  type getLogMobileListParams = {
+    date?: string;
+    end_date?: string;
+    page: number;
+    search?: string;
+    size: number;
+    start_date?: string;
+  };
+
+  type getLogOrderListParams = {
+    date?: string;
+    end_date?: string;
+    page: number;
+    search?: string;
+    size: number;
+    start_date?: string;
+    user_id?: number;
+  };
+
+  type getLogPaymentUnmatchedListParams = {
+    date?: string;
+    end_date?: string;
+    page: number;
+    search?: string;
+    size: number;
+    start_date?: string;
+    /** UserId narrows the list to one payer. */
+    user_id?: number;
+  };
+
+  type getLogRegisterListParams = {
+    date?: string;
+    end_date?: string;
+    page: number;
+    search?: string;
+    size: number;
+    start_date?: string;
+    user_id?: number;
+  };
+
+  type getLogServerTrafficListParams = {
+    date?: string;
+    end_date?: string;
+    page: number;
+    search?: string;
+    server_id?: number;
+    size: number;
+    start_date?: string;
+  };
+
+  type getLogSubscribeListParams = {
+    date?: string;
+    end_date?: string;
+    page: number;
+    search?: string;
+    size: number;
+    start_date?: string;
+    user_id?: number;
+    user_subscribe_id?: number;
+  };
+
+  type getLogSubscribeResetListParams = {
+    date?: string;
+    end_date?: string;
+    page: number;
+    search?: string;
+    size: number;
+    start_date?: string;
+    user_subscribe_id?: number;
+  };
+
+  type getLogSubscribeTrafficListParams = {
+    date?: string;
+    end_date?: string;
+    page: number;
+    search?: string;
+    size: number;
+    start_date?: string;
+    user_id?: number;
+    user_subscribe_id?: number;
+  };
+
+  type getLogTrafficDetailsParams = {
+    date?: string;
+    end_date?: string;
+    page: number;
+    search?: string;
+    server_id?: number;
+    size: number;
+    start_date?: string;
+    subscribe_id?: number;
+    user_id?: number;
+  };
+
+  type getMarketingEmailBatchListParams = {
+    page?: number;
+    scope?: 1 | 2 | 3 | 4 | 5;
+    size?: number;
+    status?: 0 | 1 | 2 | 3 | 4 | 5;
+  };
+
+  type getMarketingQuotaListParams = {
+    page?: number;
+    size?: number;
+    status?: 0 | 1 | 2 | 3 | 4 | 5;
   };
 
   type GetMessageLogListResponse = {
@@ -1061,22 +798,13 @@ declare namespace API {
     periods: TimePeriod[];
   };
 
-  type GetOrderListParams = {
+  type getOrderListParams = {
     page: number;
-    size: number;
-    user_id?: string;
-    status?: number;
-    subscribe_id?: string;
     search?: string;
-  };
-
-  type GetOrderListRequest = {
-    page: number;
     size: number;
-    user_id?: string;
     status?: number;
-    subscribe_id?: string;
-    search?: string;
+    subscribe_id?: string | number;
+    user_id?: string | number;
   };
 
   type GetOrderListResponse = {
@@ -1084,20 +812,12 @@ declare namespace API {
     list: Order[];
   };
 
-  type GetPaymentMethodListParams = {
+  type getPaymentListParams = {
+    enable?: boolean;
     page: number;
-    size: number;
     platform?: string;
     search?: string;
-    enable?: boolean;
-  };
-
-  type GetPaymentMethodListRequest = {
-    page: number;
     size: number;
-    platform?: string;
-    search?: string;
-    enable?: boolean;
   };
 
   type GetPaymentMethodListResponse = {
@@ -1109,29 +829,20 @@ declare namespace API {
     scope: number;
     register_start_time?: number;
     register_end_time?: number;
+    additional?: string;
   };
 
   type GetPreSendEmailCountResponse = {
     count: number;
   };
 
-  type GetServerProtocolsParams = {
-    id: string;
+  type getServerListParams = {
+    page: number;
+    search?: string;
+    size: number;
   };
 
-  type GetServerProtocolsRequest = {
-    id: string;
-  };
-
-  type GetServerProtocolsResponse = {
-    protocols: Protocol[];
-  };
-
-  type GetServerNodeConfigParams = {
-    server_id: number;
-  };
-
-  type GetServerNodeConfigRequest = {
+  type getServerNodeConfigParams = {
     server_id: number;
   };
 
@@ -1141,14 +852,18 @@ declare namespace API {
     effective: ServerNodeConfigValues;
   };
 
-  type GetSubscribeApplicationListParams = {
+  type getServerNodeListParams = {
     page: number;
+    search?: string;
     size: number;
   };
 
-  type GetSubscribeApplicationListRequest = {
-    page: number;
-    size: number;
+  type getServerProtocolsParams = {
+    id?: number;
+  };
+
+  type GetServerProtocolsResponse = {
+    protocols: Protocol[];
   };
 
   type GetSubscribeApplicationListResponse = {
@@ -1156,12 +871,8 @@ declare namespace API {
     list: SubscribeApplication[];
   };
 
-  type GetSubscribeDetailsParams = {
-    id: string;
-  };
-
-  type GetSubscribeDetailsRequest = {
-    id: string;
+  type getSubscribeDetailsParams = {
+    id: number;
   };
 
   type GetSubscribeGroupListResponse = {
@@ -1169,20 +880,11 @@ declare namespace API {
     total: number;
   };
 
-  type GetSubscribeListParams = {
-    page: number;
-    size: number;
+  type getSubscribeListParams = {
     language?: string;
-    search?: string;
-    node_group_id?: string;
-  };
-
-  type GetSubscribeListRequest = {
     page: number;
-    size: number;
-    language?: string;
     search?: string;
-    node_group_id?: string;
+    size: number;
   };
 
   type GetSubscribeListResponse = {
@@ -1190,20 +892,16 @@ declare namespace API {
     total: number;
   };
 
-  type GetTicketListParams = {
-    page: number;
-    size: number;
-    user_id?: string;
-    status?: number;
-    search?: string;
+  type getTicketDetailParams = {
+    id: number;
   };
 
-  type GetTicketListRequest = {
+  type getTicketListParams = {
     page: number;
-    size: number;
-    user_id?: string;
-    status?: number;
     search?: string;
+    size: number;
+    status?: number;
+    user_id?: number;
   };
 
   type GetTicketListResponse = {
@@ -1211,45 +909,31 @@ declare namespace API {
     list: Ticket[];
   };
 
-  type GetTicketParams = {
-    id: string;
+  type getToolIpLocationParams = {
+    ip: string;
   };
 
-  type GetTicketRequest = {
-    id: string;
-  };
-
-  type GetUserAuthMethodRequest = {
-    user_id: string;
+  type getUserAuthMethodParams = {
+    user_id?: number;
   };
 
   type GetUserAuthMethodResponse = {
     auth_methods: UserAuthMethod[];
   };
 
-  type GetUserDetailParams = {
-    id: string;
+  type getUserDetailParams = {
+    id: number;
   };
 
-  type GetUserListParams = {
+  type getUserListParams = {
     page: number;
-    size: number;
     search?: string;
-    user_id?: string;
-    unscoped?: boolean;
-    subscribe_id?: string;
-    user_subscribe_id?: string;
-    user_group_id?: number;
-  };
-
-  type GetUserListRequest = {
-    page: number;
     size: number;
-    search?: string;
-    user_id?: string;
+    subscribe_id?: number;
     unscoped?: boolean;
-    subscribe_id?: string;
-    user_subscribe_id?: string;
+    user_id?: number;
+    user_subscribe_id?: number;
+    user_subscribe_token?: string;
   };
 
   type GetUserListResponse = {
@@ -1257,16 +941,10 @@ declare namespace API {
     list: User[];
   };
 
-  type GetUserLoginLogsParams = {
+  type getUserLoginLogsParams = {
     page: number;
     size: number;
-    user_id: string;
-  };
-
-  type GetUserLoginLogsRequest = {
-    page: number;
-    size: number;
-    user_id: string;
+    user_id?: number;
   };
 
   type GetUserLoginLogsResponse = {
@@ -1274,26 +952,15 @@ declare namespace API {
     total: number;
   };
 
-  type GetUserSubscribeByIdParams = {
-    id: string;
+  type getUserSubscribeDetailParams = {
+    id: string | number;
   };
 
-  type GetUserSubscribeByIdRequest = {
-    id: string;
-  };
-
-  type GetUserSubscribeDevicesParams = {
+  type getUserSubscribeDeviceParams = {
     page: number;
     size: number;
-    user_id: string;
-    subscribe_id: string;
-  };
-
-  type GetUserSubscribeDevicesRequest = {
-    page: number;
-    size: number;
-    user_id: string;
-    subscribe_id: string;
+    subscribe_id?: number;
+    user_id?: number;
   };
 
   type GetUserSubscribeDevicesResponse = {
@@ -1301,29 +968,16 @@ declare namespace API {
     total: number;
   };
 
-  type GetUserSubscribeListRequest = {
-    page: number;
-    size: number;
-    user_id: string;
-  };
-
   type GetUserSubscribeListResponse = {
     list: UserSubscribe[];
     total: number;
   };
 
-  type GetUserSubscribeLogsParams = {
+  type getUserSubscribeLogsParams = {
     page: number;
     size: number;
-    user_id: string;
-    subscribe_id?: string;
-  };
-
-  type GetUserSubscribeLogsRequest = {
-    page: number;
-    size: number;
-    user_id: string;
-    subscribe_id?: string;
+    subscribe_id?: number;
+    user_id?: number;
   };
 
   type GetUserSubscribeLogsResponse = {
@@ -1331,22 +985,16 @@ declare namespace API {
     total: number;
   };
 
-  type GetUserSubscribeParams = {
+  type getUserSubscribeParams = {
     page: number;
     size: number;
-    user_id: string;
+    user_id?: number;
   };
 
-  type GetUserSubscribeResetTrafficLogsParams = {
+  type getUserSubscribeResetLogsParams = {
     page: number;
     size: number;
-    user_subscribe_id: string;
-  };
-
-  type GetUserSubscribeResetTrafficLogsRequest = {
-    page: number;
-    size: number;
-    user_subscribe_id: string;
+    user_subscribe_id?: number;
   };
 
   type GetUserSubscribeResetTrafficLogsResponse = {
@@ -1354,26 +1002,29 @@ declare namespace API {
     total: number;
   };
 
-  type GetUserSubscribeTrafficLogsParams = {
+  type getUserSubscribeTrafficLogsParams = {
+    end_time?: number;
     page: number;
     size: number;
-    user_id: string;
-    subscribe_id: string;
-    start_time: number;
-    end_time: number;
-  };
-
-  type GetUserSubscribeTrafficLogsRequest = {
-    page: number;
-    size: number;
-    user_id: string;
-    subscribe_id: string;
-    start_time: number;
-    end_time: number;
+    start_time?: number;
+    subscribe_id?: number;
+    user_id?: number;
   };
 
   type GetUserSubscribeTrafficLogsResponse = {
     list: TrafficLog[];
+    total: number;
+  };
+
+  type getWithdrawalListParams = {
+    page: number;
+    size: number;
+    status?: 0 | 1 | 2;
+    user_id?: number;
+  };
+
+  type GetWithdrawalListResponse = {
+    list: WithdrawalLog[];
     total: number;
   };
 
@@ -1386,24 +1037,22 @@ declare namespace API {
     balance: number;
     remark?: string;
     timestamp: number;
-  };
-
-  type HasMigrateSeverNodeResponse = {
-    has_migrate: boolean;
-  };
-
-  type Hysteria2 = {
-    port: number;
-    hop_ports: string;
-    hop_interval: number;
-    obfs_password: string;
-    security_config: SecurityConfig;
+    actor_id?: number;
+    client_ip?: string;
+    ip_as_organization?: string;
+    ip_asn?: number;
+    ip_city?: string;
+    ip_country?: string;
+    ip_country_code?: string;
+    ip_region?: string;
+    user_agent?: string;
   };
 
   type InviteConfig = {
     forced_invite: boolean;
     referral_percentage: number;
     only_first_purchase: boolean;
+    withdrawal_method?: string;
   };
 
   type KickOfflineRequest = {
@@ -1417,6 +1066,13 @@ declare namespace API {
     user_agent: string;
     success: boolean;
     timestamp: number;
+    actor_id?: number;
+    ip_as_organization?: string;
+    ip_asn?: number;
+    ip_city?: string;
+    ip_country?: string;
+    ip_country_code?: string;
+    ip_region?: string;
   };
 
   type LogResponse = {
@@ -1437,27 +1093,15 @@ declare namespace API {
     content: Record<string, any>;
     status: number;
     created_at: number;
-  };
-
-  type MigrateServerNodeResponse = {
-    succee: number;
-    fail: number;
-    message?: string;
-  };
-
-  type MobileAuthenticateConfig = {
-    enable: boolean;
-    enable_whitelist: boolean;
-    whitelist: string[];
-  };
-
-  type ModuleConfig = {
-    /** 通讯密钥 */
-    secret: string;
-    /** 服务名称 */
-    service_name: string;
-    /** 服务版本 */
-    service_version: string;
+    actor_id?: number;
+    client_ip?: string;
+    ip_as_organization?: string;
+    ip_asn?: number;
+    ip_city?: string;
+    ip_country?: string;
+    ip_country_code?: string;
+    ip_region?: string;
+    user_agent?: string;
   };
 
   type Node = {
@@ -1494,6 +1138,7 @@ declare namespace API {
     proto: string;
     address: string;
     domains: string[];
+    server_name?: string;
   };
 
   type NodeOutbound = {
@@ -1526,30 +1171,18 @@ declare namespace API {
     settings?: string;
     stream_settings?: string;
     rules: string[];
-  };
-
-  type ServerNodeConfigValues = {
-    ip_strategy: string;
-    dns: NodeDNS[];
-    block: string[];
-    outbound: NodeOutbound[];
-  };
-
-  type ServerNodeConfigOverride = {
-    inherit_ip_strategy: boolean;
-    ip_strategy: string;
-    inherit_dns: boolean;
-    dns: NodeDNS[];
-    inherit_block: boolean;
-    block: string[];
-    inherit_outbound: boolean;
-    outbound: NodeOutbound[];
-  };
-
-  type NodeRelay = {
-    host: string;
-    port: number;
-    prefix: string;
+    alpn?: string[];
+    encryption?: string;
+    encryption_client_padding?: string;
+    encryption_mode?: string;
+    encryption_password?: string;
+    encryption_rtt?: string;
+    encryption_ticket?: string;
+    multiplex?: string;
+    plugin?: string;
+    plugin_opts?: any;
+    xhttp_extra?: string;
+    xhttp_mode?: string;
   };
 
   type Order = {
@@ -1572,30 +1205,35 @@ declare namespace API {
     subscribe_id: string;
     created_at: number;
     updated_at: number;
+    user_subscribe_id?: number;
   };
 
-  type OrderDetail = {
-    id: string;
-    user_id: string;
-    order_no: string;
-    type: number;
-    quantity: number;
-    price: number;
+  type OrderLog = {
+    actor_id: number;
     amount: number;
-    gift_amount: number;
-    discount: number;
-    coupon: string;
+    client_ip: string;
     coupon_discount: number;
-    commission?: number;
-    payment: PaymentMethod;
-    method: string;
+    discount: number;
     fee_amount: number;
-    trade_no: string;
-    status: number;
-    subscribe_id: string;
-    subscribe: Subscribe;
-    created_at: number;
-    updated_at: number;
+    gift_amount: number;
+    id: number;
+    ip_as_organization: string;
+    ip_asn: number;
+    ip_city: string;
+    ip_country: string;
+    ip_country_code: string;
+    ip_region: string;
+    method: string;
+    order_no: string;
+    order_type: number;
+    payment_id: number;
+    price: number;
+    quantity: number;
+    source: string;
+    subscribe_id: number;
+    timestamp: number;
+    user_agent: string;
+    user_id: number;
   };
 
   type OrdersStatistics = {
@@ -1636,6 +1274,7 @@ declare namespace API {
     currency_unit?: string;
     exchange_rate?: number;
     bill_desc?: string;
+    sort?: number;
   };
 
   type PaymentMethodDetail = {
@@ -1667,35 +1306,12 @@ declare namespace API {
     list: PlatformInfo[];
   };
 
-  type PreOrderResponse = {
-    price: number;
-    amount: number;
-    discount: number;
-    gift_amount: number;
-    coupon: string;
-    coupon_discount: number;
-    fee_amount: number;
-  };
-
-  type PreRenewalOrderResponse = {
-    orderNo: string;
-  };
-
   type PreViewNodeMultiplierResponse = {
     current_time: string;
     ratio: number;
   };
 
-  type PreviewSubscribeTemplateParams = {
-    id: string;
-  };
-
-  type PreviewSubscribeTemplateRequest = {
-    id: string;
-  };
-
   type PreviewSubscribeTemplateResponse = {
-    /** 预览的模板内容 */
     template: string;
   };
 
@@ -1706,6 +1322,8 @@ declare namespace API {
   type Protocol = {
     id?: string;
     name?: string;
+    ssr_protocol?: string;
+    cert_pin_sha256?: string;
     type: string;
     port: number;
     enable: boolean;
@@ -1732,99 +1350,45 @@ declare namespace API {
     reduce_rtt?: boolean;
     udp_relay_mode?: string;
     congestion_controller?: string;
-    /** mux, eg: off/low/medium/high */
     multiplex?: string;
-    /** padding scheme */
     padding_scheme?: string;
-    /** upload speed limit */
     up_mbps?: number;
-    /** download speed limit */
     down_mbps?: number;
-    /** obfs, 'none', 'http', 'tls' */
     obfs?: string;
-    /** obfs host */
     obfs_host?: string;
-    /** obfs path */
     obfs_path?: string;
-    /** xhttp mode */
     xhttp_mode?: string;
-    /** xhttp extra path */
     xhttp_extra?: string;
-    /** encryption，'none', 'mlkem768x25519plus' */
     encryption?: string;
-    /** encryption mode，'native', 'xorpub', 'random' */
     encryption_mode?: string;
-    /** encryption rtt，'0rtt', '1rtt' */
     encryption_rtt?: string;
-    /** encryption ticket */
     encryption_ticket?: string;
-    /** encryption server padding */
     encryption_server_padding?: string;
-    /** encryption private key */
     encryption_private_key?: string;
-    /** encryption client padding */
     encryption_client_padding?: string;
-    /** encryption password */
     encryption_password?: string;
-    /** Traffic ratio, default is 1 */
     ratio?: number;
-    /** Certificate mode, `none`｜`http`｜`dns`｜`self` */
     cert_mode?: string;
-    /** DNS provider for certificate */
     cert_dns_provider?: string;
-    /** Environment for DNS provider */
     cert_dns_env?: string;
-  };
-
-  type PubilcRegisterConfig = {
-    stop_register: boolean;
-    enable_ip_register_limit: boolean;
-    ip_register_limit: number;
-    ip_register_limit_duration: number;
-  };
-
-  type PubilcVerifyCodeConfig = {
-    verify_code_interval: number;
-  };
-
-  type PurchaseOrderRequest = {
-    subscribe_id: string;
-    quantity: number;
-    payment?: string;
-    coupon?: string;
-  };
-
-  type PurchaseOrderResponse = {
-    order_no: string;
-  };
-
-  type QueryAnnouncementRequest = {
-    page: number;
-    size: number;
-    pinned: boolean;
-    popup: boolean;
-  };
-
-  type QueryAnnouncementResponse = {
-    total: number;
-    announcements: Announcement[];
-  };
-
-  type QueryDocumentDetailRequest = {
-    id: string;
-  };
-
-  type QueryDocumentListResponse = {
-    total: number;
-    list: Document[];
-  };
-
-  type QueryIPLocationParams = {
-    ip: string;
-  };
-
-  type QueryIPLocationRequest = {
-    ip: string;
+    accept_proxy_protocol?: boolean;
+    alpn?: string[];
+    ech_enable?: boolean;
+    ech_server_name?: string;
+    heartbeat?: number;
+    mode?: string;
+    network?: string;
+    obfs_param?: string;
+    plugin?: string;
+    plugin_opts?: any;
+    protocol?: string;
+    protocol_param?: string;
+    quic_congestion_control?: string;
+    traffic_pattern?: string;
+    uot?: boolean;
+    uot_version?: number;
+    user_hint_is_mandatory?: boolean;
+    version?: number;
   };
 
   type QueryIPLocationResponse = {
@@ -1835,32 +1399,6 @@ declare namespace API {
 
   type QueryNodeTagResponse = {
     tags: string[];
-  };
-
-  type QueryOrderDetailRequest = {
-    order_no: string;
-  };
-
-  type QueryOrderListRequest = {
-    page: number;
-    size: number;
-  };
-
-  type QueryOrderListResponse = {
-    total: number;
-    list: OrderDetail[];
-  };
-
-  type QueryQuotaTaskListParams = {
-    page: number;
-    size: number;
-    status?: number;
-  };
-
-  type QueryQuotaTaskListRequest = {
-    page: number;
-    size: number;
-    status?: number;
   };
 
   type QueryQuotaTaskListResponse = {
@@ -1879,42 +1417,6 @@ declare namespace API {
     count: number;
   };
 
-  type QueryQuotaTaskStatusRequest = {
-    id: string;
-  };
-
-  type QueryQuotaTaskStatusResponse = {
-    status: number;
-    current: number;
-    total: number;
-    errors: string;
-  };
-
-  type QuerySubscribeGroupListResponse = {
-    list: SubscribeGroup[];
-    total: number;
-  };
-
-  type QuerySubscribeListResponse = {
-    list: Subscribe[];
-    total: number;
-  };
-
-  type QueryUserAffiliateCountResponse = {
-    registers: number;
-    total_commission: number;
-  };
-
-  type QueryUserAffiliateListRequest = {
-    page: number;
-    size: number;
-  };
-
-  type QueryUserAffiliateListResponse = {
-    list: UserAffiliate[];
-    total: number;
-  };
-
   type QuotaTask = {
     id: string;
     subscribers: string[];
@@ -1925,7 +1427,6 @@ declare namespace API {
     days: number;
     gift_type: number;
     gift_value: number;
-    /** UserSubscribe IDs */
     objects: string[];
     status: number;
     total: number;
@@ -1933,15 +1434,6 @@ declare namespace API {
     errors: string;
     created_at: number;
     updated_at: number;
-  };
-
-  type RechargeOrderRequest = {
-    amount: number;
-    payment: string;
-  };
-
-  type RechargeOrderResponse = {
-    order_no: string;
   };
 
   type RegisterConfig = {
@@ -1963,17 +1455,13 @@ declare namespace API {
     register_ip: string;
     user_agent: string;
     timestamp: number;
-  };
-
-  type RenewalOrderRequest = {
-    user_subscribe_id: string;
-    quantity: number;
-    payment: string;
-    coupon?: string;
-  };
-
-  type RenewalOrderResponse = {
-    order_no: string;
+    actor_id?: number;
+    ip_as_organization?: string;
+    ip_asn?: number;
+    ip_city?: string;
+    ip_country?: string;
+    ip_country_code?: string;
+    ip_region?: string;
   };
 
   type ResetAllSubscribeTokenResponse = {
@@ -1990,6 +1478,15 @@ declare namespace API {
     user_subscribe_id: string;
     order_no?: string;
     timestamp: number;
+    actor_id?: number;
+    client_ip?: string;
+    ip_as_organization?: string;
+    ip_asn?: number;
+    ip_city?: string;
+    ip_country?: string;
+    ip_country_code?: string;
+    ip_region?: string;
+    user_agent?: string;
   };
 
   type ResetSubscribeTrafficLog = {
@@ -1998,15 +1495,15 @@ declare namespace API {
     user_subscribe_id: string;
     order_no?: string;
     timestamp: number;
-  };
-
-  type ResetTrafficOrderRequest = {
-    user_subscribe_id: string;
-    payment: string;
-  };
-
-  type ResetTrafficOrderResponse = {
-    order_no: string;
+    actor_id?: number;
+    client_ip?: string;
+    ip_as_organization?: string;
+    ip_asn?: number;
+    ip_city?: string;
+    ip_country?: string;
+    ip_country_code?: string;
+    ip_region?: string;
+    user_agent?: string;
   };
 
   type ResetUserSubscribeTokenRequest = {
@@ -2017,13 +1514,9 @@ declare namespace API {
     user_subscribe_id: string;
   };
 
-  type Response = {
-    /** 状态码 */
-    code?: number;
-    /** 消息 */
-    msg?: string;
-    /** 数据 */
-    data?: Record<string, any>;
+  type ResponseSuccessBean = {
+    code: number;
+    msg: string;
   };
 
   type RevenueStatisticsResponse = {
@@ -2032,15 +1525,10 @@ declare namespace API {
     all: OrdersStatistics;
   };
 
-  type SecurityConfig = {
-    sni: string;
-    allow_insecure: boolean;
-    fingerprint: string;
-    reality_server_addr: string;
-    reality_server_port: number;
-    reality_private_key: string;
-    reality_public_key: string;
-    reality_short_id: string;
+  type ReviewWithdrawalRequest = {
+    id: number;
+    reason?: string;
+    status?: 1 | 2;
   };
 
   type Server = {
@@ -2057,12 +1545,22 @@ declare namespace API {
     updated_at: number;
   };
 
-  type ServerGroup = {
-    id: string;
-    name: string;
-    description: string;
-    created_at: number;
-    updated_at: number;
+  type ServerNodeConfigOverride = {
+    inherit_ip_strategy: boolean;
+    ip_strategy: string;
+    inherit_dns: boolean;
+    dns: NodeDNS[];
+    inherit_block: boolean;
+    block: string[];
+    inherit_outbound: boolean;
+    outbound: NodeOutbound[];
+  };
+
+  type ServerNodeConfigValues = {
+    ip_strategy: string;
+    dns: NodeDNS[];
+    block: string[];
+    outbound: NodeOutbound[];
   };
 
   type ServerOnlineIP = {
@@ -2077,19 +1575,6 @@ declare namespace API {
     subscribe_id: string;
     traffic: number;
     expired_at: number;
-  };
-
-  type ServerRuleGroup = {
-    id: string;
-    icon: string;
-    name: string;
-    type: string;
-    tags: string[];
-    rules: string;
-    enable: boolean;
-    default: boolean;
-    created_at: number;
-    updated_at: number;
   };
 
   type ServerStatus = {
@@ -2124,28 +1609,16 @@ declare namespace API {
   };
 
   type ServerTrafficLog = {
-    /** Server ID */
     server_id: string;
-    /** Upload traffic in bytes */
     upload: number;
-    /** Download traffic in bytes */
     download: number;
-    /** Total traffic in bytes (Upload + Download) */
     total: number;
-    /** Date in YYYY-MM-DD format */
     date: string;
-    /** Whether to show detailed traffic */
     details: boolean;
   };
 
   type SetNodeMultiplierRequest = {
     periods: TimePeriod[];
-  };
-
-  type Shadowsocks = {
-    method: string;
-    port: number;
-    server_key: string;
   };
 
   type SiteConfig = {
@@ -2158,12 +1631,6 @@ declare namespace API {
     custom_data: string;
   };
 
-  type SiteCustomDataContacts = {
-    email: string;
-    telephone: string;
-    address: string;
-  };
-
   type SortItem = {
     id: string;
     sort: number;
@@ -2171,12 +1638,6 @@ declare namespace API {
 
   type StopBatchSendEmailTaskRequest = {
     id: string;
-  };
-
-  type StripePayment = {
-    method: string;
-    client_secret: string;
-    publishable_key: string;
   };
 
   type Subscribe = {
@@ -2223,6 +1684,7 @@ declare namespace API {
     download_link?: DownloadLink;
     created_at: number;
     updated_at: number;
+    default_params?: string;
   };
 
   type SubscribeConfig = {
@@ -2233,6 +1695,8 @@ declare namespace API {
     user_agent_limit: boolean;
     user_agent_list: string;
     show_tutorial?: boolean;
+    profile_update_interval?: number;
+    profile_web_page_url?: string;
   };
 
   type SubscribeDiscount = {
@@ -2287,21 +1751,17 @@ declare namespace API {
     client_ip: string;
     user_subscribe_id: string;
     timestamp: number;
+    actor_id?: number;
+    ip_as_organization?: string;
+    ip_asn?: number;
+    ip_city?: string;
+    ip_country?: string;
+    ip_country_code?: string;
+    ip_region?: string;
   };
 
   type SubscribeSortRequest = {
     sort: SortItem[];
-  };
-
-  type SubscribeType = {
-    subscribe_types: string[];
-  };
-
-  type TelegramConfig = {
-    telegram_bot_token: string;
-    telegram_group_url: string;
-    telegram_notify: boolean;
-    telegram_web_hook_domain: string;
   };
 
   type TestEmailSendRequest = {
@@ -2367,27 +1827,26 @@ declare namespace API {
     timestamp: number;
   };
 
-  type TransportConfig = {
-    path: string;
-    host: string;
-    service_name: string;
-  };
-
-  type Trojan = {
-    port: number;
-    transport: string;
-    transport_config: TransportConfig;
-    security: string;
-    security_config: SecurityConfig;
-  };
-
-  type Tuic = {
-    port: number;
-    disable_sni: boolean;
-    reduce_rtt: boolean;
-    udp_relay_mode: string;
-    congestion_controller: string;
-    security_config: SecurityConfig;
+  type UnmatchedPaymentLog = {
+    actor_id: number;
+    amount: number;
+    client_ip: string;
+    created_at: number;
+    currency: string;
+    id: number;
+    ip_as_organization: string;
+    ip_asn: number;
+    ip_city: string;
+    ip_country: string;
+    ip_country_code: string;
+    ip_region: string;
+    order_no: string;
+    platform: string;
+    reason: string;
+    timestamp: number;
+    trade_no: string;
+    user_agent: string;
+    user_id: number;
   };
 
   type UpdateAdsRequest = {
@@ -2400,11 +1859,6 @@ declare namespace API {
     start_time: number;
     end_time: number;
     status: number;
-  };
-
-  type UpdateAnnouncementEnableRequest = {
-    id: string;
-    enable: boolean;
   };
 
   type UpdateAnnouncementRequest = {
@@ -2486,16 +1940,6 @@ declare namespace API {
     bill_desc?: string;
   };
 
-  type UpdateServerRequest = {
-    id: string;
-    name: string;
-    country?: string;
-    city?: string;
-    address: string;
-    sort?: number;
-    protocols: Protocol[];
-  };
-
   type UpdateServerNodeConfigRequest = {
     server_id: number;
     inherit_ip_strategy: boolean;
@@ -2506,6 +1950,16 @@ declare namespace API {
     block: string[];
     inherit_outbound: boolean;
     outbound: NodeOutbound[];
+  };
+
+  type UpdateServerRequest = {
+    id: string;
+    name: string;
+    country?: string;
+    city?: string;
+    address: string;
+    sort?: number;
+    protocols: Protocol[];
   };
 
   type UpdateSubscribeApplicationRequest = {
@@ -2519,6 +1973,7 @@ declare namespace API {
     template: string;
     output_format: string;
     download_link?: DownloadLink;
+    default_params?: string;
   };
 
   type UpdateSubscribeGroupRequest = {
@@ -2626,13 +2081,6 @@ declare namespace API {
     deleted_at?: number;
   };
 
-  type UserAffiliate = {
-    avatar: string;
-    identifier: string;
-    registered_at: number;
-    enable: boolean;
-  };
-
   type UserAuthMethod = {
     auth_type: string;
     auth_identifier: string;
@@ -2657,6 +2105,13 @@ declare namespace API {
     user_agent: string;
     success: boolean;
     timestamp: number;
+    actor_id?: number;
+    ip_as_organization?: string;
+    ip_asn?: number;
+    ip_city?: string;
+    ip_country?: string;
+    ip_country_code?: string;
+    ip_region?: string;
   };
 
   type UserStatistics = {
@@ -2692,6 +2147,7 @@ declare namespace API {
     short: string;
     created_at: number;
     updated_at: number;
+    entitlement_source?: string;
   };
 
   type UserSubscribeDetail = {
@@ -2712,6 +2168,7 @@ declare namespace API {
     status: number;
     created_at: number;
     updated_at: number;
+    entitlement_source?: string;
   };
 
   type UserSubscribeLog = {
@@ -2722,22 +2179,22 @@ declare namespace API {
     ip: string;
     user_agent: string;
     timestamp: number;
+    actor_id?: number;
+    ip_as_organization?: string;
+    ip_asn?: number;
+    ip_city?: string;
+    ip_country?: string;
+    ip_country_code?: string;
+    ip_region?: string;
   };
 
   type UserSubscribeTrafficLog = {
-    /** Subscribe ID */
     subscribe_id: string;
-    /** User ID */
     user_id: string;
-    /** Upload traffic in bytes */
     upload: number;
-    /** Download traffic in bytes */
     download: number;
-    /** Total traffic in bytes (Upload + Download) */
     total: number;
-    /** Date in YYYY-MM-DD format */
     date: string;
-    /** Whether to show detailed traffic */
     details: boolean;
   };
 
@@ -2745,6 +2202,7 @@ declare namespace API {
     sid: number;
     upload: number;
     download: number;
+    uid?: number;
   };
 
   type VerifyCodeConfig = {
@@ -2765,6 +2223,1125 @@ declare namespace API {
     version: string;
   };
 
+  type WithdrawalLog = {
+    amount: number;
+    content: string;
+    created_at: number;
+    id: number;
+    reason: string;
+    status: number;
+    updated_at: number;
+    user_id: number;
+  };
+
+  type AlipayNotifyResponse = {
+    return_code: string;
+  };
+
+  type AnyTLS = {
+    port: number;
+    security_config: SecurityConfig;
+  };
+
+  type Application = {
+    id: string;
+    icon: string;
+    name: string;
+    description: string;
+    subscribe_type: string;
+  };
+
+  type ApplicationPlatform = {
+    ios?: ApplicationVersion[];
+    macos?: ApplicationVersion[];
+    linux?: ApplicationVersion[];
+    android?: ApplicationVersion[];
+    windows?: ApplicationVersion[];
+    harmony?: ApplicationVersion[];
+  };
+
+  type ApplicationResponse = {
+    applications: ApplicationResponseInfo[];
+  };
+
+  type ApplicationResponseInfo = {
+    id: string;
+    name: string;
+    icon: string;
+    description: string;
+    subscribe_type: string;
+    platform: ApplicationPlatform;
+  };
+
+  type ApplicationVersion = {
+    id: string;
+    url: string;
+    version: string;
+    description: string;
+    is_default: boolean;
+  };
+
+  type AppUserSubcbribe = {
+    id: string;
+    name: string;
+    upload: number;
+    traffic: number;
+    download: number;
+    device_limit: number;
+    start_time: string;
+    expire_time: string;
+    list: AppUserSubscbribeNode[];
+  };
+
+  type AppUserSubscbribeNode = {
+    id: string;
+    name: string;
+    uuid: string;
+    protocol: string;
+    relay_mode: string;
+    relay_node: string;
+    server_addr: string;
+    speed_limit: number;
+    tags: string[];
+    traffic: number;
+    traffic_ratio: number;
+    upload: number;
+    config: string;
+    country: string;
+    city: string;
+    latitude: string;
+    longitude: string;
+    created_at: number;
+    download: number;
+    port: number;
+  };
+
+  type AuthConfig = {
+    mobile: MobileAuthenticateConfig;
+    email: EmailAuthticateConfig;
+    device: DeviceAuthticateConfig;
+    register: PubilcRegisterConfig;
+  };
+
+  type CheckoutOrderRequest = {
+    orderNo: string;
+    returnUrl?: string;
+  };
+
+  type CheckoutOrderResponse = {
+    type: string;
+    checkout_url?: string;
+    stripe?: StripePayment;
+  };
+
+  type CloseOrderRequest = {
+    orderNo: string;
+  };
+
+  type CreateRedemptionCodeRequest = {
+    total_count: number;
+    subscribe_plan: string;
+    unit_time: string;
+    quantity: number;
+    batch_count: number;
+  };
+
+  type UpdateRedemptionCodeRequest = {
+    id: string;
+    total_count?: number;
+    subscribe_plan?: string;
+    unit_time?: string;
+    quantity?: number;
+    status?: number;
+  };
+
+  type ToggleRedemptionCodeStatusRequest = {
+    id: string;
+    status: number;
+  };
+
+  type DeleteRedemptionCodeRequest = {
+    id: string;
+  };
+
+  type BatchDeleteRedemptionCodeRequest = {
+    ids: string[];
+  };
+
+  type GetRedemptionCodeListRequest = {
+    page: number;
+    size: number;
+    subscribe_plan?: string;
+    unit_time?: string;
+    code?: string;
+  };
+
+  type GetRedemptionCodeListResponse = {
+    total: number;
+    list: RedemptionCode[];
+  };
+
+  type GetRedemptionRecordListRequest = {
+    page: number;
+    size: number;
+    user_id?: string;
+    code_id?: string;
+  };
+
+  type GetRedemptionRecordListResponse = {
+    total: number;
+    list: RedemptionRecord[];
+  };
+
+  type RedemptionCode = {
+    id: string;
+    code: string;
+    total_count: number;
+    used_count: number;
+    subscribe_plan: string;
+    unit_time: string;
+    quantity: number;
+    status: number;
+    created_at: number;
+    updated_at: number;
+  };
+
+  type RedemptionRecord = {
+    id: string;
+    redemption_code_id: string;
+    user_id: string;
+    subscribe_id: string;
+    unit_time: string;
+    quantity: number;
+    redeemed_at: number;
+    created_at: number;
+  };
+
+  type DeleteUserParams = {
+    id: string;
+  };
+
+  type DeviceAuthticateConfig = {
+    enable: boolean;
+    show_ads: boolean;
+    enable_security: boolean;
+    only_real_device: boolean;
+  };
+
+  type EmailAuthticateConfig = {
+    enable: boolean;
+    enable_verify: boolean;
+    enable_domain_suffix: boolean;
+    domain_suffix_list: string;
+  };
+
+  type EPayNotifyRequest = {
+    pid: number;
+    trade_no: string;
+    out_trade_no: string;
+    type: string;
+    name: string;
+    money: string;
+    trade_status: string;
+    param: string;
+    sign: string;
+    sign_type: string;
+  };
+
+  type FilterBalanceLogParams = {
+    page: number;
+    size: number;
+    date?: string;
+    search?: string;
+    user_id?: string;
+  };
+
+  type FilterBalanceLogRequest = {
+    page?: number;
+    size?: number;
+    date?: string;
+    search?: string;
+    user_id?: string;
+  };
+
+  type FilterCommissionLogParams = {
+    page: number;
+    size: number;
+    date?: string;
+    search?: string;
+    user_id?: string;
+  };
+
+  type FilterCommissionLogRequest = {
+    page?: number;
+    size?: number;
+    date?: string;
+    search?: string;
+    user_id?: string;
+  };
+
+  type FilterEmailLogParams = {
+    page: number;
+    size: number;
+    date?: string;
+    search?: string;
+  };
+
+  type FilterGiftLogParams = {
+    page: number;
+    size: number;
+    date?: string;
+    search?: string;
+    user_id?: string;
+  };
+
+  type FilterGiftLogRequest = {
+    page?: number;
+    size?: number;
+    date?: string;
+    search?: string;
+    user_id?: string;
+  };
+
+  type FilterLoginLogParams = {
+    page: number;
+    size: number;
+    date?: string;
+    search?: string;
+    user_id?: string;
+  };
+
+  type FilterLoginLogRequest = {
+    page?: number;
+    size?: number;
+    date?: string;
+    search?: string;
+    user_id?: string;
+  };
+
+  type FilterLogParams = {
+    page: number;
+    size: number;
+    date?: string;
+    search?: string;
+  };
+
+  type FilterMobileLogParams = {
+    page: number;
+    size: number;
+    date?: string;
+    search?: string;
+  };
+
+  type FilterNodeListParams = {
+    page: number;
+    size: number;
+    search?: string;
+    node_group_id?: string;
+  };
+
+  type FilterNodeListRequest = {
+    page: number;
+    size: number;
+    search?: string;
+    node_group_id?: string;
+  };
+
+  type FilterRegisterLogParams = {
+    page: number;
+    size: number;
+    date?: string;
+    search?: string;
+    user_id?: string;
+  };
+
+  type FilterRegisterLogRequest = {
+    page?: number;
+    size?: number;
+    date?: string;
+    search?: string;
+    user_id?: string;
+  };
+
+  type FilterResetSubscribeLogParams = {
+    page: number;
+    size: number;
+    date?: string;
+    search?: string;
+    user_subscribe_id?: string;
+  };
+
+  type FilterResetSubscribeLogRequest = {
+    page?: number;
+    size?: number;
+    date?: string;
+    search?: string;
+    user_subscribe_id?: string;
+  };
+
+  type FilterServerListParams = {
+    page: number;
+    size: number;
+    search?: string;
+  };
+
+  type FilterServerListRequest = {
+    page: number;
+    size: number;
+    search?: string;
+  };
+
+  type FilterServerTrafficLogParams = {
+    page: number;
+    size: number;
+    date?: string;
+    search?: string;
+    server_id?: string;
+  };
+
+  type FilterServerTrafficLogRequest = {
+    page?: number;
+    size?: number;
+    date?: string;
+    search?: string;
+    server_id?: string;
+  };
+
+  type FilterSubscribeLogParams = {
+    page: number;
+    size: number;
+    date?: string;
+    search?: string;
+    user_id?: string;
+    user_subscribe_id?: string;
+  };
+
+  type FilterSubscribeLogRequest = {
+    page?: number;
+    size?: number;
+    date?: string;
+    search?: string;
+    user_id?: string;
+    user_subscribe_id?: string;
+  };
+
+  type FilterSubscribeTrafficRequest = {
+    page?: number;
+    size?: number;
+    date?: string;
+    search?: string;
+    user_id?: string;
+    user_subscribe_id?: string;
+  };
+
+  type FilterTrafficLogDetailsParams = {
+    page: number;
+    size: number;
+    date?: string;
+    search?: string;
+    server_id?: string;
+    subscribe_id?: string;
+    user_id?: string;
+  };
+
+  type FilterTrafficLogDetailsRequest = {
+    page?: number;
+    size?: number;
+    date?: string;
+    search?: string;
+    server_id?: string;
+    subscribe_id?: string;
+    user_id?: string;
+  };
+
+  type FilterUserSubscribeTrafficLogParams = {
+    page: number;
+    size: number;
+    date?: string;
+    search?: string;
+    user_id?: string;
+    user_subscribe_id?: string;
+  };
+
+  type GetAdsDetailParams = {
+    id: string;
+  };
+
+  type GetAdsDetailRequest = {
+    id: string;
+  };
+
+  type GetAdsListParams = {
+    page: number;
+    size: number;
+    status?: number;
+    search?: string;
+  };
+
+  type GetAdsListRequest = {
+    page: number;
+    size: number;
+    status?: number;
+    search?: string;
+  };
+
+  type GetAnnouncementListParams = {
+    page: number;
+    size: number;
+    show?: boolean;
+    pinned?: boolean;
+    popup?: boolean;
+    search?: string;
+  };
+
+  type GetAnnouncementListRequest = {
+    page: number;
+    size: number;
+    show?: boolean;
+    pinned?: boolean;
+    popup?: boolean;
+    search?: string;
+  };
+
+  type GetAnnouncementParams = {
+    id: string;
+  };
+
+  type GetAnnouncementRequest = {
+    id: string;
+  };
+
+  type GetAuthMethodConfigParams = {
+    method: string;
+  };
+
+  type GetAuthMethodConfigRequest = {
+    method: string;
+  };
+
+  type GetAvailablePaymentMethodsResponse = {
+    list: PaymentMethod[];
+  };
+
+  type GetBatchSendEmailTaskListParams = {
+    page: number;
+    size: number;
+    scope?: number;
+    status?: number;
+  };
+
+  type GetBatchSendEmailTaskListRequest = {
+    page: number;
+    size: number;
+    scope?: number;
+    status?: number;
+  };
+
+  type GetCouponListParams = {
+    page: number;
+    size: number;
+    subscribe?: number;
+    search?: string;
+  };
+
+  type GetCouponListRequest = {
+    page: number;
+    size: number;
+    subscribe?: number;
+    search?: string;
+  };
+
+  type GetDocumentDetailRequest = {
+    id: string;
+  };
+
+  type GetDocumentListParams = {
+    page: number;
+    size: number;
+    tag?: string;
+    search?: string;
+  };
+
+  type GetDocumentListRequest = {
+    page: number;
+    size: number;
+    tag?: string;
+    search?: string;
+  };
+
+  type GetMessageLogListParams = {
+    page: number;
+    size: number;
+    type: number;
+    search?: string;
+  };
+
+  type GetMessageLogListRequest = {
+    page: number;
+    size: number;
+    type: number;
+    search?: string;
+  };
+
+  type GetOrderListParams = {
+    page: number;
+    size: number;
+    user_id?: string;
+    status?: number;
+    subscribe_id?: string;
+    search?: string;
+  };
+
+  type GetOrderListRequest = {
+    page: number;
+    size: number;
+    user_id?: string;
+    status?: number;
+    subscribe_id?: string;
+    search?: string;
+  };
+
+  type GetPaymentMethodListParams = {
+    page: number;
+    size: number;
+    platform?: string;
+    search?: string;
+    enable?: boolean;
+  };
+
+  type GetPaymentMethodListRequest = {
+    page: number;
+    size: number;
+    platform?: string;
+    search?: string;
+    enable?: boolean;
+  };
+
+  type GetServerProtocolsParams = {
+    id: string;
+  };
+
+  type GetServerProtocolsRequest = {
+    id: string;
+  };
+
+  type GetServerNodeConfigParams = {
+    server_id: number;
+  };
+
+  type GetServerNodeConfigRequest = {
+    server_id: number;
+  };
+
+  type GetSubscribeApplicationListParams = {
+    page: number;
+    size: number;
+  };
+
+  type GetSubscribeApplicationListRequest = {
+    page: number;
+    size: number;
+  };
+
+  type GetSubscribeDetailsParams = {
+    id: string;
+  };
+
+  type GetSubscribeDetailsRequest = {
+    id: string;
+  };
+
+  type GetSubscribeListParams = {
+    page: number;
+    size: number;
+    language?: string;
+    search?: string;
+    node_group_id?: string;
+  };
+
+  type GetSubscribeListRequest = {
+    page: number;
+    size: number;
+    language?: string;
+    search?: string;
+    node_group_id?: string;
+  };
+
+  type GetTicketListParams = {
+    page: number;
+    size: number;
+    user_id?: string;
+    status?: number;
+    search?: string;
+  };
+
+  type GetTicketListRequest = {
+    page: number;
+    size: number;
+    user_id?: string;
+    status?: number;
+    search?: string;
+  };
+
+  type GetTicketParams = {
+    id: string;
+  };
+
+  type GetTicketRequest = {
+    id: string;
+  };
+
+  type GetUserAuthMethodRequest = {
+    user_id: string;
+  };
+
+  type GetUserDetailParams = {
+    id: string;
+  };
+
+  type GetUserListParams = {
+    page: number;
+    size: number;
+    search?: string;
+    user_id?: string;
+    unscoped?: boolean;
+    subscribe_id?: string;
+    user_subscribe_id?: string;
+    user_group_id?: number;
+  };
+
+  type GetUserListRequest = {
+    page: number;
+    size: number;
+    search?: string;
+    user_id?: string;
+    unscoped?: boolean;
+    subscribe_id?: string;
+    user_subscribe_id?: string;
+  };
+
+  type GetUserLoginLogsParams = {
+    page: number;
+    size: number;
+    user_id: string;
+  };
+
+  type GetUserLoginLogsRequest = {
+    page: number;
+    size: number;
+    user_id: string;
+  };
+
+  type GetUserSubscribeByIdParams = {
+    id: string;
+  };
+
+  type GetUserSubscribeByIdRequest = {
+    id: string;
+  };
+
+  type GetUserSubscribeDevicesParams = {
+    page: number;
+    size: number;
+    user_id: string;
+    subscribe_id: string;
+  };
+
+  type GetUserSubscribeDevicesRequest = {
+    page: number;
+    size: number;
+    user_id: string;
+    subscribe_id: string;
+  };
+
+  type GetUserSubscribeListRequest = {
+    page: number;
+    size: number;
+    user_id: string;
+  };
+
+  type GetUserSubscribeLogsParams = {
+    page: number;
+    size: number;
+    user_id: string;
+    subscribe_id?: string;
+  };
+
+  type GetUserSubscribeLogsRequest = {
+    page: number;
+    size: number;
+    user_id: string;
+    subscribe_id?: string;
+  };
+
+  type GetUserSubscribeParams = {
+    page: number;
+    size: number;
+    user_id: string;
+  };
+
+  type GetUserSubscribeResetTrafficLogsParams = {
+    page: number;
+    size: number;
+    user_subscribe_id: string;
+  };
+
+  type GetUserSubscribeResetTrafficLogsRequest = {
+    page: number;
+    size: number;
+    user_subscribe_id: string;
+  };
+
+  type GetUserSubscribeTrafficLogsParams = {
+    page: number;
+    size: number;
+    user_id: string;
+    subscribe_id: string;
+    start_time: number;
+    end_time: number;
+  };
+
+  type GetUserSubscribeTrafficLogsRequest = {
+    page: number;
+    size: number;
+    user_id: string;
+    subscribe_id: string;
+    start_time: number;
+    end_time: number;
+  };
+
+  type HasMigrateSeverNodeResponse = {
+    has_migrate: boolean;
+  };
+
+  type Hysteria2 = {
+    port: number;
+    hop_ports: string;
+    hop_interval: number;
+    obfs_password: string;
+    security_config: SecurityConfig;
+  };
+
+  type MigrateServerNodeResponse = {
+    succee: number;
+    fail: number;
+    message?: string;
+  };
+
+  type MobileAuthenticateConfig = {
+    enable: boolean;
+    enable_whitelist: boolean;
+    whitelist: string[];
+  };
+
+  type ModuleConfig = {
+    /** 通讯密钥 */
+    secret: string;
+    /** 服务名称 */
+    service_name: string;
+    /** 服务版本 */
+    service_version: string;
+  };
+
+  type NodeRelay = {
+    host: string;
+    port: number;
+    prefix: string;
+  };
+
+  type OrderDetail = {
+    id: string;
+    user_id: string;
+    order_no: string;
+    type: number;
+    quantity: number;
+    price: number;
+    amount: number;
+    gift_amount: number;
+    discount: number;
+    coupon: string;
+    coupon_discount: number;
+    commission?: number;
+    payment: PaymentMethod;
+    method: string;
+    fee_amount: number;
+    trade_no: string;
+    status: number;
+    subscribe_id: string;
+    subscribe: Subscribe;
+    created_at: number;
+    updated_at: number;
+  };
+
+  type PreOrderResponse = {
+    price: number;
+    amount: number;
+    discount: number;
+    gift_amount: number;
+    coupon: string;
+    coupon_discount: number;
+    fee_amount: number;
+  };
+
+  type PreRenewalOrderResponse = {
+    orderNo: string;
+  };
+
+  type PreviewSubscribeTemplateParams = {
+    id: string;
+  };
+
+  type PreviewSubscribeTemplateRequest = {
+    id: string;
+  };
+
+  type PubilcRegisterConfig = {
+    stop_register: boolean;
+    enable_ip_register_limit: boolean;
+    ip_register_limit: number;
+    ip_register_limit_duration: number;
+  };
+
+  type PubilcVerifyCodeConfig = {
+    verify_code_interval: number;
+  };
+
+  type PurchaseOrderRequest = {
+    subscribe_id: string;
+    quantity: number;
+    payment?: string;
+    coupon?: string;
+  };
+
+  type PurchaseOrderResponse = {
+    order_no: string;
+  };
+
+  type QueryAnnouncementRequest = {
+    page: number;
+    size: number;
+    pinned: boolean;
+    popup: boolean;
+  };
+
+  type QueryAnnouncementResponse = {
+    total: number;
+    announcements: Announcement[];
+  };
+
+  type QueryDocumentDetailRequest = {
+    id: string;
+  };
+
+  type QueryDocumentListResponse = {
+    total: number;
+    list: Document[];
+  };
+
+  type QueryIPLocationParams = {
+    ip: string;
+  };
+
+  type QueryIPLocationRequest = {
+    ip: string;
+  };
+
+  type QueryOrderDetailRequest = {
+    order_no: string;
+  };
+
+  type QueryOrderListRequest = {
+    page: number;
+    size: number;
+  };
+
+  type QueryOrderListResponse = {
+    total: number;
+    list: OrderDetail[];
+  };
+
+  type QueryQuotaTaskListParams = {
+    page: number;
+    size: number;
+    status?: number;
+  };
+
+  type QueryQuotaTaskListRequest = {
+    page: number;
+    size: number;
+    status?: number;
+  };
+
+  type QueryQuotaTaskStatusRequest = {
+    id: string;
+  };
+
+  type QueryQuotaTaskStatusResponse = {
+    status: number;
+    current: number;
+    total: number;
+    errors: string;
+  };
+
+  type QuerySubscribeGroupListResponse = {
+    list: SubscribeGroup[];
+    total: number;
+  };
+
+  type QuerySubscribeListResponse = {
+    list: Subscribe[];
+    total: number;
+  };
+
+  type QueryUserAffiliateCountResponse = {
+    registers: number;
+    total_commission: number;
+  };
+
+  type QueryUserAffiliateListRequest = {
+    page: number;
+    size: number;
+  };
+
+  type QueryUserAffiliateListResponse = {
+    list: UserAffiliate[];
+    total: number;
+  };
+
+  type RechargeOrderRequest = {
+    amount: number;
+    payment: string;
+  };
+
+  type RechargeOrderResponse = {
+    order_no: string;
+  };
+
+  type RenewalOrderRequest = {
+    user_subscribe_id: string;
+    quantity: number;
+    payment: string;
+    coupon?: string;
+  };
+
+  type RenewalOrderResponse = {
+    order_no: string;
+  };
+
+  type ResetTrafficOrderRequest = {
+    user_subscribe_id: string;
+    payment: string;
+  };
+
+  type ResetTrafficOrderResponse = {
+    order_no: string;
+  };
+
+  type Response = {
+    /** 状态码 */
+    code?: number;
+    /** 消息 */
+    msg?: string;
+    /** 数据 */
+    data?: Record<string, any>;
+  };
+
+  type SecurityConfig = {
+    sni: string;
+    allow_insecure: boolean;
+    fingerprint: string;
+    reality_server_addr: string;
+    reality_server_port: number;
+    reality_private_key: string;
+    reality_public_key: string;
+    reality_short_id: string;
+  };
+
+  type ServerGroup = {
+    id: string;
+    name: string;
+    description: string;
+    created_at: number;
+    updated_at: number;
+  };
+
+  type ServerRuleGroup = {
+    id: string;
+    icon: string;
+    name: string;
+    type: string;
+    tags: string[];
+    rules: string;
+    enable: boolean;
+    default: boolean;
+    created_at: number;
+    updated_at: number;
+  };
+
+  type Shadowsocks = {
+    method: string;
+    port: number;
+    server_key: string;
+  };
+
+  type SiteCustomDataContacts = {
+    email: string;
+    telephone: string;
+    address: string;
+  };
+
+  type StripePayment = {
+    method: string;
+    client_secret: string;
+    publishable_key: string;
+  };
+
+  type SubscribeType = {
+    subscribe_types: string[];
+  };
+
+  type TelegramConfig = {
+    telegram_bot_token: string;
+    telegram_group_url: string;
+    telegram_notify: boolean;
+    telegram_web_hook_domain: string;
+  };
+
+  type TransportConfig = {
+    path: string;
+    host: string;
+    service_name: string;
+  };
+
+  type Trojan = {
+    port: number;
+    transport: string;
+    transport_config: TransportConfig;
+    security: string;
+    security_config: SecurityConfig;
+  };
+
+  type Tuic = {
+    port: number;
+    disable_sni: boolean;
+    reduce_rtt: boolean;
+    udp_relay_mode: string;
+    congestion_controller: string;
+    security_config: SecurityConfig;
+  };
+
+  type UpdateAnnouncementEnableRequest = {
+    id: string;
+    enable: boolean;
+  };
+
+  type UserAffiliate = {
+    avatar: string;
+    identifier: string;
+    registered_at: number;
+    enable: boolean;
+  };
+
   type Vless = {
     port: number;
     flow: string;
@@ -2781,8 +3358,6 @@ declare namespace API {
     security: string;
     security_config: SecurityConfig;
   };
-
-  // ===== Group Management Types =====
 
   type UserGroup = {
     id: string;
@@ -2878,8 +3453,6 @@ declare namespace API {
     progress: number;
     total: number;
   };
-
-  // ===== Group Request/Response Types =====
 
   type GetUserGroupListRequest = {
     page: number;
@@ -3014,15 +3587,18 @@ declare namespace API {
   type ExportGroupResultRequest = {
     history_id?: string;
   };
+
   type MigrateUsersRequest = {
     from_user_group_id: number;
     to_user_group_id: number;
     include_locked?: boolean;
   };
+
   type MigrateUsersResponse = {
     success_count: number;
     failed_count: number;
   };
+
   type ResetGroupsRequest = {
     confirm: boolean;
   };

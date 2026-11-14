@@ -8,6 +8,7 @@
     "serve": "vite preview",
     "lint": "biome lint",
     "check": "biome check",
+    "test": "vitest run",
     "i18n:extract": "i18next-cli extract",
     "i18n:sync": "i18next-cli sync",
     "i18n:status": "i18next-cli status"
@@ -16,6 +17,7 @@
     "@faker-js/faker": "^10.4.0",
     "@lottiefiles/dotlottie-react": "^0.17.15",
     "@noble/curves": "^2.2.0",
+    "@noble/post-quantum": "^0.6.1",
     "@stripe/react-stripe-js": "^5.6.1",
     "@stripe/stripe-js": "^8.11.0",
     "@tailwindcss/vite": "^4.2.2",

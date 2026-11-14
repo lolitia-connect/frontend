@@ -90,5 +90,8 @@
     "system": "システム",
     "toggle": "テーマ切替"
   },
-  "unlimited": "無制限"
+  "unlimited": "無制限",
+  "table": {
+    "columns": "列を選択"
+  }
 }

@@ -40,9 +40,9 @@ import { ArrayInput } from "@workspace/ui/composed/dynamic-inputs";
 import { EnhancedInput } from "@workspace/ui/composed/enhanced-input";
 import { Icon } from "@workspace/ui/composed/icon";
 import {
-  getNodeConfig,
-  updateNodeConfig,
-} from "@workspace/ui/services/admin/system";
+  getSystemNodeConfig as getNodeConfig,
+  putSystemNodeConfig as updateNodeConfig,
+} from "@workspace/ui/services/admin/admin";
 import { unitConversion } from "@workspace/ui/utils/unit-conversions";
 import { DicesIcon } from "lucide-react";
 import { uid } from "radash";
@@ -60,6 +60,7 @@ import { OutboundConfigInput } from "./outbound-config-input";
 const dnsConfigSchema = z.object({
   proto: z.string(), // z.enum(['tcp', 'udp', 'tls', 'https', 'quic']),
   address: z.string(),
+  server_name: z.string().optional(),
   domains: z.array(z.string()),
 });
 
@@ -439,6 +440,14 @@ export default function ServerConfig() {
                                 placeholder: "8.8.8.8:53",
                               },
                               {
+                                name: "server_name",
+                                type: "text",
+                                placeholder: t(
+                                  "server_config.fields.dns_server_name_placeholder",
+                                  "TLS server name (optional)"
+                                ),
+                              },
+                              {
                                 name: "domains",
                                 type: "textarea",
                                 className: "col-span-2",
@@ -452,6 +461,7 @@ export default function ServerConfig() {
                               const converted = values.map((item: any) => ({
                                 proto: item.proto,
                                 address: item.address,
+                                server_name: item.server_name || "",
                                 domains:
                                   typeof item.domains === "string"
                                     ? item.domains

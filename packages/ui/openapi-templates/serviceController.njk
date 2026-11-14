@@ -1,0 +1,138 @@
+{{ requestImportStatement }}
+
+{% for api in list -%}
+export async function {{ api.functionName }}(
+{%- if api.params and api.hasParams %}
+  params
+  {%- if genType === "ts" -%}
+  : {{namespace}}.{{api.typeName}}
+    {% if api.params.header -%}
+    & {
+    {% for param in api.params.header -%}
+      '{{ param.name }}'
+      {{- "?" if not param.required }}
+      {{- (": " + param.type + ";") | safe }}
+    {% endfor -%}
+    }
+    {%- endif -%}
+  {%- endif -%}
+  {%- if api.hasParams -%}
+  {{ "," if api.body or api.file}}
+  {%- endif -%}
+{%- endif -%}
+{%- if api.body -%}
+  body
+  {%- if genType === "ts" -%}
+  : {% if api.body.propertiesList %}{
+    {%- for prop in api.body.propertiesList %}
+    {{ prop.key }}{{ "?" if not prop.schema.required }}: {{ prop.schema.type }},
+    {%- endfor %}
+  }
+  {%- else -%}
+  {{ api.body.type }}
+  {%- endif -%}
+  {%- endif -%}
+  {{ "," if api.file }}
+{%- endif %}
+{%- if api.file -%}
+{%- for file in api.file -%}
+{{file.title | safe}}
+{%- if genType === "ts" -%}
+{{- "?" if not api.file.required -}}
+: File {{ "[]" if file.multiple }}
+{%- endif -%}
+{{"," if not loop.last }}
+{%- endfor -%}
+{%- endif -%}
+{{ "," if api.body or api.hasParams or api.file }}
+  options {{ ("?: " + requestOptionsType) if genType === "ts" }}
+) {
+  {% if api.params and api.params.path -%}
+  const { {% for param in api.params.path %}'{{ param.name }}': {{ param.alias }}, {% endfor %}
+  {% if api.params.path -%}
+  ...queryParams
+  {% endif -%}
+  } = params;
+  {% endif -%}
+  {% if api.hasFormData -%}
+  const formData = new FormData();
+  {% if api.file -%}
+  {% for file in api.file %}
+  if({{file.title | safe}}){
+  {% if file.multiple %}
+  {{file.title | safe}}.forEach(item => formData.append('{{file.title | safe}}', item || ''));
+  {% else %}
+  formData.append('{{file.title | safe}}', {{file.title | safe}})
+  {% endif %}
+  }
+  {% endfor %}
+  {%- endif -%}
+  {% if api.body %}
+  Object.keys(body).forEach(key => {
+    {% if genType === "ts" %}
+    const item = (body as any)[key];
+    {% else %}
+    const item = body[key];
+    {% endif %}
+    if (item !== undefined && item !== null) {
+      {% if genType === "ts" %}
+      if (typeof item === 'object' && !(item instanceof File)) {
+        if (item instanceof Array) {
+          item.forEach((value) => formData.append(key, value || ''));
+        } else {
+          formData.append(key, new Blob([JSON.stringify(item)], {type: 'application/json'}));
+        }
+      } else {
+        formData.append(key, item);
+      }
+      {% else %}
+      formData.append(key, typeof item === 'object' ? JSON.stringify(item) : item);
+      {% endif %}
+    }
+  });
+  {% endif %}
+  {% endif -%}
+  {% if api.hasPathVariables or api.hasApiPrefix -%}
+  return request{{ ("<" + api.response.type + ">") | safe if genType === "ts" }}(`{{ api.path | safe }}`, {
+  {% else -%}
+  return request{{ ("<" + api.response.type + ">") | safe if genType === "ts" }}('{{ api.path }}', {
+  {% endif -%}
+    method: '{{ api.method | upper }}',
+    {%- if api.hasHeader and api.body.mediaType not in ["multipart/form-data"] %}
+    headers: {
+      {%- if api.body.mediaType %}
+      'Content-Type': '{{ api.body.mediaType | safe }}',
+      {%- endif %}
+    },
+    {%- endif %}
+    {%- if api.params and api.hasParams %}
+    params: {
+      {%- for query in api.params.query %}
+        {% if query.schema.default -%}
+          '{{query.name | safe}}': '{{query.schema.default | safe}}',
+        {%- endif -%}
+      {%- endfor -%}
+      ...{{ 'queryParams' if api.params and api.params.path else 'params' }},
+      {%- for query in api.params.query %}
+        {%- if query.isComplexType %}
+          '{{query.name | safe}}': undefined,
+          ...{{ 'queryParams' if api.params and api.params.path else 'params' }}['{{query.name | safe}}'],
+        {%- endif %}
+      {%- endfor -%}
+    },
+    {%- endif %}
+    {%- if api.hasFormData %}
+    data: formData,
+    {%- if api.body.mediaType === "multipart/form-data" %}
+    requestType: 'form',
+    {%- endif %}
+    {%- else %}
+    {%- if api.body %}
+    data: body,
+    {%- endif %}
+    {%- endif %}
+    ...(options || {{api.options | dump}}),
+  });
+}
+
+{% endfor -%}

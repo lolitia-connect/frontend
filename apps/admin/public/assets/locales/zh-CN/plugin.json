@@ -63,5 +63,6 @@
   "validationFailed": "校验失败",
   "validationPassed": "校验通过",
   "version": "版本",
-  "yes": "是"
+  "yes": "是",
+  "running": "运行中"
 }

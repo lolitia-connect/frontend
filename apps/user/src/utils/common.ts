@@ -38,12 +38,20 @@ export function setAuthorization(token: string): void {
   setCookie("Authorization", token);
 }
 
-export function getRedirectUrl(): string {
+function normalizeRedirect(value?: string | null): string | undefined {
+  return value?.startsWith("/") &&
+    !value.startsWith("//") &&
+    !value.startsWith("/\\")
+    ? value
+    : undefined;
+}
+
+export function getRedirectUrl(options?: { consumeStored?: boolean }): string {
   if (typeof window === "undefined") return "/dashboard";
 
   const readRedirect = (search: string) => {
     const redirect = new URLSearchParams(search).get("redirect");
-    return redirect?.startsWith("/") ? redirect : undefined;
+    return normalizeRedirect(redirect);
   };
 
   const hash = window.location.hash.startsWith("#")
@@ -54,11 +62,12 @@ export function getRedirectUrl(): string {
   const redirect =
     readRedirect(window.location.search) ||
     readRedirect(hashSearch) ||
-    sessionStorage.getItem("redirect-url") ||
+    normalizeRedirect(window.sessionStorage.getItem("redirect-url")) ||
     "/dashboard";
 
-  if (redirect.startsWith("/")) {
-    sessionStorage.removeItem("redirect-url");
+  if (normalizeRedirect(redirect)) {
+    if (options?.consumeStored !== false)
+      window.sessionStorage.removeItem("redirect-url");
     return redirect;
   }
 
@@ -66,8 +75,8 @@ export function getRedirectUrl(): string {
 }
 
 export function setRedirectUrl(value?: string) {
-  if (value) {
-    sessionStorage.setItem("redirect-url", value);
+  if (normalizeRedirect(value)) {
+    window.sessionStorage.setItem("redirect-url", value!);
   }
 }
 

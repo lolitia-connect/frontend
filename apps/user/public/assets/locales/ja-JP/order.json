@@ -36,5 +36,10 @@
     "4": "チャージ"
   },
   "viewDocument": "ドキュメントを見る",
-  "waitingForPayment": "支払い待ち"
+  "waitingForPayment": "支払い待ち",
+  "orderUnavailable": "注文を表示できません",
+  "orderAccessRequired": "注文のアクセストークンがないか、無効になっています。注文に使用したアカウントでログインしてください。",
+  "retry": "再試行",
+  "signIn": "ログイン",
+  "processing": "処理中..."
 }

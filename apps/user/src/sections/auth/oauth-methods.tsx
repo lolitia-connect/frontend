@@ -3,7 +3,8 @@
 import { useSearch } from "@tanstack/react-router";
 import { Button } from "@workspace/ui/components/button";
 import { Icon } from "@workspace/ui/composed/icon";
-import { oAuthLogin } from "@workspace/ui/services/common/oauth";
+import { postAuthOauthLogin as oAuthLogin } from "@workspace/ui/services/common/common";
+import { useState } from "react";
 import { useGlobalStore } from "@/stores/global";
 import { setRedirectUrl } from "@/utils/common";
 import {
@@ -21,10 +22,11 @@ const icons = {
 
 export function OAuthMethods() {
   const { common } = useGlobalStore();
+  const [loadingMethod, setLoadingMethod] = useState<string>();
   const searchParams = useSearch({ strict: false }) as { redirect?: string };
   const { oauth_methods } = common;
-  const OAUTH_METHODS = oauth_methods?.filter(
-    (method: string) => !["mobile", "email", "device"].includes(method)
+  const OAUTH_METHODS = oauth_methods?.filter((method: string) =>
+    Object.hasOwn(icons, method)
   );
   return (
     OAUTH_METHODS?.length > 0 && (
@@ -34,16 +36,19 @@ export function OAuthMethods() {
             Or continue with
           </span>
         </div>
-        <div className="mt-6 flex justify-center gap-4 *:size-12 *:p-2">
+        <div className="mt-6 flex flex-wrap justify-center gap-4">
           {OAUTH_METHODS?.map((method: string) => (
             <Button
-              asChild
+              aria-label={`Continue with ${method}`}
+              className="size-12 p-2"
+              disabled={Boolean(loadingMethod)}
               key={method}
               onClick={async () => {
                 if (searchParams.redirect?.startsWith("/")) {
                   setRedirectUrl(searchParams.redirect);
                 }
 
+                setLoadingMethod(method);
                 try {
                   const { data } = await oAuthLogin({
                     method,
@@ -68,12 +73,19 @@ export function OAuthMethods() {
                   window.location.href = data.data.redirect;
                 } catch {
                   // ignore telegram popup cancellation and request failures
+                } finally {
+                  setLoadingMethod(undefined);
                 }
               }}
               size="icon"
+              title={`Continue with ${method}`}
+              type="button"
               variant="ghost"
             >
-              <Icon icon={icons[method as keyof typeof icons]} />
+              <Icon
+                className="size-8"
+                icon={icons[method as keyof typeof icons]}
+              />
             </Button>
           ))}
         </div>

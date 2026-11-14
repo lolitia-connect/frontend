@@ -13,6 +13,342 @@ declare namespace API {
     updated_at: number;
   };
 
+  type AuthConfig = {
+    mobile: MobileAuthenticateConfig;
+    email: EmailAuthticateConfig;
+    device: DeviceAuthticateConfig;
+    register: PubilcRegisterConfig;
+  };
+
+  type CheckUserResponse = {
+    exist: boolean;
+  };
+
+  type CheckVerificationCodeRequest = {
+    method: "email" | "mobile";
+    account: string;
+    code: string;
+    type: number;
+  };
+
+  type CheckVerificationCodeRespone = {
+    status: boolean;
+  };
+
+  type Currency = {
+    currency_unit: string;
+    currency_symbol: string;
+  };
+
+  type deleteNotifyPlatformTokenParams = {
+    /** platform */
+    platform: string;
+    /** token */
+    token: string;
+  };
+
+  type DeviceAuthticateConfig = {
+    enable: boolean;
+    show_ads: boolean;
+    enable_security: boolean;
+    only_real_device: boolean;
+  };
+
+  type DeviceLoginRequest = {
+    identifier: string;
+    user_agent: string;
+    cf_token?: string;
+    invite?: string;
+  };
+
+  type DownloadLink = {
+    ios?: string;
+    android?: string;
+    windows?: string;
+    mac?: string;
+    linux?: string;
+    harmony?: string;
+  };
+
+  type EmailAuthticateConfig = {
+    enable: boolean;
+    enable_verify: boolean;
+    enable_domain_suffix: boolean;
+    domain_suffix_list: string;
+  };
+
+  type GetAdsResponse = {
+    list: Ads[];
+  };
+
+  type getAuthCheckParams = {
+    email: string;
+  };
+
+  type getAuthCheckTelephoneParams = {
+    telephone: string;
+    telephone_area_code: string;
+  };
+
+  type getCommonAdsParams = {
+    device?: string;
+    position?: string;
+  };
+
+  type GetGlobalConfigResponse = {
+    site: SiteConfig;
+    verify: VeifyConfig;
+    auth: AuthConfig;
+    invite: InviteConfig;
+    currency: Currency;
+    subscribe: SubscribeConfig;
+    verify_code: PubilcVerifyCodeConfig;
+    oauth_methods: string[];
+    web_ad: boolean;
+  };
+
+  type getNotifyPlatformTokenParams = {
+    /** platform */
+    platform: string;
+    /** token */
+    token: string;
+  };
+
+  type GetStatResponse = {
+    user: number;
+    node: number;
+    country: number;
+    protocol: string[];
+  };
+
+  type GetSubscribeClientResponse = {
+    total: number;
+    list: SubscribeClient[];
+  };
+
+  type GetTosResponse = {
+    tos_content: string;
+  };
+
+  type HeartbeatResponse = {
+    status: boolean;
+    message?: string;
+    timestamp?: number;
+  };
+
+  type InviteConfig = {
+    forced_invite: boolean;
+    referral_percentage: number;
+    only_first_purchase: boolean;
+    withdrawal_method?: string;
+  };
+
+  type LoginResponse = {
+    token: string;
+    third_party_bindings?: string[];
+  };
+
+  type MobileAuthenticateConfig = {
+    enable: boolean;
+    enable_whitelist: boolean;
+    whitelist: string[];
+  };
+
+  type OAthLoginRequest = {
+    method: string;
+    redirect: string;
+    nonce?: string;
+  };
+
+  type OAuthLoginGetTokenRequest = {
+    method: string;
+    callback: Record<string, any>;
+    cf_token?: string;
+    invite?: string;
+    nonce?: string;
+  };
+
+  type OAuthLoginResponse = {
+    redirect: string;
+  };
+
+  type patchNotifyPlatformTokenParams = {
+    /** platform */
+    platform: string;
+    /** token */
+    token: string;
+  };
+
+  type postNotifyPlatformTokenParams = {
+    /** platform */
+    platform: string;
+    /** token */
+    token: string;
+  };
+
+  type PrivacyPolicyConfig = {
+    privacy_policy: string;
+  };
+
+  type PubilcRegisterConfig = {
+    stop_register: boolean;
+    enable_ip_register_limit: boolean;
+    ip_register_limit: number;
+    ip_register_limit_duration: number;
+  };
+
+  type PubilcVerifyCodeConfig = {
+    verify_code_interval: number;
+  };
+
+  type putNotifyPlatformTokenParams = {
+    /** platform */
+    platform: string;
+    /** token */
+    token: string;
+  };
+
+  type ResetPasswordRequest = {
+    identifier: string;
+    email: string;
+    password: string;
+    code?: string;
+    cf_token?: string;
+    captcha_id?: string;
+    captcha_code?: string;
+    slider_token?: string;
+  };
+
+  type ResponseSuccessBean = {
+    code: number;
+    msg: string;
+  };
+
+  type SendCodeRequest = {
+    email: string;
+    type: number;
+    cf_token?: string;
+  };
+
+  type SendCodeResponse = {
+    code?: string;
+    status: boolean;
+  };
+
+  type SendSmsCodeRequest = {
+    type: number;
+    telephone: string;
+    telephone_area_code: string;
+    cf_token?: string;
+  };
+
+  type SiteConfig = {
+    host: string;
+    site_name: string;
+    site_desc: string;
+    site_logo: string;
+    keywords: string;
+    custom_html: string;
+    custom_data: string;
+  };
+
+  type SubscribeClient = {
+    id: string;
+    name: string;
+    description?: string;
+    icon?: string;
+    scheme?: string;
+    is_default: boolean;
+    download_link?: DownloadLink;
+  };
+
+  type SubscribeConfig = {
+    single_model: boolean;
+    subscribe_path: string;
+    subscribe_domain: string;
+    pan_domain: boolean;
+    user_agent_limit: boolean;
+    user_agent_list: string;
+    show_tutorial?: boolean;
+    profile_update_interval?: number;
+    profile_web_page_url?: string;
+  };
+
+  type TelephoneCheckUserResponse = {
+    exist: boolean;
+  };
+
+  type TelephoneLoginRequest = {
+    identifier: string;
+    telephone: string;
+    telephone_code: string;
+    telephone_area_code: string;
+    password: string;
+    cf_token?: string;
+    captcha_id?: string;
+    captcha_code?: string;
+    slider_token?: string;
+  };
+
+  type TelephoneRegisterRequest = {
+    identifier: string;
+    telephone: string;
+    telephone_area_code: string;
+    password: string;
+    invite?: string;
+    code?: string;
+    cf_token?: string;
+    captcha_id?: string;
+    captcha_code?: string;
+    slider_token?: string;
+  };
+
+  type TelephoneResetPasswordRequest = {
+    identifier: string;
+    telephone: string;
+    telephone_area_code: string;
+    password: string;
+    code?: string;
+    cf_token?: string;
+    captcha_id?: string;
+    captcha_code?: string;
+    slider_token?: string;
+  };
+
+  type UserLoginRequest = {
+    identifier: string;
+    email: string;
+    password: string;
+    cf_token?: string;
+    captcha_id?: string;
+    captcha_code?: string;
+    slider_token?: string;
+  };
+
+  type UserRegisterRequest = {
+    identifier: string;
+    email: string;
+    password: string;
+    invite?: string;
+    code?: string;
+    cf_token?: string;
+    captcha_id?: string;
+    captcha_code?: string;
+    slider_token?: string;
+  };
+
+  type VeifyConfig = {
+    turnstile_site_key: string;
+    captcha_type: string;
+    enable_login_verify: boolean;
+    enable_register_verify: boolean;
+    enable_reset_password_verify: boolean;
+    enable_user_login_captcha: boolean;
+    enable_user_register_captcha: boolean;
+    enable_user_reset_password_captcha: boolean;
+    enable_admin_login_captcha: boolean;
+  };
+
   type AlipayNotifyResponse = {
     return_code: string;
   };
@@ -111,13 +447,6 @@ declare namespace API {
     download: number;
   };
 
-  type AuthConfig = {
-    mobile: MobileAuthenticateConfig;
-    email: EmailAuthticateConfig;
-    device: DeviceAuthticateConfig;
-    register: PubilcRegisterConfig;
-  };
-
   type AuthMethodConfig = {
     id: string;
     method: string;
@@ -153,23 +482,8 @@ declare namespace API {
     email: string;
   };
 
-  type CheckUserResponse = {
-    exist: boolean;
-  };
-
   type CheckUserTelephoneParams = {
     telephone: string;
-  };
-
-  type CheckVerificationCodeRequest = {
-    method: "email" | "mobile";
-    account: string;
-    code: string;
-    type: number;
-  };
-
-  type CheckVerificationCodeRespone = {
-    status: boolean;
   };
 
   type CloseOrderRequest = {
@@ -201,28 +515,10 @@ declare namespace API {
     updated_at: number;
   };
 
-  type Currency = {
-    currency_unit: string;
-    currency_symbol: string;
-  };
-
   type CurrencyConfig = {
     access_key: string;
     currency_unit: string;
     currency_symbol: string;
-  };
-
-  type DeviceAuthticateConfig = {
-    enable: boolean;
-    show_ads: boolean;
-    enable_security: boolean;
-    only_real_device: boolean;
-  };
-
-  type DeviceLoginRequest = {
-    identifier: string;
-    user_agent: string;
-    cf_token?: string;
   };
 
   type Document = {
@@ -233,22 +529,6 @@ declare namespace API {
     show: boolean;
     created_at: number;
     updated_at: number;
-  };
-
-  type DownloadLink = {
-    ios?: string;
-    android?: string;
-    windows?: string;
-    mac?: string;
-    linux?: string;
-    harmony?: string;
-  };
-
-  type EmailAuthticateConfig = {
-    enable: boolean;
-    enable_verify: boolean;
-    enable_domain_suffix: boolean;
-    domain_suffix_list: string;
   };
 
   type EPayNotifyRequest = {
@@ -283,40 +563,8 @@ declare namespace API {
     position: string;
   };
 
-  type GetAdsResponse = {
-    list: Ads[];
-  };
-
   type GetAvailablePaymentMethodsResponse = {
     list: PaymentMethod[];
-  };
-
-  type GetGlobalConfigResponse = {
-    site: SiteConfig;
-    verify: VeifyConfig;
-    auth: AuthConfig;
-    invite: InviteConfig;
-    currency: Currency;
-    subscribe: SubscribeConfig;
-    verify_code: PubilcVerifyCodeConfig;
-    oauth_methods: string[];
-    web_ad: boolean;
-  };
-
-  type GetStatResponse = {
-    user: number;
-    node: number;
-    country: number;
-    protocol: string[];
-  };
-
-  type GetSubscribeClientResponse = {
-    total: number;
-    list: SubscribeClient[];
-  };
-
-  type GetTosResponse = {
-    tos_content: string;
   };
 
   type GetUserSubscribeTrafficLogsRequest = {
@@ -349,28 +597,12 @@ declare namespace API {
     token: string;
   };
 
-  type HeartbeatResponse = {
-    status: boolean;
-    message?: string;
-    timestamp?: number;
-  };
-
   type Hysteria2 = {
     port: number;
     hop_ports: string;
     hop_interval: number;
     obfs_password: string;
     security_config: SecurityConfig;
-  };
-
-  type InviteConfig = {
-    forced_invite: boolean;
-    referral_percentage: number;
-    only_first_purchase: boolean;
-  };
-
-  type LoginResponse = {
-    token: string;
   };
 
   type MessageLog = {
@@ -382,12 +614,6 @@ declare namespace API {
     content: Record<string, any>;
     status: number;
     created_at: number;
-  };
-
-  type MobileAuthenticateConfig = {
-    enable: boolean;
-    enable_whitelist: boolean;
-    whitelist: string[];
   };
 
   type NodeConfig = {
@@ -443,22 +669,6 @@ declare namespace API {
     host: string;
     port: number;
     prefix: string;
-  };
-
-  type OAthLoginRequest = {
-    /** google, facebook, apple, telegram, github etc. */
-    method: string;
-    redirect: string;
-  };
-
-  type OAuthLoginGetTokenRequest = {
-    /** google, facebook, apple, telegram, github etc. */
-    method: string;
-    callback: Record<string, any>;
-  };
-
-  type OAuthLoginResponse = {
-    redirect: string;
   };
 
   type Order = {
@@ -580,10 +790,6 @@ declare namespace API {
     orderNo: string;
   };
 
-  type PrivacyPolicyConfig = {
-    privacy_policy: string;
-  };
-
   type Protocol = {
     type: string;
     port: number;
@@ -653,17 +859,6 @@ declare namespace API {
     cert_dns_provider?: string;
     /** Environment for DNS provider */
     cert_dns_env?: string;
-  };
-
-  type PubilcRegisterConfig = {
-    stop_register: boolean;
-    enable_ip_register_limit: boolean;
-    ip_register_limit: number;
-    ip_register_limit_duration: number;
-  };
-
-  type PubilcVerifyCodeConfig = {
-    verify_code_interval: number;
   };
 
   type PurchaseOrderRequest = {
@@ -768,17 +963,6 @@ declare namespace API {
     order_no: string;
   };
 
-  type ResetPasswordRequest = {
-    identifier: string;
-    email: string;
-    password: string;
-    code?: string;
-    cf_token?: string;
-    captcha_id?: string;
-    captcha_code?: string;
-    slider_token?: string;
-  };
-
   type ResetSubscribeTrafficLog = {
     id: string;
     type: number;
@@ -820,22 +1004,6 @@ declare namespace API {
     reality_short_id: string;
   };
 
-  type SendCodeRequest = {
-    email: string;
-    type: number;
-  };
-
-  type SendCodeResponse = {
-    code?: string;
-    status: boolean;
-  };
-
-  type SendSmsCodeRequest = {
-    type: number;
-    telephone: string;
-    telephone_area_code: string;
-  };
-
   type ServerGroup = {
     id: string;
     name: string;
@@ -861,16 +1029,6 @@ declare namespace API {
     method: string;
     port: number;
     server_key: string;
-  };
-
-  type SiteConfig = {
-    host: string;
-    site_name: string;
-    site_desc: string;
-    site_logo: string;
-    keywords: string;
-    custom_html: string;
-    custom_data: string;
   };
 
   type SiteCustomDataContacts = {
@@ -919,26 +1077,6 @@ declare namespace API {
     updated_at: number;
   };
 
-  type SubscribeClient = {
-    id: string;
-    name: string;
-    description?: string;
-    icon?: string;
-    scheme?: string;
-    is_default: boolean;
-    download_link?: DownloadLink;
-  };
-
-  type SubscribeConfig = {
-    single_model: boolean;
-    subscribe_path: string;
-    subscribe_domain: string;
-    pan_domain: boolean;
-    user_agent_limit: boolean;
-    user_agent_list: string;
-    show_tutorial?: boolean;
-  };
-
   type SubscribeDiscount = {
     quantity: number;
     discount: number;
@@ -965,47 +1103,6 @@ declare namespace API {
 
   type TelephoneCheckUserRequest = {
     telephone_area_code: string;
-  };
-
-  type TelephoneCheckUserResponse = {
-    exist: boolean;
-  };
-
-  type TelephoneLoginRequest = {
-    identifier: string;
-    telephone: string;
-    telephone_code: string;
-    telephone_area_code: string;
-    password: string;
-    cf_token?: string;
-    captcha_id?: string;
-    captcha_code?: string;
-    slider_token?: string;
-  };
-
-  type TelephoneRegisterRequest = {
-    identifier: string;
-    telephone: string;
-    telephone_area_code: string;
-    password: string;
-    invite?: string;
-    code?: string;
-    cf_token?: string;
-    captcha_id?: string;
-    captcha_code?: string;
-    slider_token?: string;
-  };
-
-  type TelephoneResetPasswordRequest = {
-    identifier: string;
-    telephone: string;
-    telephone_area_code: string;
-    password: string;
-    code?: string;
-    cf_token?: string;
-    captcha_id?: string;
-    captcha_code?: string;
-    slider_token?: string;
   };
 
   type Ticket = {
@@ -1120,28 +1217,6 @@ declare namespace API {
     timestamp: number;
   };
 
-  type UserLoginRequest = {
-    identifier: string;
-    email: string;
-    password: string;
-    cf_token?: string;
-    captcha_id?: string;
-    captcha_code?: string;
-    slider_token?: string;
-  };
-
-  type UserRegisterRequest = {
-    identifier: string;
-    email: string;
-    password: string;
-    invite?: string;
-    code?: string;
-    cf_token?: string;
-    captcha_id?: string;
-    captcha_code?: string;
-    slider_token?: string;
-  };
-
   type UserSubscribe = {
     id: string;
     user_id: string;
@@ -1171,18 +1246,6 @@ declare namespace API {
     ip: string;
     user_agent: string;
     timestamp: number;
-  };
-
-  type VeifyConfig = {
-    turnstile_site_key: string;
-    captcha_type: string;
-    enable_login_verify: boolean;
-    enable_register_verify: boolean;
-    enable_reset_password_verify: boolean;
-    enable_user_login_captcha: boolean;
-    enable_user_register_captcha: boolean;
-    enable_user_reset_password_captcha: boolean;
-    enable_admin_login_captcha: boolean;
   };
 
   type VerifyCodeConfig = {

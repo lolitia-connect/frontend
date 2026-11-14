@@ -2,5 +2,8 @@
   "all": "すべて",
   "document": "ドキュメント",
   "read": "閲覧",
-  "tutorial": "チュートリアル"
+  "tutorial": "チュートリアル",
+  "loadingSubscriptionConfig": "サブスクリプション設定を読み込み中...",
+  "subscriptionConfigUnavailable": "サブスクリプション設定を取得できません。ページを更新して再試行してください。",
+  "noSubscription": "サブスクリプションを購入してください"
 }

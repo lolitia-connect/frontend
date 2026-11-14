@@ -17,6 +17,7 @@ import { SubscribeDetail } from "@/sections/subscribe/detail";
 import DurationSelector from "@/sections/subscribe/duration-selector";
 import PaymentMethods from "@/sections/subscribe/payment-methods";
 import { useGlobalStore } from "@/stores/global";
+import { saveCheckoutToken } from "./checkout-token";
 
 export default function Content({
   subscription,
@@ -90,15 +91,9 @@ export default function Content({
     startTransition(async () => {
       try {
         const { data } = await purchase(params);
-        const { order_no } = data.data!;
+        const { order_no, checkout_token } = data.data!;
         if (order_no) {
-          localStorage.setItem(
-            order_no,
-            JSON.stringify({
-              auth_type: params.auth_type,
-              identifier: params.identifier,
-            })
-          );
+          saveCheckoutToken(order_no, checkout_token);
           navigate({ to: "/purchasing/order", search: { order_no } });
         }
       } catch (error) {

@@ -1,4 +1,826 @@
 declare namespace API {
+  type Announcement = {
+    id: string;
+    title: string;
+    content: string;
+    show: boolean;
+    pinned: boolean;
+    popup: boolean;
+    created_at: number;
+    updated_at: number;
+  };
+
+  type BalanceLog = {
+    type: number;
+    user_id: string;
+    amount: number;
+    order_no?: string;
+    balance: number;
+    timestamp: number;
+    actor_id?: number;
+    client_ip?: string;
+    ip_as_organization?: string;
+    ip_asn?: number;
+    ip_city?: string;
+    ip_country?: string;
+    ip_country_code?: string;
+    ip_region?: string;
+    user_agent?: string;
+  };
+
+  type BindOAuthCallbackRequest = {
+    method: string;
+    callback: Record<string, any>;
+  };
+
+  type BindOAuthRequest = {
+    method: string;
+    redirect: string;
+  };
+
+  type BindOAuthResponse = {
+    redirect: string;
+  };
+
+  type BindTelegramResponse = {
+    url: string;
+    expired_at: number;
+  };
+
+  type CheckoutOrderRequest = {
+    orderNo: string;
+    checkout_token?: string;
+    returnUrl?: string;
+  };
+
+  type CheckoutOrderResponse = {
+    type: string;
+    checkout_url?: string;
+    stripe?: StripePayment;
+  };
+
+  type CloseOrderRequest = {
+    orderNo: string;
+  };
+
+  type CommissionLog = {
+    type: number;
+    user_id: string;
+    amount: number;
+    order_no: string;
+    timestamp: number;
+    actor_id?: number;
+    client_ip?: string;
+    ip_as_organization?: string;
+    ip_asn?: number;
+    ip_city?: string;
+    ip_country?: string;
+    ip_country_code?: string;
+    ip_region?: string;
+    user_agent?: string;
+  };
+
+  type CommissionWithdrawRequest = {
+    amount: number;
+    content: string;
+  };
+
+  type CreateUserTicketFollowRequest = {
+    ticket_id: string;
+    from: string;
+    type: number;
+    content: string;
+  };
+
+  type CreateUserTicketRequest = {
+    title: string;
+    description: string;
+  };
+
+  type Document = {
+    id: string;
+    title: string;
+    content: string;
+    tags: string[];
+    show: boolean;
+    created_at: number;
+    updated_at: number;
+  };
+
+  type Follow = {
+    id: string;
+    ticket_id: string;
+    from: string;
+    type: number;
+    content: string;
+    created_at: number;
+  };
+
+  type GetAvailablePaymentMethodsResponse = {
+    list: PaymentMethod[];
+  };
+
+  type GetDeviceListResponse = {
+    list: UserDevice[];
+    total: number;
+  };
+
+  type GetLoginLogResponse = {
+    list: UserLoginLog[];
+    total: number;
+  };
+
+  type GetOAuthMethodsResponse = {
+    methods: UserAuthMethod[];
+  };
+
+  type GetSubscribeLogResponse = {
+    list: UserSubscribeLog[];
+    total: number;
+  };
+
+  type GetSubscriptionResponse = {
+    list: Subscribe[];
+  };
+
+  type GetUserTicketListResponse = {
+    total: number;
+    list: Ticket[];
+  };
+
+  type getV1AppWsUseridIdentifierParams = {
+    /** User ID of the signed-in user */
+    userid: number;
+    /** Device identifier */
+    identifier: string;
+  };
+
+  type getV1PublicAnnouncementListParams = {
+    page: number;
+    pinned?: boolean;
+    popup?: boolean;
+    size: number;
+  };
+
+  type getV1PublicDocumentDetailParams = {
+    id: string | number;
+  };
+
+  type getV1PublicOrderDetailParams = {
+    order_no: string;
+  };
+
+  type getV1PublicOrderListParams = {
+    page: number;
+    size: number;
+  };
+
+  type getV1PublicPortalOrderStatusParams = {
+    checkout_token?: string;
+    order_no: string;
+  };
+
+  type getV1PublicPortalSubscribeParams = {
+    language?: string;
+  };
+
+  type getV1PublicSubscribeListParams = {
+    language?: string;
+  };
+
+  type getV1PublicTicketDetailParams = {
+    id: number;
+  };
+
+  type getV1PublicTicketListParams = {
+    page: number;
+    search?: string;
+    size: number;
+    status?: number;
+  };
+
+  type getV1PublicUserAffiliateListParams = {
+    page: number;
+    size: number;
+  };
+
+  type getV1PublicUserCommissionLogParams = {
+    page: number;
+    size: number;
+  };
+
+  type getV1PublicUserLoginLogParams = {
+    page: number;
+    size: number;
+  };
+
+  type getV1PublicUserSubscribeLogParams = {
+    page: number;
+    size: number;
+  };
+
+  type getV1PublicUserWithdrawalLogParams = {
+    page: number;
+    size: number;
+  };
+
+  type getV1SubscribeConfigParams = {
+    /** Subscription token; alternatively send the token header */
+    token?: string;
+    /** Subscription format flag */
+    flag?: string;
+    /** Subscription format type */
+    type?: string;
+  };
+
+  type getV2PublicOrdersOrderNoEventsParams = {
+    /** Order number */
+    orderNo: string;
+    /** Short-lived order event ticket */
+    ticket: string;
+    /** Replay cursor when Last-Event-ID is unavailable */
+    after?: string;
+  };
+
+  type getV2PublicOrdersOrderNoParams = {
+    /** Order number */
+    orderNo: string;
+    /** Guest checkout capability */
+    checkout_token?: string;
+  };
+
+  type OrderDetail = {
+    id: string;
+    user_id: string;
+    order_no: string;
+    type: number;
+    quantity: number;
+    price: number;
+    amount: number;
+    gift_amount: number;
+    discount: number;
+    coupon: string;
+    coupon_discount: number;
+    commission?: number;
+    payment: PaymentMethod;
+    method: string;
+    fee_amount: number;
+    trade_no: string;
+    status: number;
+    subscribe_id: string;
+    subscribe: Subscribe;
+    created_at: number;
+    updated_at: number;
+    user_subscribe_id?: number;
+  };
+
+  type PaymentMethod = {
+    id: string;
+    name: string;
+    platform: string;
+    description: string;
+    icon: string;
+    fee_mode: number;
+    fee_percent: number;
+    fee_amount: number;
+    currency_unit?: string;
+    exchange_rate?: number;
+    bill_desc?: string;
+    sort?: number;
+  };
+
+  type PortalPurchaseRequest = {
+    auth_type: string;
+    identifier: string;
+    password?: string;
+    payment: string;
+    subscribe_id: string;
+    quantity: number;
+    coupon?: string;
+    invite_code?: string;
+    turnstile_token?: string;
+  };
+
+  type PortalPurchaseResponse = {
+    order_no: string;
+    checkout_token?: string;
+  };
+
+  type postV2PublicOrdersOrderNoCheckoutParams = {
+    /** Order number */
+    orderNo: string;
+  };
+
+  type postV2PublicOrdersOrderNoEventTicketParams = {
+    /** Order number */
+    orderNo: string;
+  };
+
+  type postV2PublicOrdersOrderNoSessionParams = {
+    /** Order number */
+    orderNo: string;
+  };
+
+  type PreOrderResponse = {
+    price: number;
+    amount: number;
+    discount: number;
+    gift_amount: number;
+    coupon: string;
+    coupon_discount: number;
+    fee_amount: number;
+  };
+
+  type PrePurchaseOrderRequest = {
+    payment?: string;
+    subscribe_id: string;
+    quantity: number;
+    coupon?: string;
+  };
+
+  type PrePurchaseOrderResponse = {
+    price: number;
+    amount: number;
+    discount: number;
+    coupon: string;
+    coupon_discount: number;
+    fee_amount: number;
+  };
+
+  type PreUnsubscribeRequest = {
+    id: string;
+  };
+
+  type PreUnsubscribeResponse = {
+    deduction_amount: number;
+  };
+
+  type PurchaseOrderRequest = {
+    subscribe_id: string;
+    quantity: number;
+    payment?: string;
+    coupon?: string;
+    user_subscribe_id?: number;
+  };
+
+  type PurchaseOrderResponse = {
+    order_no: string;
+  };
+
+  type QueryAnnouncementResponse = {
+    total: number;
+    announcements: Announcement[];
+  };
+
+  type QueryDocumentListResponse = {
+    total: number;
+    list: Document[];
+  };
+
+  type QueryOrderListResponse = {
+    total: number;
+    list: OrderDetail[];
+  };
+
+  type QueryPurchaseOrderResponse = {
+    order_no: string;
+    subscribe: Subscribe;
+    quantity: number;
+    price: number;
+    amount: number;
+    discount: number;
+    coupon: string;
+    coupon_discount: number;
+    fee_amount: number;
+    payment: PaymentMethod;
+    status: number;
+    created_at: number;
+    token?: string;
+  };
+
+  type QuerySubscribeListResponse = {
+    list: Subscribe[];
+    total: number;
+  };
+
+  type QueryUserAffiliateCountResponse = {
+    registers: number;
+    total_commission: number;
+  };
+
+  type QueryUserAffiliateListResponse = {
+    list: UserAffiliate[];
+    total: number;
+  };
+
+  type QueryUserBalanceLogListResponse = {
+    list: BalanceLog[];
+    total: number;
+  };
+
+  type QueryUserCommissionLogListResponse = {
+    list: CommissionLog[];
+    total: number;
+  };
+
+  type QueryUserSubscribeListResponse = {
+    list: UserSubscribe[];
+    total: number;
+  };
+
+  type QueryUserSubscribeNodeListResponse = {
+    list: UserSubscribeInfo[];
+  };
+
+  type QueryWithdrawalLogListResponse = {
+    list: WithdrawalLog[];
+    total: number;
+  };
+
+  type RechargeOrderRequest = {
+    amount: number;
+    payment: string;
+  };
+
+  type RechargeOrderResponse = {
+    order_no: string;
+  };
+
+  type RenewalOrderRequest = {
+    user_subscribe_id: string;
+    quantity: number;
+    payment: string;
+    coupon?: string;
+  };
+
+  type RenewalOrderResponse = {
+    order_no: string;
+  };
+
+  type ResetTrafficOrderRequest = {
+    user_subscribe_id: string;
+    payment: string;
+  };
+
+  type ResetTrafficOrderResponse = {
+    order_no: string;
+  };
+
+  type ResetUserSubscribeTokenRequest = {
+    user_subscribe_id: string;
+  };
+
+  type ResponseErrorBean = {
+    code: number;
+    msg: string;
+  };
+
+  type ResponseSuccessBean = {
+    code: number;
+    msg: string;
+  };
+
+  type StripePayment = {
+    method: string;
+    client_secret: string;
+    publishable_key: string;
+  };
+
+  type Subscribe = {
+    id: string;
+    name: string;
+    language: string;
+    description: string;
+    unit_price: number;
+    unit_time: string;
+    discount: SubscribeDiscount[];
+    replacement: number;
+    inventory: number;
+    traffic: number;
+    traffic_unlimited: boolean;
+    speed_limit: number;
+    device_limit: number;
+    quota: number;
+    nodes: string[];
+    node_tags: string[];
+    show: boolean;
+    sell: boolean;
+    sort: number;
+    deduction_ratio: number;
+    allow_deduction: boolean;
+    reset_cycle: number;
+    renewal_reset: boolean;
+    show_original_price: boolean;
+    created_at: number;
+    updated_at: number;
+  };
+
+  type SubscribeDiscount = {
+    quantity: number;
+    discount: number;
+  };
+
+  type Ticket = {
+    id: string;
+    title: string;
+    description: string;
+    user_id: string;
+    follow?: Follow[];
+    status: number;
+    created_at: number;
+    updated_at: number;
+  };
+
+  type UnbindDeviceRequest = {
+    id: string;
+  };
+
+  type UnbindOAuthRequest = {
+    method: string;
+  };
+
+  type UnsubscribeRequest = {
+    id: string;
+  };
+
+  type UpdateBindEmailRequest = {
+    email: string;
+    code?: string;
+    current_code?: string;
+    password?: string;
+  };
+
+  type UpdateBindMobileRequest = {
+    area_code: string;
+    mobile: string;
+    code: string;
+    current_code?: string;
+    password?: string;
+  };
+
+  type UpdateUserNotifyRequest = {
+    enable_balance_notify: boolean;
+    enable_login_notify: boolean;
+    enable_subscribe_notify: boolean;
+    enable_trade_notify: boolean;
+  };
+
+  type UpdateUserPasswordRequest = {
+    password: string;
+    current_code?: string;
+    old_password?: string;
+  };
+
+  type UpdateUserPasswordResponse = {
+    /** ThirdPartyBindings lists the types of the third-party sign-in methods
+(OAuth providers, Telegram) still bound to the account, so the client
+can show them: a binding made during a compromise keeps signing in
+until its owner removes it. */
+    third_party_bindings: string[];
+  };
+
+  type UpdateUserRulesRequest = {
+    rules: string[];
+  };
+
+  type UpdateUserSubscribeNoteRequest = {
+    user_subscribe_id: string;
+    note: string;
+  };
+
+  type UpdateUserTicketStatusRequest = {
+    id: string;
+    status: number;
+  };
+
+  type User = {
+    id: string;
+    avatar: string;
+    balance: number;
+    commission: number;
+    referral_percentage: number;
+    only_first_purchase: boolean;
+    gift_amount: number;
+    telegram: number;
+    refer_code: string;
+    referer_id: string;
+    enable: boolean;
+    is_admin?: boolean;
+    enable_balance_notify: boolean;
+    enable_login_notify: boolean;
+    enable_subscribe_notify: boolean;
+    enable_trade_notify: boolean;
+    auth_methods: UserAuthMethod[];
+    user_devices: UserDevice[];
+    rules: string[];
+    created_at: number;
+    updated_at: number;
+    deleted_at?: number;
+  };
+
+  type UserAffiliate = {
+    avatar: string;
+    identifier: string;
+    registered_at: number;
+    enable: boolean;
+  };
+
+  type UserAuthMethod = {
+    auth_type: string;
+    auth_identifier: string;
+    verified: boolean;
+  };
+
+  type UserDevice = {
+    id: string;
+    ip: string;
+    identifier: string;
+    user_agent: string;
+    online: boolean;
+    enabled: boolean;
+    created_at: number;
+    updated_at: number;
+  };
+
+  type UserLoginLog = {
+    id: string;
+    user_id: string;
+    login_ip: string;
+    user_agent: string;
+    success: boolean;
+    timestamp: number;
+    actor_id?: number;
+    ip_as_organization?: string;
+    ip_asn?: number;
+    ip_city?: string;
+    ip_country?: string;
+    ip_country_code?: string;
+    ip_region?: string;
+  };
+
+  type UserSubscribe = {
+    id: string;
+    id_str: string;
+    user_id: string;
+    order_id: string;
+    subscribe_id: string;
+    subscribe: Subscribe;
+    start_time: number;
+    expire_time: number;
+    finished_at: number;
+    reset_time: number;
+    traffic: number;
+    traffic_unlimited: boolean;
+    download: number;
+    upload: number;
+    token: string;
+    status: number;
+    short: string;
+    created_at: number;
+    updated_at: number;
+    entitlement_source?: string;
+  };
+
+  type UserSubscribeInfo = {
+    id: string;
+    user_id: string;
+    order_id: string;
+    subscribe_id: string;
+    start_time: number;
+    expire_time: number;
+    finished_at: number;
+    reset_time: number;
+    traffic: number;
+    download: number;
+    upload: number;
+    token: string;
+    status: number;
+    created_at: number;
+    updated_at: number;
+    is_try_out: boolean;
+    nodes: UserSubscribeNodeInfo[];
+    entitlement_source?: string;
+  };
+
+  type UserSubscribeLog = {
+    id: string;
+    user_id: string;
+    user_subscribe_id: string;
+    token: string;
+    ip: string;
+    user_agent: string;
+    timestamp: number;
+    actor_id?: number;
+    ip_as_organization?: string;
+    ip_asn?: number;
+    ip_city?: string;
+    ip_country?: string;
+    ip_country_code?: string;
+    ip_region?: string;
+  };
+
+  type UserSubscribeNodeInfo = {
+    id: string;
+    name: string;
+    uuid: string;
+    protocol: string;
+    port: number;
+    address: string;
+    tags: string[];
+    country: string;
+    city: string;
+    created_at: number;
+  };
+
+  type V2CheckoutOrderRequest = {
+    checkout_token?: string;
+    return_url?: string;
+  };
+
+  type V2CreateOrderRequest = {
+    amount?: number;
+    coupon?: string;
+    guest?: V2GuestOrderRequest;
+    payment_id?: number;
+    quantity?: number;
+    return_url?: string;
+    subscribe_id?: number;
+    type?: string;
+    user_subscribe_id?: number;
+  };
+
+  type V2EventTicketRequest = {
+    checkout_token?: string;
+  };
+
+  type V2EventTicketResponse = {
+    ticket_expires_at: number;
+    url: string;
+  };
+
+  type V2GuestOrderRequest = {
+    auth_type?: "email" | "mobile";
+    identifier?: string;
+    invite_code?: string;
+    password?: string;
+    turnstile_token?: string;
+  };
+
+  type V2OrderEvents = {
+    ticket_expires_at: number;
+    url: string;
+  };
+
+  type V2OrderPayment = {
+    checkout_url: string;
+    payment_status: string;
+    stripe: StripePayment;
+    /** Type is url, qr, stripe, or balance. */
+    type: "url" | "qr" | "stripe" | "balance";
+  };
+
+  type V2OrderResponse = {
+    checkout_token: string;
+    events: V2OrderEvents;
+    order: V2OrderSnapshot;
+    payment: V2OrderPayment;
+  };
+
+  type V2OrderSessionRequest = {
+    checkout_token?: string;
+  };
+
+  type V2OrderSessionResponse = {
+    access_token: string;
+  };
+
+  type V2OrderSnapshot = {
+    amount: number;
+    currency: string;
+    expires_at: number;
+    fulfillment_status: string;
+    order_no: string;
+    payment_status: string;
+    state_version: number;
+    status: string;
+  };
+
+  type VerifyEmailRequest = {
+    email: string;
+    code: string;
+  };
+
+  type WithdrawalLog = {
+    id: string;
+    user_id: string;
+    amount: number;
+    content: string;
+    status: number;
+    reason?: string;
+    created_at: number;
+    updated_at: number;
+  };
+
   type Ads = {
     id: string;
     title: string;
@@ -15,17 +837,6 @@ declare namespace API {
 
   type AlipayNotifyResponse = {
     return_code: string;
-  };
-
-  type Announcement = {
-    id: string;
-    title: string;
-    content: string;
-    show: boolean;
-    pinned: boolean;
-    popup: boolean;
-    created_at: number;
-    updated_at: number;
   };
 
   type AnyTLS = {
@@ -119,62 +930,6 @@ declare namespace API {
     enabled: boolean;
   };
 
-  type BalanceLog = {
-    type: number;
-    user_id: string;
-    amount: number;
-    order_no?: string;
-    balance: number;
-    timestamp: number;
-  };
-
-  type BindOAuthCallbackRequest = {
-    method: string;
-    callback: Record<string, any>;
-  };
-
-  type BindOAuthRequest = {
-    method: string;
-    redirect: string;
-  };
-
-  type BindOAuthResponse = {
-    redirect: string;
-  };
-
-  type BindTelegramResponse = {
-    url: string;
-    expired_at: number;
-  };
-
-  type CheckoutOrderRequest = {
-    orderNo: string;
-    returnUrl?: string;
-  };
-
-  type CheckoutOrderResponse = {
-    type: string;
-    checkout_url?: string;
-    stripe?: StripePayment;
-  };
-
-  type CloseOrderRequest = {
-    orderNo: string;
-  };
-
-  type CommissionLog = {
-    type: number;
-    user_id: string;
-    amount: number;
-    order_no: string;
-    timestamp: number;
-  };
-
-  type CommissionWithdrawRequest = {
-    amount: number;
-    content: string;
-  };
-
   type Coupon = {
     id: string;
     name: string;
@@ -192,18 +947,6 @@ declare namespace API {
     updated_at: number;
   };
 
-  type CreateUserTicketFollowRequest = {
-    ticket_id: string;
-    from: string;
-    type: number;
-    content: string;
-  };
-
-  type CreateUserTicketRequest = {
-    title: string;
-    description: string;
-  };
-
   type CurrencyConfig = {
     access_key: string;
     currency_unit: string;
@@ -215,16 +958,6 @@ declare namespace API {
     show_ads: boolean;
     enable_security: boolean;
     only_real_device: boolean;
-  };
-
-  type Document = {
-    id: string;
-    title: string;
-    content: string;
-    tags: string[];
-    show: boolean;
-    created_at: number;
-    updated_at: number;
   };
 
   type DownloadLink = {
@@ -256,24 +989,6 @@ declare namespace API {
     sign_type: string;
   };
 
-  type Follow = {
-    id: string;
-    ticket_id: string;
-    from: string;
-    type: number;
-    content: string;
-    created_at: number;
-  };
-
-  type GetAvailablePaymentMethodsResponse = {
-    list: PaymentMethod[];
-  };
-
-  type GetDeviceListResponse = {
-    list: UserDevice[];
-    total: number;
-  };
-
   type GetLoginLogParams = {
     page: number;
     size: number;
@@ -282,15 +997,6 @@ declare namespace API {
   type GetLoginLogRequest = {
     page: number;
     size: number;
-  };
-
-  type GetLoginLogResponse = {
-    list: UserLoginLog[];
-    total: number;
-  };
-
-  type GetOAuthMethodsResponse = {
-    methods: UserAuthMethod[];
   };
 
   type GetSubscribeLogParams = {
@@ -303,21 +1009,12 @@ declare namespace API {
     size: number;
   };
 
-  type GetSubscribeLogResponse = {
-    list: UserSubscribeLog[];
-    total: number;
-  };
-
   type GetSubscriptionParams = {
     language: string;
   };
 
   type GetSubscriptionRequest = {
     language: string;
-  };
-
-  type GetSubscriptionResponse = {
-    list: Subscribe[];
   };
 
   type GetUserSubscribeTrafficLogsRequest = {
@@ -354,11 +1051,6 @@ declare namespace API {
     size: number;
     status?: number;
     search?: string;
-  };
-
-  type GetUserTicketListResponse = {
-    total: number;
-    list: Ticket[];
   };
 
   type Hysteria2 = {
@@ -469,30 +1161,6 @@ declare namespace API {
     updated_at: number;
   };
 
-  type OrderDetail = {
-    id: string;
-    user_id: string;
-    order_no: string;
-    type: number;
-    quantity: number;
-    price: number;
-    amount: number;
-    gift_amount: number;
-    discount: number;
-    coupon: string;
-    coupon_discount: number;
-    commission?: number;
-    payment: PaymentMethod;
-    method: string;
-    fee_amount: number;
-    trade_no: string;
-    status: number;
-    subscribe_id: string;
-    subscribe: Subscribe;
-    created_at: number;
-    updated_at: number;
-  };
-
   type PaymentConfig = {
     id: string;
     name: string;
@@ -505,20 +1173,6 @@ declare namespace API {
     fee_percent?: number;
     fee_amount?: number;
     enable: boolean;
-    currency_unit?: string;
-    exchange_rate?: number;
-    bill_desc?: string;
-  };
-
-  type PaymentMethod = {
-    id: string;
-    name: string;
-    platform: string;
-    description: string;
-    icon: string;
-    fee_mode: number;
-    fee_percent: number;
-    fee_amount: number;
     currency_unit?: string;
     exchange_rate?: number;
     bill_desc?: string;
@@ -552,58 +1206,8 @@ declare namespace API {
     list: PlatformInfo[];
   };
 
-  type PortalPurchaseRequest = {
-    auth_type: string;
-    identifier: string;
-    password?: string;
-    payment: string;
-    subscribe_id: string;
-    quantity: number;
-    coupon?: string;
-    invite_code?: string;
-    turnstile_token?: string;
-  };
-
-  type PortalPurchaseResponse = {
-    order_no: string;
-  };
-
-  type PreOrderResponse = {
-    price: number;
-    amount: number;
-    discount: number;
-    gift_amount: number;
-    coupon: string;
-    coupon_discount: number;
-    fee_amount: number;
-  };
-
-  type PrePurchaseOrderRequest = {
-    payment?: string;
-    subscribe_id: string;
-    quantity: number;
-    coupon?: string;
-  };
-
-  type PrePurchaseOrderResponse = {
-    price: number;
-    amount: number;
-    discount: number;
-    coupon: string;
-    coupon_discount: number;
-    fee_amount: number;
-  };
-
   type PreRenewalOrderResponse = {
     orderNo: string;
-  };
-
-  type PreUnsubscribeRequest = {
-    id: string;
-  };
-
-  type PreUnsubscribeResponse = {
-    deduction_amount: number;
   };
 
   type PrivacyPolicyConfig = {
@@ -692,17 +1296,6 @@ declare namespace API {
     verify_code_interval: number;
   };
 
-  type PurchaseOrderRequest = {
-    subscribe_id: string;
-    quantity: number;
-    payment?: string;
-    coupon?: string;
-  };
-
-  type PurchaseOrderResponse = {
-    order_no: string;
-  };
-
   type QueryAnnouncementParams = {
     page: number;
     size: number;
@@ -717,22 +1310,12 @@ declare namespace API {
     popup: boolean;
   };
 
-  type QueryAnnouncementResponse = {
-    total: number;
-    announcements: Announcement[];
-  };
-
   type QueryDocumentDetailParams = {
     id: string;
   };
 
   type QueryDocumentDetailRequest = {
     id: string;
-  };
-
-  type QueryDocumentListResponse = {
-    total: number;
-    list: Document[];
   };
 
   type QueryOrderDetailParams = {
@@ -753,37 +1336,14 @@ declare namespace API {
     size: number;
   };
 
-  type QueryOrderListResponse = {
-    total: number;
-    list: OrderDetail[];
-  };
-
   type QueryPurchaseOrderParams = {
-    auth_type: string;
-    identifier: string;
+    checkout_token?: string;
     order_no: string;
   };
 
   type QueryPurchaseOrderRequest = {
-    auth_type: string;
-    identifier: string;
+    checkout_token?: string;
     order_no: string;
-  };
-
-  type QueryPurchaseOrderResponse = {
-    order_no: string;
-    subscribe: Subscribe;
-    quantity: number;
-    price: number;
-    amount: number;
-    discount: number;
-    coupon: string;
-    coupon_discount: number;
-    fee_amount: number;
-    payment: PaymentMethod;
-    status: number;
-    created_at: number;
-    token?: string;
   };
 
   type QuerySubscribeGroupListResponse = {
@@ -799,16 +1359,6 @@ declare namespace API {
     language: string;
   };
 
-  type QuerySubscribeListResponse = {
-    list: Subscribe[];
-    total: number;
-  };
-
-  type QueryUserAffiliateCountResponse = {
-    registers: number;
-    total_commission: number;
-  };
-
   type QueryUserAffiliateListParams = {
     page: number;
     size: number;
@@ -819,24 +1369,9 @@ declare namespace API {
     size: number;
   };
 
-  type QueryUserAffiliateListResponse = {
-    list: UserAffiliate[];
-    total: number;
-  };
-
-  type QueryUserBalanceLogListResponse = {
-    list: BalanceLog[];
-    total: number;
-  };
-
   type QueryUserCommissionLogListRequest = {
     page: number;
     size: number;
-  };
-
-  type QueryUserCommissionLogListResponse = {
-    list: CommissionLog[];
-    total: number;
   };
 
   type QueryUserCommissionLogParams = {
@@ -844,37 +1379,14 @@ declare namespace API {
     size: number;
   };
 
-  type QueryUserSubscribeListResponse = {
-    list: UserSubscribe[];
-    total: number;
-  };
-
-  type QueryUserSubscribeNodeListResponse = {
-    list: UserSubscribeInfo[];
-  };
-
   type QueryWithdrawalLogListRequest = {
     page: number;
     size: number;
   };
 
-  type QueryWithdrawalLogListResponse = {
-    list: WithdrawalLog[];
-    total: number;
-  };
-
   type QueryWithdrawalLogParams = {
     page: number;
     size: number;
-  };
-
-  type RechargeOrderRequest = {
-    amount: number;
-    payment: string;
-  };
-
-  type RechargeOrderResponse = {
-    order_no: string;
   };
 
   type RegisterConfig = {
@@ -888,36 +1400,12 @@ declare namespace API {
     ip_register_limit_duration: number;
   };
 
-  type RenewalOrderRequest = {
-    user_subscribe_id: string;
-    quantity: number;
-    payment: string;
-    coupon?: string;
-  };
-
-  type RenewalOrderResponse = {
-    order_no: string;
-  };
-
   type ResetSubscribeTrafficLog = {
     id: string;
     type: number;
     user_subscribe_id: string;
     order_no?: string;
     timestamp: number;
-  };
-
-  type ResetTrafficOrderRequest = {
-    user_subscribe_id: string;
-    payment: string;
-  };
-
-  type ResetTrafficOrderResponse = {
-    order_no: string;
-  };
-
-  type ResetUserSubscribeTokenRequest = {
-    user_subscribe_id: string;
   };
 
   type Response = {
@@ -988,41 +1476,6 @@ declare namespace API {
     sort: number;
   };
 
-  type StripePayment = {
-    method: string;
-    client_secret: string;
-    publishable_key: string;
-  };
-
-  type Subscribe = {
-    id: string;
-    name: string;
-    language: string;
-    description: string;
-    unit_price: number;
-    unit_time: string;
-    discount: SubscribeDiscount[];
-    replacement: number;
-    inventory: number;
-    traffic: number;
-    traffic_unlimited: boolean;
-    speed_limit: number;
-    device_limit: number;
-    quota: number;
-    nodes: string[];
-    node_tags: string[];
-    show: boolean;
-    sell: boolean;
-    sort: number;
-    deduction_ratio: number;
-    allow_deduction: boolean;
-    reset_cycle: number;
-    renewal_reset: boolean;
-    show_original_price: boolean;
-    created_at: number;
-    updated_at: number;
-  };
-
   type SubscribeConfig = {
     single_model: boolean;
     subscribe_path: string;
@@ -1031,11 +1484,6 @@ declare namespace API {
     user_agent_limit: boolean;
     user_agent_list: string;
     show_tutorial?: boolean;
-  };
-
-  type SubscribeDiscount = {
-    quantity: number;
-    discount: number;
   };
 
   type SubscribeGroup = {
@@ -1055,17 +1503,6 @@ declare namespace API {
     telegram_group_url: string;
     telegram_notify: boolean;
     telegram_web_hook_domain: string;
-  };
-
-  type Ticket = {
-    id: string;
-    title: string;
-    description: string;
-    user_id: string;
-    follow?: Follow[];
-    status: number;
-    created_at: number;
-    updated_at: number;
   };
 
   type TimePeriod = {
@@ -1111,176 +1548,6 @@ declare namespace API {
     security_config: SecurityConfig;
   };
 
-  type UnbindDeviceRequest = {
-    id: string;
-  };
-
-  type UnbindOAuthRequest = {
-    method: string;
-  };
-
-  type UnsubscribeRequest = {
-    id: string;
-  };
-
-  type UpdateBindEmailRequest = {
-    email: string;
-  };
-
-  type UpdateBindMobileRequest = {
-    area_code: string;
-    mobile: string;
-    code: string;
-  };
-
-  type UpdateUserNotifyRequest = {
-    enable_balance_notify: boolean;
-    enable_login_notify: boolean;
-    enable_subscribe_notify: boolean;
-    enable_trade_notify: boolean;
-  };
-
-  type UpdateUserPasswordRequest = {
-    password: string;
-  };
-
-  type UpdateUserRulesRequest = {
-    rules: string[];
-  };
-
-  type UpdateUserSubscribeNoteRequest = {
-    user_subscribe_id: string;
-    note: string;
-  };
-
-  type UpdateUserTicketStatusRequest = {
-    id: string;
-    status: number;
-  };
-
-  type User = {
-    id: string;
-    avatar: string;
-    balance: number;
-    commission: number;
-    referral_percentage: number;
-    only_first_purchase: boolean;
-    gift_amount: number;
-    telegram: number;
-    refer_code: string;
-    referer_id: string;
-    enable: boolean;
-    is_admin?: boolean;
-    enable_balance_notify: boolean;
-    enable_login_notify: boolean;
-    enable_subscribe_notify: boolean;
-    enable_trade_notify: boolean;
-    auth_methods: UserAuthMethod[];
-    user_devices: UserDevice[];
-    rules: string[];
-    created_at: number;
-    updated_at: number;
-    deleted_at?: number;
-  };
-
-  type UserAffiliate = {
-    avatar: string;
-    identifier: string;
-    registered_at: number;
-    enable: boolean;
-  };
-
-  type UserAuthMethod = {
-    auth_type: string;
-    auth_identifier: string;
-    verified: boolean;
-  };
-
-  type UserDevice = {
-    id: string;
-    ip: string;
-    identifier: string;
-    user_agent: string;
-    online: boolean;
-    enabled: boolean;
-    created_at: number;
-    updated_at: number;
-  };
-
-  type UserLoginLog = {
-    id: string;
-    user_id: string;
-    login_ip: string;
-    user_agent: string;
-    success: boolean;
-    timestamp: number;
-  };
-
-  type UserSubscribe = {
-    id: string;
-    id_str: string;
-    user_id: string;
-    order_id: string;
-    subscribe_id: string;
-    subscribe: Subscribe;
-    start_time: number;
-    expire_time: number;
-    finished_at: number;
-    reset_time: number;
-    traffic: number;
-    traffic_unlimited: boolean;
-    download: number;
-    upload: number;
-    token: string;
-    status: number;
-    short: string;
-    created_at: number;
-    updated_at: number;
-  };
-
-  type UserSubscribeInfo = {
-    id: string;
-    user_id: string;
-    order_id: string;
-    subscribe_id: string;
-    start_time: number;
-    expire_time: number;
-    finished_at: number;
-    reset_time: number;
-    traffic: number;
-    download: number;
-    upload: number;
-    token: string;
-    status: number;
-    created_at: number;
-    updated_at: number;
-    is_try_out: boolean;
-    nodes: UserSubscribeNodeInfo[];
-  };
-
-  type UserSubscribeLog = {
-    id: string;
-    user_id: string;
-    user_subscribe_id: string;
-    token: string;
-    ip: string;
-    user_agent: string;
-    timestamp: number;
-  };
-
-  type UserSubscribeNodeInfo = {
-    id: string;
-    name: string;
-    uuid: string;
-    protocol: string;
-    port: number;
-    address: string;
-    tags: string[];
-    country: string;
-    city: string;
-    created_at: number;
-  };
-
   type VerifyCodeConfig = {
     verify_code_expire_time: number;
     verify_code_limit: number;
@@ -1293,11 +1560,6 @@ declare namespace API {
     enable_login_verify: boolean;
     enable_register_verify: boolean;
     enable_reset_password_verify: boolean;
-  };
-
-  type VerifyEmailRequest = {
-    email: string;
-    code: string;
   };
 
   type Vless = {
@@ -1315,16 +1577,5 @@ declare namespace API {
     transport_config: TransportConfig;
     security: string;
     security_config: SecurityConfig;
-  };
-
-  type WithdrawalLog = {
-    id: string;
-    user_id: string;
-    amount: number;
-    content: string;
-    status: number;
-    reason?: string;
-    created_at: number;
-    updated_at: number;
   };
 }

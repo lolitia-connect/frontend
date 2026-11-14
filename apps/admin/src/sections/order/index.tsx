@@ -15,8 +15,8 @@ import {
 import { cn } from "@workspace/ui/lib/utils";
 import {
   getOrderList,
-  updateOrderStatus,
-} from "@workspace/ui/services/admin/order";
+  putOrderStatus as updateOrderStatus,
+} from "@workspace/ui/services/admin/admin";
 import { useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { Display } from "@/components/display";
@@ -114,14 +114,14 @@ export default function Order() {
                     <Display type="currency" value={order.amount} />
                   </Button>
                 </HoverCardTrigger>
-                <HoverCardContent>
+                <HoverCardContent className="w-auto max-w-[80vw]">
                   <div className="grid gap-3">
                     {order.trade_no && (
                       <>
                         <div className="font-semibold">
                           {t("tradeNo", "Transaction Number")}
                         </div>
-                        <span className="text-muted-foreground">
+                        <span className="break-all text-muted-foreground">
                           {order.trade_no}
                         </span>
                         <Separator className="my-2" />

@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
 export interface NavItem {
+  activeUrls?: string[];
   defaultOpen?: boolean;
   icon?: string;
   items?: NavItem[];
@@ -148,6 +149,11 @@ export function useNavs() {
             title: t("Login", "Login"),
             url: "/dashboard/log/login",
             icon: "flat-color-icons:unlock",
+          },
+          {
+            title: t("Order Creation", "Order Creation"),
+            url: "/dashboard/log/order",
+            icon: "flat-color-icons:todo-list",
           },
           {
             title: t("Register", "Register"),

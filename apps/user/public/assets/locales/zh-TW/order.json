@@ -36,5 +36,10 @@
     "4": "充值"
   },
   "viewDocument": "查看文檔",
-  "waitingForPayment": "等待支付"
+  "waitingForPayment": "等待支付",
+  "orderUnavailable": "訂單無法使用",
+  "orderAccessRequired": "訂單存取權杖遺失或已失效，請登入下單時使用的帳號。",
+  "retry": "重試",
+  "signIn": "登入",
+  "processing": "處理中..."
 }

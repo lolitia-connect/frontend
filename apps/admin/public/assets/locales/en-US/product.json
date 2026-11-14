@@ -90,7 +90,8 @@
     "unitPrice": "Unit Price",
     "unitTime": "Unit Time",
     "unlimitedInventory": "Unlimited (enter -1)",
-    "Year": "Year"
+    "Year": "Year",
+    "unlimited": "Unlimited"
   },
   "groupMapping": "Group Mapping",
   "groupMappingTitle": "Group Mapping",

@@ -204,5 +204,6 @@
   "days": "days",
   "expiredGroupExists": "System already has an expired node group: {{name}}",
   "nodeGroupUsedBySubscribe": "This node group is used as default node group in subscription products, cannot set as expired group",
-  "expiredGroupForCalculationDescription": "Expired-only node groups cannot participate in group calculation"
+  "expiredGroupForCalculationDescription": "Expired-only node groups cannot participate in group calculation",
+  "state": "State"
 }

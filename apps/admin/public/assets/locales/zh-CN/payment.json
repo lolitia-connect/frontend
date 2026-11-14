@@ -36,5 +36,14 @@
   "selectPlatform": "选择平台",
   "sort": "排序",
   "submit": "提交",
-  "updateSuccess": "更新成功"
+  "updateSuccess": "更新成功",
+  "currency": "币种",
+  "rate": "汇率",
+  "currencyUnit": "支付币种",
+  "currencyUnitPlaceholder": "例如 USD、CNY、EUR",
+  "exchangeRate": "汇率",
+  "exchangeRatePlaceholder": "相对于系统币种的汇率",
+  "billDesc": "账单描述",
+  "billDescPlaceholder": "例如 {item_name} - {order_no}",
+  "billDescHelp": "可用变量：{order_no}、{item_name}、{amount}、{trade_no}"
 }

@@ -44,6 +44,9 @@ export type ProtocolName =
   | "vless"
   | "trojan"
   | "hysteria"
+  | "hysteria2"
+  | "shadowsocksr"
+  | "nowhere"
   | "tuic"
   | "anytls"
   | "naive"
@@ -173,7 +176,12 @@ export default function NodeForm(props: {
 
   const existingTags: string[] = tags || [];
 
-  const availableProtocols = getAvailableProtocols(serverId);
+  const availableProtocols = getAvailableProtocols(serverId).filter(
+    (entry) =>
+      !["shadowsocksr", "nowhere"].includes(entry.protocol) ||
+      (entry.protocol === initialValues?.protocol &&
+        entry.id === initialValues?.protocol_id)
+  );
 
   // Fetch node groups
   const { data: nodeGroupsData } = useQuery({

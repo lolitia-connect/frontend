@@ -167,6 +167,8 @@ export function GlobalMap() {
           damping: 15,
           delay: 0.25,
         }}
+        viewport={{ once: true, amount: 0.2 }}
+        whileInView={{ scale: 1, opacity: 1 }}
       >
         <div className="aspect-[16/9] w-full overflow-hidden rounded-[1.5rem] bg-transparent">
           <ComposableMap

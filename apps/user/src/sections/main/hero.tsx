@@ -18,6 +18,7 @@ export function Hero() {
       initial={{ opacity: 0, y: -50 }}
       transition={{ type: "spring", stiffness: 100, damping: 20 }}
       viewport={{ once: true, amount: 0.2 }}
+      whileInView={{ opacity: 1, y: 0 }}
     >
       <motion.div
         animate={{ opacity: 1, y: 0 }}
@@ -25,6 +26,7 @@ export function Hero() {
         initial={{ opacity: 0, y: 50 }}
         transition={{ type: "spring", stiffness: 80, damping: 15, delay: 0.3 }}
         viewport={{ once: true, amount: 0.3 }}
+        whileInView={{ opacity: 1, y: 0 }}
       >
         <h1 className="my-6 font-bold text-4xl lg:text-6xl">
           {t("welcome", "Welcome to")} {site.site_name}
@@ -51,6 +53,7 @@ export function Hero() {
         initial={{ opacity: 0, y: 50 }}
         transition={{ type: "spring", stiffness: 80, damping: 15, delay: 0.5 }}
         viewport={{ once: true, amount: 0.3 }}
+        whileInView={{ opacity: 1, y: 0 }}
       >
         <DotLottieReact
           autoplay

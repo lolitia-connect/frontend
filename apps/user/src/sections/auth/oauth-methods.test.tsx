@@ -18,6 +18,13 @@ vi.mock("@workspace/ui/services/common/common", () => ({
   postAuthOauthLogin: mocks.oauthLogin,
 }));
 
+vi.mock("react-i18next", () => ({
+  useTranslation: () => ({
+    t: (_key: string, fallback: string, values?: Record<string, string>) =>
+      fallback.replace("{{method}}", values?.method ?? ""),
+  }),
+}));
+
 vi.mock("@tanstack/react-router", () => ({
   useSearch: () => ({ invite: "invite-code" }),
 }));
@@ -52,16 +59,17 @@ afterEach(() => {
 });
 
 describe("OAuth methods", () => {
-  it("uses the local OAuth contract without an unsupported registration challenge", async () => {
+  it("requires registration verification before starting the provider round trip", async () => {
     render(<OAuthMethods />);
 
     const google = screen.getByRole("button", {
       name: "Continue with google",
     }) as HTMLButtonElement;
+    expect(google.disabled).toBe(true);
+    fireEvent.click(google);
+    expect(mocks.oauthLogin).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByRole("button", { name: "Solve challenge" }));
     expect(google.disabled).toBe(false);
-    expect(
-      screen.queryByRole("button", { name: "Solve challenge" })
-    ).toBeNull();
     fireEvent.click(google);
 
     await waitFor(() => {

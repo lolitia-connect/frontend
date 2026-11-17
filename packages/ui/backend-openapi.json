@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Lolitia local backend",
-    "version": "04ea4282dc1473f3e9b2107e6ec897995288755b"
+    "version": "1fab00a261993e717b724c4ca6d62cf6546e23cd"
   },
   "paths": {
     "/v1/admin/ads/": {
@@ -1652,6 +1652,72 @@
         }
       }
     },
+    "/v1/admin/log/admin-action/list": {
+      "get": {
+        "tags": ["backend"],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "integer", "format": "int64" }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "integer", "format": "int64" }
+          },
+          {
+            "name": "date",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "start_date",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "end_date",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "user_id",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "format": "int64" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Local backend result envelope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": { "type": "integer" },
+                    "msg": { "type": "string" },
+                    "data": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/admin/log/balance/list": {
       "get": {
         "tags": ["backend"],
@@ -2642,6 +2708,72 @@
                     "data": {
                       "$ref": "#/components/schemas/FilterTrafficLogDetailsResponse"
                     }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/admin/log/unmatched-payment/list": {
+      "get": {
+        "tags": ["backend"],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "integer", "format": "int64" }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "integer", "format": "int64" }
+          },
+          {
+            "name": "date",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "start_date",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "end_date",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "user_id",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "format": "int64" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Local backend result envelope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": { "type": "integer" },
+                    "msg": { "type": "string" },
+                    "data": {}
                   }
                 }
               }
@@ -6943,6 +7075,89 @@
         }
       }
     },
+    "/v1/admin/withdrawal/list": {
+      "get": {
+        "tags": ["backend"],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "integer", "format": "int64" }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "integer", "format": "int64" }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "format": "int64", "nullable": true }
+          },
+          {
+            "name": "user_id",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "format": "int64", "nullable": true }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Local backend result envelope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": { "type": "integer" },
+                    "msg": { "type": "string" },
+                    "data": {
+                      "$ref": "#/components/schemas/GetWithdrawalListResponse"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/admin/withdrawal/status": {
+      "put": {
+        "tags": ["backend"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Local backend result envelope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": { "type": "integer" },
+                    "msg": { "type": "string" },
+                    "data": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReviewWithdrawalRequest"
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/auth/admin/captcha/generate": {
       "post": {
         "tags": ["backend"],
@@ -8049,7 +8264,7 @@
                     "code": { "type": "integer" },
                     "msg": { "type": "string" },
                     "data": {
-                      "$ref": "#/components/schemas/PortalPurchaseResponse"
+                      "$ref": "#/components/schemas/PurchaseOrderResponse"
                     }
                   }
                 }
@@ -9141,6 +9356,29 @@
         }
       }
     },
+    "/v1/public/user/logout": {
+      "post": {
+        "tags": ["backend"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Local backend result envelope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": { "type": "integer" },
+                    "msg": { "type": "string" },
+                    "data": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/public/user/notify": {
       "put": {
         "tags": ["backend"],
@@ -9711,7 +9949,9 @@
                   "properties": {
                     "code": { "type": "integer" },
                     "msg": { "type": "string" },
-                    "data": { "$ref": "#/components/schemas/V2OrderResponse" }
+                    "data": {
+                      "$ref": "#/components/schemas/V2EventTicketResponse"
+                    }
                   }
                 }
               }
@@ -9741,20 +9981,9 @@
         ],
         "responses": {
           "200": {
-            "description": "Local backend result envelope",
+            "description": "Order event stream",
             "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": { "type": "integer" },
-                    "msg": { "type": "string" },
-                    "data": {
-                      "$ref": "#/components/schemas/V2OrderSessionResponse"
-                    }
-                  }
-                }
-              }
+              "text/event-stream": { "schema": { "type": "string" } }
             }
           }
         }
@@ -9782,7 +10011,7 @@
                     "code": { "type": "integer" },
                     "msg": { "type": "string" },
                     "data": {
-                      "$ref": "#/components/schemas/V2EventTicketResponse"
+                      "$ref": "#/components/schemas/V2OrderSessionResponse"
                     }
                   }
                 }
@@ -9864,6 +10093,29 @@
   },
   "components": {
     "schemas": {
+      "AdminActionLog": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "user_id": { "type": "string" },
+          "action": { "type": "string" },
+          "object": { "type": "string" },
+          "object_id": { "type": "string" },
+          "detail": { "type": "string" },
+          "source": { "type": "string" },
+          "telegram_sender_id": { "type": "string" },
+          "timestamp": { "type": "integer", "format": "int64" },
+          "created_at": { "type": "integer", "format": "int64" }
+        },
+        "required": [
+          "id",
+          "user_id",
+          "action",
+          "source",
+          "timestamp",
+          "created_at"
+        ]
+      },
       "Ads": {
         "type": "object",
         "properties": {
@@ -10282,6 +10534,33 @@
         },
         "required": ["type"]
       },
+      "ClaimServerDeviceRequest": {
+        "type": "object",
+        "properties": {
+          "protocol": { "type": "string" },
+          "protocol_id": { "type": "string" },
+          "server_id": { "type": "integer", "format": "int64" },
+          "secret_key": { "type": "string" },
+          "uid": { "type": "integer", "format": "int64" },
+          "ip": { "type": "string" }
+        },
+        "required": [
+          "protocol",
+          "protocol_id",
+          "server_id",
+          "secret_key",
+          "uid",
+          "ip"
+        ]
+      },
+      "ClaimServerDeviceResponse": {
+        "type": "object",
+        "properties": {
+          "allowed": { "type": "boolean" },
+          "ttl_seconds": { "type": "integer", "format": "int64" }
+        },
+        "required": ["allowed", "ttl_seconds"]
+      },
       "CloseOrderRequest": {
         "type": "object",
         "properties": { "orderNo": { "type": "string" } },
@@ -10504,7 +10783,8 @@
           "payment_id": { "type": "string" },
           "trade_no": { "type": "string" },
           "status": { "type": "integer", "format": "int64" },
-          "subscribe_id": { "type": "string" }
+          "subscribe_id": { "type": "string" },
+          "user_subscribe_id": { "type": "string" }
         },
         "required": [
           "user_id",
@@ -11069,6 +11349,30 @@
           }
         }
       },
+      "FilterAdminActionLogRequest": {
+        "type": "object",
+        "properties": {
+          "page": { "type": "integer", "format": "int64" },
+          "size": { "type": "integer", "format": "int64" },
+          "date": { "type": "string" },
+          "start_date": { "type": "string" },
+          "end_date": { "type": "string" },
+          "search": { "type": "string" },
+          "user_id": { "type": "integer", "format": "int64" }
+        },
+        "required": ["page", "size"]
+      },
+      "FilterAdminActionLogResponse": {
+        "type": "object",
+        "properties": {
+          "total": { "type": "integer", "format": "int64" },
+          "list": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/AdminActionLog" }
+          }
+        },
+        "required": ["total", "list"]
+      },
       "FilterBalanceLogRequest": {
         "type": "object",
         "properties": {
@@ -11412,6 +11716,30 @@
           "list": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/TrafficLogDetails" }
+          }
+        },
+        "required": ["total", "list"]
+      },
+      "FilterUnmatchedPaymentLogRequest": {
+        "type": "object",
+        "properties": {
+          "page": { "type": "integer", "format": "int64" },
+          "size": { "type": "integer", "format": "int64" },
+          "date": { "type": "string" },
+          "start_date": { "type": "string" },
+          "end_date": { "type": "string" },
+          "search": { "type": "string" },
+          "user_id": { "type": "integer", "format": "int64" }
+        },
+        "required": ["page", "size"]
+      },
+      "FilterUnmatchedPaymentLogResponse": {
+        "type": "object",
+        "properties": {
+          "total": { "type": "integer", "format": "int64" },
+          "list": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/UnmatchedPaymentLog" }
           }
         },
         "required": ["total", "list"]
@@ -11932,6 +12260,16 @@
         },
         "required": ["total", "list"]
       },
+      "GetServerAliveListResponse": {
+        "type": "object",
+        "properties": {
+          "alive": {
+            "type": "object",
+            "additionalProperties": { "type": "integer", "format": "int64" }
+          }
+        },
+        "required": ["alive"]
+      },
       "GetServerConfigRequest": {
         "type": "object",
         "properties": {
@@ -12400,6 +12738,27 @@
           "total_traffic": { "type": "integer", "format": "int64" }
         },
         "required": ["list", "total_upload", "total_download", "total_traffic"]
+      },
+      "GetWithdrawalListRequest": {
+        "type": "object",
+        "properties": {
+          "page": { "type": "integer", "format": "int64" },
+          "size": { "type": "integer", "format": "int64" },
+          "status": { "type": "integer", "format": "int64", "nullable": true },
+          "user_id": { "type": "integer", "format": "int64", "nullable": true }
+        },
+        "required": ["page", "size"]
+      },
+      "GetWithdrawalListResponse": {
+        "type": "object",
+        "properties": {
+          "list": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/WithdrawalLog" }
+          },
+          "total": { "type": "integer", "format": "int64" }
+        },
+        "required": ["list", "total"]
       },
       "GiftLog": {
         "type": "object",
@@ -13982,6 +14341,15 @@
         },
         "required": ["today", "monthly", "all"]
       },
+      "ReviewWithdrawalRequest": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "status": { "type": "integer", "format": "int64" },
+          "reason": { "type": "string" }
+        },
+        "required": ["id", "status"]
+      },
       "SecurityConfig": {
         "type": "object",
         "properties": {
@@ -15058,6 +15426,33 @@
         "properties": { "method": { "type": "string" } },
         "required": ["method"]
       },
+      "UnmatchedPaymentLog": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "user_id": { "type": "string" },
+          "order_no": { "type": "string" },
+          "trade_no": { "type": "string" },
+          "platform": { "type": "string" },
+          "amount": { "type": "integer", "format": "int64" },
+          "currency": { "type": "string" },
+          "reason": { "type": "string" },
+          "timestamp": { "type": "integer", "format": "int64" },
+          "created_at": { "type": "integer", "format": "int64" }
+        },
+        "required": [
+          "id",
+          "user_id",
+          "order_no",
+          "trade_no",
+          "platform",
+          "amount",
+          "currency",
+          "reason",
+          "timestamp",
+          "created_at"
+        ]
+      },
       "UnsubscribeRequest": {
         "type": "object",
         "properties": { "id": { "type": "string" } },
@@ -15120,15 +15515,22 @@
       },
       "UpdateBindEmailRequest": {
         "type": "object",
-        "properties": { "email": { "type": "string" } },
-        "required": ["email"]
+        "properties": {
+          "email": { "type": "string" },
+          "code": { "type": "string" },
+          "password": { "type": "string" },
+          "current_code": { "type": "string" }
+        },
+        "required": ["email", "code"]
       },
       "UpdateBindMobileRequest": {
         "type": "object",
         "properties": {
           "area_code": { "type": "string" },
           "mobile": { "type": "string" },
-          "code": { "type": "string" }
+          "code": { "type": "string" },
+          "password": { "type": "string" },
+          "current_code": { "type": "string" }
         },
         "required": ["area_code", "mobile", "code"]
       },
@@ -15511,7 +15913,11 @@
       },
       "UpdateUserPasswordRequest": {
         "type": "object",
-        "properties": { "password": { "type": "string" } },
+        "properties": {
+          "password": { "type": "string" },
+          "old_password": { "type": "string" },
+          "current_code": { "type": "string" }
+        },
         "required": ["password"]
       },
       "UpdateUserRulesRequest": {

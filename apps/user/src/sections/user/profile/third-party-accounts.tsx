@@ -38,27 +38,156 @@ import { toast } from "sonner";
 import { z } from "zod";
 import SendCode from "@/sections/auth/send-code";
 import { useGlobalStore } from "@/stores/global";
+import { Logout } from "@/utils/common";
 import {
   navigateToTelegramCallbackRoute,
   requestTelegramAuthCallback,
 } from "@/utils/oauth/telegram-popup";
+import CurrentCredentialFields, {
+  type VerifyBy,
+} from "./current-credential-fields";
 
-function MobileBindDialog({
-  onSuccess,
-  children,
-}: {
-  onSuccess: () => void;
-  children: React.ReactNode;
-}) {
+function EmailBindDialog({ children }: { children: React.ReactNode }) {
   const { t } = useTranslation("profile");
-  const { common } = useGlobalStore();
+  const { user } = useGlobalStore();
+  const email = user?.auth_methods?.find(
+    (method) => method.auth_type === "email"
+  )?.auth_identifier;
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [verifyBy, setVerifyBy] = useState<VerifyBy>("password");
+  const schema = z.object({
+    email: z.string().email(),
+    code: z.string().min(1),
+    password: z.string().optional(),
+    current_code: z.string().optional(),
+  });
+  const form = useForm<z.infer<typeof schema>>({
+    resolver: zodResolver(schema),
+    defaultValues: { email: "", code: "", password: "", current_code: "" },
+  });
+  const onSubmit = async (values: z.infer<typeof schema>) => {
+    if (loading) return;
+    const credential =
+      verifyBy === "code" && email ? "current_code" : "password";
+    if (email && !values[credential]) {
+      form.setError(credential, {
+        message: t(
+          "currentCredential.required",
+          "Verify your current credentials"
+        ),
+      });
+      return;
+    }
+    setLoading(true);
+    try {
+      await updateBindEmail({
+        email: values.email,
+        code: values.code,
+        [credential]: values[credential] || undefined,
+      });
+      toast.success(
+        t("currentCredential.signInAgain", "Updated. Please sign in again.")
+      );
+      setOpen(false);
+      form.reset();
+      Logout();
+    } catch {
+      return;
+    } finally {
+      setLoading(false);
+    }
+  };
+  return (
+    <Dialog onOpenChange={setOpen} open={open}>
+      <DialogTrigger asChild>{children}</DialogTrigger>
+      <DialogContent className="max-h-[calc(100dvh-2rem)] overflow-y-auto sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>
+            {t("thirdParty.bindEmail", "Connect Email")}
+          </DialogTitle>
+        </DialogHeader>
+        <Form {...form}>
+          <form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
+            {email && (
+              <CurrentCredentialFields
+                email={email}
+                onVerifyByChange={setVerifyBy}
+                passwordName="password"
+                verifyBy={verifyBy}
+              />
+            )}
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input
+                      placeholder={t(
+                        "thirdParty.newEmail",
+                        "New email address"
+                      )}
+                      type="email"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="code"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <div className="flex gap-2">
+                      <Input
+                        autoComplete="one-time-code"
+                        placeholder={t(
+                          "thirdParty.newCode",
+                          "Code sent to the new address"
+                        )}
+                        {...field}
+                      />
+                      <SendCode
+                        params={{ email: form.watch("email"), type: 1 }}
+                        type="email"
+                      />
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button className="w-full" loading={loading} type="submit">
+              {t("thirdParty.confirm", "Confirm")}
+            </Button>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function MobileBindDialog({ children }: { children: React.ReactNode }) {
+  const { t } = useTranslation("profile");
+  const { common, user } = useGlobalStore();
   const { enable_whitelist, whitelist } = common.auth.mobile;
   const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [verifyBy, setVerifyBy] = useState<VerifyBy>("password");
+  const email = user?.auth_methods?.find(
+    (method) => method.auth_type === "email"
+  )?.auth_identifier;
 
   const formSchema = z.object({
     area_code: z.string().min(1, "Area code is required"),
     mobile: z.string().min(5, "Phone number is required"),
     code: z.string().min(4, "Verification code is required"),
+    password: z.string().optional(),
+    current_code: z.string().optional(),
   });
 
   type MobileBindFormValues = z.infer<typeof formSchema>;
@@ -69,24 +198,39 @@ function MobileBindDialog({
       area_code: "1",
       mobile: "",
       code: "",
+      password: "",
+      current_code: "",
     },
   });
 
   const onSubmit = async (values: MobileBindFormValues) => {
+    if (loading) return;
+    const credential =
+      verifyBy === "code" && email ? "current_code" : "password";
+    setLoading(true);
     try {
-      await updateBindMobile(values);
-      toast.success(t("thirdParty.bindSuccess", "Successfully connected"));
-      onSuccess();
+      await updateBindMobile({
+        area_code: values.area_code,
+        mobile: values.mobile,
+        code: values.code,
+        [credential]: values[credential] || undefined,
+      });
+      toast.success(
+        t("currentCredential.signInAgain", "Updated. Please sign in again.")
+      );
       setOpen(false);
+      Logout();
     } catch {
-      toast.error(t("thirdParty.bindFailed", "Failed to connect"));
+      return;
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <Dialog onOpenChange={setOpen} open={open}>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="max-h-[calc(100dvh-2rem)] overflow-y-auto sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>
             {t("thirdParty.bindMobile", "Connect Mobile")}
@@ -94,6 +238,12 @@ function MobileBindDialog({
         </DialogHeader>
         <Form {...form}>
           <form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
+            <CurrentCredentialFields
+              email={email}
+              onVerifyByChange={setVerifyBy}
+              passwordName="password"
+              verifyBy={verifyBy}
+            />
             <FormField
               control={form.control}
               name="mobile"
@@ -164,7 +314,7 @@ function MobileBindDialog({
                 </FormItem>
               )}
             />
-            <Button className="w-full" type="submit">
+            <Button className="w-full" loading={loading} type="submit">
               {t("thirdParty.confirm", "Confirm")}
             </Button>
           </form>
@@ -238,27 +388,7 @@ export default function ThirdPartyAccounts() {
     },
   ].filter((account) => oauth_methods?.includes(account.id));
 
-  const [editValues, setEditValues] = useState<Record<string, any>>({});
   const [actionLoading, setActionLoading] = useState<string | null>(null);
-
-  const handleBasicAccountUpdate = async (
-    account: (typeof accounts)[0],
-    value: string
-  ) => {
-    if (actionLoading) return;
-    setActionLoading(account.id);
-    try {
-      if (account.id === "email") {
-        await updateBindEmail({ email: value });
-        await getUserInfo();
-        toast.success(t("thirdParty.updateSuccess", "Update Successful"));
-      }
-    } catch {
-      /* error handled by interceptor */
-    } finally {
-      setActionLoading(null);
-    }
-  };
 
   const handleAccountAction = async (account: (typeof accounts)[number]) => {
     if (actionLoading) return;
@@ -309,16 +439,11 @@ export default function ThirdPartyAccounts() {
             const method = user?.auth_methods?.find(
               (auth) => auth.auth_type === account.id
             );
-            const isEditing = account.id === "email";
-            const currentValue =
-              method?.auth_identifier || editValues[account.id];
             let displayValue = "";
 
             switch (account.id) {
               case "email":
-                displayValue = isEditing
-                  ? currentValue
-                  : method?.auth_identifier || "";
+                displayValue = method?.auth_identifier || "";
                 break;
               default:
                 displayValue =
@@ -338,23 +463,23 @@ export default function ThirdPartyAccounts() {
                 <div className="flex items-center gap-2">
                   <Input
                     className="flex-1 truncate bg-muted"
-                    disabled={!isEditing}
-                    onChange={(e) =>
-                      isEditing &&
-                      setEditValues((prev) => ({
-                        ...prev,
-                        [account.id]: e.target.value,
-                      }))
-                    }
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" && isEditing) {
-                        handleBasicAccountUpdate(account, currentValue);
-                      }
-                    }}
+                    disabled
                     value={displayValue}
                   />
-                  {account.id === "mobile" ? (
-                    <MobileBindDialog onSuccess={getUserInfo}>
+                  {account.id === "email" ? (
+                    <EmailBindDialog>
+                      <Button
+                        variant={
+                          method?.auth_identifier ? "outline" : "default"
+                        }
+                      >
+                        {method?.auth_identifier
+                          ? t("thirdParty.update", "Update")
+                          : t("thirdParty.bind", "Connect")}
+                      </Button>
+                    </EmailBindDialog>
+                  ) : account.id === "mobile" ? (
+                    <MobileBindDialog>
                       <Button
                         className="whitespace-nowrap"
                         variant={
@@ -373,24 +498,14 @@ export default function ThirdPartyAccounts() {
                     <Button
                       className="whitespace-nowrap"
                       loading={actionLoading === account.id}
-                      onClick={() =>
-                        isEditing
-                          ? handleBasicAccountUpdate(account, currentValue)
-                          : handleAccountAction(account)
-                      }
+                      onClick={() => handleAccountAction(account)}
                       variant={method?.auth_identifier ? "outline" : "default"}
                     >
                       {t(
-                        isEditing
-                          ? "thirdParty.save"
-                          : method?.auth_identifier
-                            ? "thirdParty.unbind"
-                            : "thirdParty.bind",
-                        isEditing
-                          ? "Save"
-                          : method?.auth_identifier
-                            ? "Disconnect"
-                            : "Connect"
+                        method?.auth_identifier
+                          ? "thirdParty.unbind"
+                          : "thirdParty.bind",
+                        method?.auth_identifier ? "Disconnect" : "Connect"
                       )}
                     </Button>
                   )}

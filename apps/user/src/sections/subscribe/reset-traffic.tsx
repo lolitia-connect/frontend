@@ -10,10 +10,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@workspace/ui/components/dialog";
-import { resetTraffic } from "@workspace/ui/services/user/order";
 import { useEffect, useState, useTransition } from "react";
 import { useTranslation } from "react-i18next";
 import { Display } from "@/components/display";
+import { useCreateOrder } from "@/sections/purchasing/create-order";
 import { useGlobalStore } from "@/stores/global";
 import PaymentMethods from "./payment-methods";
 
@@ -30,6 +30,7 @@ export default function ResetTraffic({
   const { t } = useTranslation("subscribe");
   const { getUserInfo } = useGlobalStore();
   const navigate = useNavigate();
+  const createOrder = useCreateOrder();
   const [open, setOpen] = useState<boolean>(false);
   const [params, setParams] = useState<API.ResetTrafficOrderRequest>({
     payment: "-1",
@@ -89,8 +90,12 @@ export default function ResetTraffic({
             onClick={async () => {
               startTransition(async () => {
                 try {
-                  const response = await resetTraffic(params);
-                  const orderNo = response.data.data?.order_no;
+                  const response = await createOrder({
+                    type: "reset_traffic",
+                    payment_id: params.payment,
+                    user_subscribe_id: id,
+                  });
+                  const orderNo = response.data.data?.order.order_no;
                   if (orderNo) {
                     getUserInfo();
                     navigate({

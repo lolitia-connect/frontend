@@ -36,7 +36,8 @@ export default function Nodes() {
   const [loading, setLoading] = useState(false);
 
   // Use our zustand store for server data
-  const { getServerName, getServerAddress, getProtocolPort, fetchServers } = useServer();
+  const { getServerName, getServerAddress, getProtocolPort, fetchServers } =
+    useServer();
   const { fetchNodes, fetchTags } = useNode();
 
   // Fetch node groups for display

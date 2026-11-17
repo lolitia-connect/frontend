@@ -21,6 +21,8 @@ export const LABELS = {
   tcp: "TCP",
   udp: "UDP",
   both: "TCP + UDP",
+  mix: "TLS + QUIC",
+  morph: "Morph",
   "tcp,udp": "TCP + UDP",
   ws: "WebSocket",
   websocket: "WebSocket",

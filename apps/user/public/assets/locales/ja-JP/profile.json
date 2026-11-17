@@ -5,7 +5,9 @@
     "passwordMismatch": "パスワードが一致しません",
     "repeatNewPassword": "新しいパスワードを再入力",
     "updatePassword": "パスワードを更新",
-    "updateSuccess": "パスワードの更新が完了しました"
+    "updateSuccess": "パスワードの更新が完了しました",
+    "newPasswordHint": "新しいパスワード（8文字以上）",
+    "passwordLength": "パスワードは8〜128文字で入力してください"
   },
   "notify": {
     "balanceChange": "残高変動通知",
@@ -26,6 +28,19 @@
     "title": "サードパーティアカウント",
     "unbind": "連携解除",
     "update": "更新",
-    "updateSuccess": "更新が完了しました"
+    "updateSuccess": "更新が完了しました",
+    "bindEmail": "メールアドレスを登録",
+    "newEmail": "新しいメールアドレス",
+    "newCode": "新しい宛先に送信したコード"
+  },
+  "currentCredential": {
+    "password": "現在のパスワード",
+    "verificationCode": "確認コード",
+    "code": "{{email}} に送信したコード",
+    "required": "現在のアカウント情報を確認してください",
+    "firstPassword": "初めてパスワードを設定する場合は空欄にしてください",
+    "signInAgain": "更新しました。再度ログインしてください",
+    "noPassword": "パスワード未設定",
+    "firstPasswordCode": "確認コードはパスワード未設定の場合のみ利用できます。設定済みの場合は現在のパスワードを入力してください。"
   }
 }

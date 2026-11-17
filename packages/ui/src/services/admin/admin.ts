@@ -783,7 +783,7 @@ export async function getLogOrderList(
   });
 }
 
-/** Filter unmatched payment log Pages the payments a gateway confirmed that could not settle their order, with the order and trade numbers, the amount and the reason, for manual refunds. GET /v1/admin/log/payment/unmatched/list */
+/** Filter unmatched payment log Pages the payments a gateway confirmed that could not settle their order, with the order and trade numbers, the amount and the reason, for manual refunds. GET /v1/admin/log/unmatched-payment/list */
 export async function getLogPaymentUnmatchedList(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.getLogPaymentUnmatchedListParams,
@@ -794,7 +794,7 @@ export async function getLogPaymentUnmatchedList(
   >(
     `${
       import.meta.env.VITE_API_PREFIX || ""
-    }/v1/admin/log/payment/unmatched/list`,
+    }/v1/admin/log/unmatched-payment/list`,
     {
       method: "GET",
       params: {

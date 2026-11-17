@@ -1,5 +1,62 @@
 {
   "types": {
+    "AdminActionLog": [
+      {
+        "name": "",
+        "type": "requestmeta.Metadata",
+        "embedded": true
+      },
+      {
+        "name": "Id",
+        "type": "int64",
+        "tag": "json:\"id,string\""
+      },
+      {
+        "name": "UserId",
+        "type": "int64",
+        "tag": "json:\"user_id,string\""
+      },
+      {
+        "name": "Action",
+        "type": "string",
+        "tag": "json:\"action\""
+      },
+      {
+        "name": "Object",
+        "type": "string",
+        "tag": "json:\"object,omitempty\""
+      },
+      {
+        "name": "ObjectId",
+        "type": "int64",
+        "tag": "json:\"object_id,omitempty,string\""
+      },
+      {
+        "name": "Detail",
+        "type": "string",
+        "tag": "json:\"detail,omitempty\""
+      },
+      {
+        "name": "Source",
+        "type": "string",
+        "tag": "json:\"source\""
+      },
+      {
+        "name": "TelegramSenderId",
+        "type": "int64",
+        "tag": "json:\"telegram_sender_id,omitempty,string\""
+      },
+      {
+        "name": "Timestamp",
+        "type": "int64",
+        "tag": "json:\"timestamp\""
+      },
+      {
+        "name": "CreatedAt",
+        "type": "int64",
+        "tag": "json:\"created_at\""
+      }
+    ],
     "Ads": [
       {
         "name": "Id",
@@ -719,6 +776,35 @@
         "tag": "json:\"checkout_url,omitempty\""
       }
     ],
+    "ClaimServerDeviceRequest": [
+      {
+        "name": "",
+        "type": "ServerCommon",
+        "embedded": true
+      },
+      {
+        "name": "SID",
+        "type": "int64",
+        "tag": "json:\"uid\" validate:\"gt=0\""
+      },
+      {
+        "name": "IP",
+        "type": "string",
+        "tag": "json:\"ip\" validate:\"required\""
+      }
+    ],
+    "ClaimServerDeviceResponse": [
+      {
+        "name": "Allowed",
+        "type": "bool",
+        "tag": "json:\"allowed\""
+      },
+      {
+        "name": "TTLSeconds",
+        "type": "int64",
+        "tag": "json:\"ttl_seconds\""
+      }
+    ],
     "CloseOrderRequest": [
       {
         "name": "OrderNo",
@@ -1218,6 +1304,11 @@
         "name": "SubscribeId",
         "type": "int64",
         "tag": "json:\"subscribe_id,omitempty,string\""
+      },
+      {
+        "name": "UserSubscribeId",
+        "type": "int64",
+        "tag": "json:\"user_subscribe_id,omitempty,string\""
       }
     ],
     "CreatePaymentMethodRequest": [
@@ -1593,22 +1684,22 @@
       {
         "name": "TicketId",
         "type": "int64",
-        "tag": "json:\"ticket_id,string\" validate:\"required\""
+        "tag": "json:\"ticket_id,string\" validate:\"required,gt=0\""
       },
       {
         "name": "From",
         "type": "string",
-        "tag": "json:\"from\" validate:\"required\""
+        "tag": "json:\"from\" validate:\"required,max=255\""
       },
       {
         "name": "Type",
         "type": "uint8",
-        "tag": "json:\"type\" validate:\"required\""
+        "tag": "json:\"type\" validate:\"required,oneof=1 2\""
       },
       {
         "name": "Content",
         "type": "string",
-        "tag": "json:\"content\" validate:\"required\""
+        "tag": "json:\"content\" validate:\"required,max=65535\""
       }
     ],
     "CreateUserAuthMethodRequest": [
@@ -1731,34 +1822,34 @@
       {
         "name": "TicketId",
         "type": "int64",
-        "tag": "json:\"ticket_id,string\""
+        "tag": "json:\"ticket_id,string\" validate:\"required,gt=0\""
       },
       {
         "name": "From",
         "type": "string",
-        "tag": "json:\"from\""
+        "tag": "json:\"from\" validate:\"max=255\""
       },
       {
         "name": "Type",
         "type": "uint8",
-        "tag": "json:\"type\""
+        "tag": "json:\"type\" validate:\"oneof=0 1 2\""
       },
       {
         "name": "Content",
         "type": "string",
-        "tag": "json:\"content\""
+        "tag": "json:\"content\" validate:\"required,max=65535\""
       }
     ],
     "CreateUserTicketRequest": [
       {
         "name": "Title",
         "type": "string",
-        "tag": "json:\"title\""
+        "tag": "json:\"title\" validate:\"required,max=255\""
       },
       {
         "name": "Description",
         "type": "string",
-        "tag": "json:\"description\""
+        "tag": "json:\"description\" validate:\"max=10000\""
       }
     ],
     "Currency": [
@@ -2311,6 +2402,30 @@
         "tag": "form:\"history_id,omitempty\""
       }
     ],
+    "FilterAdminActionLogRequest": [
+      {
+        "name": "",
+        "type": "FilterLogParams",
+        "embedded": true
+      },
+      {
+        "name": "UserId",
+        "type": "int64",
+        "tag": "form:\"user_id,optional\""
+      }
+    ],
+    "FilterAdminActionLogResponse": [
+      {
+        "name": "Total",
+        "type": "int64",
+        "tag": "json:\"total\""
+      },
+      {
+        "name": "List",
+        "type": "[]AdminActionLog",
+        "tag": "json:\"list\""
+      }
+    ],
     "FilterBalanceLogRequest": [
       {
         "name": "",
@@ -2711,6 +2826,30 @@
       {
         "name": "List",
         "type": "[]TrafficLogDetails",
+        "tag": "json:\"list\""
+      }
+    ],
+    "FilterUnmatchedPaymentLogRequest": [
+      {
+        "name": "",
+        "type": "FilterLogParams",
+        "embedded": true
+      },
+      {
+        "name": "UserId",
+        "type": "int64",
+        "tag": "form:\"user_id,optional\""
+      }
+    ],
+    "FilterUnmatchedPaymentLogResponse": [
+      {
+        "name": "Total",
+        "type": "int64",
+        "tag": "json:\"total\""
+      },
+      {
+        "name": "List",
+        "type": "[]UnmatchedPaymentLog",
         "tag": "json:\"list\""
       }
     ],
@@ -3474,6 +3613,13 @@
         "tag": "json:\"list\""
       }
     ],
+    "GetServerAliveListResponse": [
+      {
+        "name": "Alive",
+        "type": "map[int64]int64",
+        "tag": "json:\"alive\""
+      }
+    ],
     "GetServerConfigRequest": [
       {
         "name": "",
@@ -4119,6 +4265,40 @@
         "name": "TotalTraffic",
         "type": "int64",
         "tag": "json:\"total_traffic\""
+      }
+    ],
+    "GetWithdrawalListRequest": [
+      {
+        "name": "Page",
+        "type": "int",
+        "tag": "form:\"page\""
+      },
+      {
+        "name": "Size",
+        "type": "int",
+        "tag": "form:\"size\""
+      },
+      {
+        "name": "Status",
+        "type": "*uint8",
+        "tag": "form:\"status,optional\" validate:\"omitempty,oneof=0 1 2\""
+      },
+      {
+        "name": "UserId",
+        "type": "*int64",
+        "tag": "form:\"user_id,optional\""
+      }
+    ],
+    "GetWithdrawalListResponse": [
+      {
+        "name": "List",
+        "type": "[]WithdrawalLog",
+        "tag": "json:\"list\""
+      },
+      {
+        "name": "Total",
+        "type": "int64",
+        "tag": "json:\"total\""
       }
     ],
     "GiftLog": [
@@ -7144,6 +7324,23 @@
         "tag": "json:\"all\""
       }
     ],
+    "ReviewWithdrawalRequest": [
+      {
+        "name": "Id",
+        "type": "int64",
+        "tag": "json:\"id,string\" validate:\"required\""
+      },
+      {
+        "name": "Status",
+        "type": "uint8",
+        "tag": "json:\"status\" validate:\"required,oneof=1 2\""
+      },
+      {
+        "name": "Reason",
+        "type": "string",
+        "tag": "json:\"reason,optional\" validate:\"omitempty,max=500\""
+      }
+    ],
     "SecurityConfig": [
       {
         "name": "SNI",
@@ -8922,6 +9119,63 @@
         "tag": "json:\"method\""
       }
     ],
+    "UnmatchedPaymentLog": [
+      {
+        "name": "",
+        "type": "requestmeta.Metadata",
+        "embedded": true
+      },
+      {
+        "name": "Id",
+        "type": "int64",
+        "tag": "json:\"id,string\""
+      },
+      {
+        "name": "UserId",
+        "type": "int64",
+        "tag": "json:\"user_id,string\""
+      },
+      {
+        "name": "OrderNo",
+        "type": "string",
+        "tag": "json:\"order_no\""
+      },
+      {
+        "name": "TradeNo",
+        "type": "string",
+        "tag": "json:\"trade_no\""
+      },
+      {
+        "name": "Platform",
+        "type": "string",
+        "tag": "json:\"platform\""
+      },
+      {
+        "name": "Amount",
+        "type": "int64",
+        "tag": "json:\"amount\""
+      },
+      {
+        "name": "Currency",
+        "type": "string",
+        "tag": "json:\"currency\""
+      },
+      {
+        "name": "Reason",
+        "type": "string",
+        "tag": "json:\"reason\""
+      },
+      {
+        "name": "Timestamp",
+        "type": "int64",
+        "tag": "json:\"timestamp\""
+      },
+      {
+        "name": "CreatedAt",
+        "type": "int64",
+        "tag": "json:\"created_at\""
+      }
+    ],
     "UnsubscribeRequest": [
       {
         "name": "Id",
@@ -9047,6 +9301,21 @@
         "name": "Email",
         "type": "string",
         "tag": "json:\"email\" validate:\"required\""
+      },
+      {
+        "name": "Code",
+        "type": "string",
+        "tag": "json:\"code\" validate:\"required\""
+      },
+      {
+        "name": "Password",
+        "type": "string",
+        "tag": "json:\"password,optional\""
+      },
+      {
+        "name": "CurrentCode",
+        "type": "string",
+        "tag": "json:\"current_code,optional\""
       }
     ],
     "UpdateBindMobileRequest": [
@@ -9064,6 +9333,16 @@
         "name": "Code",
         "type": "string",
         "tag": "json:\"code\" validate:\"required\""
+      },
+      {
+        "name": "Password",
+        "type": "string",
+        "tag": "json:\"password,optional\""
+      },
+      {
+        "name": "CurrentCode",
+        "type": "string",
+        "tag": "json:\"current_code,optional\""
       }
     ],
     "UpdateCouponRequest": [
@@ -9837,6 +10116,16 @@
         "name": "Password",
         "type": "string",
         "tag": "json:\"password\" validate:\"required\""
+      },
+      {
+        "name": "OldPassword",
+        "type": "string",
+        "tag": "json:\"old_password,optional\""
+      },
+      {
+        "name": "CurrentCode",
+        "type": "string",
+        "tag": "json:\"current_code,optional\""
       }
     ],
     "UpdateUserRulesRequest": [
@@ -11283,8 +11572,7 @@
     },
     {
       "method": "GET",
-      "path": "/api/edge/v1/manifest",
-      "response": "EdgeManifestResponse"
+      "path": "/api/edge/v1/manifest"
     },
     {
       "method": "DELETE",
@@ -11561,6 +11849,11 @@
     },
     {
       "method": "GET",
+      "path": "/v1/admin/log/admin-action/list",
+      "request": "FilterAdminActionLogRequest"
+    },
+    {
+      "method": "GET",
       "path": "/v1/admin/log/balance/list",
       "request": "FilterBalanceLogRequest",
       "response": "FilterBalanceLogResponse"
@@ -11652,6 +11945,11 @@
       "path": "/v1/admin/log/traffic/details",
       "request": "FilterTrafficLogDetailsRequest",
       "response": "FilterTrafficLogDetailsResponse"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/admin/log/unmatched-payment/list",
+      "request": "FilterUnmatchedPaymentLogRequest"
     },
     {
       "method": "GET",
@@ -12330,6 +12628,21 @@
       "request": "UpdateUserSubscribeRequest"
     },
     {
+      "method": "GET",
+      "path": "/v1/admin/withdrawal/list",
+      "request": "GetWithdrawalListRequest",
+      "response": "GetWithdrawalListResponse"
+    },
+    {
+      "method": "PUT",
+      "path": "/v1/admin/withdrawal/status",
+      "request": "ReviewWithdrawalRequest"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/app/ws/:userid/:identifier"
+    },
+    {
       "method": "POST",
       "path": "/v1/auth/admin/captcha/generate",
       "response": "GenerateCaptchaResponse"
@@ -12532,7 +12845,7 @@
       "method": "POST",
       "path": "/v1/public/order/purchase",
       "request": "PurchaseOrderRequest",
-      "response": "PortalPurchaseResponse"
+      "response": "PurchaseOrderResponse"
     },
     {
       "method": "POST",
@@ -12721,6 +13034,10 @@
       "response": "GetLoginLogResponse"
     },
     {
+      "method": "POST",
+      "path": "/v1/public/user/logout"
+    },
+    {
       "method": "PUT",
       "path": "/v1/public/user/notify",
       "request": "UpdateUserNotifyRequest"
@@ -12805,8 +13122,15 @@
     },
     {
       "method": "GET",
-      "path": "/v1/server/config",
-      "response": "GetServerConfigResponse"
+      "path": "/v1/server/alivelist"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/server/config"
+    },
+    {
+      "method": "POST",
+      "path": "/v1/server/device"
     },
     {
       "method": "POST",
@@ -12822,8 +13146,7 @@
     },
     {
       "method": "GET",
-      "path": "/v1/server/user",
-      "response": "GetServerUserListResponse"
+      "path": "/v1/server/user"
     },
     {
       "method": "POST",
@@ -12835,18 +13158,18 @@
       "method": "POST",
       "path": "/v2/public/orders/:orderNo/event-ticket",
       "request": "V2EventTicketRequest",
-      "response": "V2OrderResponse"
+      "response": "V2EventTicketResponse"
     },
     {
       "method": "GET",
       "path": "/v2/public/orders/:orderNo/events",
-      "response": "V2OrderSessionResponse"
+      "contentType": "text/event-stream"
     },
     {
       "method": "POST",
       "path": "/v2/public/orders/:orderNo/session",
       "request": "V2OrderSessionRequest",
-      "response": "V2EventTicketResponse"
+      "response": "V2OrderSessionResponse"
     },
     {
       "method": "GET",
@@ -12861,9 +13184,9 @@
     },
     {
       "method": "GET",
-      "path": "/v2/server/:server_id",
-      "response": "QueryServerConfigResponse"
+      "path": "/v2/server/:server_id"
     }
   ],
-  "backendCommit": "04ea4282dc1473f3e9b2107e6ec897995288755b"
+  "backendCommit": "1fab00a261993e717b724c4ca6d62cf6546e23cd",
+  "backendDirty": true
 }

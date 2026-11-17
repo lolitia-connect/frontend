@@ -26,6 +26,7 @@ export const routeI18nNamespaces: Record<string, string[]> = {
   "/dashboard/system": ["system"],
   "/dashboard/ticket": ["ticket"],
   "/dashboard/user": ["user"],
+  "/dashboard/withdrawal": ["withdrawal"],
   "/dashboard/plugin": ["plugin"],
   "/dashboard/group": ["group"],
   "/dashboard/redemption": ["redemption"],

@@ -5,7 +5,7 @@ import {
   ENCRYPTION_RTT,
   ENCRYPTION_TYPES,
   FLOWS,
-  multiplexLevels,
+  MIERU_MULTIPLEX,
   SECURITY,
   SS_CIPHERS,
   SSR_CIPHERS,
@@ -242,7 +242,7 @@ const mieru = z.object({
   type: z.literal("mieru"),
   enable: nullableBool,
   port: nullablePort,
-  multiplex: z.enum(multiplexLevels).nullish(),
+  multiplex: z.enum(MIERU_MULTIPLEX).nullish(),
   transport: z.enum(TRANSPORTS.mieru).nullish(),
 });
 
@@ -269,9 +269,11 @@ const nowhere = z.object({
   ratio: nullableRatio,
   enable: nullableBool,
   port: nullablePort,
-  version: z.literal(1).default(1),
+  version: z.literal(3).default(3),
   network: z.enum(["mix", "tcp", "udp"]).default("mix"),
-  alpn: z.array(z.string().min(1).max(255)).length(1).default(["now/1"]),
+  alpn: z.tuple([z.literal("nw3")]).default(["nw3"]),
+  obfs: z.enum(["morph", "none"]).default("morph"),
+  allow_insecure: z.literal(false).default(false),
   security: z.literal("tls").default("tls"),
   sni: nullableString,
   cert_mode: z.enum(CERT_MODES).nullish(),
@@ -347,7 +349,8 @@ export const protocolApiScheme = z
         "nowhere",
       ].includes(protocol.type)
     ) {
-      if (!protocol.sni) issue("sni", "SNI is required");
+      if (typeof protocol.sni !== "string" || !protocol.sni.trim())
+        issue("sni", "SNI is required");
       if (!protocol.cert_mode || protocol.cert_mode === "none")
         issue("cert_mode", "Certificate mode is required");
     }
@@ -358,5 +361,10 @@ export const formSchema = z.object({
   address: z.string().min(1),
   country: z.string().optional(),
   city: z.string().optional(),
-  protocols: z.array(protocolApiScheme),
+  protocols: z.array(
+    z.union([
+      protocolApiScheme,
+      z.object({ type: z.string(), enable: z.literal(false) }).passthrough(),
+    ])
+  ),
 });

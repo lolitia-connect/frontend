@@ -41,5 +41,10 @@
   "orderAccessRequired": "订单访问令牌缺失或已失效，请登录下单时使用的账号。",
   "retry": "重试",
   "signIn": "登录",
-  "processing": "处理中..."
+  "processing": "处理中...",
+  "paymentReceived": "已收到付款",
+  "fulfillmentPending": "正在开通您的订阅，请稍候。",
+  "sessionRestoreFailed": "订单已完成，但暂时无法恢复登录。",
+  "sessionRestoring": "正在恢复您的登录状态...",
+  "retrySession": "重试登录"
 }

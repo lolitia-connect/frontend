@@ -40,7 +40,9 @@
     "user": "用户",
     "userAgent": "User-Agent",
     "userId": "用户 ID",
-    "userSubscribeId": "用户订阅 ID"
+    "userSubscribeId": "用户订阅 ID",
+    "tradeNo": "交易号",
+    "reason": "原因"
   },
   "detail": "详情",
   "failed": "失败",
@@ -65,7 +67,8 @@
       "serverTraffic": "服务器流量",
       "subscribe": "订阅访问",
       "subscribeTraffic": "订阅流量",
-      "trafficDetails": "流量明细"
+      "trafficDetails": "流量明细",
+      "paymentUnmatched": "未匹配付款"
     },
     "title": "日志检索"
   },
@@ -108,7 +111,8 @@
     "serverTraffic": "服务器流量日志",
     "subscribe": "订阅日志",
     "subscribeTraffic": "订阅流量日志",
-    "trafficDetails": "流量详情"
+    "trafficDetails": "流量详情",
+    "paymentUnmatched": "未匹配付款"
   },
   "type": {
     "231": "自动重置",
@@ -129,5 +133,6 @@
     "341": "增加",
     "342": "减少"
   },
-  "unknown": "未知"
+  "unknown": "未知",
+  "unmatchedSearch": "订单号或交易号"
 }

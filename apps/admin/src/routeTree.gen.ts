@@ -15,6 +15,9 @@ import { Route as rootRouteImport } from './routes/__root'
 const DashboardRouteLazyRouteImport = createFileRoute('/dashboard')()
 const IndexLazyRouteImport = createFileRoute('/')()
 const DashboardIndexLazyRouteImport = createFileRoute('/dashboard/')()
+const DashboardWithdrawalLazyRouteImport = createFileRoute(
+  '/dashboard/withdrawal',
+)()
 const DashboardServersLazyRouteImport = createFileRoute('/dashboard/servers')()
 const DashboardPluginLazyRouteImport = createFileRoute('/dashboard/plugin')()
 const DashboardNodesLazyRouteImport = createFileRoute('/dashboard/nodes')()
@@ -73,6 +76,9 @@ const DashboardLogResetSubscribeLazyRouteImport = createFileRoute(
 const DashboardLogRegisterLazyRouteImport = createFileRoute(
   '/dashboard/log/register',
 )()
+const DashboardLogPaymentUnmatchedLazyRouteImport = createFileRoute(
+  '/dashboard/log/payment-unmatched',
+)()
 const DashboardLogOrderLazyRouteImport = createFileRoute(
   '/dashboard/log/order',
 )()
@@ -111,6 +117,13 @@ const DashboardIndexLazyRoute = DashboardIndexLazyRouteImport.update({
   getParentRoute: () => DashboardRouteLazyRoute,
 } as any).lazy(() =>
   import('./routes/dashboard/index.lazy').then((d) => d.Route),
+)
+const DashboardWithdrawalLazyRoute = DashboardWithdrawalLazyRouteImport.update({
+  id: '/withdrawal',
+  path: '/withdrawal',
+  getParentRoute: () => DashboardRouteLazyRoute,
+} as any).lazy(() =>
+  import('./routes/dashboard/withdrawal.lazy').then((d) => d.Route),
 )
 const DashboardServersLazyRoute = DashboardServersLazyRouteImport.update({
   id: '/servers',
@@ -306,6 +319,16 @@ const DashboardLogRegisterLazyRoute =
   } as any).lazy(() =>
     import('./routes/dashboard/log/register.lazy').then((d) => d.Route),
   )
+const DashboardLogPaymentUnmatchedLazyRoute =
+  DashboardLogPaymentUnmatchedLazyRouteImport.update({
+    id: '/payment-unmatched',
+    path: '/payment-unmatched',
+    getParentRoute: () => DashboardLogRouteLazyRoute,
+  } as any).lazy(() =>
+    import('./routes/dashboard/log/payment-unmatched.lazy').then(
+      (d) => d.Route,
+    ),
+  )
 const DashboardLogOrderLazyRoute = DashboardLogOrderLazyRouteImport.update({
   id: '/order',
   path: '/order',
@@ -364,6 +387,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/nodes': typeof DashboardNodesLazyRoute
   '/dashboard/plugin': typeof DashboardPluginLazyRoute
   '/dashboard/servers': typeof DashboardServersLazyRoute
+  '/dashboard/withdrawal': typeof DashboardWithdrawalLazyRoute
   '/dashboard/': typeof DashboardIndexLazyRoute
   '/dashboard/log/balance': typeof DashboardLogBalanceLazyRoute
   '/dashboard/log/commission': typeof DashboardLogCommissionLazyRoute
@@ -372,6 +396,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/log/login': typeof DashboardLogLoginLazyRoute
   '/dashboard/log/mobile': typeof DashboardLogMobileLazyRoute
   '/dashboard/log/order': typeof DashboardLogOrderLazyRoute
+  '/dashboard/log/payment-unmatched': typeof DashboardLogPaymentUnmatchedLazyRoute
   '/dashboard/log/register': typeof DashboardLogRegisterLazyRoute
   '/dashboard/log/reset-subscribe': typeof DashboardLogResetSubscribeLazyRoute
   '/dashboard/log/server-traffic': typeof DashboardLogServerTrafficLazyRoute
@@ -400,6 +425,7 @@ export interface FileRoutesByTo {
   '/dashboard/nodes': typeof DashboardNodesLazyRoute
   '/dashboard/plugin': typeof DashboardPluginLazyRoute
   '/dashboard/servers': typeof DashboardServersLazyRoute
+  '/dashboard/withdrawal': typeof DashboardWithdrawalLazyRoute
   '/dashboard': typeof DashboardIndexLazyRoute
   '/dashboard/log/balance': typeof DashboardLogBalanceLazyRoute
   '/dashboard/log/commission': typeof DashboardLogCommissionLazyRoute
@@ -408,6 +434,7 @@ export interface FileRoutesByTo {
   '/dashboard/log/login': typeof DashboardLogLoginLazyRoute
   '/dashboard/log/mobile': typeof DashboardLogMobileLazyRoute
   '/dashboard/log/order': typeof DashboardLogOrderLazyRoute
+  '/dashboard/log/payment-unmatched': typeof DashboardLogPaymentUnmatchedLazyRoute
   '/dashboard/log/register': typeof DashboardLogRegisterLazyRoute
   '/dashboard/log/reset-subscribe': typeof DashboardLogResetSubscribeLazyRoute
   '/dashboard/log/server-traffic': typeof DashboardLogServerTrafficLazyRoute
@@ -438,6 +465,7 @@ export interface FileRoutesById {
   '/dashboard/nodes': typeof DashboardNodesLazyRoute
   '/dashboard/plugin': typeof DashboardPluginLazyRoute
   '/dashboard/servers': typeof DashboardServersLazyRoute
+  '/dashboard/withdrawal': typeof DashboardWithdrawalLazyRoute
   '/dashboard/': typeof DashboardIndexLazyRoute
   '/dashboard/log/balance': typeof DashboardLogBalanceLazyRoute
   '/dashboard/log/commission': typeof DashboardLogCommissionLazyRoute
@@ -446,6 +474,7 @@ export interface FileRoutesById {
   '/dashboard/log/login': typeof DashboardLogLoginLazyRoute
   '/dashboard/log/mobile': typeof DashboardLogMobileLazyRoute
   '/dashboard/log/order': typeof DashboardLogOrderLazyRoute
+  '/dashboard/log/payment-unmatched': typeof DashboardLogPaymentUnmatchedLazyRoute
   '/dashboard/log/register': typeof DashboardLogRegisterLazyRoute
   '/dashboard/log/reset-subscribe': typeof DashboardLogResetSubscribeLazyRoute
   '/dashboard/log/server-traffic': typeof DashboardLogServerTrafficLazyRoute
@@ -477,6 +506,7 @@ export interface FileRouteTypes {
     | '/dashboard/nodes'
     | '/dashboard/plugin'
     | '/dashboard/servers'
+    | '/dashboard/withdrawal'
     | '/dashboard/'
     | '/dashboard/log/balance'
     | '/dashboard/log/commission'
@@ -485,6 +515,7 @@ export interface FileRouteTypes {
     | '/dashboard/log/login'
     | '/dashboard/log/mobile'
     | '/dashboard/log/order'
+    | '/dashboard/log/payment-unmatched'
     | '/dashboard/log/register'
     | '/dashboard/log/reset-subscribe'
     | '/dashboard/log/server-traffic'
@@ -513,6 +544,7 @@ export interface FileRouteTypes {
     | '/dashboard/nodes'
     | '/dashboard/plugin'
     | '/dashboard/servers'
+    | '/dashboard/withdrawal'
     | '/dashboard'
     | '/dashboard/log/balance'
     | '/dashboard/log/commission'
@@ -521,6 +553,7 @@ export interface FileRouteTypes {
     | '/dashboard/log/login'
     | '/dashboard/log/mobile'
     | '/dashboard/log/order'
+    | '/dashboard/log/payment-unmatched'
     | '/dashboard/log/register'
     | '/dashboard/log/reset-subscribe'
     | '/dashboard/log/server-traffic'
@@ -550,6 +583,7 @@ export interface FileRouteTypes {
     | '/dashboard/nodes'
     | '/dashboard/plugin'
     | '/dashboard/servers'
+    | '/dashboard/withdrawal'
     | '/dashboard/'
     | '/dashboard/log/balance'
     | '/dashboard/log/commission'
@@ -558,6 +592,7 @@ export interface FileRouteTypes {
     | '/dashboard/log/login'
     | '/dashboard/log/mobile'
     | '/dashboard/log/order'
+    | '/dashboard/log/payment-unmatched'
     | '/dashboard/log/register'
     | '/dashboard/log/reset-subscribe'
     | '/dashboard/log/server-traffic'
@@ -607,6 +642,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/dashboard/'
       preLoaderRoute: typeof DashboardIndexLazyRouteImport
+      parentRoute: typeof DashboardRouteLazyRoute
+    }
+    '/dashboard/withdrawal': {
+      id: '/dashboard/withdrawal'
+      path: '/withdrawal'
+      fullPath: '/dashboard/withdrawal'
+      preLoaderRoute: typeof DashboardWithdrawalLazyRouteImport
       parentRoute: typeof DashboardRouteLazyRoute
     }
     '/dashboard/servers': {
@@ -784,6 +826,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardLogRegisterLazyRouteImport
       parentRoute: typeof DashboardLogRouteLazyRoute
     }
+    '/dashboard/log/payment-unmatched': {
+      id: '/dashboard/log/payment-unmatched'
+      path: '/payment-unmatched'
+      fullPath: '/dashboard/log/payment-unmatched'
+      preLoaderRoute: typeof DashboardLogPaymentUnmatchedLazyRouteImport
+      parentRoute: typeof DashboardLogRouteLazyRoute
+    }
     '/dashboard/log/order': {
       id: '/dashboard/log/order'
       path: '/order'
@@ -844,6 +893,7 @@ interface DashboardLogRouteLazyRouteChildren {
   DashboardLogLoginLazyRoute: typeof DashboardLogLoginLazyRoute
   DashboardLogMobileLazyRoute: typeof DashboardLogMobileLazyRoute
   DashboardLogOrderLazyRoute: typeof DashboardLogOrderLazyRoute
+  DashboardLogPaymentUnmatchedLazyRoute: typeof DashboardLogPaymentUnmatchedLazyRoute
   DashboardLogRegisterLazyRoute: typeof DashboardLogRegisterLazyRoute
   DashboardLogResetSubscribeLazyRoute: typeof DashboardLogResetSubscribeLazyRoute
   DashboardLogServerTrafficLazyRoute: typeof DashboardLogServerTrafficLazyRoute
@@ -860,6 +910,7 @@ const DashboardLogRouteLazyRouteChildren: DashboardLogRouteLazyRouteChildren = {
   DashboardLogLoginLazyRoute: DashboardLogLoginLazyRoute,
   DashboardLogMobileLazyRoute: DashboardLogMobileLazyRoute,
   DashboardLogOrderLazyRoute: DashboardLogOrderLazyRoute,
+  DashboardLogPaymentUnmatchedLazyRoute: DashboardLogPaymentUnmatchedLazyRoute,
   DashboardLogRegisterLazyRoute: DashboardLogRegisterLazyRoute,
   DashboardLogResetSubscribeLazyRoute: DashboardLogResetSubscribeLazyRoute,
   DashboardLogServerTrafficLazyRoute: DashboardLogServerTrafficLazyRoute,
@@ -878,6 +929,7 @@ interface DashboardRouteLazyRouteChildren {
   DashboardNodesLazyRoute: typeof DashboardNodesLazyRoute
   DashboardPluginLazyRoute: typeof DashboardPluginLazyRoute
   DashboardServersLazyRoute: typeof DashboardServersLazyRoute
+  DashboardWithdrawalLazyRoute: typeof DashboardWithdrawalLazyRoute
   DashboardIndexLazyRoute: typeof DashboardIndexLazyRoute
   DashboardAdsIndexLazyRoute: typeof DashboardAdsIndexLazyRoute
   DashboardAnnouncementIndexLazyRoute: typeof DashboardAnnouncementIndexLazyRoute
@@ -901,6 +953,7 @@ const DashboardRouteLazyRouteChildren: DashboardRouteLazyRouteChildren = {
   DashboardNodesLazyRoute: DashboardNodesLazyRoute,
   DashboardPluginLazyRoute: DashboardPluginLazyRoute,
   DashboardServersLazyRoute: DashboardServersLazyRoute,
+  DashboardWithdrawalLazyRoute: DashboardWithdrawalLazyRoute,
   DashboardIndexLazyRoute: DashboardIndexLazyRoute,
   DashboardAdsIndexLazyRoute: DashboardAdsIndexLazyRoute,
   DashboardAnnouncementIndexLazyRoute: DashboardAnnouncementIndexLazyRoute,

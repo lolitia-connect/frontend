@@ -41,5 +41,10 @@
   "orderAccessRequired": "注文のアクセストークンがないか、無効になっています。注文に使用したアカウントでログインしてください。",
   "retry": "再試行",
   "signIn": "ログイン",
-  "processing": "処理中..."
+  "processing": "処理中...",
+  "paymentReceived": "お支払いを受け付けました",
+  "fulfillmentPending": "サブスクリプションを有効にしています。しばらくお待ちください。",
+  "sessionRestoreFailed": "注文は完了しましたが、ログインを復元できませんでした。",
+  "sessionRestoring": "ログイン状態を復元しています...",
+  "retrySession": "ログインを再試行"
 }

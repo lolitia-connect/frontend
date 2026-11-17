@@ -163,7 +163,7 @@
   "toggleSubscriptionStatusDescription": "将切换该订阅的启用/停用状态。",
   "subscriptionProduct": "订阅套餐",
   "subscriptionToken": "订阅凭证",
-  "subscriptionTokenOrUrl": "订阅地址 / Token / UUID",
+  "subscriptionTokenOrUrl": "订阅链接 / Token / UUID",
   "userSubscriptionId": "用户订阅 ID",
   "yes": "是",
   "no": "否",

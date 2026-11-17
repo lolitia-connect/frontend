@@ -10,6 +10,7 @@ import GiftLogPage from "./gift";
 import LoginLogPage from "./login";
 import MobileLogPage from "./mobile";
 import OrderLogPage from "./order";
+import UnmatchedPayments from "./payment-unmatched";
 import RegisterLogPage from "./register";
 import ResetSubscribeLogPage from "./reset-subscribe";
 import SubscribeLogPage from "./subscribe";
@@ -54,6 +55,7 @@ describe("log request source columns", () => {
     ["email", EmailLogPage],
     ["SMS", MobileLogPage],
     ["order creation", OrderLogPage],
+    ["unmatched payments", UnmatchedPayments],
     ["balance", BalanceLogPage],
     ["commission", CommissionLogPage],
     ["gift", GiftLogPage],

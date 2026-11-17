@@ -12,9 +12,10 @@ import {
   DialogTrigger,
 } from "@workspace/ui/components/dialog";
 import { Separator } from "@workspace/ui/components/separator";
-import { preCreateOrder, renewal } from "@workspace/ui/services/user/order";
+import { preCreateOrder } from "@workspace/ui/services/user/order";
 import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import { useTranslation } from "react-i18next";
+import { useCreateOrder } from "@/sections/purchasing/create-order";
 import CouponInput from "@/sections/subscribe/coupon-input";
 import DurationSelector from "@/sections/subscribe/duration-selector";
 import PaymentMethods from "@/sections/subscribe/payment-methods";
@@ -23,14 +24,20 @@ import { SubscribeBilling } from "./billing";
 import { SubscribeDetail } from "./detail";
 
 interface RenewalProps {
+  className?: string;
   id: string;
   subscribe: API.Subscribe;
 }
 
-export default function Renewal({ id, subscribe }: Readonly<RenewalProps>) {
+export default function Renewal({
+  className,
+  id,
+  subscribe,
+}: Readonly<RenewalProps>) {
   const { t } = useTranslation("subscribe");
   const { getUserInfo } = useGlobalStore();
   const navigate = useNavigate();
+  const createOrder = useCreateOrder();
   const [open, setOpen] = useState<boolean>(false);
   const [params, setParams] = useState<
     Partial<API.RenewalOrderRequest> & { subscribe_id?: string }
@@ -99,8 +106,14 @@ export default function Renewal({ id, subscribe }: Readonly<RenewalProps>) {
   const handleSubmit = useCallback(async () => {
     startTransition(async () => {
       try {
-        const response = await renewal(params as API.RenewalOrderRequest);
-        const orderNo = response.data.data?.order_no;
+        const response = await createOrder({
+          type: "renewal",
+          payment_id: params.payment || "-1",
+          user_subscribe_id: id,
+          quantity: params.quantity,
+          coupon: params.coupon,
+        });
+        const orderNo = response.data.data?.order.order_no;
         if (orderNo) {
           getUserInfo();
           navigate({ to: "/payment", search: { order_no: String(orderNo) } });
@@ -109,12 +122,14 @@ export default function Renewal({ id, subscribe }: Readonly<RenewalProps>) {
         /* empty */
       }
     });
-  }, [params, getUserInfo, navigate]);
+  }, [params, id, getUserInfo, navigate, createOrder]);
 
   return (
     <Dialog onOpenChange={setOpen} open={open}>
       <DialogTrigger asChild>
-        <Button size="sm">{t("renew", "Renew")}</Button>
+        <Button className={className} size="sm">
+          {t("renew", "Renew")}
+        </Button>
       </DialogTrigger>
       <DialogContent className="flex max-h-[calc(100dvh-2rem)] flex-col overflow-hidden p-0 md:max-h-none md:max-w-screen-lg">
         <DialogHeader className="flex-none p-6 pb-0">

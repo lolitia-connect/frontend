@@ -5,7 +5,9 @@
     "passwordMismatch": "密碼不相符",
     "repeatNewPassword": "重複新密碼",
     "updatePassword": "更新密碼",
-    "updateSuccess": "密碼更新成功"
+    "updateSuccess": "密碼更新成功",
+    "newPasswordHint": "新密碼（至少 8 個字元）",
+    "passwordLength": "密碼長度必須為 8–128 個字元"
   },
   "notify": {
     "balanceChange": "餘額變動通知",
@@ -26,6 +28,19 @@
     "title": "第三方帳戶",
     "unbind": "解綁",
     "update": "更新",
-    "updateSuccess": "更新成功"
+    "updateSuccess": "更新成功",
+    "bindEmail": "綁定電子郵件",
+    "newEmail": "新電子郵件地址",
+    "newCode": "傳送至新地址的驗證碼"
+  },
+  "currentCredential": {
+    "password": "目前密碼",
+    "verificationCode": "驗證碼",
+    "code": "傳送至 {{email}} 的驗證碼",
+    "required": "請驗證目前帳戶憑證",
+    "firstPassword": "首次設定密碼時請留空",
+    "signInAgain": "更新成功，請重新登入",
+    "noPassword": "尚未設定密碼",
+    "firstPasswordCode": "僅未設定密碼的帳戶可使用驗證碼。已有密碼請驗證目前密碼。"
   }
 }

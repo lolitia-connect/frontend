@@ -176,12 +176,7 @@ export default function NodeForm(props: {
 
   const existingTags: string[] = tags || [];
 
-  const availableProtocols = getAvailableProtocols(serverId).filter(
-    (entry) =>
-      !["shadowsocksr", "nowhere"].includes(entry.protocol) ||
-      (entry.protocol === initialValues?.protocol &&
-        entry.id === initialValues?.protocol_id)
-  );
+  const availableProtocols = getAvailableProtocols(serverId);
 
   // Fetch node groups
   const { data: nodeGroupsData } = useQuery({

@@ -164,6 +164,9 @@ declare namespace API {
     method: string;
     callback: Record<string, any>;
     cf_token?: string;
+    captcha_id?: string;
+    captcha_code?: string;
+    slider_token?: string;
     invite?: string;
     nonce?: string;
   };

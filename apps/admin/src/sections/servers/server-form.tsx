@@ -59,6 +59,10 @@ import {
   type ProtocolType,
   useProtocolFields,
 } from "./form-schema";
+import {
+  getProtocolFormValues,
+  preserveUneditableProtocols,
+} from "./form-schema/values";
 
 function getFieldLabel(field: FieldConfig) {
   return (
@@ -446,15 +450,6 @@ export default function ServerForm(props: {
   const protocolsValues = useWatch({ control, name: "protocols" });
 
   function addProtocolInstance(type: ProtocolType) {
-    if (["shadowsocksr", "nowhere"].includes(type)) {
-      toast.error(
-        t(
-          "nodeProtocolUnavailable",
-          "This protocol requires a compatible node implementation."
-        )
-      );
-      return;
-    }
     const current = form.getValues("protocols") || [];
     const id = nextProtocolId(current, type);
     const next = {
@@ -486,10 +481,7 @@ export default function ServerForm(props: {
         country: "",
         city: "",
         ...initialValues,
-        protocols: (initialValues.protocols || []).map((protocol) => ({
-          ...getProtocolDefaultConfig(protocol.type as ProtocolType),
-          ...protocol,
-        })),
+        protocols: getProtocolFormValues(initialValues.protocols),
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -588,25 +580,30 @@ export default function ServerForm(props: {
       return;
     }
 
-    const filteredProtocols = (values?.protocols || []).map((protocol: any) => {
-      if (protocol.ech_enable === true) {
-        return protocol;
-      }
+    const filteredProtocols: API.Protocol[] = (values?.protocols || []).map(
+      (protocol: any) => {
+        if (!protocol.enable || protocol.ech_enable === true) {
+          return protocol;
+        }
 
-      const {
-        ech_enable: _ech_enable,
-        ech_server_name: _ech_server_name,
-        ...rest
-      } = protocol;
-      return rest;
-    });
+        const {
+          ech_enable: _ech_enable,
+          ech_server_name: _ech_server_name,
+          ...rest
+        } = protocol;
+        return rest;
+      }
+    );
 
     const result = {
       name: values.name,
       country: values.country,
       city: values.city,
       address: values.address,
-      protocols: filteredProtocols,
+      protocols: preserveUneditableProtocols(
+        filteredProtocols,
+        initialValues?.protocols
+      ),
     };
 
     const ok = await onSubmit(result);
@@ -839,19 +836,15 @@ export default function ServerForm(props: {
                             <Switch
                               checked={!!isEnabled}
                               className="mr-2"
-                              disabled={
-                                (["shadowsocksr", "nowhere"].includes(type) &&
-                                  !isEnabled) ||
-                                Boolean(
-                                  initialValues?.id &&
-                                    isProtocolUsedInNodes(
-                                      initialValues?.id || 0,
-                                      type,
-                                      current.id
-                                    ) &&
-                                    isEnabled
-                                )
-                              }
+                              disabled={Boolean(
+                                initialValues?.id &&
+                                  isProtocolUsedInNodes(
+                                    initialValues?.id || 0,
+                                    type,
+                                    current.id
+                                  ) &&
+                                  isEnabled
+                              )}
                               onCheckedChange={(checked) => {
                                 form.setValue(`protocols.${i}.enable`, checked);
                                 if (checked) {

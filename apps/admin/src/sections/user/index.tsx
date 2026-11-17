@@ -82,6 +82,7 @@ export default function User() {
     subscribe_id: sp.subscribe_id || undefined,
     user_subscribe_id: sp.user_subscribe_id || undefined,
     short_code: sp.short_code || undefined,
+    user_subscribe_token: sp.user_subscribe_token || undefined,
     // user_group_id: sp.user_group_id || undefined,
   };
 
@@ -332,11 +333,21 @@ export default function User() {
           key: "short_code",
           placeholder: t("shortCode", "Short Code"),
         },
+        {
+          key: "user_subscribe_token",
+          placeholder: t(
+            "subscriptionTokenOrUrl",
+            "Subscription URL / Token / UUID"
+          ),
+        },
       ]}
       request={async (pagination, filter) => {
         const { data } = await getUserList({
           ...pagination,
           ...filter,
+          user_subscribe_token: extractSubscribeToken(
+            filter.user_subscribe_token
+          ),
         });
         return {
           list: data.data?.list || [],
@@ -344,6 +355,21 @@ export default function User() {
         };
       }}
     />
+  );
+}
+
+function extractSubscribeToken(value: unknown) {
+  if (typeof value !== "string" || !value.trim()) return;
+  const input = value.trim();
+  let query = input;
+  try {
+    query = new URL(input).search;
+  } catch {
+    /* raw token or query */
+  }
+  const params = new URLSearchParams(query);
+  return (
+    (params.get("token") ?? params.get("uuid") ?? input).trim() || undefined
   );
 }
 

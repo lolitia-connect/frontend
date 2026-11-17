@@ -26,6 +26,7 @@ type endpoint struct {
 	Path string `json:"path"`
 	Request string `json:"request,omitempty"`
 	Response string `json:"response,omitempty"`
+	ContentType string `json:"contentType,omitempty"`
 }
 
 type contract struct {
@@ -94,6 +95,7 @@ func main() {
 		})
 	}
 	handlers := map[string]string{}
+	contentTypes := map[string]string{}
 	responses := map[string]string{}
 	importsFor := func(file *ast.File) map[string]string {
 		imports := map[string]string{}
@@ -114,7 +116,7 @@ func main() {
 			receiver := strings.TrimPrefix(expression(function.Recv.List[0].Type), "*")
 			for _, value := range function.Type.Results.List {
 				kind := expression(value.Type)
-				if strings.HasPrefix(kind, "*types.") { responses[receiver+"."+function.Name.Name] = strings.TrimPrefix(kind, "*types.") }
+				if strings.HasPrefix(kind, "*types.") { responses[filepath.ToSlash(filepath.Dir(name))+"."+receiver+"."+function.Name.Name] = strings.TrimPrefix(kind, "*types.") }
 			}
 		}
 		return nil
@@ -122,20 +124,45 @@ func main() {
 	filepath.WalkDir(filepath.Join(root, "internal/handler"), func(name string, entry os.DirEntry, err error) error {
 		if err != nil || entry.IsDir() || !strings.HasSuffix(name, ".go") || strings.HasSuffix(name, "_test.go") { return err }
 		file := parseFile(name)
+		imports := importsFor(file)
 		for _, declaration := range file.Decls {
 			function, ok := declaration.(*ast.FuncDecl)
 			if !ok || function.Body == nil { continue }
 			key := filepath.ToSlash(filepath.Dir(name)) + "." + function.Name.Name
+			locals := map[string]string{}
+			values := map[string]string{}
+			constructor := func(expr ast.Expr) string {
+				call, ok := expr.(*ast.CallExpr)
+				if !ok { return "" }
+				selector, ok := call.Fun.(*ast.SelectorExpr)
+				if !ok || !strings.HasPrefix(selector.Sel.Name, "New") { return "" }
+				importPath := imports[expression(selector.X)]
+				parts := strings.SplitN(importPath, "/internal/logic/", 2)
+				if len(parts) != 2 { return "" }
+				return filepath.ToSlash(filepath.Join(root, "internal/logic", parts[1]))+"."+strings.TrimPrefix(selector.Sel.Name, "New")
+			}
 			ast.Inspect(function.Body, func(node ast.Node) bool {
 				if value, ok := node.(*ast.ValueSpec); ok && value.Type != nil && strings.HasPrefix(expression(value.Type), "types.") {
 					handlers[key] = strings.TrimPrefix(expression(value.Type), "types.")
 				}
-				if call, ok := node.(*ast.CallExpr); ok {
-					if selector, ok := call.Fun.(*ast.SelectorExpr); ok && strings.HasPrefix(selector.Sel.Name, "New") && strings.HasSuffix(selector.Sel.Name, "Logic") {
-						logic := strings.TrimPrefix(selector.Sel.Name, "New")
-						for method, response := range responses {
-							if strings.HasPrefix(method, logic+".") { handlers[key+".response"] = response }
+				if assignment, ok := node.(*ast.AssignStmt); ok && len(assignment.Rhs) == 1 && len(assignment.Lhs) > 0 {
+					value := assignment.Rhs[0]
+					local := expression(assignment.Lhs[0])
+					if logic := constructor(value); logic != "" { locals[local] = logic }
+					if call, ok := value.(*ast.CallExpr); ok {
+						if selector, ok := call.Fun.(*ast.SelectorExpr); ok {
+							logic := locals[expression(selector.X)]
+							if logic == "" { logic = constructor(selector.X) }
+							if response := responses[logic+"."+selector.Sel.Name]; response != "" { values[local] = response }
 						}
+					}
+				}
+				if call, ok := node.(*ast.CallExpr); ok {
+					if selector, ok := call.Fun.(*ast.SelectorExpr); ok {
+						if selector.Sel.Name == "HttpResult" && len(call.Args) >= 2 {
+							if response := values[expression(call.Args[1])]; response != "" { handlers[key+".response"] = response }
+						}
+						if selector.Sel.Name == "NewWriter" && strings.HasSuffix(imports[expression(selector.X)], "/sse") { contentTypes[key] = "text/event-stream" }
 					}
 				}
 				return true
@@ -175,6 +202,7 @@ func main() {
 						key := filepath.ToSlash(filepath.Join(root, "internal/handler", relative))+"."+handler.Sel.Name
 						item.Request = handlers[key]
 						item.Response = handlers[key+".response"]
+						item.ContentType = contentTypes[key]
 					}
 					return true
 				})

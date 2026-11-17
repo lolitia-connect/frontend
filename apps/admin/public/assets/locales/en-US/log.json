@@ -40,7 +40,9 @@
     "user": "User",
     "userAgent": "User-Agent",
     "userId": "User ID",
-    "userSubscribeId": "User subscription ID"
+    "userSubscribeId": "User subscription ID",
+    "tradeNo": "Transaction No.",
+    "reason": "Reason"
   },
   "detail": "Detail",
   "failed": "Failed",
@@ -65,7 +67,8 @@
       "serverTraffic": "Server traffic",
       "subscribe": "Subscription access",
       "subscribeTraffic": "Subscription traffic",
-      "trafficDetails": "Traffic details"
+      "trafficDetails": "Traffic details",
+      "paymentUnmatched": "Unmatched Payments"
     },
     "title": "Log explorer"
   },
@@ -108,7 +111,8 @@
     "serverTraffic": "Server Traffic Log",
     "subscribe": "Subscribe Log",
     "subscribeTraffic": "Subscribe Traffic Log",
-    "trafficDetails": "Traffic Details"
+    "trafficDetails": "Traffic Details",
+    "paymentUnmatched": "Unmatched Payments"
   },
   "type": {
     "231": "Auto Reset",
@@ -129,5 +133,6 @@
     "341": "Increase",
     "342": "Reduce"
   },
-  "unknown": "Unknown"
+  "unknown": "Unknown",
+  "unmatchedSearch": "Order or transaction number"
 }

@@ -41,5 +41,10 @@
   "orderAccessRequired": "The order access token is missing or no longer valid. Sign in to the account used for this order.",
   "retry": "Retry",
   "signIn": "Sign in",
-  "processing": "Processing..."
+  "processing": "Processing...",
+  "paymentReceived": "Payment received",
+  "fulfillmentPending": "Your subscription is being activated.",
+  "sessionRestoreFailed": "Your order is complete, but sign-in could not be restored.",
+  "sessionRestoring": "Restoring your account session...",
+  "retrySession": "Retry sign-in"
 }

@@ -67,5 +67,12 @@
     "unsubscribeDescription": "Please note: If you unsubscribe now, the remaining value of the subscription will be refunded to your account balance, which can be used for your next subscription purchase or renewal."
   },
   "Year": "Year",
-  "noPaymentMethodsAvailable": "No payment methods available for recharge"
+  "noPaymentMethodsAvailable": "No payment methods available for recharge",
+  "passwordLength": "Password must be 8-128 characters",
+  "passwordPlaceholder": "Password (at least 8 characters, optional)",
+  "renewReminder": {
+    "buyNew": "Buy {{name}} as a new subscription",
+    "description": "Renewing extends your current subscription and keeps its nodes and subscription link. Buying a new plan creates a separate subscription with its own time and traffic.",
+    "title": "You already have a subscription"
+  }
 }

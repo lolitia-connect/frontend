@@ -2903,6 +2903,8 @@ declare namespace API {
     page: number;
     size: number;
     search?: string;
+    short_code?: string;
+    user_subscribe_token?: string;
     user_id?: string;
     unscoped?: boolean;
     subscribe_id?: string;

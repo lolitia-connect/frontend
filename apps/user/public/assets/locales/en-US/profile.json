@@ -5,7 +5,9 @@
     "passwordMismatch": "Passwords do not match",
     "repeatNewPassword": "Repeat New Password",
     "updatePassword": "Update Password",
-    "updateSuccess": "Password updated successfully"
+    "updateSuccess": "Password updated successfully",
+    "newPasswordHint": "New Password (at least 8 characters)",
+    "passwordLength": "Password must be 8-128 characters"
   },
   "notify": {
     "balanceChange": "Balance Change Notification",
@@ -27,7 +29,9 @@
     "unbind": "Unbind",
     "update": "Update",
     "updateSuccess": "Update successfully",
-    "bindEmail": "Connect Email"
+    "bindEmail": "Connect Email",
+    "newEmail": "New email address",
+    "newCode": "Code sent to the new address"
   },
   "currentCredential": {
     "code": "Code sent to {{email}}",
@@ -38,6 +42,10 @@
     "passwordRequired": "Enter your current password",
     "signInAgain": "Updated. Please sign in again.",
     "useCode": "No password set? Verify with a code sent to {{email}}",
-    "usePassword": "Use your current password"
+    "usePassword": "Use your current password",
+    "verificationCode": "Verification code",
+    "required": "Verify your current credentials",
+    "noPassword": "No password set",
+    "firstPasswordCode": "Use a verification code only if you have not set a password. Otherwise, enter your current password."
   }
 }

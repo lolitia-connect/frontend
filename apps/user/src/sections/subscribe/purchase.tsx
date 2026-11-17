@@ -11,9 +11,10 @@ import {
   DialogTitle,
 } from "@workspace/ui/components/dialog";
 import { Separator } from "@workspace/ui/components/separator";
-import { preCreateOrder, purchase } from "@workspace/ui/services/user/order";
+import { preCreateOrder } from "@workspace/ui/services/user/order";
 import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import { useTranslation } from "react-i18next";
+import { useCreateOrder } from "@/sections/purchasing/create-order";
 import CouponInput from "@/sections/subscribe/coupon-input";
 import DurationSelector from "@/sections/subscribe/duration-selector";
 import PaymentMethods from "@/sections/subscribe/payment-methods";
@@ -33,6 +34,7 @@ export default function Purchase({
   const { t } = useTranslation("subscribe");
   const { getUserInfo } = useGlobalStore();
   const router = useRouter();
+  const createOrder = useCreateOrder();
   const [params, setParams] = useState<Partial<API.PurchaseOrderRequest>>({
     quantity: 1,
     subscribe_id: "",
@@ -98,8 +100,14 @@ export default function Purchase({
   const handleSubmit = useCallback(async () => {
     startTransition(async () => {
       try {
-        const response = await purchase(params as API.PurchaseOrderRequest);
-        const orderNo = response.data.data?.order_no;
+        const response = await createOrder({
+          type: "purchase",
+          payment_id: params.payment || "-1",
+          subscribe_id: params.subscribe_id,
+          quantity: params.quantity,
+          coupon: params.coupon,
+        });
+        const orderNo = response.data.data?.order.order_no;
         if (orderNo) {
           getUserInfo();
           router.navigate({ to: "/payment", search: { order_no: orderNo } });
@@ -108,7 +116,7 @@ export default function Purchase({
         /* empty */
       }
     });
-  }, [params, router, getUserInfo]);
+  }, [params, router, getUserInfo, createOrder]);
 
   return (
     <Dialog

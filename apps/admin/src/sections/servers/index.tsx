@@ -245,11 +245,19 @@ export default function Servers() {
                 <div className="flex flex-col gap-1">
                   {list.map((p, idx) => {
                     const ratio = Number(p.ratio ?? 1) || 1;
+                    // The instance identity is `name#id` when the admin named
+                    // the instance, `#id` for an unnamed one, and "—" only when
+                    // the backend reported neither.
+                    const instance = p.name
+                      ? `${p.name}#${p.id}`
+                      : p.id
+                        ? `#${p.id}`
+                        : "—";
                     return (
                       <div className="flex items-center gap-2" key={idx}>
                         <Badge variant="outline">{ratio.toFixed(2)}x</Badge>
                         <Badge variant="secondary">
-                          {p.type}-{`${p.name}#${p.id}` || `#${p.id}` || "—"}
+                          {p.type}-{instance}
                         </Badge>
                         <Badge variant="secondary">{p.port}</Badge>
                       </div>

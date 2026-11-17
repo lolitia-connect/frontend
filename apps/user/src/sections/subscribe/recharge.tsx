@@ -11,11 +11,11 @@ import {
   DialogTrigger,
 } from "@workspace/ui/components/dialog";
 import { EnhancedInput } from "@workspace/ui/composed/enhanced-input";
-import { recharge } from "@workspace/ui/services/user/order";
 import { unitConversion } from "@workspace/ui/utils/unit-conversions";
 import type React from "react";
 import { useState, useTransition } from "react";
 import { useTranslation } from "react-i18next";
+import { useCreateOrder } from "@/sections/purchasing/create-order";
 import { useGlobalStore } from "@/stores/global";
 import PaymentMethods from "./payment-methods";
 
@@ -25,6 +25,7 @@ export default function Recharge(
   const { t } = useTranslation("subscribe");
   const { common } = useGlobalStore();
   const navigate = useNavigate();
+  const createOrder = useCreateOrder();
   const { currency } = common;
 
   const [open, setOpen] = useState<boolean>(false);
@@ -101,8 +102,12 @@ export default function Recharge(
             onClick={() => {
               startTransition(async () => {
                 try {
-                  const response = await recharge(params);
-                  const orderNo = response.data.data?.order_no;
+                  const response = await createOrder({
+                    type: "recharge",
+                    payment_id: params.payment,
+                    amount: params.amount,
+                  });
+                  const orderNo = response.data.data?.order.order_no;
                   if (orderNo) {
                     navigate({
                       to: "/payment",

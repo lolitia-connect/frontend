@@ -14,14 +14,16 @@ import {
 import { Separator } from "@workspace/ui/components/separator";
 import { Icon } from "@workspace/ui/composed/icon";
 import {
-  purchaseCheckout,
-  queryPurchaseOrder,
-} from "@workspace/ui/services/user/portal";
+  checkoutV2Order,
+  exchangeOrderSession,
+  type OrderSnapshot,
+} from "@workspace/ui/services/user/order-v2";
+import { queryPurchaseOrder } from "@workspace/ui/services/user/portal";
 import { formatDate } from "@workspace/ui/utils/formatting";
 import { useCountDown } from "ahooks";
 import { addMinutes, format } from "date-fns";
 import { QRCodeCanvas } from "qrcode.react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { SubscribeBilling } from "@/sections/subscribe/billing";
 import { SubscribeDetail } from "@/sections/subscribe/detail";
@@ -29,6 +31,8 @@ import { SubscribeDetail } from "@/sections/subscribe/detail";
 import { useGlobalStore } from "@/stores/global";
 import { setAuthorization, setRedirectUrl } from "@/utils/common";
 import { clearCheckoutToken, getCheckoutToken } from "./checkout-token";
+import { recentCheckoutOrder, takeOrderPayment } from "./create-order";
+import { watchOrderEvents } from "./order-events";
 
 export default function Order() {
   const { t } = useTranslation("order");
@@ -36,6 +40,12 @@ export default function Order() {
   const [orderNo, setOrderNo] = useState<string>();
   const [enabled, setEnabled] = useState<boolean>(false);
   const [accessError, setAccessError] = useState(false);
+  const [snapshot, setSnapshot] = useState<OrderSnapshot>();
+  const [sessionState, setSessionState] = useState<
+    "idle" | "pending" | "error" | "ready"
+  >("idle");
+  const [sessionRetry, setSessionRetry] = useState(0);
+  const sessionAttempt = useRef<string | undefined>(undefined);
   const search = useSearch({ from: "/(main)/purchasing/order/" });
 
   const capability = orderNo ? getCheckoutToken(orderNo) : undefined;
@@ -53,13 +63,8 @@ export default function Order() {
           },
           { skipErrorHandler: true }
         );
-        if (data?.data?.status !== 1) {
+        if (data?.data?.status !== 1 && data?.data?.status !== 2) {
           setEnabled(false);
-          if (data?.data?.token) {
-            setAuthorization(data?.data?.token);
-            await getUserInfo();
-            clearCheckoutToken(orderNo);
-          }
           if ([3, 4].includes(data?.data?.status ?? 0))
             clearCheckoutToken(orderNo);
         }
@@ -74,7 +79,7 @@ export default function Order() {
     retry: false,
     refetchInterval: (query) =>
       query.state.status === "error" ||
-      (query.state.data && query.state.data.status !== 1)
+      (query.state.data && ![1, 2].includes(query.state.data.status))
         ? false
         : 3000,
   });
@@ -82,15 +87,72 @@ export default function Order() {
   const [paymentType, setPaymentType] = useState<string>();
   const [checkoutUrl, setCheckoutUrl] = useState<string>();
 
+  useEffect(() => {
+    if (!(orderNo && capability) || accessError) return;
+    return watchOrderEvents({
+      orderNo,
+      checkoutToken: capability,
+      onSnapshot: setSnapshot,
+      onError: () => {
+        setAccessError(true);
+        setEnabled(false);
+      },
+    });
+  }, [orderNo, capability, accessError]);
+
+  useEffect(() => {
+    if (!orderNo) return;
+    const payment = takeOrderPayment(orderNo);
+    if (
+      payment &&
+      ["qr", "url"].includes(payment.type) &&
+      payment.checkout_url
+    ) {
+      setPaymentType(payment.type);
+      setCheckoutUrl(payment.checkout_url);
+    }
+  }, [orderNo]);
+
+  useEffect(() => {
+    if (
+      !(orderNo && capability) ||
+      sessionAttempt.current === orderNo ||
+      !(snapshot?.fulfillment_status === "finished" || data?.status === 5)
+    )
+      return;
+    sessionAttempt.current = orderNo;
+    setSessionState("pending");
+    exchangeOrderSession(orderNo, capability)
+      .then(async ({ data: result }) => {
+        const token = result.data?.access_token;
+        if (!token) throw new Error("Missing account session");
+        setAuthorization(token);
+        await getUserInfo();
+        clearCheckoutToken(orderNo);
+        setSessionState("ready");
+      })
+      .catch(() => {
+        sessionAttempt.current = undefined;
+        setSessionState("error");
+      });
+  }, [
+    orderNo,
+    capability,
+    snapshot?.fulfillment_status,
+    data?.status,
+    getUserInfo,
+    sessionRetry,
+  ]);
+
   // Checkout is triggered manually by user click, not automatically
   const checkoutMutation = useMutation({
     mutationFn: async () => {
-      const { data } = await purchaseCheckout({
-        orderNo: orderNo || "",
-        checkout_token: orderNo ? getCheckoutToken(orderNo) : undefined,
-        returnUrl: window.location.href,
-      });
-      return data?.data;
+      const { data } = await checkoutV2Order(
+        orderNo || "",
+        orderNo ? getCheckoutToken(orderNo) : undefined
+      );
+      if (data.data) setSnapshot(data.data.order);
+      return data.data?.payment;
     },
     onSuccess: (result) => {
       if (!result) return;
@@ -108,17 +170,37 @@ export default function Order() {
   });
 
   useEffect(() => {
-    if (search.order_no) {
-      setOrderNo(search.order_no);
+    const restoredOrder = search.order_no || recentCheckoutOrder();
+    if (restoredOrder) {
+      setOrderNo(restoredOrder);
       setEnabled(true);
       setAccessError(false);
+      setSnapshot(undefined);
+      setPaymentType(undefined);
+      setCheckoutUrl(undefined);
+      setSessionState("idle");
     }
-  }, [search]);
+  }, [search.order_no]);
+
+  const currentStatus = snapshot
+    ? ({ pending_payment: 1, paid: 2, closed: 3, failed: 4, finished: 5 }[
+        snapshot.status
+      ] ?? data?.status)
+    : data?.status;
+
+  useEffect(() => {
+    if (["finished", "closed", "failed"].includes(snapshot?.status || ""))
+      setEnabled(false);
+  }, [snapshot?.status]);
 
   const [countDown, formattedRes] = useCountDown({
-    targetDate:
-      data &&
-      format(addMinutes(data?.created_at, 15), "yyyy-MM-dd'T'HH:mm:ss.SSSxxx"),
+    targetDate: snapshot
+      ? snapshot.expires_at * 1000
+      : data &&
+        format(
+          addMinutes(data?.created_at, 15),
+          "yyyy-MM-dd'T'HH:mm:ss.SSSxxx"
+        ),
   });
 
   const { hours, minutes, seconds } = formattedRes;
@@ -219,22 +301,63 @@ export default function Order() {
         </Card>
         <Card className="order-1 flex flex-auto items-center justify-center xl:order-2">
           <CardContent className="py-16">
-            {data?.status && [2, 5].includes(data?.status) && (
+            {currentStatus && [2, 5].includes(currentStatus) && (
               <div className="flex flex-col items-center gap-8 text-center">
                 <h3 className="font-bold text-2xl tracking-tight">
-                  {t("paymentSuccess", "Payment Successful")}
+                  {currentStatus === 5
+                    ? t("paymentSuccess", "Payment Successful")
+                    : t("paymentReceived", "Payment received")}
                 </h3>
                 <Icon
                   className="text-7xl text-green-500"
                   icon="mdi:success-circle-outline"
                 />
-                <div className="flex gap-4">
-                  <Button asChild>
-                    <Link to="/dashboard">
-                      {t("subscribeNow", "Subscribe Now")}
-                    </Link>
-                  </Button>
-                  <Button variant="outline">
+                {currentStatus === 2 && (
+                  <p
+                    className="max-w-sm text-muted-foreground text-sm"
+                    role="status"
+                  >
+                    {t(
+                      "fulfillmentPending",
+                      "Your subscription is being activated."
+                    )}
+                  </p>
+                )}
+                {currentStatus === 5 && sessionState !== "ready" && (
+                  <div
+                    className="max-w-sm space-y-3 text-muted-foreground text-sm"
+                    role="status"
+                  >
+                    <p>
+                      {sessionState === "error"
+                        ? t(
+                            "sessionRestoreFailed",
+                            "Your order is complete, but sign-in could not be restored."
+                          )
+                        : t(
+                            "sessionRestoring",
+                            "Restoring your account session..."
+                          )}
+                    </p>
+                    {sessionState === "error" && (
+                      <Button
+                        onClick={() => setSessionRetry((value) => value + 1)}
+                        variant="outline"
+                      >
+                        {t("retrySession", "Retry sign-in")}
+                      </Button>
+                    )}
+                  </div>
+                )}
+                <div className="flex flex-wrap justify-center gap-4">
+                  {currentStatus === 5 && sessionState === "ready" && (
+                    <Button asChild>
+                      <Link to="/dashboard">
+                        {t("subscribeNow", "Subscribe Now")}
+                      </Link>
+                    </Button>
+                  )}
+                  <Button asChild variant="outline">
                     <Link to="/document">
                       {t("viewDocument", "View Document")}
                     </Link>
@@ -242,7 +365,7 @@ export default function Order() {
                 </div>
               </div>
             )}
-            {data?.status === 1 && !paymentType && (
+            {currentStatus === 1 && (!paymentType || paymentType === "url") && (
               <div className="flex flex-col items-center gap-8 text-center">
                 <h3 className="font-bold text-2xl tracking-tight">
                   {t("waitingForPayment", "Waiting for Payment")}
@@ -257,7 +380,11 @@ export default function Order() {
                 <div className="flex gap-4">
                   <Button
                     disabled={checkoutMutation.isPending}
-                    onClick={() => checkoutMutation.mutate()}
+                    onClick={() => {
+                      if (paymentType === "url" && checkoutUrl)
+                        window.location.assign(checkoutUrl);
+                      else checkoutMutation.mutate();
+                    }}
                   >
                     {checkoutMutation.isPending
                       ? t("processing", "Processing...")
@@ -267,7 +394,7 @@ export default function Order() {
               </div>
             )}
 
-            {data?.status === 1 && paymentType === "qr" && checkoutUrl && (
+            {currentStatus === 1 && paymentType === "qr" && checkoutUrl && (
               <div className="flex flex-col items-center gap-8 text-center">
                 <h3 className="font-bold text-2xl tracking-tight">
                   {t("scanToPay", "Scan to Pay")}
@@ -298,7 +425,7 @@ export default function Order() {
               </div>
             )}
 
-            {data?.status && [3, 4].includes(data?.status) && (
+            {currentStatus && [3, 4].includes(currentStatus) && (
               <div className="flex flex-col items-center gap-8 text-center">
                 <h3 className="font-bold text-2xl tracking-tight">
                   {t("orderClosed", "Order Closed")}

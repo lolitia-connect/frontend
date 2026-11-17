@@ -8,7 +8,7 @@ import { Separator } from "@workspace/ui/components/separator";
 import { EnhancedInput } from "@workspace/ui/composed/enhanced-input";
 import { Icon } from "@workspace/ui/composed/icon";
 import { cn } from "@workspace/ui/lib/utils";
-import { prePurchaseOrder, purchase } from "@workspace/ui/services/user/portal";
+import { prePurchaseOrder } from "@workspace/ui/services/user/portal";
 import { useCallback, useEffect, useState, useTransition } from "react";
 import { useTranslation } from "react-i18next";
 import { SubscribeBilling } from "@/sections/subscribe/billing";
@@ -17,7 +17,7 @@ import { SubscribeDetail } from "@/sections/subscribe/detail";
 import DurationSelector from "@/sections/subscribe/duration-selector";
 import PaymentMethods from "@/sections/subscribe/payment-methods";
 import { useGlobalStore } from "@/stores/global";
-import { saveCheckoutToken } from "./checkout-token";
+import { useCreateOrder } from "./create-order";
 
 export default function Content({
   subscription,
@@ -33,8 +33,9 @@ export default function Content({
     NoLimit: t("NoLimit", "No Limit"),
     Year: t("Year", "Year"),
   };
-  const { common } = useGlobalStore();
+  const { common, user } = useGlobalStore();
   const navigate = useNavigate();
+  const createOrder = useCreateOrder();
   const [params, setParams] = useState<API.PortalPurchaseRequest>({
     quantity: 1,
     subscribe_id: "",
@@ -90,17 +91,38 @@ export default function Content({
   const handleSubmit = useCallback(async () => {
     startTransition(async () => {
       try {
-        const { data } = await purchase(params);
-        const { order_no, checkout_token } = data.data!;
+        const { data } = await createOrder({
+          type: "purchase",
+          payment_id: params.payment,
+          subscribe_id: params.subscribe_id,
+          quantity: params.quantity,
+          coupon: params.coupon,
+          guest: user
+            ? undefined
+            : {
+                auth_type: params.auth_type,
+                identifier: params.identifier,
+                password: params.password || "",
+                invite_code: localStorage.getItem("invite") || undefined,
+              },
+          return_url: `${window.location.origin}${window.location.pathname}#/${user ? "payment" : "purchasing/order"}`,
+        });
+        const order_no = data.data?.order.order_no;
         if (order_no) {
-          saveCheckoutToken(order_no, checkout_token);
-          navigate({ to: "/purchasing/order", search: { order_no } });
+          navigate({
+            to: user ? "/payment" : "/purchasing/order",
+            search: { order_no },
+          });
         }
       } catch (error) {
         console.log(error);
       }
     });
-  }, [params, navigate]);
+  }, [params, navigate, createOrder, user]);
+
+  const passwordLength = params.password?.length ?? 0;
+  const isPasswordInvalid =
+    passwordLength > 0 && (passwordLength < 8 || passwordLength > 128);
 
   if (!subscription) {
     return (
@@ -113,98 +135,109 @@ export default function Content({
   return (
     <div className="mx-auto mt-8 flex max-w-4xl flex-col gap-8 md:grid md:grid-cols-2 md:flex-row">
       <div className="flex flex-col gap-6">
-        <Card>
-          <CardHeader>
-            {t(
-              "emailInputTitle",
-              "Enter the email address for your {{siteName}} account",
-              {
-                siteName: common.site.site_name,
-              }
-            )}
-          </CardHeader>
-          <CardContent className="flex flex-col gap-2">
-            <div className="flex flex-col gap-2">
-              <EnhancedInput
-                className={cn({
-                  "border-destructive":
-                    !isEmailValid.valid && params.identifier !== "",
-                })}
-                onValueChange={(value: string) => {
-                  const email = value as string;
-                  setParams((prev) => ({
-                    ...prev,
-                    identifier: email,
-                  }));
-                  const reg = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                  if (!reg.test(email)) {
-                    setIsEmailValid({
-                      valid: false,
-                      message: t(
-                        "invalidEmail",
-                        "Please enter a valid email address"
-                      ),
-                    });
-                  } else if (common.auth.email.enable_domain_suffix) {
-                    const domain = email.split("@")[1];
-                    const isValid = common.auth.email?.domain_suffix_list
-                      .split("\n")
-                      .includes(domain || "");
-                    if (!isValid) {
+        {!user && (
+          <Card>
+            <CardHeader>
+              {t(
+                "emailInputTitle",
+                "Enter the email address for your {{siteName}} account",
+                {
+                  siteName: common.site.site_name,
+                }
+              )}
+            </CardHeader>
+            <CardContent className="flex flex-col gap-2">
+              <div className="flex flex-col gap-2">
+                <EnhancedInput
+                  className={cn({
+                    "border-destructive":
+                      !isEmailValid.valid && params.identifier !== "",
+                  })}
+                  onValueChange={(value: string) => {
+                    const email = value as string;
+                    setParams((prev) => ({
+                      ...prev,
+                      identifier: email,
+                    }));
+                    const reg = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (!reg.test(email)) {
                       setIsEmailValid({
                         valid: false,
                         message: t(
-                          "emailDomainNotAllowed",
-                          "Email domain is not in the whitelist"
+                          "invalidEmail",
+                          "Please enter a valid email address"
                         ),
                       });
                       return;
                     }
-                  } else {
+                    if (common.auth.email.enable_domain_suffix) {
+                      const domain = email.split("@")[1];
+                      const isValid = common.auth.email?.domain_suffix_list
+                        .split("\n")
+                        .includes(domain || "");
+                      if (!isValid) {
+                        setIsEmailValid({
+                          valid: false,
+                          message: t(
+                            "emailDomainNotAllowed",
+                            "Email domain is not in the whitelist"
+                          ),
+                        });
+                        return;
+                      }
+                    }
                     setIsEmailValid({
                       valid: true,
                       message: "",
                     });
-                  }
-                }}
-                placeholder="Email"
-                required
-                type="email"
-                value={params.identifier || ""}
-              />
-              <p
-                className={cn("text-muted-foreground text-xs", {
-                  "text-destructive":
-                    !isEmailValid.valid && params.identifier !== "",
-                })}
-              >
-                {isEmailValid.message ||
-                  t("emailRequired", "Please enter your email address.")}
-              </p>
-            </div>
-            {params.identifier && isEmailValid.valid && (
-              <div className="flex flex-col gap-2">
-                <EnhancedInput
-                  onValueChange={(value: string) =>
-                    handleChange("password", value)
-                  }
-                  placeholder="Password"
-                  type="password"
-                  value={params.password || ""}
+                  }}
+                  placeholder="Email"
+                  required
+                  type="email"
+                  value={params.identifier || ""}
                 />
-                <p className="text-muted-foreground text-xs">
-                  {t(
-                    "passwordHint",
-                    "If you do not enter a password, we will automatically generate one and send it to your email."
-                  )}
+                <p
+                  className={cn("text-muted-foreground text-xs", {
+                    "text-destructive":
+                      !isEmailValid.valid && params.identifier !== "",
+                  })}
+                >
+                  {isEmailValid.message ||
+                    t("emailRequired", "Please enter your email address.")}
                 </p>
               </div>
-            )}
-            {/* <div>
+              {params.identifier && isEmailValid.valid && (
+                <div className="flex flex-col gap-2">
+                  <EnhancedInput
+                    onValueChange={(value: string) =>
+                      handleChange("password", value)
+                    }
+                    placeholder={t(
+                      "passwordPlaceholder",
+                      "Password (at least 8 characters, optional)"
+                    )}
+                    type="password"
+                    value={params.password || ""}
+                  />
+                  {isPasswordInvalid && (
+                    <p className="text-destructive text-xs">
+                      {t("passwordLength", "Password must be 8-128 characters")}
+                    </p>
+                  )}
+                  <p className="text-muted-foreground text-xs">
+                    {t(
+                      "passwordHint",
+                      "If you do not enter a password, we will automatically generate one and send it to your email."
+                    )}
+                  </p>
+                </div>
+              )}
+              {/* <div>
               <OAuthMethods />
             </div> */}
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        )}
         <Card>
           <CardContent className="grid gap-3 text-sm">
             <h2 className="font-semibold text-xl">{subscription.name}</h2>
@@ -310,7 +343,9 @@ export default function Content({
 
         <Button
           className="w-full"
-          disabled={!isEmailValid.valid || loading}
+          disabled={
+            (!user && (!isEmailValid.valid || isPasswordInvalid)) || loading
+          }
           onClick={handleSubmit}
           size="lg"
         >

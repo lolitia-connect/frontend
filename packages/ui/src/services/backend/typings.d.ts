@@ -1,4 +1,17 @@
 declare namespace BackendAPI {
+  type AdminActionLog = {
+    id: string;
+    user_id: string;
+    action: string;
+    object?: string;
+    object_id?: string;
+    detail?: string;
+    source: string;
+    telegram_sender_id?: string;
+    timestamp: number;
+    created_at: number;
+  };
+
   type Ads = {
     id: number;
     title: string;
@@ -226,6 +239,20 @@ declare namespace BackendAPI {
     status: boolean;
   };
 
+  type ClaimServerDeviceRequest = {
+    protocol: string;
+    protocol_id: string;
+    server_id: number;
+    secret_key: string;
+    uid: number;
+    ip: string;
+  };
+
+  type ClaimServerDeviceResponse = {
+    allowed: boolean;
+    ttl_seconds: number;
+  };
+
   type CloseOrderRequest = {
     orderNo: string;
   };
@@ -358,6 +385,7 @@ declare namespace BackendAPI {
     trade_no?: string;
     status?: number;
     subscribe_id?: string;
+    user_subscribe_id?: string;
   };
 
   type CreatePaymentMethodRequest = {
@@ -694,6 +722,21 @@ declare namespace BackendAPI {
     history_id?: number;
   };
 
+  type FilterAdminActionLogRequest = {
+    page: number;
+    size: number;
+    date?: string;
+    start_date?: string;
+    end_date?: string;
+    search?: string;
+    user_id?: number;
+  };
+
+  type FilterAdminActionLogResponse = {
+    total: number;
+    list: AdminActionLog[];
+  };
+
   type FilterBalanceLogRequest = {
     page: number;
     size: number;
@@ -903,6 +946,21 @@ declare namespace BackendAPI {
   type FilterTrafficLogDetailsResponse = {
     total: number;
     list: TrafficLogDetails[];
+  };
+
+  type FilterUnmatchedPaymentLogRequest = {
+    page: number;
+    size: number;
+    date?: string;
+    start_date?: string;
+    end_date?: string;
+    search?: string;
+    user_id?: number;
+  };
+
+  type FilterUnmatchedPaymentLogResponse = {
+    total: number;
+    list: UnmatchedPaymentLog[];
   };
 
   type Follow = {
@@ -1196,6 +1254,10 @@ declare namespace BackendAPI {
   type GetRedemptionRecordListResponse = {
     total: number;
     list: RedemptionRecord[];
+  };
+
+  type GetServerAliveListResponse = {
+    alive: Record<string, any>;
   };
 
   type GetServerConfigRequest = {
@@ -1544,6 +1606,16 @@ declare namespace BackendAPI {
     user_id: number;
   };
 
+  type getV1AdminLogAdminActionListParams = {
+    page: number;
+    size: number;
+    date?: string;
+    start_date?: string;
+    end_date?: string;
+    search?: string;
+    user_id?: number;
+  };
+
   type getV1AdminLogBalanceListParams = {
     page: number;
     size: number;
@@ -1680,6 +1752,16 @@ declare namespace BackendAPI {
     search?: string;
     server_id?: number;
     subscribe_id?: number;
+    user_id?: number;
+  };
+
+  type getV1AdminLogUnmatchedPaymentListParams = {
+    page: number;
+    size: number;
+    date?: string;
+    start_date?: string;
+    end_date?: string;
+    search?: string;
     user_id?: number;
   };
 
@@ -3483,6 +3565,19 @@ declare namespace BackendAPI {
     method: string;
   };
 
+  type UnmatchedPaymentLog = {
+    id: string;
+    user_id: string;
+    order_no: string;
+    trade_no: string;
+    platform: string;
+    amount: number;
+    currency: string;
+    reason: string;
+    timestamp: number;
+    created_at: number;
+  };
+
   type UnsubscribeRequest = {
     id: string;
   };
@@ -3522,12 +3617,17 @@ declare namespace BackendAPI {
 
   type UpdateBindEmailRequest = {
     email: string;
+    code: string;
+    password?: string;
+    current_code?: string;
   };
 
   type UpdateBindMobileRequest = {
     area_code: string;
     mobile: string;
     code: string;
+    password?: string;
+    current_code?: string;
   };
 
   type UpdateCouponRequest = {
@@ -3739,6 +3839,8 @@ declare namespace BackendAPI {
 
   type UpdateUserPasswordRequest = {
     password: string;
+    old_password?: string;
+    current_code?: string;
   };
 
   type UpdateUserRulesRequest = {

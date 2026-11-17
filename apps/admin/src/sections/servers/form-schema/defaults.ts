@@ -205,7 +205,7 @@ export function getProtocolDefaultConfig(proto: ProtocolType) {
         type: "mieru",
         enable: false,
         port: null,
-        multiplex: "none",
+        multiplex: "MULTIPLEXING_LOW",
         transport: "tcp",
       } as any;
     case "anytls":
@@ -255,9 +255,11 @@ export function getProtocolDefaultConfig(proto: ProtocolType) {
         ratio: 1,
         port: null,
         security: "tls",
-        version: 1,
+        version: 3,
         network: "mix",
-        alpn: ["now/1"],
+        alpn: ["nw3"],
+        obfs: "morph",
+        allow_insecure: false,
         cert_mode: "self",
         sni: "",
       };

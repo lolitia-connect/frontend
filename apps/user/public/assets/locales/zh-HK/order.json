@@ -41,5 +41,10 @@
   "orderAccessRequired": "訂單存取權杖遺失或已失效，請登入下單時使用的帳戶。",
   "retry": "重試",
   "signIn": "登入",
-  "processing": "處理中..."
+  "processing": "處理中...",
+  "paymentReceived": "已收到付款",
+  "fulfillmentPending": "正在啟用您的訂閱，請稍候。",
+  "sessionRestoreFailed": "訂單已完成，但暫時無法恢復登入。",
+  "sessionRestoring": "正在恢復您的登入狀態...",
+  "retrySession": "重試登入"
 }

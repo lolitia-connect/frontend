@@ -5,7 +5,9 @@
     "passwordMismatch": "密码不匹配",
     "repeatNewPassword": "重复新密码",
     "updatePassword": "更新密码",
-    "updateSuccess": "密码更新成功"
+    "updateSuccess": "密码更新成功",
+    "newPasswordHint": "新密码（至少 8 位）",
+    "passwordLength": "密码长度需为 8–128 位"
   },
   "currentCredential": {
     "code": "发送至 {{email}} 的验证码",
@@ -16,7 +18,11 @@
     "passwordRequired": "请输入当前密码",
     "signInAgain": "更新成功，请重新登录",
     "useCode": "未设置密码？改用发送至 {{email}} 的验证码",
-    "usePassword": "改用当前密码验证"
+    "usePassword": "改用当前密码验证",
+    "verificationCode": "验证码",
+    "required": "请验证当前账户凭证",
+    "noPassword": "尚未设置密码",
+    "firstPasswordCode": "仅未设置密码的账户可使用验证码。已有密码请验证当前密码。"
   },
   "notify": {
     "balanceChange": "余额变动通知",
@@ -38,6 +44,8 @@
     "title": "第三方账户",
     "unbind": "解绑",
     "update": "更新",
-    "updateSuccess": "更新成功"
+    "updateSuccess": "更新成功",
+    "newEmail": "新邮箱地址",
+    "newCode": "发送至新地址的验证码"
   }
 }

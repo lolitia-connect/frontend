@@ -2,9 +2,9 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <title>OAuth Redirect</title>
-    <meta http-equiv="refresh" content="0; url=/#/auth">
+    <meta content="0; url=/#/auth" http-equiv="refresh">
     <script>
     "use strict";
 
@@ -33,11 +33,13 @@
 
         const query = params.toString();
         window.location.replace(`/#${path}${query ? `?${query}` : ""}`);
-      } catch (_e) {
+      } catch {
         window.location.replace("/#/auth");
       }
     })();
     </script>
   </head>
-  <body>Redirecting…</body>
+  <body>
+    Redirecting…
+  </body>
 </html>

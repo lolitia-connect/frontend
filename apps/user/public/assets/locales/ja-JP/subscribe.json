@@ -65,5 +65,12 @@
   "expireAt": "有効期限",
   "expired": "期限切れ",
   "expiresInDays": "残り {{days}} 日",
-  "moreRenewable": "ダッシュボードで他の {{total}} 件のサブスクリプションを更新できます"
+  "moreRenewable": "ダッシュボードで他の {{total}} 件のサブスクリプションを更新できます",
+  "passwordLength": "パスワードは8〜128文字で入力してください",
+  "passwordPlaceholder": "パスワード（8文字以上、任意）",
+  "renewReminder": {
+    "title": "このプランのサブスクリプションをお持ちです",
+    "description": "更新すると現在のサブスクリプションの期間を延長し、ノードとリンクを引き継ぎます。新規購入では期間と通信量が独立した別のサブスクリプションを作成します。",
+    "buyNew": "{{name}} を新しいサブスクリプションとして購入"
+  }
 }

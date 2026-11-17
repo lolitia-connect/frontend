@@ -856,6 +856,22 @@ export async function getV1AdminGroupSubscribeMapping(options?: {
   );
 }
 
+export async function getV1AdminLogAdminActionList(
+  params: BackendAPI.getV1AdminLogAdminActionListParams,
+  options?: { [key: string]: any }
+) {
+  return request<{ code?: number; msg?: string; data?: any }>(
+    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/log/admin-action/list`,
+    {
+      method: "GET",
+      params: {
+        ...params,
+      },
+      ...(options || {}),
+    }
+  );
+}
+
 export async function getV1AdminLogBalanceList(
   params: BackendAPI.getV1AdminLogBalanceListParams,
   options?: { [key: string]: any }
@@ -1132,6 +1148,24 @@ export async function getV1AdminLogTrafficDetails(
     },
     ...(options || {}),
   });
+}
+
+export async function getV1AdminLogUnmatchedPaymentList(
+  params: BackendAPI.getV1AdminLogUnmatchedPaymentListParams,
+  options?: { [key: string]: any }
+) {
+  return request<{ code?: number; msg?: string; data?: any }>(
+    `${
+      import.meta.env.VITE_API_PREFIX || ""
+    }/v1/admin/log/unmatched-payment/list`,
+    {
+      method: "GET",
+      params: {
+        ...params,
+      },
+      ...(options || {}),
+    }
+  );
 }
 
 export async function getV1AdminMarketingEmailBatchList(
@@ -3918,7 +3952,7 @@ export async function postV1PublicOrderPurchase(
   return request<{
     code?: number;
     msg?: string;
-    data?: BackendAPI.PortalPurchaseResponse;
+    data?: BackendAPI.PurchaseOrderResponse;
   }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/public/order/purchase`, {
     method: "POST",
     headers: {
@@ -4486,6 +4520,16 @@ export async function getV1PublicUserLoginLog(
   });
 }
 
+export async function postV1PublicUserLogout(options?: { [key: string]: any }) {
+  return request<{ code?: number; msg?: string; data?: any }>(
+    `${import.meta.env.VITE_API_PREFIX || ""}/v1/public/user/logout`,
+    {
+      method: "POST",
+      ...(options || {}),
+    }
+  );
+}
+
 export async function putV1PublicUserNotify(
   body: BackendAPI.UpdateUserNotifyRequest,
   options?: { [key: string]: any }
@@ -4818,7 +4862,7 @@ export async function postV2PublicOrdersOrderNoEventTicket(
   return request<{
     code?: number;
     msg?: string;
-    data?: BackendAPI.V2OrderResponse;
+    data?: BackendAPI.V2EventTicketResponse;
   }>(
     `${
       import.meta.env.VITE_API_PREFIX || ""
@@ -4840,11 +4884,7 @@ export async function getV2PublicOrdersOrderNoEvents(
   options?: { [key: string]: any }
 ) {
   const { orderNo: param0, ...queryParams } = params;
-  return request<{
-    code?: number;
-    msg?: string;
-    data?: BackendAPI.V2OrderSessionResponse;
-  }>(
+  return request<string>(
     `${
       import.meta.env.VITE_API_PREFIX || ""
     }/v2/public/orders/${param0}/events`,
@@ -4865,7 +4905,7 @@ export async function postV2PublicOrdersOrderNoSession(
   return request<{
     code?: number;
     msg?: string;
-    data?: BackendAPI.V2EventTicketResponse;
+    data?: BackendAPI.V2OrderSessionResponse;
   }>(
     `${
       import.meta.env.VITE_API_PREFIX || ""

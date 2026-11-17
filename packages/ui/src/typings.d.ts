@@ -14,5 +14,6 @@ declare global {
 declare module "axios" {
   export interface AxiosRequestConfig<D = any> {
     requestType?: string;
+    skipErrorHandler?: boolean;
   }
 }

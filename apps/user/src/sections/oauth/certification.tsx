@@ -5,6 +5,11 @@ import { postAuthOauthLoginToken as oAuthLoginGetToken } from "@workspace/ui/ser
 import { useEffect, useRef } from "react";
 import { useGlobalStore } from "@/stores/global";
 import { getRedirectUrl, setAuthorization } from "@/utils/common";
+import {
+  takeOAuthCfToken,
+  takeOAuthInvite,
+  takeOAuthVerification,
+} from "@/utils/oauth";
 
 interface CertificationProps {
   children: React.ReactNode;
@@ -34,6 +39,9 @@ export default function Certification({
     oAuthLoginGetToken({
       method: platform,
       callback,
+      cf_token: takeOAuthCfToken(),
+      invite: takeOAuthInvite(),
+      ...takeOAuthVerification(),
     } as API.OAuthLoginGetTokenRequest)
       .then(async (res) => {
         const token = res?.data?.data?.token;

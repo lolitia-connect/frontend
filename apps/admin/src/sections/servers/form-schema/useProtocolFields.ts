@@ -809,7 +809,16 @@ export function useProtocolFields() {
         options: ["mix", "tcp", "udp"],
         group: "basic",
       },
-      ...certificateFields(() => true),
+      {
+        name: "obfs",
+        type: "select",
+        label: t("obfs", "Obfuscation"),
+        options: ["morph", "none"],
+        group: "basic",
+      },
+      ...certificateFields(() => true).filter(
+        (field) => field.name !== "allow_insecure"
+      ),
     ];
     return fields;
   }, [t]);

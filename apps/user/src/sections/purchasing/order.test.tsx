@@ -21,6 +21,7 @@ const mocks = vi.hoisted(() => ({
   search: { order_no: "guest-order" },
   setAuthorization: vi.fn(),
   setRedirectUrl: vi.fn(),
+  session: vi.fn(),
 }));
 
 vi.mock("@tanstack/react-router", () => ({
@@ -40,8 +41,17 @@ vi.mock("@tanstack/react-router", () => ({
 }));
 
 vi.mock("@workspace/ui/services/user/portal", () => ({
-  purchaseCheckout: mocks.checkout,
   queryPurchaseOrder: mocks.queryOrder,
+}));
+
+vi.mock("@workspace/ui/services/user/order-v2", () => ({
+  checkoutV2Order: mocks.checkout,
+  exchangeOrderSession: mocks.session,
+}));
+vi.mock("./order-events", () => ({ watchOrderEvents: () => () => undefined }));
+vi.mock("./create-order", () => ({
+  takeOrderPayment: () => undefined,
+  recentCheckoutOrder: () => undefined,
 }));
 
 vi.mock("@/stores/global", () => ({
@@ -105,7 +115,12 @@ beforeEach(() => {
   localStorage.clear();
   mocks.search.order_no = `guest-order-${crypto.randomUUID()}`;
   mocks.queryOrder.mockResolvedValue(orderResponse());
-  mocks.checkout.mockResolvedValue({ data: { data: { type: "balance" } } });
+  mocks.checkout.mockResolvedValue({
+    data: { data: { payment: { type: "balance" } } },
+  });
+  mocks.session.mockResolvedValue({
+    data: { data: { access_token: "account-session" } },
+  });
   mocks.getUserInfo.mockResolvedValue(undefined);
 });
 
@@ -159,11 +174,10 @@ describe("guest order capability", () => {
 
     fireEvent.click(payButton);
     await waitFor(() => expect(mocks.checkout).toHaveBeenCalledTimes(1));
-    expect(mocks.checkout).toHaveBeenCalledWith({
-      orderNo: mocks.search.order_no,
-      checkout_token: "checkout-capability",
-      returnUrl: window.location.href,
-    });
+    expect(mocks.checkout).toHaveBeenCalledWith(
+      mocks.search.order_no,
+      "checkout-capability"
+    );
   });
 
   it("stops polling after failure and retries only on request", async () => {
@@ -199,9 +213,51 @@ describe("guest order capability", () => {
     expect(
       await screen.findByRole("heading", { name: "Payment Successful" })
     ).toBeTruthy();
+    expect(
+      await screen.findByRole("link", { name: "Subscribe Now" })
+    ).toBeTruthy();
     expect(mocks.setAuthorization).toHaveBeenCalledWith("account-session");
     expect(mocks.getUserInfo).toHaveBeenCalledTimes(1);
     expect(getCheckoutToken(mocks.search.order_no)).toBeUndefined();
     expect(screen.queryByRole("alert")).toBeNull();
+  });
+
+  it("waits for fulfillment before restoring a session or offering the subscription", async () => {
+    localStorage.setItem(
+      mocks.search.order_no,
+      JSON.stringify({ checkout_token: "checkout-capability" })
+    );
+    mocks.queryOrder.mockResolvedValue(orderResponse(2));
+    renderOrder();
+
+    expect(
+      await screen.findByRole("heading", { name: "Payment received" })
+    ).toBeTruthy();
+    expect(screen.getByRole("status").textContent).toContain("being activated");
+    expect(screen.queryByRole("link", { name: "Subscribe Now" })).toBeNull();
+    expect(mocks.session).not.toHaveBeenCalled();
+    expect(getCheckoutToken(mocks.search.order_no)).toBe("checkout-capability");
+  });
+
+  it("retains the checkout capability and offers an explicit session retry after a failure", async () => {
+    localStorage.setItem(
+      mocks.search.order_no,
+      JSON.stringify({ checkout_token: "checkout-capability" })
+    );
+    mocks.queryOrder.mockResolvedValue(orderResponse(5));
+    mocks.session.mockRejectedValueOnce(new Error("temporary session failure"));
+    renderOrder();
+
+    const retry = await screen.findByRole("button", { name: "Retry sign-in" });
+    expect(mocks.session).toHaveBeenCalledTimes(1);
+    expect(getCheckoutToken(mocks.search.order_no)).toBe("checkout-capability");
+    expect(screen.queryByRole("link", { name: "Subscribe Now" })).toBeNull();
+    fireEvent.click(retry);
+
+    expect(
+      await screen.findByRole("link", { name: "Subscribe Now" })
+    ).toBeTruthy();
+    expect(mocks.session).toHaveBeenCalledTimes(2);
+    expect(getCheckoutToken(mocks.search.order_no)).toBeUndefined();
   });
 });

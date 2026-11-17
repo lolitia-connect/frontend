@@ -1,6 +1,6 @@
 {
   "name": "frontend",
-  "version": "1.22.0+tia",
+  "version": "1.23.0+tia",
   "private": true,
   "homepage": "https://github.com/perfect-panel/frontend",
   "bugs": {
@@ -22,6 +22,9 @@
     "openapi": "turbo openapi",
     "api:refresh": "bun scripts/backend-contract.mjs --refresh",
     "api:check": "bun scripts/backend-contract.mjs --check",
+    "api:verify": "bun scripts/backend-contract.mjs --verify-generated",
+    "test:contract": "bun test tests/contract",
+    "test:proxy": "bun test tests/functions",
     "i18n:extract": "turbo i18n:extract",
     "i18n:sync": "turbo i18n:sync",
     "i18n:status": "turbo i18n:status",

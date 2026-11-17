@@ -14,9 +14,10 @@ import {
 import { Separator } from "@workspace/ui/components/separator";
 import { Icon } from "@workspace/ui/composed/icon";
 import {
-  postV1PublicPortalOrderCheckout as purchaseCheckout,
-  getV1PublicOrderDetail as queryOrderDetail,
-} from "@workspace/ui/services/user/user";
+  checkoutV2Order,
+  type OrderSnapshot,
+} from "@workspace/ui/services/user/order-v2";
+import { getV1PublicOrderDetail as queryOrderDetail } from "@workspace/ui/services/user/user";
 import { formatDate } from "@workspace/ui/utils/formatting";
 import { useCountDown } from "ahooks";
 import { addMinutes, format } from "date-fns";
@@ -24,6 +25,11 @@ import { QRCodeCanvas } from "qrcode.react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Display } from "@/components/display";
+import {
+  recentCheckoutOrder,
+  takeOrderPayment,
+} from "@/sections/purchasing/create-order";
+import { watchOrderEvents } from "@/sections/purchasing/order-events";
 import { SubscribeBilling } from "@/sections/subscribe/billing";
 import { SubscribeDetail } from "@/sections/subscribe/detail";
 import { useGlobalStore } from "@/stores/global";
@@ -33,40 +39,73 @@ const routeApi = getRouteApi("/(main)/payment");
 export default function Page() {
   const { t } = useTranslation("order");
   const { getUserInfo } = useGlobalStore();
-  const { order_no } = routeApi.useSearch() as { order_no?: string };
+  const search = routeApi.useSearch() as { order_no?: string };
+  const order_no = search.order_no || recentCheckoutOrder();
   const [enabled, setEnabled] = useState<boolean>(!!order_no);
+  const [snapshot, setSnapshot] = useState<OrderSnapshot>();
 
   useEffect(() => {
     if (order_no) {
       setEnabled(true);
+      setSnapshot(undefined);
+      setPaymentType(undefined);
+      setCheckoutUrl(undefined);
     }
   }, [order_no]);
 
-  const { data } = useQuery({
+  const { data, refetch, isError } = useQuery({
     enabled: enabled && !!order_no,
     queryKey: ["queryOrderDetail", order_no],
     queryFn: async () => {
       const { data } = await queryOrderDetail({ order_no: order_no! });
-      if (data?.data?.status !== 1) {
+      if (data?.data?.status !== 1 && data?.data?.status !== 2) {
         getUserInfo();
         setEnabled(false);
       }
       return data?.data;
     },
-    refetchInterval: 3000,
+    retry: false,
+    refetchInterval: (query) =>
+      query.state.status === "error" ||
+      (query.state.data && ![1, 2].includes(query.state.data.status))
+        ? false
+        : 5000,
   });
 
   const [paymentType, setPaymentType] = useState<string>();
   const [checkoutUrl, setCheckoutUrl] = useState<string>();
 
+  useEffect(() => {
+    if (!order_no || isError) return;
+    return watchOrderEvents({
+      orderNo: order_no,
+      onSnapshot: (next) => {
+        setSnapshot(next);
+        if (next.payment_status === "paid") getUserInfo();
+      },
+      onError: () => undefined,
+    });
+  }, [order_no, getUserInfo, isError]);
+
+  useEffect(() => {
+    if (!order_no) return;
+    const payment = takeOrderPayment(order_no);
+    if (
+      payment &&
+      ["qr", "url"].includes(payment.type) &&
+      payment.checkout_url
+    ) {
+      setPaymentType(payment.type);
+      setCheckoutUrl(payment.checkout_url);
+    }
+  }, [order_no]);
+
   // Checkout is triggered manually by user click, not automatically
   const checkoutMutation = useMutation({
     mutationFn: async () => {
-      const { data } = await purchaseCheckout({
-        orderNo: order_no!,
-        returnUrl: window.location.href,
-      });
-      return data?.data;
+      const { data } = await checkoutV2Order(order_no!);
+      if (data.data) setSnapshot(data.data.order);
+      return data.data?.payment;
     },
     onSuccess: (result) => {
       if (!result) return;
@@ -79,10 +118,25 @@ export default function Page() {
     },
   });
 
+  const currentStatus = snapshot
+    ? ({ pending_payment: 1, paid: 2, closed: 3, failed: 4, finished: 5 }[
+        snapshot.status
+      ] ?? data?.status)
+    : data?.status;
+
+  useEffect(() => {
+    if (["finished", "closed", "failed"].includes(snapshot?.status || ""))
+      setEnabled(false);
+  }, [snapshot?.status]);
+
   const [countDown, formattedRes] = useCountDown({
-    targetDate:
-      data &&
-      format(addMinutes(data?.created_at, 15), "yyyy-MM-dd'T'HH:mm:ss.SSSxxx"),
+    targetDate: snapshot
+      ? snapshot.expires_at * 1000
+      : data &&
+        format(
+          addMinutes(data?.created_at, 15),
+          "yyyy-MM-dd'T'HH:mm:ss.SSSxxx"
+        ),
   });
 
   const { hours, minutes, seconds } = formattedRes;
@@ -100,6 +154,19 @@ export default function Page() {
 
   return (
     <div className="container grid gap-4 pt-16 xl:grid-cols-2">
+      {isError && (
+        <div className="col-span-full flex items-center gap-3" role="alert">
+          <span>{t("orderUnavailable", "Order unavailable")}</span>
+          <Button
+            onClick={() => {
+              setEnabled(true);
+              refetch();
+            }}
+          >
+            {t("retry", "Retry")}
+          </Button>
+        </div>
+      )}
       <Card className="order-2 gap-0 xl:order-1">
         <CardHeader className="flex flex-row items-start">
           <div className="grid gap-0.5">
@@ -180,7 +247,7 @@ export default function Page() {
       </Card>
       <Card className="order-1 flex flex-auto items-center justify-center xl:order-2">
         <CardContent className="py-16">
-          {data?.status && [2, 5].includes(data?.status) && (
+          {currentStatus && [2, 5].includes(currentStatus) && (
             <div className="flex flex-col items-center gap-8 text-center">
               <h3 className="font-bold text-2xl tracking-tight">
                 {t("paymentSuccess", "Payment Success")}
@@ -203,7 +270,7 @@ export default function Page() {
               </div>
             </div>
           )}
-          {data?.status === 1 && !paymentType && (
+          {currentStatus === 1 && (!paymentType || paymentType === "url") && (
             <div className="flex flex-col items-center gap-8 text-center">
               <h3 className="font-bold text-2xl tracking-tight">
                 {t("waitingForPayment", "Waiting For Payment")}
@@ -218,7 +285,11 @@ export default function Page() {
               <div className="flex gap-4">
                 <Button
                   disabled={checkoutMutation.isPending}
-                  onClick={() => checkoutMutation.mutate()}
+                  onClick={() => {
+                    if (paymentType === "url" && checkoutUrl)
+                      window.location.assign(checkoutUrl);
+                    else checkoutMutation.mutate();
+                  }}
                 >
                   {checkoutMutation.isPending
                     ? t("processing", "Processing...")
@@ -228,7 +299,7 @@ export default function Page() {
             </div>
           )}
 
-          {data?.status === 1 && paymentType === "qr" && checkoutUrl && (
+          {currentStatus === 1 && paymentType === "qr" && checkoutUrl && (
             <div className="flex flex-col items-center gap-8 text-center">
               <h3 className="font-bold text-2xl tracking-tight">
                 {t("scanToPay", "Scan To Pay")}
@@ -259,7 +330,7 @@ export default function Page() {
             </div>
           )}
 
-          {data?.status && [3, 4].includes(data?.status) && (
+          {currentStatus && [3, 4].includes(currentStatus) && (
             <div className="flex flex-col items-center gap-8 text-center">
               <h3 className="font-bold text-2xl tracking-tight">
                 {t("orderClosed", "Order Closed")}

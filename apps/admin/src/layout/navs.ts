@@ -68,6 +68,11 @@ export function useNavs() {
             icon: "flat-color-icons:bookmark",
           },
           {
+            title: t("Commission Management", "Commission Management"),
+            url: "/dashboard/withdrawal",
+            icon: "flat-color-icons:debt",
+          },
+          {
             title: t("Redemption Management", "Redemption Management"),
             url: "/dashboard/redemption",
             icon: "flat-color-icons:key",
@@ -154,6 +159,11 @@ export function useNavs() {
             title: t("Order Creation", "Order Creation"),
             url: "/dashboard/log/order",
             icon: "flat-color-icons:todo-list",
+          },
+          {
+            title: t("Unmatched Payments", "Unmatched Payments"),
+            url: "/dashboard/log/payment-unmatched",
+            icon: "flat-color-icons:currency-exchange",
           },
           {
             title: t("Register", "Register"),

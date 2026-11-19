@@ -13,6 +13,9 @@
   "license": "GUN",
   "scripts": {
     "build": "turbo build",
+    "build:user": "turbo build --filter=ppanel-user-web",
+    "build:admin": "turbo build --filter=ppanel-admin-web",
+    "build:payment-portal": "turbo build --filter=ppanel-payment-portal",
     "dev": "turbo dev",
     "docs:dev": "turbo docs:dev",
     "docs:build": "turbo docs:build",

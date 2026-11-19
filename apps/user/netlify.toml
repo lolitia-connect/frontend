@@ -1,18 +1,21 @@
 # Netlify config for the PPanel user web app (user 端).
 #
-# Deploy as its own Netlify site with the base directory set to `apps/user`
-# (Site configuration → Build & deploy → Base directory). Netlify then reads
-# this file and every path below is resolved relative to `apps/user`.
+# The build runs from the repository ROOT (Netlify's monorepo picker reads this
+# file but executes at the repo root, not inside apps/user). So the command is
+# invoked at the root and `publish` is written relative to the root.
 #
-# No `/api/*` proxy is defined here on purpose: the app forwards API traffic
-# through its own `next.config.ts` rewrites driven by NEXT_PUBLIC_API_BASE_URL
-# and NEXT_PUBLIC_API_PREFIX, so configure those env vars in the Netlify UI.
+# Turborepo is scoped to THIS app only via `--filter` (the root `build:user`
+# script), so sibling apps (admin / payment-portal / docs) are never built here.
+#
+# No `/api/*` proxy: the app forwards API traffic via its own next.config.ts
+# rewrites driven by NEXT_PUBLIC_API_BASE_URL / NEXT_PUBLIC_API_PREFIX, set in
+# the Netlify UI.
 [build]
-  command = "bun run build"
-  publish = ".next"
+  command = "bun run build:user"
+  publish = "apps/user/.next"
 
 [build.environment]
-  NODE_VERSION = "20"
+  NODE_VERSION = "26"
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"

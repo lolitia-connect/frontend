@@ -9,7 +9,7 @@ export async function queryPublicServerList(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: API.QueryPublicServerListResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/public/server/list`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/public/server/list`,
     {
       method: "GET",
       params: {

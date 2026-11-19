@@ -1,10 +1,10 @@
 "use client";
 
-import { useSearch } from "@tanstack/react-router";
 import { Button } from "@workspace/ui/components/button";
 import { Icon } from "@workspace/ui/composed/icon";
+import { useSearch } from "@workspace/ui/lib/router-compat";
 import { postAuthOauthLogin as oAuthLogin } from "@workspace/ui/services/common/common";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useGlobalStore } from "@/stores/global";
 import { setRedirectUrl } from "@/utils/common";
@@ -17,6 +17,7 @@ import {
   navigateToTelegramCallbackRoute,
   requestTelegramAuthCallback,
 } from "@/utils/oauth/telegram-popup";
+import { resolveInviteCode } from "./invite";
 import LocalCaptcha, { type LocalCaptchaRef } from "./local-captcha";
 import SliderCaptcha, { type SliderCaptchaRef } from "./slider-captcha";
 import CloudFlareTurnstile, { type TurnstileRef } from "./turnstile";
@@ -42,13 +43,45 @@ export function OAuthMethods() {
     redirect?: string;
     invite?: string;
   };
-  const { oauth_methods, verify, invite } = common;
+  const { oauth_methods, verify, auth } = common;
   const captchaType = verify.captcha_type || "turnstile";
-  const requiresVerification = Boolean(
-    verify.enable_user_register_captcha || verify.enable_register_verify
-  );
-  const invitation =
-    searchParams.invite || localStorage.getItem("invite") || "";
+  // The email/phone auth form rendered above owns the captcha for this page:
+  // `email/register-form.tsx` and `phone/register-form.tsx` render one when
+  // `enable_user_register_captcha` is set, and the login forms render one when
+  // `enable_user_login_captcha` is set. The OAuth block is a sibling on the very
+  // same page, so rendering its own challenge as well is what produced the two
+  // captchas users reported. Only stand in with a challenge when no auth form
+  // shares the page (email and mobile both disabled).
+  //
+  // `enable_register_verify` is deliberately not consulted: that key no longer
+  // exists in the global-config payload (migration `02132_update_verify_config`
+  // deletes it and `VeifyConfig` exposes only the four `enable_*_captcha`
+  // flags), so reading it silently evaluated to `undefined`.
+  const authFormShowsCaptcha =
+    Boolean(auth?.email?.enable || auth?.mobile?.enable) &&
+    Boolean(
+      verify.enable_user_login_captcha || verify.enable_user_register_captcha
+    );
+  const requiresVerification =
+    Boolean(verify.enable_user_register_captcha) && !authFormShowsCaptcha;
+  // `null` = not resolved yet. Resolved after mount so the server-rendered
+  // markup stays deterministic (the invite can come from `localStorage`, which
+  // does not exist on the server). Before this change the value was read during
+  // render, which both missed hash-form invitation links and could disagree
+  // with the SSR output.
+  const [invitation, setInvitation] = useState<string | null>(null);
+  useEffect(() => {
+    setInvitation(resolveInviteCode(searchParams.invite));
+  }, [searchParams.invite]);
+  // Invitation codes are a *registration* policy (`invite.forced_invite`), not a
+  // gate on signing in. The backend applies it inside its own registration path
+  // and only to accounts that do not exist yet — `findOrRegisterUser` returns an
+  // existing user's record directly and calls `register` (the only place
+  // `ForcedInvite` is enforced) solely when the provider identity is unseen. So
+  // an existing user signing in through a provider must never be blocked by it,
+  // and this page cannot know which of the two applies until after the provider
+  // round trip. The buttons therefore do not consult `forced_invite`; an invite
+  // code the visitor arrived with is still forwarded for the registration leg.
   const OAUTH_METHODS = oauth_methods?.filter((method: string) =>
     Object.hasOwn(icons, method)
   );
@@ -56,7 +89,7 @@ export function OAuthMethods() {
     OAUTH_METHODS?.length > 0 && (
       <>
         <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-border after:border-t">
-          <span className="relative z-10 bg-background px-2 text-muted-foreground">
+          <span className="relative z-10 bg-background px-2 text-muted">
             {t("oauth.continue", "Or continue with")}
           </span>
         </div>
@@ -68,9 +101,7 @@ export function OAuthMethods() {
               })}
               className="size-12 p-2"
               disabled={
-                Boolean(loadingMethod) ||
-                (requiresVerification && !challenge) ||
-                Boolean(invite?.forced_invite && !invitation)
+                Boolean(loadingMethod) || (requiresVerification && !challenge)
               }
               key={method}
               onClick={async () => {
@@ -92,7 +123,7 @@ export function OAuthMethods() {
                     return;
                   }
 
-                  storeOAuthInvite(invitation);
+                  storeOAuthInvite(invitation ?? undefined);
                   storeOAuthCfToken(
                     captchaType === "turnstile" ? challenge : undefined
                   );
@@ -165,14 +196,6 @@ export function OAuthMethods() {
               />
             )}
           </div>
-        )}
-        {invite?.forced_invite && !invitation && (
-          <p className="mt-3 text-destructive text-sm">
-            {t(
-              "oauth.inviteRequired",
-              "An invitation code is required. Open your invitation link to continue."
-            )}
-          </p>
         )}
       </>
     )

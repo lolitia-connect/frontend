@@ -73,6 +73,23 @@ bun dev
 
 Open <http://localhost:3000> with your browser to see the result.
 
+### Landing page components
+
+The landing page follows the user dashboard's HeroUI `Card`, `Card.Title`,
+`Card.Description`, `Chip`, and shared button patterns, using the theme's default
+background, surfaces, radii, and interaction states. Service and plan cards do not
+override these with glass backgrounds, custom shadows, or hover movement. The
+hero's WebGL globe animation remains independent.
+
+### Main-content empty states
+
+Page-level empty states use [MainEmpty](./src/components/main-empty.tsx), with the same
+`py-24` spacing as the ticket support list. Keep this wrapper limited to main
+content; do not change shared empty-state defaults or placeholders inside
+sidebars, dialogs, or charts. Cards wrapping a main empty state must not add
+vertical padding.
+
+
 ## 🚀 Deploy on Vercel
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?demo-description=PPanel%20is%20a%20pure%2C%20professional%2C%20and%20perfect%20open-source%20proxy%20panel%20tool%2C%20designed%20to%20be%20your%20ideal%20choice%20for%20learning%20and%20practical%20use&demo-image=https%3A%2F%2Furlscan.io%2Fliveshot%2F%3Fwidth%3D1920%26height%3D1080%26url%3Dhttps%3A%2F%user.ppanel.dev&demo-title=PPanel%20User%20Web&demo-url=https%3A%2F%2Fuser.ppanel.dev%2F&from=.&project-name=ppanel-user-web&repository-name=ppanel-web&repository-url=https%3A%2F%2Fgithub.com%2Fperfect-panel%2Fppanel-web&root-directory=apps%user&skippable-integrations=1)

@@ -1,18 +1,21 @@
-import { useQuery } from "@tanstack/react-query";
+"use client";
+
 import {
   Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@workspace/ui/components/card";
-import {
+  ListBox,
   Select,
-  SelectContent,
-  SelectItem,
+  SelectPopover as SelectContent,
+  SelectIndicator,
+  ListBoxItem as SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@workspace/ui/components/select";
-import { Tabs, TabsList, TabsTrigger } from "@workspace/ui/components/tabs";
+  TabIndicator,
+  Tabs,
+  TabList as TabsList,
+  TabListContainer as TabsListContainer,
+  Tab as TabsTrigger,
+} from "@heroui/react";
+import { useQuery } from "@tanstack/react-query";
 import { BlockLoading } from "@workspace/ui/composed/block-loading";
 import { Icon } from "@workspace/ui/composed/icon";
 import { getUserTrafficStats } from "@workspace/ui/services/user/traffic";
@@ -69,32 +72,56 @@ export default function TrafficStatistics() {
           {/* 订阅选择 */}
           {userSubscribe.length > 1 && (
             <Select
-              onValueChange={(value) => setSelectedSubscribeId(value)}
-              value={activeSubscribeId || undefined}
+              aria-label={t("selectSubscription", "Select Subscription")}
+              onSelectionChange={(key) => {
+                if (key != null)
+                  ((value) => setSelectedSubscribeId(value))(String(key));
+              }}
+              placeholder={t("selectSubscription", "Select Subscription")}
+              selectedKey={
+                (activeSubscribeId || undefined) == null
+                  ? undefined
+                  : String(activeSubscribeId || undefined)
+              }
             >
               <SelectTrigger className="w-full md:w-[200px]">
-                <SelectValue
-                  placeholder={t("selectSubscription", "Select Subscription")}
-                />
+                <SelectValue />
+                <SelectIndicator />
               </SelectTrigger>
               <SelectContent>
-                {userSubscribe.map((sub) => (
-                  <SelectItem key={sub.id} value={sub.id_str}>
-                    {sub.subscribe.name}
-                  </SelectItem>
-                ))}
+                <ListBox>
+                  {userSubscribe.map((sub) => (
+                    <SelectItem id={sub.id_str} key={sub.id}>
+                      {sub.subscribe.name}
+                    </SelectItem>
+                  ))}
+                </ListBox>
               </SelectContent>
             </Select>
           )}
           {/* 时间范围切换 */}
           <Tabs
-            onValueChange={(value) => setDays(Number(value) as 7 | 30)}
-            value={String(days)}
+            className="min-w-0 max-w-full"
+            onSelectionChange={(key) =>
+              ((value) => setDays(Number(value) as 7 | 30))(String(key))
+            }
+            selectedKey={String(days)}
           >
-            <TabsList>
-              <TabsTrigger value="7">{t("days7", "7 Days")}</TabsTrigger>
-              <TabsTrigger value="30">{t("days30", "30 Days")}</TabsTrigger>
-            </TabsList>
+            <TabsListContainer className="min-w-0 max-w-full">
+              <TabsList aria-label={t("sections", "Sections")}>
+                <TabsTrigger className="w-auto flex-1 whitespace-nowrap" id="7">
+                  {t("days7", "7 Days")}
+                  <TabIndicator />
+                </TabsTrigger>
+                <TabsTrigger
+                  className="w-auto flex-1 whitespace-nowrap"
+                  id="30"
+                >
+                  {t("days30", "30 Days")}
+                  <TabIndicator />
+                </TabsTrigger>
+              </TabsList>
+            </TabsListContainer>
           </Tabs>
         </div>
       </div>
@@ -106,32 +133,32 @@ export default function TrafficStatistics() {
       <div className="grid gap-4 md:grid-cols-2">
         {/* 流量趋势图 */}
         <Card>
-          <CardHeader>
-            <CardTitle className="text-base">
+          <Card.Header>
+            <Card.Title className="text-base">
               {t("trafficTrend", "Traffic Trend")}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
+            </Card.Title>
+          </Card.Header>
+          <Card.Content>
             {isLoading ? (
               <BlockLoading minHeight="300px" />
             ) : trafficStats && trafficStats.list.length > 0 ? (
               <TrafficTrendChart data={trafficStats.list} />
             ) : (
-              <div className="flex h-[300px] items-center justify-center text-muted-foreground">
+              <div className="flex h-[300px] items-center justify-center text-muted">
                 {t("noData", "No traffic data available")}
               </div>
             )}
-          </CardContent>
+          </Card.Content>
         </Card>
 
         {/* 流量占比图 */}
         <Card>
-          <CardHeader>
-            <CardTitle className="text-base">
+          <Card.Header>
+            <Card.Title className="text-base">
               {t("trafficRatio", "Upload/Download Ratio")}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
+            </Card.Title>
+          </Card.Header>
+          <Card.Content>
             {isLoading ? (
               <BlockLoading minHeight="300px" />
             ) : trafficStats &&
@@ -142,11 +169,11 @@ export default function TrafficStatistics() {
                 upload={trafficStats.total_upload}
               />
             ) : (
-              <div className="flex h-[300px] items-center justify-center text-muted-foreground">
+              <div className="flex h-[300px] items-center justify-center text-muted">
                 {t("noData", "No traffic data available")}
               </div>
             )}
-          </CardContent>
+          </Card.Content>
         </Card>
       </div>
     </div>

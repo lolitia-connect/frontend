@@ -18,6 +18,7 @@
     "subscribe": "サブスクリプション通知",
     "updateSuccess": "通知設定の更新が完了しました"
   },
+  "sections": "セクション",
   "thirdParty": {
     "bind": "連携",
     "bindFailed": "連携に失敗しました",
@@ -34,6 +35,11 @@
     "newCode": "新しい宛先に送信したコード"
   },
   "currentCredential": {
+    "codeRequired": "確認コードを入力してください",
+    "passwordRequired": "現在のパスワードを入力してください",
+    "useCode": "パスワード未設定の場合は {{email}} に送信したコードで認証できます",
+    "usePassword": "現在のパスワードで認証する",
+    "mobileNeedsPassword": "パスワード未設定のアカウントは、電話番号を変更する前にパスワードを設定してください",
     "password": "現在のパスワード",
     "verificationCode": "確認コード",
     "code": "{{email}} に送信したコード",

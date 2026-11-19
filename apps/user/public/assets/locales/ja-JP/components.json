@@ -11,7 +11,8 @@
       "7": "ここに大きなサプライズがあるはずでしたが、サプライズが逃げてしまいました！",
       "8": "今はここに何もない、空のスナック棚のようです。",
       "9": "この空っぽのスペースは、主役の登場を待っています！"
-    }
+    },
+    "title": "データなし"
   },
   "error": {
     "400": "リクエストパラメータが正しくありません。確認してもう一度お試しください。",
@@ -114,11 +115,17 @@
   },
   "footer": {
     "copyright": "全著作権所有",
+    "email": "メールでお問い合わせ",
     "privacyPolicy": "プライバシーポリシー",
+    "social": "{{name}} のページを見る",
     "tos": "利用規約"
   },
-  "language": "言語",
+  "language": {
+    "followSystem": "システムの既定値",
+    "label": "言語"
+  },
   "loginRegister": "ログイン / 新規登録",
+  "loginRegisterMobile": "マイページ",
   "menu": {
     "affiliate": "アフィリエイト報酬",
     "announcement": "お知らせ",
@@ -137,18 +144,47 @@
     "traffic": "トラフィック統計",
     "wallet": "資産明細"
   },
+  "noResults": "結果が見つかりません",
   "pagination": {
     "pageInfo": "{{page}} ページ目、全 {{total}} ページ",
-    "rowsPerPage": "ページあたりの行数"
+    "rowsPerPage": "ページあたりの行数",
+    "first": "最初のページへ",
+    "next": "次のページへ",
+    "selectPage": "ページ番号を選択",
+    "previous": "前のページへ",
+    "last": "最後のページへ"
   },
+  "search": "検索",
   "theme": {
     "dark": "ダーク",
     "light": "ライト",
     "system": "システム",
-    "toggle": "テーマ切替"
+    "toggle": "テーマ切替",
+    "followSystem": "システムの既定値"
   },
   "unlimited": "無制限",
   "table": {
-    "columns": "列を選択"
+    "actions": "操作",
+    "columns": "列を選択",
+    "data": "データテーブル",
+    "reorder": "並べ替え",
+    "reset": "テーブルをリセット",
+    "selectAll": "すべて選択",
+    "selectRow": "行を選択"
+  },
+  "breadcrumb": {
+    "more": "その他"
+  },
+  "close": "閉じる",
+  "sidebar": {
+    "title": "サイドバー",
+    "toggle": "サイドバーの表示切替",
+    "description": "モバイル用サイドバーを表示します。"
+  },
+  "spinner": {
+    "label": "読み込み中"
+  },
+  "progress": {
+    "label": "進捗"
   }
 }

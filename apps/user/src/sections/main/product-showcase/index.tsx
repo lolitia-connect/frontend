@@ -1,3 +1,5 @@
+"use client";
+
 import { getV1PublicPortalSubscribe as getSubscription } from "@workspace/ui/services/user/user";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";

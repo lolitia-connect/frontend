@@ -1,3 +1,6 @@
+"use client";
+
+import { Sheet } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@workspace/ui/components/button";
 import {
@@ -13,14 +16,7 @@ import {
   RadioGroupItem,
 } from "@workspace/ui/components/radio-group";
 import { ScrollArea } from "@workspace/ui/components/scroll-area";
-import {
-  Sheet,
-  SheetContent,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@workspace/ui/components/sheet";
+
 import { Combobox } from "@workspace/ui/composed/combobox";
 import { DatePicker } from "@workspace/ui/composed/date-picker";
 import { EnhancedInput } from "@workspace/ui/composed/enhanced-input";
@@ -83,8 +79,8 @@ export default function CouponForm<T extends Record<string, any>>({
   const { subscribes } = useSubscribe();
 
   return (
-    <Sheet onOpenChange={setOpen} open={open}>
-      <SheetTrigger asChild>
+    <Sheet isOpen={open} onOpenChange={setOpen} placement="right">
+      <Sheet.Trigger>
         <Button
           onClick={() => {
             form.reset();
@@ -93,302 +89,319 @@ export default function CouponForm<T extends Record<string, any>>({
         >
           {trigger}
         </Button>
-      </SheetTrigger>
-      <SheetContent className="w-[500px] max-w-full md:max-w-screen-md">
-        <SheetHeader>
-          <SheetTitle>{title}</SheetTitle>
-        </SheetHeader>
-        <ScrollArea className="h-[calc(100vh-48px-36px-36px-env(safe-area-inset-top))]">
-          <Form {...form}>
-            <form
-              className="space-y-4 px-6 pt-4"
-              onSubmit={form.handleSubmit(handleSubmit)}
-            >
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t("form.name", "Name")}</FormLabel>
-                    <FormControl>
-                      <EnhancedInput
-                        onValueChange={(value) => {
-                          form.setValue(field.name, value);
-                        }}
-                        placeholder={t(
-                          "form.enterCouponName",
-                          "Enter Coupon Name"
-                        )}
-                        value={field.value}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="code"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      {t("form.customCouponCode", "Custom Coupon Code")}
-                    </FormLabel>
-                    <FormControl>
-                      <EnhancedInput
-                        placeholder={t(
-                          "form.customCouponCodePlaceholder",
-                          "Custom Coupon Code (leave blank for auto-generation)"
-                        )}
-                        {...field}
-                        onValueChange={(value) => {
-                          form.setValue(field.name, value);
-                        }}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="type"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t("form.type", "Coupon Type")}</FormLabel>
-                    <FormControl>
-                      <RadioGroup
-                        className="flex gap-2"
-                        defaultValue={String(field.value)}
-                        onValueChange={(value) => {
-                          form.setValue(field.name, Number(value));
-                          form.setValue("discount", "");
-                        }}
-                      >
-                        <FormItem className="flex items-center space-x-3 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="1" />
-                          </FormControl>
-                          <FormLabel className="font-normal">
+      </Sheet.Trigger>
+      <Sheet.Backdrop>
+        <Sheet.Content>
+          <Sheet.Dialog className="w-[500px] max-w-full md:max-w-screen-md">
+            <Sheet.Header>
+              <Sheet.Heading>{title}</Sheet.Heading>
+            </Sheet.Header>
+            <ScrollArea className="h-[calc(100vh-48px-36px-36px-env(safe-area-inset-top))]">
+              <Form {...form}>
+                <form
+                  className="space-y-4 px-6 pt-4"
+                  onSubmit={form.handleSubmit(handleSubmit)}
+                >
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{t("form.name", "Name")}</FormLabel>
+                        <FormControl>
+                          <EnhancedInput
+                            onValueChange={(value) => {
+                              form.setValue(field.name, value);
+                            }}
+                            placeholder={t(
+                              "form.enterCouponName",
+                              "Enter Coupon Name"
+                            )}
+                            value={field.value}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="code"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          {t("form.customCouponCode", "Custom Coupon Code")}
+                        </FormLabel>
+                        <FormControl>
+                          <EnhancedInput
+                            placeholder={t(
+                              "form.customCouponCodePlaceholder",
+                              "Custom Coupon Code (leave blank for auto-generation)"
+                            )}
+                            {...field}
+                            onValueChange={(value) => {
+                              form.setValue(field.name, value);
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="type"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{t("form.type", "Coupon Type")}</FormLabel>
+                        <FormControl>
+                          <RadioGroup
+                            className="flex gap-2"
+                            defaultValue={String(field.value)}
+                            onValueChange={(value) => {
+                              form.setValue(field.name, Number(value));
+                              form.setValue("discount", "");
+                            }}
+                          >
+                            <FormItem className="flex items-center space-x-3 space-y-0">
+                              <FormControl>
+                                <RadioGroupItem value="1" />
+                              </FormControl>
+                              <FormLabel className="font-normal">
+                                {t(
+                                  "form.percentageDiscount",
+                                  "Percentage Discount"
+                                )}
+                              </FormLabel>
+                            </FormItem>
+                            <FormItem className="flex items-center space-x-3 space-y-0">
+                              <FormControl>
+                                <RadioGroupItem value="2" />
+                              </FormControl>
+                              <FormLabel className="font-normal">
+                                {t("form.amountDiscount", "Amount Discount")}
+                              </FormLabel>
+                            </FormItem>
+                          </RadioGroup>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  {type === 1 && (
+                    <FormField
+                      control={form.control}
+                      name="discount"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>
                             {t(
                               "form.percentageDiscount",
                               "Percentage Discount"
                             )}
                           </FormLabel>
-                        </FormItem>
-                        <FormItem className="flex items-center space-x-3 space-y-0">
                           <FormControl>
-                            <RadioGroupItem value="2" />
+                            <EnhancedInput
+                              max={100}
+                              min={1}
+                              onValueChange={(value) => {
+                                form.setValue(field.name, value);
+                              }}
+                              placeholder={t("form.enterValue", "Enter Value")}
+                              suffix="%"
+                              type="number"
+                              value={field.value}
+                            />
                           </FormControl>
-                          <FormLabel className="font-normal">
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  )}
+                  {type === 2 && (
+                    <FormField
+                      control={form.control}
+                      name="discount"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>
                             {t("form.amountDiscount", "Amount Discount")}
                           </FormLabel>
+                          <FormControl>
+                            <EnhancedInput
+                              formatInput={(value) =>
+                                unitConversion("centsToDollars", value)
+                              }
+                              formatOutput={(value) =>
+                                unitConversion("dollarsToCents", value)
+                              }
+                              onValueChange={(value) => {
+                                form.setValue(field.name, value);
+                              }}
+                              placeholder={t("form.enterValue", "Enter Value")}
+                              type="number"
+                              value={field.value}
+                            />
+                          </FormControl>
+                          <FormMessage />
                         </FormItem>
-                      </RadioGroup>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              {type === 1 && (
-                <FormField
-                  control={form.control}
-                  name="discount"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        {t("form.percentageDiscount", "Percentage Discount")}
-                      </FormLabel>
-                      <FormControl>
-                        <EnhancedInput
-                          max={100}
-                          min={1}
-                          onValueChange={(value) => {
-                            form.setValue(field.name, value);
-                          }}
-                          placeholder={t("form.enterValue", "Enter Value")}
-                          suffix="%"
-                          type="number"
-                          value={field.value}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
+                      )}
+                    />
                   )}
-                />
-              )}
-              {type === 2 && (
-                <FormField
-                  control={form.control}
-                  name="discount"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        {t("form.amountDiscount", "Amount Discount")}
-                      </FormLabel>
-                      <FormControl>
-                        <EnhancedInput
-                          formatInput={(value) =>
-                            unitConversion("centsToDollars", value)
-                          }
-                          formatOutput={(value) =>
-                            unitConversion("dollarsToCents", value)
-                          }
-                          onValueChange={(value) => {
-                            form.setValue(field.name, value);
-                          }}
-                          placeholder={t("form.enterValue", "Enter Value")}
-                          type="number"
-                          value={field.value}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              )}
-              <FormField
-                control={form.control}
-                name="subscribe"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      {t("form.specifiedServer", "Specified Subscription")}
-                    </FormLabel>
-                    <FormControl>
-                      <Combobox<string, true>
-                        multiple
-                        onChange={(value) => {
-                          form.setValue(field.name, value);
-                        }}
-                        options={subscribes?.map((item) => ({
-                          value: item.id!,
-                          label: item.name!,
-                        }))}
-                        placeholder={t(
-                          "form.selectServer",
-                          "Select Subscription"
-                        )}
-                        value={field.value}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="start_time"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t("form.startTime", "Start Time")}</FormLabel>
-                    <FormControl>
-                      <DatePicker
-                        disabled={(date: Date) =>
-                          date < new Date(Date.now() - 24 * 60 * 60 * 1000)
-                        }
-                        onChange={(value: number | undefined) => {
-                          form.setValue(field.name, value);
-                        }}
-                        placeholder={t("form.enterValue", "Enter Value")}
-                        value={field.value}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="expire_time"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t("form.expireTime", "Expire Time")}</FormLabel>
-                    <FormControl>
-                      <DatePicker
-                        onChange={(value: number | undefined) => {
-                          form.setValue(field.name, value);
-                        }}
-                        placeholder={t("form.enterValue", "Enter Value")}
-                        value={field.value}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                  <FormField
+                    control={form.control}
+                    name="subscribe"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          {t("form.specifiedServer", "Specified Subscription")}
+                        </FormLabel>
+                        <FormControl>
+                          <Combobox<string, true>
+                            multiple
+                            onChange={(value) => {
+                              form.setValue(field.name, value);
+                            }}
+                            options={subscribes?.map((item) => ({
+                              value: item.id!,
+                              label: item.name!,
+                            }))}
+                            placeholder={t(
+                              "form.selectServer",
+                              "Select Subscription"
+                            )}
+                            value={field.value}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="start_time"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          {t("form.startTime", "Start Time")}
+                        </FormLabel>
+                        <FormControl>
+                          <DatePicker
+                            disabled={(date: Date) =>
+                              date < new Date(Date.now() - 24 * 60 * 60 * 1000)
+                            }
+                            onChange={(value: number | undefined) => {
+                              form.setValue(field.name, value);
+                            }}
+                            placeholder={t("form.enterValue", "Enter Value")}
+                            value={field.value}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="expire_time"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          {t("form.expireTime", "Expire Time")}
+                        </FormLabel>
+                        <FormControl>
+                          <DatePicker
+                            onChange={(value: number | undefined) => {
+                              form.setValue(field.name, value);
+                            }}
+                            placeholder={t("form.enterValue", "Enter Value")}
+                            value={field.value}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-              <FormField
-                control={form.control}
-                name="count"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t("form.count", "Max Usage Count")}</FormLabel>
-                    <FormControl>
-                      <EnhancedInput
-                        min={0}
-                        placeholder={t(
-                          "form.countPlaceholder",
-                          "Max Usage Count (leave blank for no limit)"
-                        )}
-                        step={1}
-                        type="number"
-                        {...field}
-                        onValueChange={(value) => {
-                          form.setValue(field.name, value);
-                        }}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="user_limit"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      {t("form.userLimit", "Max Usage Count per User")}
-                    </FormLabel>
-                    <FormControl>
-                      <EnhancedInput
-                        min={0}
-                        placeholder={t(
-                          "form.userLimitPlaceholder",
-                          "Max Usage Count per User (leave blank for no limit)"
-                        )}
-                        step={1}
-                        type="number"
-                        {...field}
-                        onValueChange={(value) => {
-                          form.setValue(field.name, value);
-                        }}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </form>
-          </Form>
-        </ScrollArea>
-        <SheetFooter className="flex-row justify-end gap-2 pt-3">
-          <Button
-            loading={loading}
-            onClick={() => {
-              setOpen(false);
-            }}
-            variant="outline"
-          >
-            {t("form.cancel", "Cancel")}
-          </Button>
-          <Button loading={loading} onClick={form.handleSubmit(handleSubmit)}>
-            {" "}
-            {t("form.confirm", "Confirm")}
-          </Button>
-        </SheetFooter>
-      </SheetContent>
+                  <FormField
+                    control={form.control}
+                    name="count"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          {t("form.count", "Max Usage Count")}
+                        </FormLabel>
+                        <FormControl>
+                          <EnhancedInput
+                            min={0}
+                            placeholder={t(
+                              "form.countPlaceholder",
+                              "Max Usage Count (leave blank for no limit)"
+                            )}
+                            step={1}
+                            type="number"
+                            {...field}
+                            onValueChange={(value) => {
+                              form.setValue(field.name, value);
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="user_limit"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          {t("form.userLimit", "Max Usage Count per User")}
+                        </FormLabel>
+                        <FormControl>
+                          <EnhancedInput
+                            min={0}
+                            placeholder={t(
+                              "form.userLimitPlaceholder",
+                              "Max Usage Count per User (leave blank for no limit)"
+                            )}
+                            step={1}
+                            type="number"
+                            {...field}
+                            onValueChange={(value) => {
+                              form.setValue(field.name, value);
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </form>
+              </Form>
+            </ScrollArea>
+            <Sheet.Footer className="flex-row justify-end gap-2 pt-3">
+              <Button
+                loading={loading}
+                onClick={() => {
+                  setOpen(false);
+                }}
+                variant="outline"
+              >
+                {t("form.cancel", "Cancel")}
+              </Button>
+              <Button
+                loading={loading}
+                onClick={form.handleSubmit(handleSubmit)}
+              >
+                {" "}
+                {t("form.confirm", "Confirm")}
+              </Button>
+            </Sheet.Footer>
+            <Sheet.CloseTrigger aria-label="Close" />
+          </Sheet.Dialog>
+        </Sheet.Content>
+      </Sheet.Backdrop>
     </Sheet>
   );
 }

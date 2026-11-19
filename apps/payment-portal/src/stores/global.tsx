@@ -25,7 +25,7 @@ function mapPaymentMethod(item: any): PaymentMethod {
     icon: item?.icon ? String(item.icon) : "",
     fee_mode: Number(item?.fee_mode || 0),
     fee_percent: Number(item?.fee_percent || 0),
-    fee_amount: Number(item?.fee_amount || 0),
+    fee_amount: Number(item?.fee_amount || 0) / 100,
   };
 }
 
@@ -264,7 +264,13 @@ export const usePortalStore = create<PortalStore>((set, get) => ({
         const detailResponse = await queryOrderDetail({ order_no: orderNo });
         const detail = detailResponse.data.data;
         if (detail) {
-          set({ activeOrder: mapActiveOrder(detail) });
+          const current = get().activeOrder;
+          set({
+            activeOrder: mapActiveOrder(
+              detail,
+              current?.orderNo === orderNo ? current.checkout : undefined
+            ),
+          });
         }
       }
     } finally {
@@ -296,8 +302,7 @@ export const usePortalStore = create<PortalStore>((set, get) => ({
           returnUrl: window.location.href,
         });
         checkout = mapCheckoutInfo(checkoutResponse.data.data);
-        // Mark checkout as requested for this order
-        set({ checkoutRequestedForOrderNo: orderNo });
+        if (checkout) set({ checkoutRequestedForOrderNo: orderNo });
       } catch {
         checkout = undefined;
       }

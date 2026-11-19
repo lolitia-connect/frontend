@@ -8,7 +8,7 @@ export async function updateDocument(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/document/`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/document/`,
     {
       method: "PUT",
       headers: {
@@ -26,7 +26,7 @@ export async function createDocument(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/document/`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/document/`,
     {
       method: "POST",
       headers: {
@@ -44,7 +44,7 @@ export async function deleteDocument(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/document/`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/document/`,
     {
       method: "DELETE",
       headers: {
@@ -62,7 +62,7 @@ export async function batchDeleteDocument(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/document/batch`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/document/batch`,
     {
       method: "DELETE",
       headers: {
@@ -77,7 +77,7 @@ export async function batchDeleteDocument(
 /** Get document detail GET /v1/admin/document/detail */
 export async function getDocumentDetail(options?: { [key: string]: any }) {
   return request<API.Response & { data?: API.Document }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/document/detail`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/document/detail`,
     {
       method: "GET",
       ...(options || {}),
@@ -92,7 +92,7 @@ export async function getDocumentList(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: API.GetDocumentListResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/document/list`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/document/list`,
     {
       method: "GET",
       params: {

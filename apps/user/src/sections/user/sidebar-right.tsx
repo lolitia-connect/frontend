@@ -1,12 +1,7 @@
 "use client";
 
+import { Card } from "@heroui/react";
 import { Button } from "@workspace/ui/components/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@workspace/ui/components/card";
 import { Sidebar, SidebarContent } from "@workspace/ui/components/sidebar";
 import { Icon } from "@workspace/ui/composed/icon";
 import { isBrowser } from "@workspace/ui/utils/index";
@@ -27,61 +22,63 @@ export function SidebarRight({
     <Sidebar collapsible="none" side="right" {...props}>
       <SidebarContent className="*:gap-0 *:py-0">
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 p-3 pb-2">
-            <CardTitle className="font-medium text-sm">
+          <Card.Header className="space-y-0 p-3 pb-2">
+            <Card.Title className="font-medium text-sm">
               {t("accountBalance", "Account Balance")}
-            </CardTitle>
-            <Recharge className="p-0" variant="link" />
-          </CardHeader>
-          <CardContent className="p-3 font-bold text-2xl">
-            <Display type="currency" value={user?.balance} />
-          </CardContent>
+            </Card.Title>
+          </Card.Header>
+          <Card.Content className="flex flex-col items-start gap-1 p-3">
+            <span className="font-bold text-2xl">
+              <Display type="currency" value={user?.balance} />
+            </span>
+            <Recharge className="h-auto p-0" variant="link" />
+          </Card.Content>
         </Card>
         <Card>
-          <CardHeader className="space-y-0 p-3 pb-2">
-            <CardTitle className="font-medium text-sm">
+          <Card.Header className="space-y-0 p-3 pb-2">
+            <Card.Title className="font-medium text-sm">
               {t("giftAmount", "Gift Amount")}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-3 font-bold text-2xl">
+            </Card.Title>
+          </Card.Header>
+          <Card.Content className="p-3 font-bold text-2xl">
             <Display type="currency" value={user?.gift_amount} />
-          </CardContent>
+          </Card.Content>
         </Card>
         <Card>
-          <CardHeader className="space-y-0 p-3 pb-2">
-            <CardTitle className="font-medium text-sm">
+          <Card.Header className="space-y-0 p-3 pb-2">
+            <Card.Title className="font-medium text-sm">
               {t("commission", "Commission")}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-3 font-bold text-2xl">
+            </Card.Title>
+          </Card.Header>
+          <Card.Content className="p-3 font-bold text-2xl">
             <Display type="currency" value={user?.commission} />
-          </CardContent>
+          </Card.Content>
         </Card>
         {user?.refer_code && (
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 p-3 pb-2">
-              <CardTitle className="font-medium text-sm">
+            <Card.Header className="flex flex-row items-center justify-between space-y-0 p-3 pb-2">
+              <Card.Title className="font-medium text-sm">
                 {t("inviteCode", "Invite Code")}
-              </CardTitle>
+              </Card.Title>
               <CopyToClipboard
                 onCopy={(_text: string, result: boolean) => {
                   if (result) {
                     toast.success(t("copySuccess", "Copy Success"));
                   }
                 }}
-                text={`${isBrowser() && location?.origin}/#/auth?invite=${user?.refer_code}`}
+                text={`${isBrowser() && location?.origin}/auth?invite=${user?.refer_code}`}
               >
                 <Button className="size-5 p-0" variant="ghost">
                   <Icon
-                    className="text-2xl text-primary"
+                    className="text-2xl text-accent"
                     icon="mdi:content-copy"
                   />
                 </Button>
               </CopyToClipboard>
-            </CardHeader>
-            <CardContent className="truncate p-3 font-bold">
+            </Card.Header>
+            <Card.Content className="truncate p-3 font-bold">
               {user?.refer_code}
-            </CardContent>
+            </Card.Content>
           </Card>
         )}
       </SidebarContent>

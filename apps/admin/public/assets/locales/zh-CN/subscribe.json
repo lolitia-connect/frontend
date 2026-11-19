@@ -96,7 +96,9 @@
       "template": "模板"
     },
     "validation": {
-      "invalidDefaultParams": "查询字符串参数格式无效"
+      "invalidDefaultParams": "查询字符串参数格式无效",
+      "userAgentRequiredSuffix": "为必填项",
+      "nameRequired": "请输入客户端名称"
     }
   },
   "outputFormats": {
@@ -109,6 +111,7 @@
   "protocol": {
     "title": "客户端管理"
   },
+  "sections": "标签页",
   "table": {
     "columns": {
       "default": "默认",

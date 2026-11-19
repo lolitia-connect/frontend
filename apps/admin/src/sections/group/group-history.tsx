@@ -1,31 +1,18 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
-import { Badge } from "@workspace/ui/components/badge";
-import { Button } from "@workspace/ui/components/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@workspace/ui/components/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@workspace/ui/components/dialog";
+  Description,
+  Modal,
+} from "@heroui/react";
+import { useQuery } from "@tanstack/react-query";
+import { Badge } from "@workspace/ui/components/badge";
+import { Button } from "@workspace/ui/components/button";
 import { Spinner } from "@workspace/ui/components/spinner";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@workspace/ui/components/table";
 import {
   ProTable,
   type ProTableActions,
@@ -39,6 +26,8 @@ import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { formatDate } from "@/utils/common";
 
+import { GroupDetailStats, GroupDetailTable } from "./group-detail-table";
+
 export default function GroupHistory() {
   const { t } = useTranslation("group");
   const ref = useRef<ProTableActions>(null);
@@ -46,18 +35,7 @@ export default function GroupHistory() {
   const [detailLoading, setDetailLoading] = useState(false);
   const [selectedHistory, setSelectedHistory] =
     useState<API.GroupHistory | null>(null);
-  const [details, setDetails] = useState<any[]>([]);
-  const [nodeGroupMap, setNodeGroupMap] = useState<Map<string, string>>(
-    new Map()
-  );
-
-  // User list dialog state
-  const [userListOpen, setUserListOpen] = useState(false);
-  const [selectedNodeGroupName, setSelectedNodeGroupName] =
-    useState<string>("");
-  const [userList, setUserList] = useState<any[]>([]);
-  const [userListTotal, setUserListTotal] = useState(0);
-
+  const [details, setDetails] = useState<API.GroupHistoryDetailItem[]>([]);
   // Fetch all node groups
   const { data: nodeGroups } = useQuery({
     queryKey: ["getNodeGroupListForDetail"],
@@ -69,17 +47,6 @@ export default function GroupHistory() {
       return data.data?.list || [];
     },
   });
-
-  // Build ID to name maps when groups are loaded
-  if (nodeGroups) {
-    const newNodeGroupMap = new Map<string, string>();
-    nodeGroups.forEach((ng: API.NodeGroup) => {
-      newNodeGroupMap.set(String(ng.id), ng.name);
-    });
-    if (newNodeGroupMap.size !== nodeGroupMap.size) {
-      setNodeGroupMap(newNodeGroupMap);
-    }
-  }
 
   const getModeLabel = (mode: string) => {
     switch (mode) {
@@ -134,41 +101,6 @@ export default function GroupHistory() {
     }
   };
 
-  const handleShowUserList = async (
-    nodeGroupId: string,
-    nodeGroupName: string
-  ) => {
-    setSelectedNodeGroupName(nodeGroupName);
-    setUserListOpen(true);
-
-    // 从历史详情记录中获取用户数据
-    const detail = details.find((d: any) => {
-      const detailNodeGroupId = d.NodeGroupId || d.node_group_id;
-      return String(detailNodeGroupId) === String(nodeGroupId);
-    });
-
-    if (detail) {
-      const userDataJSON = detail.UserData || detail.user_data;
-      if (userDataJSON) {
-        try {
-          const userData = JSON.parse(userDataJSON);
-          setUserList(userData);
-          setUserListTotal(userData.length);
-        } catch (error) {
-          console.error("Failed to parse user data:", error);
-          setUserList([]);
-          setUserListTotal(0);
-        }
-      } else {
-        setUserList([]);
-        setUserListTotal(0);
-      }
-    } else {
-      setUserList([]);
-      setUserListTotal(0);
-    }
-  };
-
   return (
     <div className="space-y-4">
       <Card>
@@ -204,7 +136,7 @@ export default function GroupHistory() {
                 accessorKey: "id",
                 header: t("id", "ID"),
                 cell: ({ row }: { row: any }) => (
-                  <span className="text-muted-foreground">
+                  <span className="text-muted">
                     {t("idPrefix", "#")}
                     {row.getValue("id")}
                   </span>
@@ -248,7 +180,7 @@ export default function GroupHistory() {
                   const record = row.original;
                   return (
                     <div className="space-y-1">
-                      <div className="text-muted-foreground text-xs">
+                      <div className="text-muted text-xs">
                         {t("successCount", "Success")}: {record.success_count}{" "}
                         {t("separator", "/")} {t("failedCount", "Failed")}:{" "}
                         {record.failed_count}
@@ -293,249 +225,122 @@ export default function GroupHistory() {
       </Card>
 
       {/* Detail Dialog */}
-      <Dialog onOpenChange={setDetailOpen} open={detailOpen}>
-        <DialogContent className="max-h-[80vh] overflow-y-auto sm:max-w-[700px]">
-          <DialogHeader>
-            <DialogTitle>
-              {t("groupHistoryDetail", "Group Calculation Detail")}
-            </DialogTitle>
-            <DialogDescription>
-              {t("historyId", "History ID")}: {selectedHistory?.id}
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4">
-            {selectedHistory && (
-              <>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <div className="text-muted-foreground text-sm">
-                      {t("groupMode", "Group Mode")}
-                    </div>
-                    <div className="font-medium">
-                      {getModeLabel(selectedHistory.group_mode)}
-                    </div>
-                  </div>
-                  <div>
-                    <div className="text-muted-foreground text-sm">
-                      {t("triggerType", "Trigger Type")}
-                    </div>
-                    <div className="font-medium">
-                      {getTriggerTypeLabel(selectedHistory.trigger_type)}
-                    </div>
-                  </div>
-                  <div>
-                    <div className="text-muted-foreground text-sm">
-                      {t("totalUsers", "Total Users")}
-                    </div>
-                    <div className="font-medium">
-                      {selectedHistory.total_users}
-                    </div>
-                  </div>
-                  <div>
-                    <div className="text-muted-foreground text-sm">
-                      {t("result", "Result")}
-                    </div>
-                    <div className="font-medium">
-                      {t("successCount", "Success")}:{" "}
-                      {selectedHistory.success_count} {t("separator", "/")}{" "}
-                      {t("failedCount", "Failed")}:{" "}
-                      {selectedHistory.failed_count}
-                    </div>
-                  </div>
-                  {selectedHistory.start_time && (
-                    <div>
-                      <div className="text-muted-foreground text-sm">
-                        {t("startTime", "Start Time")}
-                      </div>
-                      <div className="font-medium">
-                        {formatDate(selectedHistory.start_time)}
-                      </div>
-                    </div>
-                  )}
-                  {selectedHistory.end_time && (
-                    <div>
-                      <div className="text-muted-foreground text-sm">
-                        {t("endTime", "End Time")}
-                      </div>
-                      <div className="font-medium">
-                        {formatDate(selectedHistory.end_time)}
-                      </div>
-                    </div>
-                  )}
-                </div>
 
-                {selectedHistory.error_log && (
-                  <div>
-                    <div className="text-muted-foreground text-sm">
-                      {t("errorMessage", "Error Message")}
-                    </div>
-                    <div className="rounded-md bg-destructive/10 p-3 text-destructive text-sm">
-                      {selectedHistory.error_log}
-                    </div>
-                  </div>
-                )}
-              </>
-            )}
-
-            <div>
-              <div className="mb-2 font-medium text-sm">
-                {t("groupDetails", "Group Details")}
-              </div>
-              {detailLoading ? (
-                <div className="flex items-center justify-center py-8">
-                  <Spinner className="size-6 text-muted-foreground" />
-                  <span className="ml-2 text-muted-foreground text-sm">
-                    {t("loading", "Loading...")}
-                  </span>
-                </div>
-              ) : details.length > 0 ? (
+      <Modal.Backdrop isOpen={detailOpen} onOpenChange={setDetailOpen}>
+        <Modal.Container>
+          <Modal.Dialog className="max-h-[80vh] overflow-y-auto sm:max-w-[700px]">
+            <Modal.Header>
+              <Modal.Heading>
+                {t("groupHistoryDetail", "Group Calculation Detail")}
+              </Modal.Heading>
+              <Description slot="description">
+                {t("historyId", "History ID")}: {selectedHistory?.id}
+              </Description>
+            </Modal.Header>
+            <div className="space-y-4">
+              {selectedHistory && (
                 <>
-                  {/* 统计信息 */}
-                  <div className="mb-4 grid grid-cols-3 gap-4 rounded-lg bg-muted/50 p-4">
-                    <div className="text-center">
-                      <div className="font-bold text-2xl">
-                        {details.reduce(
-                          (sum: number, d: any) =>
-                            sum + (d.UserCount || d.user_count || 0),
-                          0
-                        )}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <div className="text-muted text-sm">
+                        {t("groupMode", "Group Mode")}
                       </div>
-                      <div className="text-muted-foreground text-xs">
+                      <div className="font-medium">
+                        {getModeLabel(selectedHistory.group_mode)}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-muted text-sm">
+                        {t("triggerType", "Trigger Type")}
+                      </div>
+                      <div className="font-medium">
+                        {getTriggerTypeLabel(selectedHistory.trigger_type)}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-muted text-sm">
                         {t("totalUsers", "Total Users")}
                       </div>
-                    </div>
-                    <div className="text-center">
-                      <div className="font-bold text-2xl">
-                        {details.reduce(
-                          (sum: number, d: any) =>
-                            sum + (d.NodeCount || d.node_count || 0),
-                          0
-                        )}
-                      </div>
-                      <div className="text-muted-foreground text-xs">
-                        {t("totalNodes", "Total Nodes")}
+                      <div className="font-medium">
+                        {selectedHistory.total_users}
                       </div>
                     </div>
-                    <div className="text-center">
-                      <div className="font-bold text-2xl">{details.length}</div>
-                      <div className="text-muted-foreground text-xs">
-                        {t("totalNodeGroups", "Total Node Groups")}
+                    <div>
+                      <div className="text-muted text-sm">
+                        {t("result", "Result")}
+                      </div>
+                      <div className="font-medium">
+                        {t("successCount", "Success")}:{" "}
+                        {selectedHistory.success_count} {t("separator", "/")}{" "}
+                        {t("failedCount", "Failed")}:{" "}
+                        {selectedHistory.failed_count}
                       </div>
                     </div>
+                    {selectedHistory.start_time && (
+                      <div>
+                        <div className="text-muted text-sm">
+                          {t("startTime", "Start Time")}
+                        </div>
+                        <div className="font-medium">
+                          {formatDate(selectedHistory.start_time)}
+                        </div>
+                      </div>
+                    )}
+                    {selectedHistory.end_time && (
+                      <div>
+                        <div className="text-muted text-sm">
+                          {t("endTime", "End Time")}
+                        </div>
+                        <div className="font-medium">
+                          {formatDate(selectedHistory.end_time)}
+                        </div>
+                      </div>
+                    )}
                   </div>
 
-                  {/* 详情表格 */}
-                  <div className="rounded-md border">
-                    <table className="w-full text-sm">
-                      <thead className="bg-muted">
-                        <tr>
-                          <th className="border-b px-4 py-2 text-left">
-                            {t("nodeGroup", "Node Group")}
-                          </th>
-                          <th className="border-b px-4 py-2 text-right">
-                            {t("userCount", "User Count")}
-                          </th>
-                          <th className="border-b px-4 py-2 text-right">
-                            {t("nodeCount", "Node Count")}
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {details.map((detail: any, index: number) => {
-                          const nodeGroupId =
-                            detail.NodeGroupId || detail.node_group_id;
-                          const nodeGroupName =
-                            nodeGroupMap.get(String(nodeGroupId)) ||
-                            `${t("idPrefix", "#")}${nodeGroupId}`;
-
-                          return (
-                            <tr key={index}>
-                              <td className="border-b px-4 py-2">
-                                <div>
-                                  <div className="font-medium">
-                                    {nodeGroupName}
-                                  </div>
-                                  <div className="text-muted-foreground text-xs">
-                                    {t("id", "ID")}: {nodeGroupId}
-                                  </div>
-                                </div>
-                              </td>
-                              <td className="border-b px-4 py-2 text-right">
-                                <button
-                                  className="cursor-pointer font-semibold hover:underline disabled:cursor-not-allowed disabled:opacity-50"
-                                  disabled={
-                                    (detail.UserCount ||
-                                      detail.user_count ||
-                                      0) === 0
-                                  }
-                                  onClick={() =>
-                                    handleShowUserList(
-                                      nodeGroupId,
-                                      nodeGroupName
-                                    )
-                                  }
-                                  type="button"
-                                >
-                                  {detail.UserCount || detail.user_count || 0}
-                                </button>
-                              </td>
-                              <td className="border-b px-4 py-2 text-right">
-                                {detail.NodeCount || detail.node_count || 0}
-                              </td>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
-                  </div>
+                  {selectedHistory.error_log && (
+                    <div>
+                      <div className="text-muted text-sm">
+                        {t("errorMessage", "Error Message")}
+                      </div>
+                      <div className="rounded-md bg-danger/10 p-3 text-danger text-sm">
+                        {selectedHistory.error_log}
+                      </div>
+                    </div>
+                  )}
                 </>
-              ) : (
-                <div className="py-8 text-center text-muted-foreground text-sm">
-                  {t("noDetails", "No details available")}
-                </div>
               )}
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
 
-      {/* User List Dialog */}
-      <Dialog onOpenChange={setUserListOpen} open={userListOpen}>
-        <DialogContent className="max-h-[80vh] overflow-y-auto sm:max-w-[700px]">
-          <DialogHeader>
-            <DialogTitle>
-              {selectedNodeGroupName} - {t("userList", "User List")}
-            </DialogTitle>
-            <DialogDescription>
-              {t("totalUsers", "Total Users")}: {userListTotal}
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4">
-            {userList.length > 0 ? (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>{t("id", "ID")}</TableHead>
-                    <TableHead>{t("email", "Email")}</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {userList.map((user) => (
-                    <TableRow key={user.id}>
-                      <TableCell className="font-medium">{user.id}</TableCell>
-                      <TableCell>{user.email || "-"}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            ) : (
-              <div className="py-8 text-center text-muted-foreground text-sm">
-                {t("noUsers", "No users found")}
+              <div>
+                <div className="mb-2 font-medium text-sm">
+                  {t("groupDetails", "Group Details")}
+                </div>
+                {detailLoading ? (
+                  <div className="flex items-center justify-center py-8">
+                    <Spinner className="size-6 text-muted" />
+                    <span className="ml-2 text-muted text-sm">
+                      {t("loading", "Loading...")}
+                    </span>
+                  </div>
+                ) : details.length > 0 ? (
+                  <div className="space-y-4">
+                    <GroupDetailStats details={details} />
+                    <GroupDetailTable
+                      details={details}
+                      nodeGroups={nodeGroups}
+                    />
+                  </div>
+                ) : (
+                  <div className="py-8 text-center text-muted text-sm">
+                    {t("noDetails", "No details available")}
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-        </DialogContent>
-      </Dialog>
+            </div>
+            <Modal.CloseTrigger aria-label="Close" />
+          </Modal.Dialog>
+        </Modal.Container>
+      </Modal.Backdrop>
     </div>
   );
 }

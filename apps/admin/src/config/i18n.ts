@@ -1,5 +1,5 @@
-// Pure constants only: this module is also imported by vite.config.ts (to
-// generate locale preload hints), which cannot evaluate import.meta.env.
+// Pure constants only: this module is imported by i18n tooling that runs outside
+// the bundler, so it must stay free of runtime/env-dependent code.
 export const fallbackLng = "en-US";
 export const supportedLngs = ["en-US", "zh-CN"];
 

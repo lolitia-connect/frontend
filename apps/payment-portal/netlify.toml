@@ -1,0 +1,21 @@
+# Netlify config for the PPanel payment portal app (收银端).
+#
+# The build runs from the repository ROOT (Netlify's monorepo picker reads this
+# file but executes at the repo root, not inside apps/payment-portal). So the
+# command is invoked at the root and `publish` is written relative to the root.
+#
+# Turborepo is scoped to THIS app only via `--filter` (the root
+# `build:payment-portal` script), so sibling apps (user / admin / docs) are
+# never built here.
+#
+# No `/api/*` proxy: the app forwards API traffic via its own next.config.ts
+# rewrites driven by NEXT_PUBLIC_API_BASE_URL, set in the Netlify UI.
+[build]
+  command = "bun run build:payment-portal"
+  publish = "apps/payment-portal/.next"
+
+[build.environment]
+  NODE_VERSION = "26"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"

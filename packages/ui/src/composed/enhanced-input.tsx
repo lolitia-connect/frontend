@@ -127,7 +127,7 @@ export function EnhancedInput<T = string>({
 
   const renderPrefix = () =>
     typeof prefix === "string" ? (
-      <div className="relative mr-px flex h-9 items-center text-nowrap bg-muted px-3">
+      <div className="relative mr-px flex h-9 items-center text-nowrap bg-default px-3">
         {prefix}
       </div>
     ) : (
@@ -136,7 +136,7 @@ export function EnhancedInput<T = string>({
 
   const renderSuffix = () =>
     typeof suffix === "string" ? (
-      <div className="relative ml-px flex h-9 items-center text-nowrap bg-muted px-3">
+      <div className="relative ml-px flex h-9 items-center text-nowrap bg-default px-3">
         {suffix}
       </div>
     ) : (
@@ -146,9 +146,10 @@ export function EnhancedInput<T = string>({
   return (
     <div
       className={cn(
-        "flex w-full items-center overflow-hidden rounded-md border border-input",
+        "flex w-full items-center overflow-hidden rounded-md border border-field-border",
         className
       )}
+      data-slot="enhanced-input"
       suppressHydrationWarning
     >
       {renderPrefix()}

@@ -5,9 +5,9 @@
   "confirmDelete": "Are you sure you want to delete?",
   "create": "Create",
   "createRedemptionCode": "Create Redemption Code",
-  "createSuccess": "Create Success",
+  "createSuccess": "Created successfully",
   "delete": "Delete",
-  "deleteSuccess": "Delete Success",
+  "deleteSuccess": "Deleted successfully",
   "deleteWarning": "Once deleted, data cannot be recovered. Please proceed with caution.",
   "duration": "Redemption Duration",
   "edit": "Edit",
@@ -30,7 +30,11 @@
     "totalCount": "Available Uses",
     "totalCountPlaceholder": "Available Uses",
     "unitTime": "Redemption Duration Unit",
-    "year": "Year"
+    "year": "Year",
+    "quantityRequired": "Quantity is required",
+    "unitTimeRequired": "Unit time is required",
+    "totalCountRequired": "Total count is required",
+    "subscribePlanRequired": "Subscribe plan is required"
   },
   "id": "ID",
   "loading": "Loading...",
@@ -47,7 +51,7 @@
   "total": "Total",
   "totalCount": "Available Uses",
   "unitTime": "Redemption Duration Unit",
-  "updateSuccess": "Update Success",
+  "updateSuccess": "Updated successfully",
   "usedCount": "Used",
   "userId": "User ID"
 }

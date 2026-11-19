@@ -42,7 +42,7 @@ export interface CreateOrder {
 }
 
 const orderPath = (orderNo: string) =>
-  `${import.meta.env.VITE_API_PREFIX || ""}/v2/public/orders/${encodeURIComponent(orderNo)}`;
+  `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v2/public/orders/${encodeURIComponent(orderNo)}`;
 
 export function createV2Order(body: CreateOrder, idempotencyKey: string) {
   const serialized = { ...body } as Record<string, unknown>;
@@ -58,7 +58,7 @@ export function createV2Order(body: CreateOrder, idempotencyKey: string) {
     }
   }
   return request<API.Response & { data?: V2Order }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v2/public/orders`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v2/public/orders`,
     {
       method: "POST",
       data: stringify(serialized),

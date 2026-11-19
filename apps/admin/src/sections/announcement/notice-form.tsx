@@ -1,3 +1,6 @@
+"use client";
+
+import { Sheet } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@workspace/ui/components/button";
 import {
@@ -10,14 +13,7 @@ import {
 } from "@workspace/ui/components/form";
 import { Input } from "@workspace/ui/components/input";
 import { ScrollArea } from "@workspace/ui/components/scroll-area";
-import {
-  Sheet,
-  SheetContent,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@workspace/ui/components/sheet";
+
 import { MarkdownEditor } from "@workspace/ui/composed/editor/markdown";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -65,8 +61,8 @@ export default function AnnouncementForm<T extends Record<string, any>>({
   }
 
   return (
-    <Sheet onOpenChange={setOpen} open={open}>
-      <SheetTrigger asChild>
+    <Sheet isOpen={open} onOpenChange={setOpen} placement="right">
+      <Sheet.Trigger>
         <Button
           onClick={() => {
             form.reset();
@@ -75,72 +71,83 @@ export default function AnnouncementForm<T extends Record<string, any>>({
         >
           {trigger}
         </Button>
-      </SheetTrigger>
-      <SheetContent className="w-[800px] max-w-full md:max-w-screen-md">
-        <SheetHeader>
-          <SheetTitle>{title}</SheetTitle>
-        </SheetHeader>
-        <ScrollArea className="h-[calc(100vh-48px-36px-36px-env(safe-area-inset-top))] px-6">
-          <Form {...form}>
-            <form
-              className="space-y-4 pt-4"
-              id="notice-form"
-              onSubmit={form.handleSubmit(handleSubmit)}
-            >
-              <FormField
-                control={form.control}
-                name="title"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t("form.title", "Title")}</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder={t("form.titlePlaceholder", "Enter title")}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+      </Sheet.Trigger>
+      <Sheet.Backdrop>
+        <Sheet.Content>
+          <Sheet.Dialog className="w-[800px] max-w-full md:max-w-screen-md">
+            <Sheet.Header>
+              <Sheet.Heading>{title}</Sheet.Heading>
+            </Sheet.Header>
+            <ScrollArea className="h-[calc(100vh-48px-36px-36px-env(safe-area-inset-top))] px-6">
+              <Form {...form}>
+                <form
+                  className="space-y-4 pt-4"
+                  id="notice-form"
+                  onSubmit={form.handleSubmit(handleSubmit)}
+                >
+                  <FormField
+                    control={form.control}
+                    name="title"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{t("form.title", "Title")}</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder={t(
+                              "form.titlePlaceholder",
+                              "Enter title"
+                            )}
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-              <FormField
-                control={form.control}
-                name="content"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t("form.content", "Content")}</FormLabel>
-                    <FormControl>
-                      <MarkdownEditor
-                        onChange={(value) => {
-                          form.setValue(field.name, value || "");
-                        }}
-                        value={field.value}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </form>
-          </Form>
-        </ScrollArea>
-        <SheetFooter className="flex-row justify-end gap-2 pt-3">
-          <Button
-            loading={loading}
-            onClick={() => {
-              setOpen(false);
-            }}
-            variant="outline"
-          >
-            {t("form.cancel", "Cancel")}
-          </Button>
-          <Button loading={loading} onClick={form.handleSubmit(handleSubmit)}>
-            {" "}
-            {t("form.confirm", "Confirm")}
-          </Button>
-        </SheetFooter>
-      </SheetContent>
+                  <FormField
+                    control={form.control}
+                    name="content"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{t("form.content", "Content")}</FormLabel>
+                        <FormControl>
+                          <MarkdownEditor
+                            onChange={(value) => {
+                              form.setValue(field.name, value || "");
+                            }}
+                            value={field.value}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </form>
+              </Form>
+            </ScrollArea>
+            <Sheet.Footer className="flex-row justify-end gap-2 pt-3">
+              <Button
+                loading={loading}
+                onClick={() => {
+                  setOpen(false);
+                }}
+                variant="outline"
+              >
+                {t("form.cancel", "Cancel")}
+              </Button>
+              <Button
+                loading={loading}
+                onClick={form.handleSubmit(handleSubmit)}
+              >
+                {" "}
+                {t("form.confirm", "Confirm")}
+              </Button>
+            </Sheet.Footer>
+            <Sheet.CloseTrigger aria-label="Close" />
+          </Sheet.Dialog>
+        </Sheet.Content>
+      </Sheet.Backdrop>
     </Sheet>
   );
 }

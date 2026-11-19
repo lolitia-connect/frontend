@@ -42,7 +42,7 @@ function CodeBlock({ className, children, ...props }: CodeBlockProps) {
   if (match) {
     return (
       <div className="group relative my-4 w-full overflow-hidden rounded-lg">
-        <div className="flex items-center justify-between gap-4 bg-muted px-4 py-2 font-semibold text-sm">
+        <div className="flex items-center justify-between gap-4 bg-default px-4 py-2 font-semibold text-sm">
           <span className="lowercase [&>span]:text-xs">{match[1]}</span>
           <Button
             className="absolute top-0 right-2 z-20 p-0.5 opacity-0 transition-opacity duration-200 group-hover:opacity-100"
@@ -79,7 +79,7 @@ export default function RichMarkdownImpl({
   components,
 }: MarkdownProps) {
   return (
-    <div className="prose dark:prose-invert wrap-break-word w-full max-w-[unset]">
+    <div className="prose dark:prose-invert wrap-anywhere w-full min-w-0 max-w-full">
       <ReactMarkdown
         components={{
           ...markdownComponents,

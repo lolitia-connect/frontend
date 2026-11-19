@@ -11,7 +11,8 @@
       "7": "这个地方本该有个大惊喜，但惊喜溜走了！",
       "8": "暂时这里什么都没有，就像一个空的零食柜。",
       "9": "这个空荡荡的空间正在等待它的主角登场！"
-    }
+    },
+    "title": "暂无数据"
   },
   "error": {
     "400": "请求参数不正确，请检查后重新提交。",
@@ -114,11 +115,17 @@
   },
   "footer": {
     "copyright": "版权所有",
+    "email": "发送邮件联系我们",
     "privacyPolicy": "隐私政策",
+    "social": "访问我们的 {{name}}",
     "tos": "服务条款"
   },
-  "language": "语言",
+  "language": {
+    "followSystem": "系统默认",
+    "label": "语言"
+  },
   "loginRegister": "登录 / 注册",
+  "loginRegisterMobile": "控制台",
   "menu": {
     "affiliate": "推广佣金",
     "announcement": "站点公告",
@@ -137,18 +144,47 @@
     "traffic": "流量统计",
     "wallet": "资产明细"
   },
+  "noResults": "未找到结果",
   "pagination": {
     "pageInfo": "第 {{page}} 页，共 {{total}} 页",
-    "rowsPerPage": "每页行数"
+    "rowsPerPage": "每页行数",
+    "first": "首页",
+    "next": "下一页",
+    "selectPage": "选择页码",
+    "previous": "上一页",
+    "last": "末页"
   },
+  "search": "搜索",
   "theme": {
     "dark": "深色",
     "light": "浅色",
     "system": "系统",
-    "toggle": "切换主题"
+    "toggle": "切换主题",
+    "followSystem": "系统默认"
   },
   "unlimited": "无限制",
   "table": {
-    "columns": "选择列"
+    "actions": "操作",
+    "columns": "选择列",
+    "data": "数据表格",
+    "reorder": "拖动排序",
+    "reset": "重置表格",
+    "selectAll": "全选",
+    "selectRow": "选择行"
+  },
+  "breadcrumb": {
+    "more": "更多"
+  },
+  "close": "关闭",
+  "sidebar": {
+    "title": "侧边栏",
+    "toggle": "切换侧边栏",
+    "description": "显示移动端侧边栏。"
+  },
+  "spinner": {
+    "label": "加载中"
+  },
+  "progress": {
+    "label": "进度"
   }
 }

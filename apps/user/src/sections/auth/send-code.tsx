@@ -104,7 +104,12 @@ export default function SendCode({ type, params }: SendCodeProps) {
       : !(params.telephone && params.telephone_area_code));
 
   return (
-    <Button disabled={disabled} onClick={handleSendCode} type="button">
+    <Button
+      className="shrink-0 whitespace-nowrap"
+      disabled={disabled}
+      onClick={handleSendCode}
+      type="button"
+    >
       {seconds > 0 ? `${seconds}s` : t("get", "Get Code")}
     </Button>
   );

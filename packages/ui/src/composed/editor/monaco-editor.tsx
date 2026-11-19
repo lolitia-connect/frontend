@@ -110,9 +110,7 @@ export function MonacoEditor({
               <h1 className="text-left font-medium text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                 {title}
               </h1>
-              <p className="text-[0.8rem] text-muted-foreground">
-                {description}
-              </p>
+              <p className="text-[0.8rem] text-muted">{description}</p>
             </div>
 
             <div className="flex items-center space-x-2">
@@ -192,7 +190,7 @@ export function MonacoEditor({
               {!internalValue?.trim() && placeholder && (
                 <pre
                   className={cn(
-                    "pointer-events-none absolute top-4 left-7 text-muted-foreground text-sm",
+                    "pointer-events-none absolute top-4 left-7 text-muted text-sm",
                     {
                       "left-16": showLineNumbers,
                     }

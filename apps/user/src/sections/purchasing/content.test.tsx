@@ -15,7 +15,7 @@ const mocks = vi.hoisted(() => ({
   navigate: vi.fn(),
   user: undefined as { id: string } | undefined,
 }));
-vi.mock("@tanstack/react-router", () => ({
+vi.mock("@workspace/ui/lib/router-compat", () => ({
   useNavigate: () => mocks.navigate,
 }));
 vi.mock("./create-order", () => ({ useCreateOrder: () => mocks.create }));
@@ -100,13 +100,30 @@ describe("public purchase identity", () => {
         guest: undefined,
         payment_id: "2",
         subscribe_id: "9007199254740993123",
-        return_url: `${window.location.origin}${window.location.pathname}#/payment`,
+        return_url: `${window.location.origin}/payment`,
       })
     );
     expect(mocks.navigate).toHaveBeenCalledWith({
       to: "/payment",
       search: { order_no: "created-order" },
     });
+  });
+
+  it("generates a guest password when none is provided", async () => {
+    renderPurchase();
+    fireEvent.change(screen.getByPlaceholderText("Email"), {
+      target: { value: "guest@example.com" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Buy Now" }));
+    await waitFor(() => expect(mocks.create).toHaveBeenCalledOnce());
+    const request = mocks.create.mock.calls[0]?.[0];
+    expect(request.guest).toEqual({
+      auth_type: "email",
+      identifier: "guest@example.com",
+      password: expect.any(String),
+      invite_code: undefined,
+    });
+    expect(request.guest.password).toHaveLength(36);
   });
 
   it("accepts a whitelisted guest email and enforces optional password length", async () => {
@@ -142,7 +159,7 @@ describe("public purchase identity", () => {
           password: "guest-password",
           invite_code: undefined,
         },
-        return_url: `${window.location.origin}${window.location.pathname}#/purchasing/order`,
+        return_url: `${window.location.origin}/purchasing/order`,
       })
     );
     expect(mocks.navigate).toHaveBeenCalledWith({

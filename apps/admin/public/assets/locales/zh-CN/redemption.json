@@ -30,7 +30,11 @@
     "totalCount": "兑换码可用次数",
     "totalCountPlaceholder": "兑换码可用次数",
     "unitTime": "兑换时长单位",
-    "year": "年"
+    "year": "年",
+    "quantityRequired": "请输入数量",
+    "unitTimeRequired": "请输入单位时间",
+    "totalCountRequired": "请输入总数量",
+    "subscribePlanRequired": "请选择订阅套餐"
   },
   "id": "ID",
   "loading": "加载中...",

@@ -1,9 +1,9 @@
 {
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
   "vcs": {
-    "enabled": false,
+    "enabled": true,
     "clientKind": "git",
-    "useIgnoreFile": false
+    "useIgnoreFile": true
   },
   "files": {
     "ignoreUnknown": false,
@@ -15,7 +15,20 @@
       "!**/src/routeTree.gen.ts",
       "!**/src/styles.css",
       "!**/docs/**/*",
-      "!apps/*/public/assets/lotties/**/*"
+      "!apps/*/public/assets/lotties/**/*",
+      "!**/node_modules",
+      "!**/.next",
+      "!**/.next-debug",
+      "!**/.next-playwright",
+      "!**/.turbo",
+      "!**/.tmp-e2e",
+      "!**/.tmp-vitest",
+      "!**/test-results",
+      "!**/playwright-report",
+      "!**/coverage",
+      "!**/dist",
+      "!**/build",
+      "!**/out"
     ]
   },
   "formatter": {
@@ -87,5 +100,15 @@
       "quoteStyle": "double"
     }
   },
+  "overrides": [
+    {
+      "includes": ["**/vitest.setup.ts", "**/*.test.ts", "**/*.test.tsx"],
+      "linter": {
+        "rules": {
+          "suspicious": { "noEmptyBlockStatements": "off" }
+        }
+      }
+    }
+  ],
   "extends": ["ultracite/biome/core", "ultracite/biome/react"]
 }

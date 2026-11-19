@@ -8,6 +8,6 @@ export default [
     templatesFolder: resolve("openapi-templates"),
     projectName: "backend",
     namespace: "BackendAPI",
-    apiPrefix: "import.meta.env.VITE_API_PREFIX || ''",
+    apiPrefix: "process.env.NEXT_PUBLIC_API_PREFIX || ''",
   },
 ];

@@ -8,7 +8,7 @@ export async function getUserGroupList(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: API.GetUserGroupListResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/group/user/list`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/group/user/list`,
     {
       method: "GET",
       params: {
@@ -25,7 +25,7 @@ export async function createUserGroup(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/group/user`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/group/user`,
     {
       method: "POST",
       headers: {
@@ -43,7 +43,7 @@ export async function updateUserGroup(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/group/user`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/group/user`,
     {
       method: "PUT",
       headers: {
@@ -61,7 +61,7 @@ export async function deleteUserGroup(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/group/user`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/group/user`,
     {
       method: "DELETE",
       headers: {
@@ -79,7 +79,7 @@ export async function getNodeGroupList(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: API.GetNodeGroupListResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/group/node/list`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/group/node/list`,
     {
       method: "GET",
       params: {
@@ -96,7 +96,7 @@ export async function createNodeGroup(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/group/node`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/group/node`,
     {
       method: "POST",
       headers: {
@@ -114,7 +114,7 @@ export async function updateNodeGroup(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/group/node`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/group/node`,
     {
       method: "PUT",
       headers: {
@@ -132,7 +132,7 @@ export async function deleteNodeGroup(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/group/node`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/group/node`,
     {
       method: "DELETE",
       headers: {
@@ -150,7 +150,7 @@ export async function getSubscribeMapping(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: API.GetSubscribeMappingResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/group/subscribe/mapping`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/group/subscribe/mapping`,
     {
       method: "GET",
       params: {
@@ -167,7 +167,7 @@ export async function updateSubscribeMapping(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/group/subscribe/mapping`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/group/subscribe/mapping`,
     {
       method: "PUT",
       headers: {
@@ -186,7 +186,7 @@ export async function getSubscribeGroupMapping(options?: {
   return request<
     API.Response & { data?: API.GetSubscribeGroupMappingResponse }
   >(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/group/subscribe/mapping`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/group/subscribe/mapping`,
     {
       method: "GET",
       ...(options || {}),
@@ -200,7 +200,7 @@ export async function getGroupConfig(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: API.GetGroupConfigResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/group/config`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/group/config`,
     {
       method: "GET",
       params: params || {},
@@ -215,7 +215,7 @@ export async function updateGroupConfig(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/group/config`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/group/config`,
     {
       method: "PUT",
       headers: {
@@ -230,7 +230,7 @@ export async function updateGroupConfig(
 /** Get recalculation status GET /v1/admin/group/recalculation/status */
 export async function getRecalculationStatus(options?: { [key: string]: any }) {
   return request<API.Response & { data?: API.RecalculationState }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/group/recalculation/status`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/group/recalculation/status`,
     {
       method: "GET",
       ...(options || {}),
@@ -244,7 +244,7 @@ export async function recalculateGroup(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/group/recalculate`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/group/recalculate`,
     {
       method: "POST",
       headers: {
@@ -262,7 +262,7 @@ export async function getGroupHistory(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: API.GetGroupHistoryResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/group/history`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/group/history`,
     {
       method: "GET",
       params: {
@@ -279,7 +279,7 @@ export async function getGroupHistoryDetail(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: API.GetGroupHistoryDetailResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/group/history/detail`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/group/history/detail`,
     {
       method: "GET",
       params: {
@@ -296,7 +296,7 @@ export async function exportGroupResult(
   options?: { [key: string]: any }
 ) {
   return request<Blob>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/group/export`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/group/export`,
     {
       method: "GET",
       params: params || {},
@@ -312,7 +312,7 @@ export async function previewUserNodes(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: API.PreviewUserNodesResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/group/preview`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/group/preview`,
     {
       method: "GET",
       params: {
@@ -329,7 +329,7 @@ export async function migrateUsersToGroup(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: API.MigrateUsersResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/group/migrate`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/group/migrate`,
     {
       method: "POST",
       headers: {
@@ -347,7 +347,7 @@ export async function updateUserUserGroup(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/user_group`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/user_group`,
     {
       method: "PUT",
       headers: {
@@ -365,7 +365,7 @@ export async function resetGroups(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/group/reset`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/group/reset`,
     {
       method: "POST",
       headers: {
@@ -383,7 +383,7 @@ export async function bindNodeGroups(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/group/user/bind-node-groups`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/group/user/bind-node-groups`,
     {
       method: "POST",
       headers: {

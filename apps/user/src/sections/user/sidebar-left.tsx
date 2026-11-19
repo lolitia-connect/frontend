@@ -1,5 +1,4 @@
 "use client";
-import { Link, useLocation } from "@tanstack/react-router";
 import {
   Sidebar,
   SidebarContent,
@@ -11,6 +10,7 @@ import {
   SidebarMenuItem,
 } from "@workspace/ui/components/sidebar";
 import { Icon } from "@workspace/ui/composed/icon";
+import { Link, useLocation } from "@workspace/ui/lib/router-compat";
 import { useTranslation } from "react-i18next";
 import { useNavs } from "@/layout/navs";
 

@@ -1,3 +1,5 @@
+"use client";
+
 import { x25519 } from "@noble/curves/ed25519.js";
 import { toB64Url } from "./util";
 

@@ -1,5 +1,22 @@
 "use client";
 
+import {
+  ListBox,
+  Select,
+  SelectPopover as SelectContent,
+  SelectIndicator,
+  ListBoxItem as SelectItem,
+  SelectTrigger,
+  SelectValue,
+  Sheet,
+  TabIndicator,
+  Tabs,
+  TabPanel as TabsContent,
+  TabList as TabsList,
+  TabListContainer as TabsListContainer,
+  Tab as TabsTrigger,
+  Tooltip,
+} from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "@workspace/ui/components/badge";
@@ -15,34 +32,9 @@ import {
 } from "@workspace/ui/components/form";
 import { Input } from "@workspace/ui/components/input";
 import { ScrollArea } from "@workspace/ui/components/scroll-area";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@workspace/ui/components/select";
-import {
-  Sheet,
-  SheetContent,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-} from "@workspace/ui/components/sheet";
 import { Switch } from "@workspace/ui/components/switch";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@workspace/ui/components/tabs";
 import { Textarea } from "@workspace/ui/components/textarea";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@workspace/ui/components/tooltip";
+
 import { ConfirmButton } from "@workspace/ui/composed/confirm-button";
 import { GoTemplateEditor } from "@workspace/ui/composed/editor/index";
 import { EnhancedInput } from "@workspace/ui/composed/enhanced-input";
@@ -205,7 +197,7 @@ export function ProtocolForm() {
       accessorKey: "user_agent",
       header: "User-Agent",
       cell: ({ row }) => (
-        <div className="max-w-[150px] truncate font-mono text-muted-foreground text-sm">
+        <div className="max-w-[150px] truncate font-mono text-muted text-sm">
           {row.original.user_agent}
         </div>
       ),
@@ -246,18 +238,16 @@ export function ProtocolForm() {
       accessorKey: "description",
       header: t("table.columns.description", "Description"),
       cell: ({ row }) => (
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger>
-              <div className="max-w-[200px] truncate text-muted-foreground text-sm">
-                {row.original.description}
-              </div>
-            </TooltipTrigger>
-            <TooltipContent className="max-w-xs">
-              <p>{row.original.description}</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+        <Tooltip>
+          <Tooltip.Trigger>
+            <div className="max-w-[200px] truncate text-muted text-sm">
+              {row.original.description}
+            </div>
+          </Tooltip.Trigger>
+          <Tooltip.Content className="max-w-xs">
+            <p>{row.original.description}</p>
+          </Tooltip.Content>
+        </Tooltip>
       ),
     },
   ];
@@ -436,17 +426,14 @@ export function ProtocolForm() {
                 {t("protocol.title", "Client Management")}
               </h2>
               <a
-                className="inline-flex items-center gap-2 rounded-md px-3 py-1 font-medium text-primary text-sm hover:underline"
+                className="inline-flex items-center gap-2 rounded-md px-3 py-1 font-medium text-accent text-sm hover:underline"
                 href="https://github.com/perfect-panel/subscription-template"
                 rel="noreferrer noopener"
                 target="_blank"
               >
                 <Icon className="h-4 w-4" icon="mdi:github" />
                 <span>Template Repo</span>
-                <Icon
-                  className="h-4 w-4 text-muted-foreground"
-                  icon="mdi:open-in-new"
-                />
+                <Icon className="h-4 w-4 text-muted" icon="mdi:open-in-new" />
               </a>
             </div>
           ),
@@ -457,529 +444,577 @@ export function ProtocolForm() {
         request={request}
       />
 
-      <Sheet onOpenChange={setOpen} open={open}>
-        <SheetContent className="w-[580px] max-w-full md:max-w-screen-md">
-          <SheetHeader>
-            <SheetTitle>
-              {editingClient
-                ? t("form.editTitle", "Edit Client")
-                : t("form.addTitle", "Add Client")}
-            </SheetTitle>
-          </SheetHeader>
-          <ScrollArea className="h-[calc(100dvh-48px-36px-36px)] px-6">
-            <Form {...form}>
-              <form className="space-y-6 py-4">
-                <Tabs className="w-full" defaultValue="basic">
-                  <TabsList className="grid w-full grid-cols-3">
-                    <TabsTrigger value="basic">
-                      {t("form.tabs.basic", "Basic Info")}
-                    </TabsTrigger>
-                    <TabsTrigger value="template">
-                      {t("form.tabs.template", "Templates")}
-                    </TabsTrigger>
-                    <TabsTrigger value="download">
-                      {t("form.tabs.download", "Downloads")}
-                    </TabsTrigger>
-                  </TabsList>
+      <Sheet isOpen={open} onOpenChange={setOpen} placement="right">
+        <Sheet.Backdrop>
+          <Sheet.Content>
+            <Sheet.Dialog className="w-[580px] max-w-full md:max-w-screen-md">
+              <Sheet.Header>
+                <Sheet.Heading>
+                  {editingClient
+                    ? t("form.editTitle", "Edit Client")
+                    : t("form.addTitle", "Add Client")}
+                </Sheet.Heading>
+              </Sheet.Header>
+              <ScrollArea className="h-[calc(100dvh-48px-36px-36px)] px-6">
+                <Form {...form}>
+                  <form className="space-y-6 py-4">
+                    <Tabs
+                      className="w-full min-w-0 max-w-full"
+                      defaultSelectedKey="basic"
+                    >
+                      <TabsListContainer className="min-w-0 max-w-full">
+                        <TabsList aria-label={t("sections", "Sections")}>
+                          <TabsTrigger
+                            className="w-auto flex-1 whitespace-nowrap"
+                            id="basic"
+                          >
+                            {t("form.tabs.basic", "Basic Info")}
+                            <TabIndicator />
+                          </TabsTrigger>
+                          <TabsTrigger
+                            className="w-auto flex-1 whitespace-nowrap"
+                            id="template"
+                          >
+                            {t("form.tabs.template", "Templates")}
+                            <TabIndicator />
+                          </TabsTrigger>
+                          <TabsTrigger
+                            className="w-auto flex-1 whitespace-nowrap"
+                            id="download"
+                          >
+                            {t("form.tabs.download", "Downloads")}
+                            <TabIndicator />
+                          </TabsTrigger>
+                        </TabsList>
+                      </TabsListContainer>
 
-                  <TabsContent className="space-y-4" value="basic">
-                    <FormField
-                      control={form.control}
-                      name="icon"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>{t("form.fields.icon", "Icon")}</FormLabel>
-                          <FormControl>
-                            <EnhancedInput
-                              onValueChange={(value) => {
-                                form.setValue(field.name, value as string);
-                              }}
-                              placeholder="https://example.com/icon.png"
-                              suffix={
-                                <UploadImage
-                                  className="h-9 rounded-none border-none bg-muted px-2"
-                                  onChange={(value) => {
+                      <TabsContent className="space-y-4" id="basic">
+                        <FormField
+                          control={form.control}
+                          name="icon"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>
+                                {t("form.fields.icon", "Icon")}
+                              </FormLabel>
+                              <FormControl>
+                                <EnhancedInput
+                                  onValueChange={(value) => {
                                     form.setValue(field.name, value as string);
                                   }}
+                                  placeholder="https://example.com/icon.png"
+                                  suffix={
+                                    <UploadImage
+                                      className="h-9 rounded-none border-none bg-default px-2"
+                                      onChange={(value) => {
+                                        form.setValue(
+                                          field.name,
+                                          value as string
+                                        );
+                                      }}
+                                    />
+                                  }
+                                  type="text"
+                                  value={field.value}
                                 />
-                              }
-                              type="text"
-                              value={field.value}
-                            />
-                          </FormControl>
-                          <FormDescription>
-                            {t(
-                              "form.descriptions.icon",
-                              "Icon URL or base64 encoding"
-                            )}
-                          </FormDescription>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                              </FormControl>
+                              <FormDescription>
+                                {t(
+                                  "form.descriptions.icon",
+                                  "Icon URL or base64 encoding"
+                                )}
+                              </FormDescription>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
 
-                    <FormField
-                      control={form.control}
-                      name="name"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>{t("form.fields.name", "Name")}</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Clash for Windows" {...field} />
-                          </FormControl>
-                          <FormDescription>
-                            {t("form.descriptions.name", "Client display name")}
-                          </FormDescription>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                        <FormField
+                          control={form.control}
+                          name="name"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>
+                                {t("form.fields.name", "Name")}
+                              </FormLabel>
+                              <FormControl>
+                                <Input
+                                  placeholder="Clash for Windows"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormDescription>
+                                {t(
+                                  "form.descriptions.name",
+                                  "Client display name"
+                                )}
+                              </FormDescription>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
 
-                    <FormField
-                      control={form.control}
-                      name="user_agent"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>User-Agent</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Clash" {...field} />
-                          </FormControl>
-                          <FormDescription>
-                            {t(
-                              "form.descriptions.userAgentPrefix",
-                              "Client identifier for distinguishing different clients"
-                            )}
-                          </FormDescription>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                        <FormField
+                          control={form.control}
+                          name="user_agent"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>User-Agent</FormLabel>
+                              <FormControl>
+                                <Input placeholder="Clash" {...field} />
+                              </FormControl>
+                              <FormDescription>
+                                {t(
+                                  "form.descriptions.userAgentPrefix",
+                                  "Client identifier for distinguishing different clients"
+                                )}
+                              </FormDescription>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
 
-                    <FormField
-                      control={form.control}
-                      name="description"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>
-                            {t("form.fields.description", "Description")}
-                          </FormLabel>
-                          <FormControl>
-                            <Textarea
-                              placeholder={t(
-                                "form.descriptions.description",
-                                "Detailed client description"
-                              )}
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormDescription>
-                            {t(
-                              "form.descriptions.description",
-                              "Detailed client description"
-                            )}
-                          </FormDescription>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </TabsContent>
-
-                  <TabsContent className="space-y-4" value="template">
-                    <FormField
-                      control={form.control}
-                      name="default_params"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>
-                            {t(
-                              "form.fields.defaultParams",
-                              "Default Parameters"
-                            )}
-                          </FormLabel>
-                          <FormControl>
-                            <Input {...field} placeholder="mode=rule&emoji=1" />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="output_format"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>
-                            {t("form.fields.outputFormat", "Output Format")}
-                          </FormLabel>
-                          <FormControl>
-                            <Select
-                              onValueChange={field.onChange}
-                              value={field.value}
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select ..." />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="base64">
-                                  {t("outputFormats.base64", "Base64")}
-                                </SelectItem>
-                                <SelectItem value="yaml">
-                                  {t("outputFormats.yaml", "YAML")}
-                                </SelectItem>
-                                <SelectItem value="json">
-                                  {t("outputFormats.json", "JSON")}
-                                </SelectItem>
-                                <SelectItem value="conf">
-                                  {t("outputFormats.conf", "CONF")}
-                                </SelectItem>
-                                <SelectItem value="plain">
-                                  {t("outputFormats.plain", "Plain Text")}
-                                </SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </FormControl>
-                          <FormDescription>
-                            {t(
-                              "form.descriptions.outputFormat",
-                              "Subscription configuration file format"
-                            )}
-                          </FormDescription>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="scheme"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="flex items-center gap-2">
-                            {t("form.fields.scheme", "URL Scheme")}
-                            <TooltipProvider>
-                              <Tooltip>
-                                <TooltipTrigger
-                                  onClick={(e) => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                  }}
-                                >
-                                  <Icon
-                                    className="h-4 w-4 text-muted-foreground"
-                                    icon="mdi:help-circle-outline"
-                                  />
-                                </TooltipTrigger>
-                                <TooltipContent
-                                  className="max-w-md bg-secondary text-secondary-foreground"
-                                  side="right"
-                                >
-                                  <div className="space-y-2 text-sm">
-                                    <div className="font-medium">
-                                      {t(
-                                        "form.descriptions.scheme.title",
-                                        "URL Scheme template"
-                                      )}
-                                    </div>
-
-                                    <div>
-                                      <div className="font-medium">
-                                        {t(
-                                          "form.descriptions.scheme.variables",
-                                          "Supports variables:"
-                                        )}
-                                      </div>
-                                      <ul className="ml-2 list-disc space-y-1 text-xs">
-                                        <li>
-                                          <code className="rounded px-1">
-                                            {"${url}"}
-                                          </code>{" "}
-                                          -{" "}
-                                          {t(
-                                            "form.descriptions.scheme.urlVariable",
-                                            "subscription URL"
-                                          )}
-                                        </li>
-                                        <li>
-                                          <code className="rounded px-1">
-                                            {"${name}"}
-                                          </code>{" "}
-                                          -{" "}
-                                          {t(
-                                            "form.descriptions.scheme.nameVariable",
-                                            "site name"
-                                          )}
-                                        </li>
-                                      </ul>
-                                    </div>
-
-                                    <div>
-                                      <div className="font-medium">
-                                        {t(
-                                          "form.descriptions.scheme.functions",
-                                          "Supports functions:"
-                                        )}
-                                      </div>
-                                      <ul className="ml-2 list-disc space-y-1 text-xs">
-                                        <li>
-                                          <code className="rounded px-1">
-                                            {"${encodeURIComponent(...)}"}
-                                          </code>{" "}
-                                          -{" "}
-                                          {t(
-                                            "form.descriptions.scheme.urlEncoding",
-                                            "URL encoding"
-                                          )}
-                                        </li>
-                                        <li>
-                                          <code className="rounded px-1">
-                                            {"${window.btoa(...)}"}
-                                          </code>{" "}
-                                          -{" "}
-                                          {t(
-                                            "form.descriptions.scheme.base64Encoding",
-                                            "Base64 encoding"
-                                          )}
-                                        </li>
-                                        <li>
-                                          <code className="rounded px-1">
-                                            {"${JSON.stringify(...)}"}
-                                          </code>{" "}
-                                          -{" "}
-                                          {t(
-                                            "form.descriptions.scheme.jsonStringify",
-                                            "JSON object to string"
-                                          )}
-                                        </li>
-                                      </ul>
-                                    </div>
-                                  </div>
-                                </TooltipContent>
-                              </Tooltip>
-                            </TooltipProvider>
-                          </FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="clash://install-config?url=${url}&name=${name}"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="template"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="flex items-center gap-2">
-                            {t(
-                              "form.fields.template",
-                              "Subscription File Template"
-                            )}
-                            <TooltipProvider>
-                              <Tooltip>
-                                <TooltipTrigger
-                                  onClick={(e) => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                  }}
-                                >
-                                  <Icon
-                                    className="h-4 w-4 text-muted-foreground"
-                                    icon="mdi:help-circle-outline"
-                                  />
-                                </TooltipTrigger>
-                                <TooltipContent
-                                  className="max-w-md bg-secondary text-secondary-foreground"
-                                  side="right"
-                                >
-                                  <div className="space-y-2 text-sm">
-                                    <div className="font-medium">
-                                      {t(
-                                        "form.descriptions.template.title",
-                                        "Go Template Syntax"
-                                      )}
-                                    </div>
-
-                                    <div>
-                                      <div className="font-medium">
-                                        {t(
-                                          "form.descriptions.template.variables",
-                                          "Available variables:"
-                                        )}
-                                      </div>
-                                      <ul className="ml-2 list-disc space-y-1 text-xs">
-                                        <li>
-                                          <code className="rounded px-1">
-                                            .SiteName
-                                          </code>{" "}
-                                          -{" "}
-                                          {t(
-                                            "form.descriptions.template.siteName",
-                                            "site name"
-                                          )}
-                                        </li>
-                                        <li>
-                                          <code className="rounded px-1">
-                                            .SubscribeName
-                                          </code>{" "}
-                                          -{" "}
-                                          {t(
-                                            "form.descriptions.template.subscribeName",
-                                            "subscription name"
-                                          )}
-                                        </li>
-                                        <li>
-                                          <code className="rounded px-1">
-                                            .Proxies
-                                          </code>{" "}
-                                          -{" "}
-                                          {t(
-                                            "form.descriptions.template.nodes",
-                                            "proxy nodes list"
-                                          )}
-                                        </li>
-                                        <li>
-                                          <code className="rounded px-1">
-                                            .UserInfo
-                                          </code>{" "}
-                                          -{" "}
-                                          {t(
-                                            "form.descriptions.template.userInfo",
-                                            "user info (traffic, expiry, etc.)"
-                                          )}
-                                        </li>
-                                        <li>
-                                          <code className="rounded px-1">
-                                            .UserInfo.NowhereKey
-                                          </code>{" "}
-                                          -{" "}
-                                          {t(
-                                            "form.descriptions.template.nowhereKey",
-                                            "NW3 shared key; other protocols continue to use .UserInfo.Password"
-                                          )}
-                                        </li>
-                                      </ul>
-                                    </div>
-
-                                    <div>
-                                      <div className="font-medium">
-                                        {t(
-                                          "form.descriptions.template.functions",
-                                          "Template functions:"
-                                        )}
-                                      </div>
-                                      <ul className="ml-2 list-disc space-y-1 text-xs">
-                                        <li>
-                                          <code className="rounded px-1">
-                                            {"{{range .Proxies}}...{{end}}"}
-                                          </code>{" "}
-                                          -{" "}
-                                          {t(
-                                            "form.descriptions.template.range",
-                                            "iterate arrays"
-                                          )}
-                                        </li>
-                                        <li>
-                                          <code className="rounded px-1">
-                                            {"{{if .condition}}...{{end}}"}
-                                          </code>{" "}
-                                          -{" "}
-                                          {t(
-                                            "form.descriptions.template.if",
-                                            "conditional statements"
-                                          )}
-                                        </li>
-                                        <li>
-                                          <code className="rounded px-1">
-                                            {"{{sprig_func}}"}
-                                          </code>{" "}
-                                          -{" "}
-                                          {t(
-                                            "form.descriptions.template.sprig",
-                                            "Sprig function library (string processing, dates, etc.)"
-                                          )}
-                                        </li>
-                                      </ul>
-                                    </div>
-                                  </div>
-                                </TooltipContent>
-                              </Tooltip>
-                            </TooltipProvider>
-                          </FormLabel>
-                          <FormControl>
-                            <GoTemplateEditor
-                              enableSprig
-                              onChange={(value: string | undefined) =>
-                                field.onChange(value || "")
-                              }
-                              schema={subscribeSchema}
-                              showLineNumbers
-                              value={field.value || ""}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </TabsContent>
-
-                  <TabsContent className="space-y-4" value="download">
-                    <div className="space-y-4">
-                      <div className="grid gap-3">
-                        {[
-                          "windows",
-                          "mac",
-                          "linux",
-                          "ios",
-                          "android",
-                          "harmony",
-                        ].map((key) => (
-                          <FormField
-                            control={form.control}
-                            key={key}
-                            name={
-                              `download_link.${key}` as `download_link.${keyof ClientFormData["download_link"]}`
-                            }
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>
-                                  {t(`platforms.${key}`, key)}
-                                </FormLabel>
-                                <FormControl>
-                                  <Input {...field} />
-                                </FormControl>
-                                <FormDescription>
-                                  {t(`platforms.${key}`, key)}{" "}
-                                  {t(
-                                    "form.descriptions.downloadLink",
-                                    "platform download URL"
+                        <FormField
+                          control={form.control}
+                          name="description"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>
+                                {t("form.fields.description", "Description")}
+                              </FormLabel>
+                              <FormControl>
+                                <Textarea
+                                  placeholder={t(
+                                    "form.descriptions.description",
+                                    "Detailed client description"
                                   )}
-                                </FormDescription>
-                              </FormItem>
-                            )}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                  </TabsContent>
-                </Tabs>
-              </form>
-            </Form>
-          </ScrollArea>
-          <SheetFooter className="flex-row justify-end gap-2 pt-3">
-            <Button onClick={() => setOpen(false)} variant="outline">
-              {t("actions.cancel", "Cancel")}
-            </Button>
-            <Button loading={loading} onClick={form.handleSubmit(onSubmit)}>
-              {editingClient
-                ? t("actions.update", "Update")
-                : t("actions.add", "Add")}
-            </Button>
-          </SheetFooter>
-        </SheetContent>
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormDescription>
+                                {t(
+                                  "form.descriptions.description",
+                                  "Detailed client description"
+                                )}
+                              </FormDescription>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </TabsContent>
+
+                      <TabsContent className="space-y-4" id="template">
+                        <FormField
+                          control={form.control}
+                          name="default_params"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>
+                                {t(
+                                  "form.fields.defaultParams",
+                                  "Default Parameters"
+                                )}
+                              </FormLabel>
+                              <FormControl>
+                                <Input
+                                  {...field}
+                                  placeholder="mode=rule&emoji=1"
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="output_format"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>
+                                {t("form.fields.outputFormat", "Output Format")}
+                              </FormLabel>
+                              <FormControl>
+                                <Select
+                                  aria-label="Select ..."
+                                  onSelectionChange={(key) => {
+                                    if (key != null)
+                                      field.onChange(String(key));
+                                  }}
+                                  placeholder="Select ..."
+                                  selectedKey={
+                                    field.value == null
+                                      ? undefined
+                                      : String(field.value)
+                                  }
+                                >
+                                  <SelectTrigger>
+                                    <SelectValue />
+                                    <SelectIndicator />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <ListBox>
+                                      <SelectItem id="base64">
+                                        {t("outputFormats.base64", "Base64")}
+                                      </SelectItem>
+                                      <SelectItem id="yaml">
+                                        {t("outputFormats.yaml", "YAML")}
+                                      </SelectItem>
+                                      <SelectItem id="json">
+                                        {t("outputFormats.json", "JSON")}
+                                      </SelectItem>
+                                      <SelectItem id="conf">
+                                        {t("outputFormats.conf", "CONF")}
+                                      </SelectItem>
+                                      <SelectItem id="plain">
+                                        {t("outputFormats.plain", "Plain Text")}
+                                      </SelectItem>
+                                    </ListBox>
+                                  </SelectContent>
+                                </Select>
+                              </FormControl>
+                              <FormDescription>
+                                {t(
+                                  "form.descriptions.outputFormat",
+                                  "Subscription configuration file format"
+                                )}
+                              </FormDescription>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+
+                        <FormField
+                          control={form.control}
+                          name="scheme"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="flex items-center gap-2">
+                                {t("form.fields.scheme", "URL Scheme")}
+
+                                <Tooltip>
+                                  <Tooltip.Trigger
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      e.stopPropagation();
+                                    }}
+                                  >
+                                    <Icon
+                                      className="h-4 w-4 text-muted"
+                                      icon="mdi:help-circle-outline"
+                                    />
+                                  </Tooltip.Trigger>
+                                  <Tooltip.Content
+                                    className="max-w-md bg-accent-soft text-accent-soft-foreground"
+                                    placement="right"
+                                  >
+                                    <div className="space-y-2 text-sm">
+                                      <div className="font-medium">
+                                        {t(
+                                          "form.descriptions.scheme.title",
+                                          "URL Scheme template"
+                                        )}
+                                      </div>
+
+                                      <div>
+                                        <div className="font-medium">
+                                          {t(
+                                            "form.descriptions.scheme.variables",
+                                            "Supports variables:"
+                                          )}
+                                        </div>
+                                        <ul className="ml-2 list-disc space-y-1 text-xs">
+                                          <li>
+                                            <code className="rounded px-1">
+                                              {"${url}"}
+                                            </code>{" "}
+                                            -{" "}
+                                            {t(
+                                              "form.descriptions.scheme.urlVariable",
+                                              "subscription URL"
+                                            )}
+                                          </li>
+                                          <li>
+                                            <code className="rounded px-1">
+                                              {"${name}"}
+                                            </code>{" "}
+                                            -{" "}
+                                            {t(
+                                              "form.descriptions.scheme.nameVariable",
+                                              "site name"
+                                            )}
+                                          </li>
+                                        </ul>
+                                      </div>
+
+                                      <div>
+                                        <div className="font-medium">
+                                          {t(
+                                            "form.descriptions.scheme.functions",
+                                            "Supports functions:"
+                                          )}
+                                        </div>
+                                        <ul className="ml-2 list-disc space-y-1 text-xs">
+                                          <li>
+                                            <code className="rounded px-1">
+                                              {"${encodeURIComponent(...)}"}
+                                            </code>{" "}
+                                            -{" "}
+                                            {t(
+                                              "form.descriptions.scheme.urlEncoding",
+                                              "URL encoding"
+                                            )}
+                                          </li>
+                                          <li>
+                                            <code className="rounded px-1">
+                                              {"${window.btoa(...)}"}
+                                            </code>{" "}
+                                            -{" "}
+                                            {t(
+                                              "form.descriptions.scheme.base64Encoding",
+                                              "Base64 encoding"
+                                            )}
+                                          </li>
+                                          <li>
+                                            <code className="rounded px-1">
+                                              {"${JSON.stringify(...)}"}
+                                            </code>{" "}
+                                            -{" "}
+                                            {t(
+                                              "form.descriptions.scheme.jsonStringify",
+                                              "JSON object to string"
+                                            )}
+                                          </li>
+                                        </ul>
+                                      </div>
+                                    </div>
+                                  </Tooltip.Content>
+                                </Tooltip>
+                              </FormLabel>
+                              <FormControl>
+                                <Input
+                                  placeholder="clash://install-config?url=${url}&name=${name}"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+
+                        <FormField
+                          control={form.control}
+                          name="template"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="flex items-center gap-2">
+                                {t(
+                                  "form.fields.template",
+                                  "Subscription File Template"
+                                )}
+
+                                <Tooltip>
+                                  <Tooltip.Trigger
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      e.stopPropagation();
+                                    }}
+                                  >
+                                    <Icon
+                                      className="h-4 w-4 text-muted"
+                                      icon="mdi:help-circle-outline"
+                                    />
+                                  </Tooltip.Trigger>
+                                  <Tooltip.Content
+                                    className="max-w-md bg-accent-soft text-accent-soft-foreground"
+                                    placement="right"
+                                  >
+                                    <div className="space-y-2 text-sm">
+                                      <div className="font-medium">
+                                        {t(
+                                          "form.descriptions.template.title",
+                                          "Go Template Syntax"
+                                        )}
+                                      </div>
+
+                                      <div>
+                                        <div className="font-medium">
+                                          {t(
+                                            "form.descriptions.template.variables",
+                                            "Available variables:"
+                                          )}
+                                        </div>
+                                        <ul className="ml-2 list-disc space-y-1 text-xs">
+                                          <li>
+                                            <code className="rounded px-1">
+                                              .SiteName
+                                            </code>{" "}
+                                            -{" "}
+                                            {t(
+                                              "form.descriptions.template.siteName",
+                                              "site name"
+                                            )}
+                                          </li>
+                                          <li>
+                                            <code className="rounded px-1">
+                                              .SubscribeName
+                                            </code>{" "}
+                                            -{" "}
+                                            {t(
+                                              "form.descriptions.template.subscribeName",
+                                              "subscription name"
+                                            )}
+                                          </li>
+                                          <li>
+                                            <code className="rounded px-1">
+                                              .Proxies
+                                            </code>{" "}
+                                            -{" "}
+                                            {t(
+                                              "form.descriptions.template.nodes",
+                                              "proxy nodes list"
+                                            )}
+                                          </li>
+                                          <li>
+                                            <code className="rounded px-1">
+                                              .UserInfo
+                                            </code>{" "}
+                                            -{" "}
+                                            {t(
+                                              "form.descriptions.template.userInfo",
+                                              "user info (traffic, expiry, etc.)"
+                                            )}
+                                          </li>
+                                          <li>
+                                            <code className="rounded px-1">
+                                              .UserInfo.NowhereKey
+                                            </code>{" "}
+                                            -{" "}
+                                            {t(
+                                              "form.descriptions.template.nowhereKey",
+                                              "NW3 shared key; other protocols continue to use .UserInfo.Password"
+                                            )}
+                                          </li>
+                                        </ul>
+                                      </div>
+
+                                      <div>
+                                        <div className="font-medium">
+                                          {t(
+                                            "form.descriptions.template.functions",
+                                            "Template functions:"
+                                          )}
+                                        </div>
+                                        <ul className="ml-2 list-disc space-y-1 text-xs">
+                                          <li>
+                                            <code className="rounded px-1">
+                                              {"{{range .Proxies}}...{{end}}"}
+                                            </code>{" "}
+                                            -{" "}
+                                            {t(
+                                              "form.descriptions.template.range",
+                                              "iterate arrays"
+                                            )}
+                                          </li>
+                                          <li>
+                                            <code className="rounded px-1">
+                                              {"{{if .condition}}...{{end}}"}
+                                            </code>{" "}
+                                            -{" "}
+                                            {t(
+                                              "form.descriptions.template.if",
+                                              "conditional statements"
+                                            )}
+                                          </li>
+                                          <li>
+                                            <code className="rounded px-1">
+                                              {"{{sprig_func}}"}
+                                            </code>{" "}
+                                            -{" "}
+                                            {t(
+                                              "form.descriptions.template.sprig",
+                                              "Sprig function library (string processing, dates, etc.)"
+                                            )}
+                                          </li>
+                                        </ul>
+                                      </div>
+                                    </div>
+                                  </Tooltip.Content>
+                                </Tooltip>
+                              </FormLabel>
+                              <FormControl>
+                                <GoTemplateEditor
+                                  enableSprig
+                                  onChange={(value: string | undefined) =>
+                                    field.onChange(value || "")
+                                  }
+                                  schema={subscribeSchema}
+                                  showLineNumbers
+                                  value={field.value || ""}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </TabsContent>
+
+                      <TabsContent className="space-y-4" id="download">
+                        <div className="space-y-4">
+                          <div className="grid gap-3">
+                            {[
+                              "windows",
+                              "mac",
+                              "linux",
+                              "ios",
+                              "android",
+                              "harmony",
+                            ].map((key) => (
+                              <FormField
+                                control={form.control}
+                                key={key}
+                                name={
+                                  `download_link.${key}` as `download_link.${keyof ClientFormData["download_link"]}`
+                                }
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>
+                                      {t(`platforms.${key}`, key)}
+                                    </FormLabel>
+                                    <FormControl>
+                                      <Input {...field} />
+                                    </FormControl>
+                                    <FormDescription>
+                                      {t(`platforms.${key}`, key)}{" "}
+                                      {t(
+                                        "form.descriptions.downloadLink",
+                                        "platform download URL"
+                                      )}
+                                    </FormDescription>
+                                  </FormItem>
+                                )}
+                              />
+                            ))}
+                          </div>
+                        </div>
+                      </TabsContent>
+                    </Tabs>
+                  </form>
+                </Form>
+              </ScrollArea>
+              <Sheet.Footer className="flex-row justify-end gap-2 pt-3">
+                <Button onClick={() => setOpen(false)} variant="outline">
+                  {t("actions.cancel", "Cancel")}
+                </Button>
+                <Button loading={loading} onClick={form.handleSubmit(onSubmit)}>
+                  {editingClient
+                    ? t("actions.update", "Update")
+                    : t("actions.add", "Add")}
+                </Button>
+              </Sheet.Footer>
+              <Sheet.CloseTrigger aria-label="Close" />
+            </Sheet.Dialog>
+          </Sheet.Content>
+        </Sheet.Backdrop>
       </Sheet>
     </>
   );

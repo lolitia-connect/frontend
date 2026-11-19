@@ -1,13 +1,19 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
 import {
   Card,
   CardContent,
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@workspace/ui/components/card";
+  TabIndicator,
+  Tabs,
+  TabPanel as TabsContent,
+  TabList as TabsList,
+  TabListContainer as TabsListContainer,
+  Tab as TabsTrigger,
+} from "@heroui/react";
+import { useQuery } from "@tanstack/react-query";
 import {
   ChartContainer,
   ChartLegend,
@@ -16,12 +22,6 @@ import {
   ChartTooltipContent,
 } from "@workspace/ui/components/chart";
 import { Separator } from "@workspace/ui/components/separator";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@workspace/ui/components/tabs";
 import Empty from "@workspace/ui/composed/empty";
 import { getConsoleRevenue as queryRevenueStatistics } from "@workspace/ui/services/admin/admin";
 import { unitConversion } from "@workspace/ui/utils/unit-conversions";
@@ -46,15 +46,15 @@ export function RevenueStatisticsCard() {
   const IncomeStatisticsConfig = {
     new_purchase: {
       label: t("newPurchase", "New Purchase"),
-      color: "var(--color-chart-1)",
+      color: "var(--accent)",
     },
     repurchase: {
       label: t("repurchase", "Repurchase"),
-      color: "var(--color-chart-2)",
+      color: "var(--primary-400)",
     },
     total: {
       label: t("totalIncome", "Total Income"),
-      color: "var(--color-chart-3)",
+      color: "var(--primary-700)",
     },
   };
 
@@ -67,17 +67,39 @@ export function RevenueStatisticsCard() {
   });
 
   return (
-    <Tabs defaultValue="today">
+    <Tabs className="min-w-0 max-w-full" defaultSelectedKey="today">
       <Card className="h-full pb-0">
-        <CardHeader className="!flex-row flex items-center justify-between">
-          <CardTitle>{t("revenueTitle", "Revenue Statistics")}</CardTitle>
-          <TabsList>
-            <TabsTrigger value="today">{t("today", "Today")}</TabsTrigger>
-            <TabsTrigger value="month">{t("month", "Month")}</TabsTrigger>
-            <TabsTrigger value="total">{t("total", "Total")}</TabsTrigger>
-          </TabsList>
+        <CardHeader className="!flex-row flex flex-wrap items-center justify-between gap-2">
+          <CardTitle className="min-w-0">
+            {t("revenueTitle", "Revenue Statistics")}
+          </CardTitle>
+          <TabsListContainer className="min-w-0 max-w-full">
+            <TabsList aria-label={t("sections", "Sections")}>
+              <TabsTrigger
+                className="w-auto flex-1 whitespace-nowrap"
+                id="today"
+              >
+                {t("today", "Today")}
+                <TabIndicator />
+              </TabsTrigger>
+              <TabsTrigger
+                className="w-auto flex-1 whitespace-nowrap"
+                id="month"
+              >
+                {t("month", "Month")}
+                <TabIndicator />
+              </TabsTrigger>
+              <TabsTrigger
+                className="w-auto flex-1 whitespace-nowrap"
+                id="total"
+              >
+                {t("total", "Total")}
+                <TabIndicator />
+              </TabsTrigger>
+            </TabsList>
+          </TabsListContainer>
         </CardHeader>
-        <TabsContent className="h-full" value="today">
+        <TabsContent className="h-full" id="today">
           <CardContent className="h-80">
             {RevenueStatistics?.today.new_order_amount ||
             RevenueStatistics?.today.renewal_order_amount ? (
@@ -152,7 +174,7 @@ export function RevenueStatisticsCard() {
           <CardFooter className="!py-5 flex h-20 flex-row border-t">
             <div className="flex w-full items-center gap-2">
               <div className="grid flex-1 auto-rows-min gap-0.5">
-                <div className="text-muted-foreground text-xs">
+                <div className="text-muted text-xs">
                   {t("totalIncome", "Total Income")}
                 </div>
                 <div className="font-bold text-xl tabular-nums leading-none">
@@ -164,7 +186,7 @@ export function RevenueStatisticsCard() {
               </div>
               <Separator className="!h-10 mx-2 w-px" orientation="vertical" />
               <div className="grid flex-1 auto-rows-min gap-0.5">
-                <div className="text-muted-foreground text-xs">
+                <div className="text-muted text-xs">
                   {IncomeStatisticsConfig.new_purchase.label}
                 </div>
                 <div className="font-bold text-xl tabular-nums leading-none">
@@ -176,7 +198,7 @@ export function RevenueStatisticsCard() {
               </div>
               <Separator className="!h-10 mx-2 w-px" orientation="vertical" />
               <div className="grid flex-1 auto-rows-min gap-0.5">
-                <div className="text-muted-foreground text-xs">
+                <div className="text-muted text-xs">
                   {IncomeStatisticsConfig.repurchase.label}
                 </div>
                 <div className="font-bold text-xl tabular-nums leading-none">
@@ -190,7 +212,7 @@ export function RevenueStatisticsCard() {
           </CardFooter>
         </TabsContent>
 
-        <TabsContent className="h-full" value="month">
+        <TabsContent className="h-full" id="month">
           <CardContent className="h-80">
             {RevenueStatistics?.monthly.list &&
             RevenueStatistics?.monthly.list.length > 0 ? (
@@ -292,7 +314,7 @@ export function RevenueStatisticsCard() {
           <CardFooter className="!py-5 flex h-20 flex-row border-t">
             <div className="flex w-full items-center gap-2">
               <div className="grid flex-1 auto-rows-min gap-0.5">
-                <div className="text-muted-foreground text-xs">
+                <div className="text-muted text-xs">
                   {t("totalIncome", "Total Income")}
                 </div>
                 <div className="font-bold text-xl tabular-nums leading-none">
@@ -304,7 +326,7 @@ export function RevenueStatisticsCard() {
               </div>
               <Separator className="!h-10 mx-2 w-px" orientation="vertical" />
               <div className="grid flex-1 auto-rows-min gap-0.5">
-                <div className="text-muted-foreground text-xs">
+                <div className="text-muted text-xs">
                   {IncomeStatisticsConfig.new_purchase.label}
                 </div>
                 <div className="font-bold text-xl tabular-nums leading-none">
@@ -316,7 +338,7 @@ export function RevenueStatisticsCard() {
               </div>
               <Separator className="!h-10 mx-2 w-px" orientation="vertical" />
               <div className="grid flex-1 auto-rows-min gap-0.5">
-                <div className="text-muted-foreground text-xs">
+                <div className="text-muted text-xs">
                   {IncomeStatisticsConfig.repurchase.label}
                 </div>
                 <div className="font-bold text-xl tabular-nums leading-none">
@@ -330,7 +352,7 @@ export function RevenueStatisticsCard() {
           </CardFooter>
         </TabsContent>
 
-        <TabsContent className="h-full" value="total">
+        <TabsContent className="h-full" id="total">
           <CardContent className="h-80">
             {RevenueStatistics?.all.list &&
             RevenueStatistics?.all.list.length > 0 ? (
@@ -438,7 +460,7 @@ export function RevenueStatisticsCard() {
           <CardFooter className="!py-5 flex h-20 flex-row border-t">
             <div className="flex w-full items-center gap-2">
               <div className="grid flex-1 auto-rows-min gap-0.5">
-                <div className="text-muted-foreground text-xs">
+                <div className="text-muted text-xs">
                   {t("totalIncome", "Total Income")}
                 </div>
                 <div className="font-bold text-xl tabular-nums leading-none">

@@ -2,30 +2,21 @@
 
 import {
   AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@workspace/ui/components/alert-dialog";
-import { Button } from "@workspace/ui/components/button";
-import {
+  Button,
   Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@workspace/ui/components/card";
-import { Spinner } from "@workspace/ui/components/spinner";
+  Description,
+  Label,
+  Radio,
+  RadioGroup,
+  Spinner,
+  Switch,
+} from "@heroui/react";
 import {
   getGroupConfig,
   resetGroups,
   updateGroupConfig,
 } from "@workspace/ui/services/admin/group";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
@@ -34,65 +25,36 @@ export default function GroupConfig() {
   const [saving, setSaving] = useState(false);
   const [resetting, setResetting] = useState(false);
   const [showResetDialog, setShowResetDialog] = useState(false);
-  const [config, setConfig] = useState<{
-    enabled: boolean;
-    mode: "average" | "subscribe" | "traffic";
-  }>({
-    enabled: false,
-    mode: "average",
-  });
+  const [loading, setLoading] = useState(true);
+  const [config, setConfig] = useState({ enabled: false, mode: "average" });
 
-  const loadConfig = async () => {
+  const loadConfig = useCallback(async () => {
+    setLoading(true);
     try {
       const { data } = await getGroupConfig();
       if (data.data) {
         setConfig({
           enabled: data.data.enabled,
-          mode: (data.data.mode || "average") as
-            | "average"
-            | "subscribe"
-            | "traffic",
+          mode: data.data.mode || "average",
         });
       }
     } catch (error) {
       console.error("Failed to load group config:", error);
       toast.error(t("loadFailed", "Failed to load configuration"));
+    } finally {
+      setLoading(false);
     }
-  };
+  }, [t]);
 
   useEffect(() => {
     loadConfig();
-  }, []);
+  }, [loadConfig]);
 
-  const handleUpdateEnabled = async (enabled: boolean) => {
+  const saveConfig = async (next: typeof config) => {
     setSaving(true);
     try {
-      const payload: any = {
-        enabled,
-        mode: config.mode,
-      };
-      await updateGroupConfig(payload);
-      setConfig({ ...config, enabled });
-      toast.success(t("saved", "Configuration saved successfully"));
-    } catch (error) {
-      console.error("Failed to update group config:", error);
-      toast.error(t("saveFailed", "Failed to save configuration"));
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const handleUpdateMode = async (
-    mode: "average" | "subscribe" | "traffic"
-  ) => {
-    setSaving(true);
-    try {
-      const payload: any = {
-        enabled: config.enabled,
-        mode,
-      };
-      await updateGroupConfig(payload);
-      setConfig({ ...config, mode });
+      await updateGroupConfig(next);
+      setConfig(next);
       toast.success(t("saved", "Configuration saved successfully"));
     } catch (error) {
       console.error("Failed to update group config:", error);
@@ -120,156 +82,138 @@ export default function GroupConfig() {
     }
   };
 
+  const busy = loading || saving || resetting;
+  const modes = [
+    {
+      value: "average",
+      label: t("averageMode", "Average Mode"),
+      description: t(
+        "averageModeDescription",
+        "Distribute users evenly across groups"
+      ),
+    },
+    {
+      value: "subscribe",
+      label: t("subscribeMode", "Subscribe Mode"),
+      description: t(
+        "subscribeModeDescription",
+        "Group users by their subscription plan"
+      ),
+    },
+    {
+      value: "traffic",
+      label: t("trafficMode", "Traffic Mode"),
+      description: t(
+        "trafficModeDescription",
+        "Group users by their traffic usage"
+      ),
+    },
+  ];
+
   return (
-    <div className="space-y-4">
-      <Card>
-        <CardHeader>
-          <CardTitle>{t("groupConfig", "Group Configuration")}</CardTitle>
-          <CardDescription>
-            {t(
-              "groupConfigDescription",
-              "Configure user group and node group settings"
-            )}
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {/* Enable/Disable */}
-          <div className="flex items-center justify-between">
-            <div>
-              <label className="font-medium" htmlFor="enabled">
-                {t("enableGrouping", "Enable Grouping")}
-              </label>
-              <p className="text-muted-foreground text-sm">
-                {t(
-                  "enableGroupingDescription",
-                  "When enabled, users will only see nodes from their assigned group"
-                )}
-              </p>
-            </div>
-            <input
-              checked={config.enabled}
-              className="h-4 w-4"
-              disabled={saving}
-              id="enabled"
-              onChange={(e) => handleUpdateEnabled(e.target.checked)}
-              type="checkbox"
-            />
-          </div>
-
-          {/* Mode Selection */}
-          {config.enabled && (
-            <div className="space-y-2">
-              <span className="block font-medium">
-                {t("groupingMode", "Grouping Mode")}
-              </span>
-              <div className="grid grid-cols-3 gap-4">
-                <button
-                  className={`rounded-lg border p-4 text-left transition-colors ${
-                    config.mode === "average"
-                      ? "border-primary bg-primary/10"
-                      : "border-border hover:bg-muted"
-                  } ${saving ? "cursor-not-allowed opacity-50" : ""}`}
-                  disabled={saving}
-                  onClick={() => handleUpdateMode("average")}
-                  type="button"
-                >
-                  <div className="font-medium">
-                    {t("averageMode", "Average Mode")}
-                  </div>
-                  <div className="text-muted-foreground text-sm">
-                    {t(
-                      "averageModeDescription",
-                      "Distribute users evenly across groups"
-                    )}
-                  </div>
-                </button>
-
-                <button
-                  className={`rounded-lg border p-4 text-left transition-colors ${
-                    config.mode === "subscribe"
-                      ? "border-primary bg-primary/10"
-                      : "border-border hover:bg-muted"
-                  } ${saving ? "cursor-not-allowed opacity-50" : ""}`}
-                  disabled={saving}
-                  onClick={() => handleUpdateMode("subscribe")}
-                  type="button"
-                >
-                  <div className="font-medium">
-                    {t("subscribeMode", "Subscribe Mode")}
-                  </div>
-                  <div className="text-muted-foreground text-sm">
-                    {t(
-                      "subscribeModeDescription",
-                      "Group users by their subscription plan"
-                    )}
-                  </div>
-                </button>
-
-                <button
-                  className={`rounded-lg border p-4 text-left transition-colors ${
-                    config.mode === "traffic"
-                      ? "border-primary bg-primary/10"
-                      : "border-border hover:bg-muted"
-                  } ${saving ? "cursor-not-allowed opacity-50" : ""}`}
-                  disabled={saving}
-                  onClick={() => handleUpdateMode("traffic")}
-                  type="button"
-                >
-                  <div className="font-medium">
-                    {t("trafficMode", "Traffic Mode")}
-                  </div>
-                  <div className="text-muted-foreground text-sm">
-                    {t(
-                      "trafficModeDescription",
-                      "Group users by their traffic usage"
-                    )}
-                  </div>
-                </button>
-              </div>
-            </div>
+    <Card>
+      <Card.Header>
+        <Card.Title>{t("groupConfig", "Group Configuration")}</Card.Title>
+        <Card.Description>
+          {t(
+            "groupConfigDescription",
+            "Configure user group and node group settings"
           )}
-
-          {/* Reset Button */}
-          <div className="flex justify-end border-t pt-4">
-            <AlertDialog
-              onOpenChange={setShowResetDialog}
-              open={showResetDialog}
-            >
-              <AlertDialogTrigger asChild>
-                <Button variant="destructive">
-                  {t("resetGroups", "Reset All Groups")}
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>
+        </Card.Description>
+      </Card.Header>
+      <Card.Content className="space-y-5">
+        <Switch
+          className="w-full rounded-xl bg-default/50 p-4"
+          isDisabled={busy}
+          isSelected={config.enabled}
+          onChange={(enabled) => saveConfig({ ...config, enabled })}
+        >
+          <Switch.Content className="w-full justify-between">
+            <Label className="font-medium">
+              {t("enableGrouping", "Enable Grouping")}
+            </Label>
+            <Switch.Control>
+              <Switch.Thumb />
+            </Switch.Control>
+          </Switch.Content>
+          <Description className="ps-0">
+            {t(
+              "enableGroupingDescription",
+              "When enabled, users will only see nodes from their assigned group"
+            )}
+          </Description>
+        </Switch>
+        {config.enabled && (
+          <RadioGroup
+            isDisabled={busy}
+            onChange={(mode) => saveConfig({ ...config, mode })}
+            value={config.mode}
+          >
+            <Label>{t("groupingMode", "Grouping Mode")}</Label>
+            <div className="grid gap-2 md:grid-cols-3">
+              {modes.map(({ value, label, description }) => (
+                <Radio
+                  className="relative rounded-xl border border-border p-3 transition-colors data-[selected]:border-accent data-[selected]:bg-accent/5"
+                  key={value}
+                  value={value}
+                >
+                  <Radio.Content className="static after:absolute after:inset-0">
+                    <Radio.Control>
+                      <Radio.Indicator />
+                    </Radio.Control>
+                    <Label>{label}</Label>
+                  </Radio.Content>
+                  <Description>{description}</Description>
+                </Radio>
+              ))}
+            </div>
+          </RadioGroup>
+        )}
+      </Card.Content>
+      <Card.Footer className="justify-end border-border border-t pt-4">
+        <AlertDialog isOpen={showResetDialog} onOpenChange={setShowResetDialog}>
+          <Button isDisabled={busy} variant="danger-soft">
+            {t("resetGroups", "Reset All Groups")}
+          </Button>
+          <AlertDialog.Backdrop
+            isDismissable={!resetting}
+            isKeyboardDismissDisabled={resetting}
+          >
+            <AlertDialog.Container>
+              <AlertDialog.Dialog>
+                <AlertDialog.Header>
+                  <AlertDialog.Heading>
                     {t("resetGroupsTitle", "Reset All Groups")}
-                  </AlertDialogTitle>
-                  <AlertDialogDescription>
+                  </AlertDialog.Heading>
+                  <Description>
                     {t(
                       "resetGroupsDescription",
                       "This action will delete all node groups and user groups, reset all users' group ID to 0, clear all products' node group IDs, and clear all nodes' node group IDs. This action cannot be undone."
                     )}
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel disabled={resetting}>
-                    {t("cancel", "Cancel")}
-                  </AlertDialogCancel>
-                  <AlertDialogAction
-                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                    disabled={resetting}
-                    onClick={handleResetGroups}
+                  </Description>
+                </AlertDialog.Header>
+                <AlertDialog.Footer>
+                  <Button
+                    isDisabled={resetting}
+                    slot="close"
+                    variant="secondary"
                   >
-                    {resetting && <Spinner className="mr-2" />}
+                    {t("cancel", "Cancel")}
+                  </Button>
+                  <Button
+                    isDisabled={resetting}
+                    onPress={handleResetGroups}
+                    variant="danger"
+                  >
+                    {resetting && <Spinner color="current" size="sm" />}
                     {t("confirm", "Confirm")}
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+                  </Button>
+                </AlertDialog.Footer>
+              </AlertDialog.Dialog>
+            </AlertDialog.Container>
+          </AlertDialog.Backdrop>
+        </AlertDialog>
+      </Card.Footer>
+    </Card>
   );
 }

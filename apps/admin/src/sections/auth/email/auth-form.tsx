@@ -1,6 +1,6 @@
 "use client";
 
-import { useNavigate } from "@tanstack/react-router";
+import { useNavigate } from "@workspace/ui/lib/router-compat";
 import {
   adminLogin,
   adminResetPassword,
@@ -114,7 +114,7 @@ export default function EmailAuthForm() {
                 ? t("reset.title", "Reset Password")
                 : t("check.title", "Verify")}
         </h1>
-        <div className="font-medium text-muted-foreground">
+        <div className="font-medium text-muted">
           {type === "login"
             ? t("login.description", "Enter your credentials to continue")
             : type === "register"

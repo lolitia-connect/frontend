@@ -1,22 +1,17 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
-import { Badge } from "@workspace/ui/components/badge";
-import { Button } from "@workspace/ui/components/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@workspace/ui/components/card";
-import { Spinner } from "@workspace/ui/components/spinner";
-import {
   Table,
-  TableBody,
-  TableCell,
-  TableRow,
-} from "@workspace/ui/components/table";
+} from "@heroui/react";
+import { useQuery } from "@tanstack/react-query";
+import { Badge } from "@workspace/ui/components/badge";
+import { Button } from "@workspace/ui/components/button";
+import { Spinner } from "@workspace/ui/components/spinner";
 import {
   getRecalculationStatus,
   getSubscribeGroupMapping,
@@ -145,40 +140,50 @@ export default function SubscribeModeTab() {
         <CardContent>
           {mappingLoading ? (
             <div className="flex items-center justify-center py-8">
-              <Spinner className="size-6 text-muted-foreground" />
+              <Spinner className="size-6 text-muted" />
             </div>
           ) : (
             <Table>
-              <TableBody>
-                {mappingData && mappingData.length > 0 ? (
-                  mappingData
-                    .filter(
-                      (item: SubscribeGroupMapping) =>
-                        item.subscribe_name && item.node_group_name
-                    )
-                    .map((item: SubscribeGroupMapping, index: number) => (
-                      <TableRow key={index}>
-                        <TableCell>
-                          <span className="font-medium">
+              <Table.ScrollContainer>
+                <Table.Content
+                  aria-label={t(
+                    "subscribeGroupMappingTitle",
+                    "套餐-节点组对应关系"
+                  )}
+                >
+                  <Table.Header>
+                    <Table.Column id="subscribe" isRowHeader>
+                      {t("subscribe", "Subscription")}
+                    </Table.Column>
+                    <Table.Column id="node-group">
+                      {t("nodeGroups", "Node Groups")}
+                    </Table.Column>
+                  </Table.Header>
+                  <Table.Body
+                    renderEmptyState={() =>
+                      t("noMappingData", "No mapping data available")
+                    }
+                  >
+                    {(mappingData || [])
+                      .filter(
+                        (item: SubscribeGroupMapping) =>
+                          item.subscribe_name && item.node_group_name
+                      )
+                      .map((item: SubscribeGroupMapping, index: number) => (
+                        <Table.Row id={index} key={index}>
+                          <Table.Cell className="font-medium">
                             {item.subscribe_name}
-                          </span>
-                          <span className="mx-2 text-muted-foreground">
-                            {t("arrow", "→")}
-                          </span>
-                          <Badge variant="outline">
-                            {item.node_group_name}
-                          </Badge>
-                        </TableCell>
-                      </TableRow>
-                    ))
-                ) : (
-                  <TableRow>
-                    <TableCell className="text-center text-muted-foreground">
-                      {t("noMappingData", "No mapping data available")}
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
+                          </Table.Cell>
+                          <Table.Cell>
+                            <Badge variant="outline">
+                              {item.node_group_name}
+                            </Badge>
+                          </Table.Cell>
+                        </Table.Row>
+                      ))}
+                  </Table.Body>
+                </Table.Content>
+              </Table.ScrollContainer>
             </Table>
           )}
         </CardContent>
@@ -221,9 +226,9 @@ export default function SubscribeModeTab() {
                     {status.progress} / {status.total || 0}
                   </span>
                 </div>
-                <div className="h-2 overflow-hidden rounded-full bg-muted">
+                <div className="h-2 overflow-hidden rounded-full bg-default">
                   <div
-                    className="h-full bg-primary transition-all"
+                    className="h-full bg-accent transition-all"
                     style={{
                       width: `${status.total > 0 ? (status.progress / status.total) * 100 : 0}%`,
                     }}
@@ -233,7 +238,7 @@ export default function SubscribeModeTab() {
             )}
 
             {status?.state === "completed" && (
-              <div className="text-muted-foreground text-sm">
+              <div className="text-muted text-sm">
                 {t(
                   "recalculationCompleted",
                   "Recalculation completed successfully"
@@ -242,7 +247,7 @@ export default function SubscribeModeTab() {
             )}
 
             {status?.state === "failed" && (
-              <div className="text-destructive text-sm">
+              <div className="text-danger text-sm">
                 {t(
                   "recalculationFailed",
                   "Recalculation failed. Please try again."
@@ -263,7 +268,7 @@ export default function SubscribeModeTab() {
           </div>
 
           {/* Warning */}
-          <div className="rounded-md bg-yellow-50 p-4 text-sm text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400">
+          <div className="rounded-md bg-warning-soft p-4 text-sm text-warning-soft-foreground">
             <strong>{t("warning", "Warning")}:</strong>{" "}
             {t(
               "recalculationWarning",

@@ -1,3 +1,5 @@
+"use client";
+
 import { removeCookie, setCookie } from "@workspace/ui/lib/cookies";
 import { isBrowser } from "@workspace/ui/utils/index";
 import { intlFormat } from "date-fns";

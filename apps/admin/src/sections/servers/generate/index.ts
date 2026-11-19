@@ -1,3 +1,5 @@
+"use client";
+
 export { generateMLKEM768KeyPair } from "./mlkem768";
 export { generateRealityShortId } from "./short-id";
 export {

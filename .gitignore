@@ -15,6 +15,12 @@ node_modules
 # Testing
 coverage
 test-artifacts
+test-results/
+playwright-report/
+.tmp-e2e/
+.tmp-vitest/
+.next-playwright/
+.next-debug/
 *.coverage
 *.cover
 
@@ -33,6 +39,9 @@ logs
 out/
 build
 dist
+
+# Generated at build time by scripts/write-version-lock.mjs (served at /version.lock)
+apps/*/public/version.lock
 
 
 # Debug

@@ -1,40 +1,58 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { TableCell, TableRow } from "@workspace/ui/components/table";
+import { Button } from "@heroui/react";
 import { GripVertical } from "lucide-react";
-import type React from "react";
+import { type ComponentProps, createContext, useContext } from "react";
 
-interface SortableRowProps {
-  children: React.ReactNode;
-  id: string;
-  isSortable: boolean;
-}
+const SortableRowContext = createContext<ReturnType<typeof useSortable> | null>(
+  null
+);
 
-export function SortableRow({ id, children, isSortable }: SortableRowProps) {
-  const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({
-      id,
-      disabled: !isSortable,
-    });
-
-  const style = {
-    transform: CSS.Transform.toString({
-      x: 0,
-      y: transform?.y || 0,
-      scaleX: transform?.scaleX || 1,
-      scaleY: transform?.scaleY || 1,
-    }),
-    transition,
-  };
+export function SortableRow({
+  sortableId,
+  ref,
+  style,
+  ...props
+}: ComponentProps<"tr"> & { sortableId: string }) {
+  const sortable = useSortable({ id: sortableId });
 
   return (
-    <TableRow ref={setNodeRef} style={style}>
-      {isSortable ? (
-        <TableCell className="cursor-move" {...listeners} {...attributes}>
-          <GripVertical className="h-4 w-4 cursor-move text-gray-500 hover:text-gray-700" />
-        </TableCell>
-      ) : null}
-      {children}
-    </TableRow>
+    <SortableRowContext.Provider value={sortable}>
+      <tr
+        {...props}
+        ref={(node) => {
+          sortable.setNodeRef(node);
+          if (typeof ref === "function") return ref(node);
+          if (ref) ref.current = node;
+        }}
+        style={{
+          ...style,
+          transform: CSS.Transform.toString(
+            sortable.transform && { ...sortable.transform, x: 0 }
+          ),
+          transition: sortable.transition,
+        }}
+      />
+    </SortableRowContext.Provider>
+  );
+}
+
+export function SortHandle({ label }: { label: string }) {
+  const sortable = useContext(SortableRowContext);
+  if (!sortable) return null;
+
+  return (
+    <Button
+      {...sortable.attributes}
+      {...sortable.listeners}
+      aria-label={label}
+      className="cursor-grab touch-none"
+      isIconOnly
+      ref={sortable.setActivatorNodeRef}
+      size="sm"
+      variant="ghost"
+    >
+      <GripVertical className="size-4" />
+    </Button>
   );
 }

@@ -1,3 +1,5 @@
+"use client";
+
 import {
   type CreateOrder,
   createV2Order,
@@ -14,11 +16,14 @@ export function useCreateOrder() {
   );
   return async (body: CreateOrder) => {
     if (pending.current) return pending.current;
+    // `return_url` is where the payment gateway sends the browser back to.
+    // The pre-migration app used TanStack *hash* history, so `/payment` was
+    // written as `#/payment`; under the App Router a fragment is not a route, so
+    // the gateway would return the user to the bare pathname with a dead
+    // fragment instead of the payment page. Use the real pathname route.
     const requestBody = {
       ...body,
-      return_url:
-        body.return_url ||
-        `${window.location.origin}${window.location.pathname}#/payment`,
+      return_url: body.return_url || `${window.location.origin}/payment`,
     };
     const payload = JSON.stringify(requestBody);
     if (attempt.current?.payload !== payload)

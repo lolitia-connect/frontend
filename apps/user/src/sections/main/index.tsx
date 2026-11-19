@@ -1,4 +1,6 @@
-import { useNavigate } from "@tanstack/react-router";
+"use client";
+
+import { useNavigate } from "@workspace/ui/lib/router-compat";
 import { useEffect } from "react";
 import { useGlobalStore } from "@/stores/global";
 import { GlobalMap } from "./global-map";
@@ -10,7 +12,7 @@ export default function Main() {
   const { user, isLoadingUser } = useGlobalStore();
   const navigate = useNavigate();
 
-  const showLanding = import.meta.env.VITE_SHOW_LANDING_PAGE !== "false";
+  const showLanding = process.env.NEXT_PUBLIC_SHOW_LANDING_PAGE !== "false";
 
   useEffect(() => {
     // Wait for user info to load before making navigation decisions
@@ -31,14 +33,17 @@ export default function Main() {
   if (!showLanding) return null;
 
   return (
-    <main className="relative overflow-hidden">
-      <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[34rem] bg-[radial-gradient(circle_at_top,rgba(244,114,182,0.22),transparent_45%),radial-gradient(circle_at_20%_20%,rgba(251,207,232,0.35),transparent_30%),linear-gradient(to_bottom,rgba(255,255,255,0),transparent_55%)] dark:bg-[radial-gradient(circle_at_top,rgba(244,114,182,0.2),transparent_42%),radial-gradient(circle_at_20%_20%,rgba(190,24,93,0.18),transparent_30%),linear-gradient(to_bottom,rgba(255,255,255,0),transparent_58%)]" />
+    <main className="relative isolate overflow-hidden bg-background text-foreground">
+      <section className="relative min-h-[calc(100svh-4rem)] overflow-hidden">
+        <GlobalMap />
+        <div className="container relative z-10 flex min-h-[calc(100svh-4rem)] flex-col">
+          <Hero />
+        </div>
+      </section>
 
-      <div className="container space-y-14 py-8 sm:space-y-20 sm:py-12 lg:py-16">
-        <Hero />
+      <div className="container relative z-10 space-y-12 py-8 sm:space-y-16 sm:py-12">
         <Stats />
         <ProductShowcase />
-        <GlobalMap />
       </div>
     </main>
   );

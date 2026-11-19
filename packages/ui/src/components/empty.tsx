@@ -1,5 +1,4 @@
 import { cn } from "@workspace/ui/lib/utils";
-import { cva, type VariantProps } from "class-variance-authority";
 
 function Empty({ className, ...props }: React.ComponentProps<"div">) {
   return (
@@ -27,29 +26,27 @@ function EmptyHeader({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
-const emptyMediaVariants = cva(
-  "mb-2 flex shrink-0 items-center justify-center [&_svg]:pointer-events-none [&_svg]:shrink-0",
-  {
-    variants: {
-      variant: {
-        default: "bg-transparent",
-        icon: "flex size-10 shrink-0 items-center justify-center rounded-lg bg-muted text-foreground [&_svg:not([class*='size-'])]:size-6",
-      },
-    },
-    defaultVariants: {
-      variant: "default",
-    },
-  }
-);
+type EmptyMediaVariant = "default" | "icon";
+function emptyMediaVariants(
+  variant: EmptyMediaVariant = "default",
+  className?: string
+) {
+  return cn(
+    "mb-2 flex shrink-0 items-center justify-center bg-transparent [&_svg]:pointer-events-none [&_svg]:shrink-0",
+    variant === "icon" &&
+      "flex size-10 shrink-0 items-center justify-center rounded-lg bg-default text-foreground [&_svg:not([class*='size-'])]:size-6",
+    className
+  );
+}
 
 function EmptyMedia({
   className,
   variant = "default",
   ...props
-}: React.ComponentProps<"div"> & VariantProps<typeof emptyMediaVariants>) {
+}: React.ComponentProps<"div"> & { variant?: EmptyMediaVariant | null }) {
   return (
     <div
-      className={cn(emptyMediaVariants({ variant, className }))}
+      className={emptyMediaVariants(variant ?? "default", className)}
       data-slot="empty-icon"
       data-variant={variant}
       {...props}
@@ -71,7 +68,7 @@ function EmptyDescription({ className, ...props }: React.ComponentProps<"p">) {
   return (
     <div
       className={cn(
-        "text-muted-foreground text-sm/relaxed [&>a:hover]:text-primary [&>a]:underline [&>a]:underline-offset-4",
+        "text-muted text-sm/relaxed [&>a:hover]:text-accent [&>a]:underline [&>a]:underline-offset-4",
         className
       )}
       data-slot="empty-description"

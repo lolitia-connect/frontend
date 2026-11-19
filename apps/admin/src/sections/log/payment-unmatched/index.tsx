@@ -1,5 +1,7 @@
-import { useSearch } from "@tanstack/react-router";
+"use client";
+
 import { ProTable } from "@workspace/ui/composed/pro-table/pro-table";
+import { useSearch } from "@workspace/ui/lib/router-compat";
 import { getLogPaymentUnmatchedList } from "@workspace/ui/services/admin/admin";
 import { useTranslation } from "react-i18next";
 import { Display } from "@/components/display";

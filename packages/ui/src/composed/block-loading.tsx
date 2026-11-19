@@ -33,13 +33,13 @@ export function BlockLoading({
     <div
       className={cn(
         "flex items-center justify-center rounded-md",
-        surface && "bg-muted/40",
+        surface && "bg-default/40",
         className
       )}
       style={{ minHeight }}
     >
       <div className="rounded-full border bg-background p-3 shadow-sm">
-        <Spinner className={cn(sizeMap[size], "text-muted-foreground")} />
+        <Spinner className={cn(sizeMap[size], "text-muted")} />
       </div>
     </div>
   );

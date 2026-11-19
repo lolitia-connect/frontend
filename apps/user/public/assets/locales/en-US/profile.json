@@ -18,17 +18,18 @@
     "subscribe": "Subscribe Notification",
     "updateSuccess": "Notification settings updated successfully"
   },
+  "sections": "Sections",
   "thirdParty": {
     "bind": "Bind",
     "bindFailed": "Bind failed",
     "bindMobile": "Bind Mobile",
-    "bindSuccess": "Bind successfully",
+    "bindSuccess": "Bound successfully",
     "confirm": "Confirm",
     "save": "Save",
     "title": "Third-party Accounts",
     "unbind": "Unbind",
     "update": "Update",
-    "updateSuccess": "Update successfully",
+    "updateSuccess": "Updated successfully",
     "bindEmail": "Connect Email",
     "newEmail": "New email address",
     "newCode": "Code sent to the new address"

@@ -1,15 +1,10 @@
+"use client";
+
+import { Alert, Card, Description, Modal } from "@heroui/react";
 import { Badge } from "@workspace/ui/components/badge";
 import { Button } from "@workspace/ui/components/button";
 import { Checkbox } from "@workspace/ui/components/checkbox";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@workspace/ui/components/dialog";
+
 import { Input } from "@workspace/ui/components/input";
 import { Label } from "@workspace/ui/components/label";
 import { ScrollArea } from "@workspace/ui/components/scroll-area";
@@ -186,7 +181,7 @@ export default function PluginManagement() {
             <div className="flex min-w-0 flex-col gap-1">
               <span className="font-medium">{row.original.name}</span>
               {row.original.description ? (
-                <span className="max-w-[360px] truncate text-muted-foreground text-xs">
+                <span className="max-w-[360px] truncate text-muted text-xs">
                   {row.original.description}
                 </span>
               ) : null}
@@ -215,7 +210,7 @@ export default function PluginManagement() {
                   </Badge>
                 ))
               ) : (
-                <span className="text-muted-foreground">-</span>
+                <span className="text-muted">-</span>
               )}
               {(row.original.permissions?.length || 0) > 4 ? (
                 <Badge variant="secondary">
@@ -235,11 +230,11 @@ export default function PluginManagement() {
           header: t("error", "Error"),
           cell: ({ row }) =>
             row.original.error ? (
-              <span className="line-clamp-2 max-w-[320px] text-destructive text-xs">
+              <span className="line-clamp-2 max-w-[320px] text-danger text-xs">
                 {row.original.error}
               </span>
             ) : (
-              <span className="text-muted-foreground">-</span>
+              <span className="text-muted">-</span>
             ),
         },
       ]}
@@ -347,109 +342,122 @@ function PluginUploadDialog({ onUploaded }: { onUploaded: () => void }) {
   };
 
   return (
-    <Dialog
+    <Modal
+      isOpen={open}
       onOpenChange={(nextOpen) => {
         setOpen(nextOpen);
         if (!nextOpen) {
           reset();
         }
       }}
-      open={open}
     >
-      <DialogTrigger asChild>
-        <Button>
-          <Upload />
-          {t("uploadPlugin", "Upload plugin")}
-        </Button>
-      </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{t("uploadPlugin", "Upload plugin")}</DialogTitle>
-          <DialogDescription>
-            {t(
-              "uploadDescription",
-              "Upload a zip package that contains plugin.yaml and the WASM module."
-            )}
-          </DialogDescription>
-        </DialogHeader>
-        <div className="grid gap-4">
-          <div className="grid gap-2">
-            <Label htmlFor={inputId}>{t("packageFile", "Package file")}</Label>
-            <Input
-              accept=".zip,application/zip,application/x-zip-compressed"
-              id={inputId}
-              onChange={(event) => setFile(event.target.files?.[0] || null)}
-              type="file"
-            />
-            <p className="text-muted-foreground text-xs">
-              {file
-                ? t("selectedPackage", "Selected: {{name}}", {
-                    name: file.name,
-                  })
-                : t("packageHint", "Only .zip plugin packages are supported.")}
-            </p>
-          </div>
+      <Button>
+        <Upload />
+        {t("uploadPlugin", "Upload plugin")}
+      </Button>
 
-          <div className="grid gap-3">
-            <div className="flex items-start gap-3 rounded-md border p-3">
-              <Checkbox
-                checked={replace}
-                id={`${inputId}-replace`}
-                onCheckedChange={(checked) => setReplace(checked === true)}
-              />
-              <div className="grid gap-1">
-                <Label htmlFor={`${inputId}-replace`}>
-                  {t("replaceExisting", "Replace existing plugin")}
+      <Modal.Backdrop>
+        <Modal.Container>
+          <Modal.Dialog>
+            <Modal.Header>
+              <Modal.Heading>
+                {t("uploadPlugin", "Upload plugin")}
+              </Modal.Heading>
+              <Description slot="description">
+                {t(
+                  "uploadDescription",
+                  "Upload a zip package that contains plugin.yaml and the WASM module."
+                )}
+              </Description>
+            </Modal.Header>
+            <div className="grid gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor={inputId}>
+                  {t("packageFile", "Package file")}
                 </Label>
-                <p className="text-muted-foreground text-xs">
-                  {t(
-                    "replaceExistingDescription",
-                    "If a plugin with the same manifest name exists, stop it and replace its files."
-                  )}
+                <Input
+                  accept=".zip,application/zip,application/x-zip-compressed"
+                  id={inputId}
+                  onChange={(event) => setFile(event.target.files?.[0] || null)}
+                  type="file"
+                />
+                <p className="text-muted text-xs">
+                  {file
+                    ? t("selectedPackage", "Selected: {{name}}", {
+                        name: file.name,
+                      })
+                    : t(
+                        "packageHint",
+                        "Only .zip plugin packages are supported."
+                      )}
                 </p>
               </div>
-            </div>
 
-            <div className="flex items-start gap-3 rounded-md border p-3">
-              <Checkbox
-                checked={enable}
-                id={`${inputId}-enable`}
-                onCheckedChange={(checked) => setEnable(checked === true)}
-              />
-              <div className="grid gap-1">
-                <Label htmlFor={`${inputId}-enable`}>
-                  {t("enableAfterUpload", "Enable after upload")}
-                </Label>
-                <p className="text-muted-foreground text-xs">
-                  {t(
-                    "enableAfterUploadDescription",
-                    "Load the uploaded WASM plugin immediately after installation."
-                  )}
-                </p>
+              <div className="grid gap-3">
+                <div className="flex items-start gap-3 rounded-md border p-3">
+                  <Checkbox
+                    checked={replace}
+                    id={`${inputId}-replace`}
+                    onCheckedChange={(checked) => setReplace(checked === true)}
+                  />
+                  <div className="grid gap-1">
+                    <Label htmlFor={`${inputId}-replace`}>
+                      {t("replaceExisting", "Replace existing plugin")}
+                    </Label>
+                    <p className="text-muted text-xs">
+                      {t(
+                        "replaceExistingDescription",
+                        "If a plugin with the same manifest name exists, stop it and replace its files."
+                      )}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3 rounded-md border p-3">
+                  <Checkbox
+                    checked={enable}
+                    id={`${inputId}-enable`}
+                    onCheckedChange={(checked) => setEnable(checked === true)}
+                  />
+                  <div className="grid gap-1">
+                    <Label htmlFor={`${inputId}-enable`}>
+                      {t("enableAfterUpload", "Enable after upload")}
+                    </Label>
+                    <p className="text-muted text-xs">
+                      {t(
+                        "enableAfterUploadDescription",
+                        "Load the uploaded WASM plugin immediately after installation."
+                      )}
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
-        <DialogFooter>
-          <Button
-            disabled={uploading}
-            onClick={() => setOpen(false)}
-            type="button"
-            variant="outline"
-          >
-            {t("cancel", "Cancel")}
-          </Button>
-          <Button
-            disabled={!file || uploading}
-            onClick={handleUpload}
-            type="button"
-          >
-            <Upload />
-            {uploading ? t("uploading", "Uploading...") : t("upload", "Upload")}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+            <Modal.Footer>
+              <Button
+                disabled={uploading}
+                onClick={() => setOpen(false)}
+                type="button"
+                variant="outline"
+              >
+                {t("cancel", "Cancel")}
+              </Button>
+              <Button
+                disabled={!file || uploading}
+                onClick={handleUpload}
+                type="button"
+              >
+                <Upload />
+                {uploading
+                  ? t("uploading", "Uploading...")
+                  : t("upload", "Upload")}
+              </Button>
+            </Modal.Footer>
+            <Modal.CloseTrigger aria-label="Close" />
+          </Modal.Dialog>
+        </Modal.Container>
+      </Modal.Backdrop>
+    </Modal>
   );
 }
 
@@ -478,125 +486,136 @@ function PluginDetailDialog({ plugin }: { plugin: PluginInfo }) {
   };
 
   return (
-    <Dialog
+    <Modal
+      isOpen={open}
       onOpenChange={(nextOpen) => {
         setOpen(nextOpen);
         if (nextOpen) {
           loadDetail().catch(() => setDetail(null));
         }
       }}
-      open={open}
     >
-      <DialogTrigger asChild>
-        <Button size="sm" variant="outline">
-          <Eye />
-          {t("detail", "Detail")}
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="max-h-[86vh] max-w-5xl">
-        <DialogHeader>
-          <DialogTitle>{plugin.name}</DialogTitle>
-        </DialogHeader>
-        <ScrollArea className="max-h-[72vh] pr-4">
-          <div className="grid gap-5">
-            <section className="grid gap-3">
-              <div className="flex flex-wrap items-center gap-2">
-                <Badge variant={statusVariant[plugin.status] || "outline"}>
-                  {getStatusLabel(plugin.status)}
-                </Badge>
-                <span className="text-muted-foreground text-sm">
-                  {plugin.version || "-"}
-                </span>
-                <span className="text-muted-foreground text-sm">
-                  {plugin.author || "-"}
-                </span>
+      <Button size="sm" variant="outline">
+        <Eye />
+        {t("detail", "Detail")}
+      </Button>
+
+      <Modal.Backdrop>
+        <Modal.Container>
+          <Modal.Dialog className="max-h-[86vh] max-w-5xl">
+            <Modal.Header>
+              <Modal.Heading>{plugin.name}</Modal.Heading>
+            </Modal.Header>
+            <ScrollArea className="max-h-[72vh] pr-4">
+              <div className="grid gap-5">
+                <section className="grid gap-3">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Badge variant={statusVariant[plugin.status] || "outline"}>
+                      {getStatusLabel(plugin.status)}
+                    </Badge>
+                    <span className="text-muted text-sm">
+                      {plugin.version || "-"}
+                    </span>
+                    <span className="text-muted text-sm">
+                      {plugin.author || "-"}
+                    </span>
+                  </div>
+                  {plugin.error ? (
+                    <Alert
+                      className="block rounded-md border border-danger/30 bg-danger/10 p-3 text-danger text-sm shadow-none"
+                      status="danger"
+                    >
+                      {plugin.error}
+                    </Alert>
+                  ) : null}
+                </section>
+
+                <Separator />
+
+                <section className="grid gap-3 md:grid-cols-4">
+                  <Metric
+                    label={t("ready", "Ready")}
+                    value={
+                      detail?.health?.ready ? t("yes", "Yes") : t("no", "No")
+                    }
+                  />
+                  <Metric
+                    label={t("poolSize", "Pool Size")}
+                    value={detail?.health?.pool_size ?? "-"}
+                  />
+                  <Metric
+                    label={t("asyncInflight", "Async In-flight")}
+                    value={`${detail?.health?.async_in_flight ?? 0}/${detail?.health?.async_limit ?? 0}`}
+                  />
+                  <Metric
+                    label={t("registeredRoutes", "Registered Routes")}
+                    value={detail?.health?.registered_route ?? 0}
+                  />
+                </section>
+
+                <Separator />
+
+                <DetailSection title={t("manifest", "Manifest")}>
+                  <pre className="max-h-72 overflow-auto rounded-md bg-default p-3 text-xs">
+                    {JSON.stringify(detail?.manifest || {}, null, 2)}
+                  </pre>
+                </DetailSection>
+
+                <DetailSection title={t("runtimeRoutes", "Runtime Routes")}>
+                  <RuntimeList
+                    emptyText={t("noRoutes", "No runtime routes")}
+                    items={detail?.routes.map((item) => ({
+                      key: `${item.Method}:${item.Path}`,
+                      title: `${item.Method} ${item.Path}`,
+                      description: item.Handler,
+                      meta: item.Middleware?.join(", "),
+                    }))}
+                  />
+                </DetailSection>
+
+                <DetailSection
+                  title={t("runtimeMiddlewares", "Runtime Middlewares")}
+                >
+                  <RuntimeList
+                    emptyText={t("noMiddlewares", "No runtime middlewares")}
+                    items={detail?.middlewares.map((item) => ({
+                      key: item.Name,
+                      title: item.Name,
+                      description: item.Handler,
+                    }))}
+                  />
+                </DetailSection>
+
+                <DetailSection
+                  title={t("eventSubscriptions", "Event Subscriptions")}
+                >
+                  <RuntimeList
+                    emptyText={t("noEvents", "No event subscriptions")}
+                    items={detail?.events.map((item) => ({
+                      key: `${item.Event}:${item.Handler}`,
+                      title: item.Event,
+                      description: item.Handler,
+                    }))}
+                  />
+                </DetailSection>
               </div>
-              {plugin.error ? (
-                <div className="rounded-md border border-destructive/30 bg-destructive/10 p-3 text-destructive text-sm">
-                  {plugin.error}
-                </div>
-              ) : null}
-            </section>
-
-            <Separator />
-
-            <section className="grid gap-3 md:grid-cols-4">
-              <Metric
-                label={t("ready", "Ready")}
-                value={detail?.health?.ready ? t("yes", "Yes") : t("no", "No")}
-              />
-              <Metric
-                label={t("poolSize", "Pool Size")}
-                value={detail?.health?.pool_size ?? "-"}
-              />
-              <Metric
-                label={t("asyncInflight", "Async In-flight")}
-                value={`${detail?.health?.async_in_flight ?? 0}/${detail?.health?.async_limit ?? 0}`}
-              />
-              <Metric
-                label={t("registeredRoutes", "Registered Routes")}
-                value={detail?.health?.registered_route ?? 0}
-              />
-            </section>
-
-            <Separator />
-
-            <DetailSection title={t("manifest", "Manifest")}>
-              <pre className="max-h-72 overflow-auto rounded-md bg-muted p-3 text-xs">
-                {JSON.stringify(detail?.manifest || {}, null, 2)}
-              </pre>
-            </DetailSection>
-
-            <DetailSection title={t("runtimeRoutes", "Runtime Routes")}>
-              <RuntimeList
-                emptyText={t("noRoutes", "No runtime routes")}
-                items={detail?.routes.map((item) => ({
-                  key: `${item.Method}:${item.Path}`,
-                  title: `${item.Method} ${item.Path}`,
-                  description: item.Handler,
-                  meta: item.Middleware?.join(", "),
-                }))}
-              />
-            </DetailSection>
-
-            <DetailSection
-              title={t("runtimeMiddlewares", "Runtime Middlewares")}
-            >
-              <RuntimeList
-                emptyText={t("noMiddlewares", "No runtime middlewares")}
-                items={detail?.middlewares.map((item) => ({
-                  key: item.Name,
-                  title: item.Name,
-                  description: item.Handler,
-                }))}
-              />
-            </DetailSection>
-
-            <DetailSection
-              title={t("eventSubscriptions", "Event Subscriptions")}
-            >
-              <RuntimeList
-                emptyText={t("noEvents", "No event subscriptions")}
-                items={detail?.events.map((item) => ({
-                  key: `${item.Event}:${item.Handler}`,
-                  title: item.Event,
-                  description: item.Handler,
-                }))}
-              />
-            </DetailSection>
-          </div>
-        </ScrollArea>
-      </DialogContent>
-    </Dialog>
+            </ScrollArea>
+            <Modal.CloseTrigger aria-label="Close" />
+          </Modal.Dialog>
+        </Modal.Container>
+      </Modal.Backdrop>
+    </Modal>
   );
 }
 
 function Metric({ label, value }: { label: string; value: string | number }) {
   return (
-    <div className="rounded-md border p-3">
-      <div className="text-muted-foreground text-xs">{label}</div>
+    // HeroUI `Card` is `flex-direction: column` with a 12px gap, so the gap is
+    // zeroed to keep this tile's original label/value spacing.
+    <Card className="gap-0 rounded-md border bg-transparent p-3 shadow-none">
+      <div className="text-muted text-xs">{label}</div>
       <div className="mt-1 font-medium text-sm">{value}</div>
-    </div>
+    </Card>
   );
 }
 
@@ -628,25 +647,24 @@ function RuntimeList({
   emptyText: string;
 }) {
   if (!items?.length) {
-    return <div className="text-muted-foreground text-sm">{emptyText}</div>;
+    return <div className="text-muted text-sm">{emptyText}</div>;
   }
 
   return (
     <div className="grid gap-2">
       {items.map((item) => (
-        <div className="rounded-md border p-3" key={item.key}>
+        <Card
+          className="gap-0 rounded-md border bg-transparent p-3 shadow-none"
+          key={item.key}
+        >
           <div className="font-medium text-sm">{item.title}</div>
           {item.description ? (
-            <div className="mt-1 text-muted-foreground text-xs">
-              {item.description}
-            </div>
+            <div className="mt-1 text-muted text-xs">{item.description}</div>
           ) : null}
           {item.meta ? (
-            <div className="mt-2 text-muted-foreground text-xs">
-              {item.meta}
-            </div>
+            <div className="mt-2 text-muted text-xs">{item.meta}</div>
           ) : null}
-        </div>
+        </Card>
       ))}
     </div>
   );

@@ -29,6 +29,7 @@
   "resetSubscription": "重設訂閱",
   "resetSuccess": "重設成功",
   "scanToSubscribe": "掃碼訂閱",
+  "sections": "分頁",
   "subscriptionUrl": "訂閱連結",
   "totalTraffic": "總流量",
   "unknown": "未知",
@@ -46,6 +47,8 @@
   "resetSubscriptionDescription": "舊連結和已匯入節點將失效。請在所有用戶端刪除舊訂閱，再加入新連結；計劃、到期時間和已用流量不受影響。",
   "expiredDays": "已過期天數",
   "remainingDays": "剩餘天數",
+  "resetSubscriptionSteps": "請在所有用戶端刪除舊訂閱，再加入本頁顯示的新連結。只重新整理舊訂閱沒有用。",
+  "resetSubscriptionUnaffected": "您的計劃、到期時間與已用流量不受影響。",
   "loadingSubscriptionConfig": "正在載入訂閱設定...",
   "subscriptionConfigUnavailable": "訂閱設定暫時無法使用，請重新整理後再試。",
   "clickToCopy": "按此複製"

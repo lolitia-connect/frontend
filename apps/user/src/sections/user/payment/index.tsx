@@ -1,18 +1,12 @@
 "use client";
 
+import { Card } from "@heroui/react";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { getRouteApi, Link } from "@tanstack/react-router";
 import { Badge } from "@workspace/ui/components/badge";
 import { Button } from "@workspace/ui/components/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@workspace/ui/components/card";
 import { Separator } from "@workspace/ui/components/separator";
 import { Icon } from "@workspace/ui/composed/icon";
+import { getRouteApi, Link } from "@workspace/ui/lib/router-compat";
 import {
   checkoutV2Order,
   type OrderSnapshot,
@@ -167,26 +161,28 @@ export default function Page() {
           </Button>
         </div>
       )}
-      <Card className="order-2 gap-0 xl:order-1">
-        <CardHeader className="flex flex-row items-start">
+      <Card className="wrap-anywhere order-2 min-w-0 gap-0 xl:order-1">
+        <Card.Header className="flex flex-row items-start">
           <div className="grid gap-0.5">
-            <CardTitle className="flex flex-col text-lg">
+            <Card.Title className="flex flex-col text-lg">
               {t("orderNumber", "Order Number")}
               <span>{data?.order_no}</span>
-            </CardTitle>
-            <CardDescription>
+            </Card.Title>
+            <Card.Description>
               {t("createdAt", "Created At")}: {formatDate(data?.created_at)}
-            </CardDescription>
+            </Card.Description>
           </div>
-        </CardHeader>
-        <CardContent className="grid gap-3 p-6 text-sm">
+        </Card.Header>
+        <Card.Content className="grid gap-3 p-6 text-sm">
           <div className="font-semibold">
             {t("paymentMethod", "Payment Method")}
           </div>
           <dl className="grid gap-3">
             <div className="flex items-center justify-between">
-              <dt className="text-muted-foreground">
-                <Badge>{data?.payment.name || data?.payment.platform}</Badge>
+              <dt className="text-muted">
+                <Badge className="wrap-anywhere h-auto max-w-full whitespace-normal">
+                  {data?.payment.name || data?.payment.platform}
+                </Badge>
               </dt>
             </div>
           </dl>
@@ -207,7 +203,7 @@ export default function Page() {
               </div>
               <ul className="grid grid-cols-2 gap-3 *:flex *:items-center *:justify-between lg:grid-cols-1">
                 <li className="flex items-center justify-between">
-                  <span className="line-clamp-2 flex-1 text-muted-foreground">
+                  <span className="line-clamp-2 flex-1 text-muted">
                     {t("resetPrice", "Reset Price")}
                   </span>
                   <span>
@@ -225,7 +221,7 @@ export default function Page() {
               </div>
               <ul className="grid grid-cols-2 gap-3 *:flex *:items-center *:justify-between lg:grid-cols-1">
                 <li className="flex items-center justify-between">
-                  <span className="line-clamp-2 flex-1 text-muted-foreground">
+                  <span className="line-clamp-2 flex-1 text-muted">
                     {t("rechargeAmount", "Recharge Amount")}
                   </span>
                   <span>
@@ -243,20 +239,20 @@ export default function Page() {
               show_original_price: data?.subscribe?.show_original_price,
             }}
           />
-        </CardContent>
+        </Card.Content>
       </Card>
-      <Card className="order-1 flex flex-auto items-center justify-center xl:order-2">
-        <CardContent className="py-16">
+      <Card className="order-1 flex min-w-0 flex-auto items-center justify-center xl:order-2">
+        <Card.Content className="min-w-0 max-w-full py-16">
           {currentStatus && [2, 5].includes(currentStatus) && (
             <div className="flex flex-col items-center gap-8 text-center">
               <h3 className="font-bold text-2xl tracking-tight">
                 {t("paymentSuccess", "Payment Success")}
               </h3>
               <Icon
-                className="text-7xl text-green-500"
+                className="text-7xl text-success"
                 icon="mdi:success-circle-outline"
               />
-              <div className="flex gap-4">
+              <div className="flex flex-wrap justify-center gap-4">
                 <Button asChild>
                   <Link to="/dashboard">
                     {t("subscribeNow", "Subscribe Now")}
@@ -278,11 +274,8 @@ export default function Page() {
               <p className="flex items-center font-bold text-3xl">
                 {countdownDisplay}
               </p>
-              <Icon
-                className="text-7xl text-muted-foreground"
-                icon="mdi:access-time"
-              />
-              <div className="flex gap-4">
+              <Icon className="text-7xl text-muted" icon="mdi:access-time" />
+              <div className="flex flex-wrap justify-center gap-4">
                 <Button
                   disabled={checkoutMutation.isPending}
                   onClick={() => {
@@ -317,7 +310,7 @@ export default function Page() {
                 size={208}
                 value={checkoutUrl || ""}
               />
-              <div className="flex gap-4">
+              <div className="flex flex-wrap justify-center gap-4">
                 <Button asChild>
                   <Link to="/subscribe">
                     {t("productList", "Product List")}
@@ -335,8 +328,8 @@ export default function Page() {
               <h3 className="font-bold text-2xl tracking-tight">
                 {t("orderClosed", "Order Closed")}
               </h3>
-              <Icon className="text-7xl text-red-500" icon="mdi:cancel" />
-              <div className="flex gap-4">
+              <Icon className="text-7xl text-danger" icon="mdi:cancel" />
+              <div className="flex flex-wrap justify-center gap-4">
                 <Button asChild>
                   <Link to="/subscribe">
                     {t("productList", "Product List")}
@@ -348,7 +341,7 @@ export default function Page() {
               </div>
             </div>
           )}
-        </CardContent>
+        </Card.Content>
       </Card>
     </div>
   );

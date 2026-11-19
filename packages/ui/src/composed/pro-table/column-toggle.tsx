@@ -1,18 +1,7 @@
 "use client";
 
+import { buttonVariants, Dropdown, Tooltip } from "@heroui/react";
 import type { Table } from "@tanstack/react-table";
-import { Button } from "@workspace/ui/components/button";
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from "@workspace/ui/components/dropdown-menu";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@workspace/ui/components/tooltip";
 import { ListTodoIcon } from "lucide-react";
 import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
@@ -23,48 +12,58 @@ interface ColumnToggleProps<TData> {
 
 export function ColumnToggle<TData>({ table }: ColumnToggleProps<TData>) {
   const { t } = useTranslation("components");
+  const columns = table
+    .getAllColumns()
+    .filter((column) => column.accessorFn && column.getCanHide());
+  const visible = table
+    .getAllColumns()
+    .filter((column) => column.getIsVisible());
+  const label = t("table.columns", "Choose columns");
+
   return (
-    <DropdownMenu>
+    <Dropdown>
       <Tooltip>
-        <TooltipTrigger asChild>
-          <DropdownMenuTrigger asChild>
-            <Button
-              aria-label={t("table.columns", "Choose columns")}
-              size="icon"
-              variant="outline"
-            >
-              <ListTodoIcon />
-            </Button>
-          </DropdownMenuTrigger>
-        </TooltipTrigger>
-        <TooltipContent>{t("table.columns", "Choose columns")}</TooltipContent>
+        <Dropdown.Trigger
+          aria-label={label}
+          className={buttonVariants({ isIconOnly: true, variant: "outline" })}
+        >
+          <ListTodoIcon />
+        </Dropdown.Trigger>
+        <Tooltip.Content>{label}</Tooltip.Content>
       </Tooltip>
-      <DropdownMenuContent align="end" className="w-[150px]">
-        {table
-          .getAllColumns()
-          .filter(
-            (column) =>
-              typeof column.accessorFn !== "undefined" && column.getCanHide()
-          )
-          .map((column) => {
-            const columns = table
-              .getAllColumns()
-              .filter((item) => item.getIsVisible());
-            return (
-              <DropdownMenuCheckboxItem
-                checked={column.getIsVisible()}
-                className="capitalize"
-                disabled={
-                  columns.length === 1 && columns?.[0]?.id === column.id
-                }
-                key={column.id}
-                onCheckedChange={(value) => column.toggleVisibility(!!value)}
-              >
-                {column.columnDef.header as ReactNode}
-              </DropdownMenuCheckboxItem>
-            );
-          })}
-      </DropdownMenuContent>
-    </DropdownMenu>
+      <Dropdown.Popover placement="bottom end">
+        <Dropdown.Menu
+          aria-label={label}
+          disabledKeys={
+            visible.length === 1 ? visible.map((column) => column.id) : []
+          }
+          onSelectionChange={(keys) => {
+            for (const column of columns) {
+              const selected = keys === "all" || keys.has(column.id);
+              if (selected !== column.getIsVisible())
+                column.toggleVisibility(selected);
+            }
+          }}
+          selectedKeys={visible.map((column) => column.id)}
+          selectionMode="multiple"
+        >
+          {columns.map((column) => (
+            <Dropdown.Item
+              id={column.id}
+              key={column.id}
+              shouldCloseOnSelect={false}
+              textValue={
+                typeof column.columnDef.header === "string"
+                  ? column.columnDef.header
+                  : column.id
+              }
+            >
+              {column.columnDef.header as ReactNode}
+              <Dropdown.ItemIndicator />
+            </Dropdown.Item>
+          ))}
+        </Dropdown.Menu>
+      </Dropdown.Popover>
+    </Dropdown>
   );
 }

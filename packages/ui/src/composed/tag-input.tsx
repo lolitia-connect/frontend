@@ -113,16 +113,16 @@ export function TagInput({
     );
 
   return (
-    <div className={cn("relative", className)}>
+    <div className={cn("relative", className)} data-slot="tag-input">
       <div
         className={cn(
-          "flex min-h-9 w-full cursor-text flex-wrap items-center gap-2 rounded-md border border-input bg-transparent p-2 shadow-sm transition-colors focus-within:ring-0 focus-within:ring-primary"
+          "flex min-h-9 w-full cursor-text flex-wrap items-center gap-2 rounded-md border border-field-border bg-transparent p-2 shadow-sm transition-colors focus-within:ring-0 focus-within:ring-accent"
         )}
         onClick={() => inputRef.current?.focus()}
       >
         {tags.map((tag, index) => (
           <Badge
-            className="flex items-center gap-1 border-primary bg-primary/10 px-1"
+            className="flex items-center gap-1 border-accent bg-accent/10 px-1"
             key={tag}
             onClick={(e) => e.stopPropagation()}
             variant="outline"
@@ -138,7 +138,7 @@ export function TagInput({
               onMouseDown={(e) => e.preventDefault()}
               type="button"
             >
-              <X className="size-4 cursor-pointer rounded-sm hover:text-destructive" />
+              <X className="size-4 cursor-pointer rounded-sm hover:text-danger" />
             </button>
           </Badge>
         ))}
@@ -155,10 +155,10 @@ export function TagInput({
           />
 
           {open && availableOptions.length > 0 && (
-            <div className="absolute top-full left-0 z-50 max-h-60 w-full overflow-auto rounded-md border bg-popover text-popover-foreground shadow-md">
+            <div className="absolute top-full left-0 z-50 max-h-60 w-full overflow-auto rounded-md border bg-overlay text-overlay-foreground shadow-md">
               {availableOptions.map((option) => (
                 <div
-                  className="relative flex cursor-pointer select-none items-center px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground"
+                  className="relative flex cursor-pointer select-none items-center px-2 py-1.5 text-sm hover:bg-default hover:text-default-foreground"
                   key={option}
                   onMouseDown={(e) => {
                     e.preventDefault();

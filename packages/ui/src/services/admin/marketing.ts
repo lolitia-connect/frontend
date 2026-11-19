@@ -12,7 +12,7 @@ export async function getBatchSendEmailTaskList(
     API.Response & { data?: API.GetBatchSendEmailTaskListResponse }
   >(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/marketing/email/batch/list`,
     {
       method: "GET",
@@ -31,7 +31,7 @@ export async function getPreSendEmailCount(
 ) {
   return request<API.Response & { data?: API.GetPreSendEmailCountResponse }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/marketing/email/batch/pre-send-count`,
     {
       method: "POST",
@@ -51,7 +51,7 @@ export async function createBatchSendEmailTask(
 ) {
   return request<API.Response & { data?: any }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/marketing/email/batch/send`,
     {
       method: "POST",
@@ -73,7 +73,7 @@ export async function getBatchSendEmailTaskStatus(
     API.Response & { data?: API.GetBatchSendEmailTaskStatusResponse }
   >(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/marketing/email/batch/status`,
     {
       method: "POST",
@@ -93,7 +93,7 @@ export async function stopBatchSendEmailTask(
 ) {
   return request<API.Response & { data?: any }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/marketing/email/batch/stop`,
     {
       method: "POST",
@@ -112,7 +112,7 @@ export async function createQuotaTask(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/marketing/quota/create`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/marketing/quota/create`,
     {
       method: "POST",
       headers: {
@@ -131,7 +131,7 @@ export async function queryQuotaTaskList(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: API.QueryQuotaTaskListResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/marketing/quota/list`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/marketing/quota/list`,
     {
       method: "GET",
       params: {
@@ -149,7 +149,7 @@ export async function queryQuotaTaskPreCount(
 ) {
   return request<API.Response & { data?: API.QueryQuotaTaskPreCountResponse }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/marketing/quota/pre-count`,
     {
       method: "POST",

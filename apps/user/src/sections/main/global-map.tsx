@@ -1,279 +1,380 @@
+"use client";
+
 import { useTheme } from "@workspace/ui/integrations/theme";
-import { motion } from "framer-motion";
-import { useTranslation } from "react-i18next";
-import {
-  ComposableMap,
-  Geographies,
-  Geography,
-  Line,
-  Marker,
-} from "react-simple-maps";
-import worldAtlasUrl from "world-atlas/countries-110m.json?url";
+import { useEffect, useRef } from "react";
+import countries from "world-atlas/countries-110m.json";
 
 interface MapLocation {
   coordinates: [number, number];
   isHub?: boolean;
   key: string;
-  labelKey: string;
-  labelOffset: [number, number];
-}
-
-interface MapRoute {
-  from: string;
-  hub: "hong_kong" | "tokyo";
-  to: string;
 }
 
 const MAP_LOCATIONS: MapLocation[] = [
-  {
-    key: "hong_kong",
-    labelKey: "map_location_hong_kong",
-    coordinates: [114.1694, 22.3193],
-    labelOffset: [10, -12],
-    isHub: true,
-  },
-  {
-    key: "tokyo",
-    labelKey: "map_location_tokyo",
-    coordinates: [139.6917, 35.6895],
-    labelOffset: [10, -12],
-    isHub: true,
-  },
-  {
-    key: "los_angeles",
-    labelKey: "map_location_los_angeles",
-    coordinates: [-118.2437, 34.0522],
-    labelOffset: [10, -12],
-  },
-  {
-    key: "london",
-    labelKey: "map_location_london",
-    coordinates: [-0.1276, 51.5072],
-    labelOffset: [10, -12],
-  },
-  {
-    key: "paris",
-    labelKey: "map_location_paris",
-    coordinates: [2.3522, 48.8566],
-    labelOffset: [10, 16],
-  },
-  {
-    key: "frankfurt",
-    labelKey: "map_location_frankfurt",
-    coordinates: [8.6821, 50.1109],
-    labelOffset: [10, -12],
-  },
-  {
-    key: "delhi",
-    labelKey: "map_location_delhi",
-    coordinates: [77.1025, 28.7041],
-    labelOffset: [10, -12],
-  },
-  {
-    key: "singapore",
-    labelKey: "map_location_singapore",
-    coordinates: [103.8198, 1.3521],
-    labelOffset: [10, 16],
-  },
-  {
-    key: "macau",
-    labelKey: "map_location_macau",
-    coordinates: [113.5439, 22.1987],
-    labelOffset: [10, 18],
-  },
+  { key: "hong_kong", coordinates: [114.1694, 22.3193], isHub: true },
+  { key: "tokyo", coordinates: [139.6917, 35.6895], isHub: true },
+  { key: "los_angeles", coordinates: [-118.2437, 34.0522] },
+  { key: "london", coordinates: [-0.1276, 51.5072] },
+  { key: "paris", coordinates: [2.3522, 48.8566] },
+  { key: "frankfurt", coordinates: [8.6821, 50.1109] },
+  { key: "delhi", coordinates: [77.1025, 28.7041] },
+  { key: "singapore", coordinates: [103.8198, 1.3521] },
+  { key: "macau", coordinates: [113.5439, 22.1987] },
 ];
 
-const MAP_ROUTES: MapRoute[] = [
-  { from: "hong_kong", to: "london", hub: "hong_kong" },
-  { from: "hong_kong", to: "paris", hub: "hong_kong" },
-  { from: "hong_kong", to: "frankfurt", hub: "hong_kong" },
-  { from: "hong_kong", to: "delhi", hub: "hong_kong" },
-  { from: "hong_kong", to: "singapore", hub: "hong_kong" },
-  { from: "hong_kong", to: "macau", hub: "hong_kong" },
-  { from: "hong_kong", to: "tokyo", hub: "hong_kong" },
-  { from: "tokyo", to: "los_angeles", hub: "tokyo" },
-  { from: "tokyo", to: "frankfurt", hub: "tokyo" },
-  { from: "tokyo", to: "delhi", hub: "tokyo" },
-  { from: "tokyo", to: "singapore", hub: "tokyo" },
-  { from: "tokyo", to: "hong_kong", hub: "tokyo" },
+const MAP_ROUTES = [
+  { from: "hong_kong", to: "london" },
+  { from: "hong_kong", to: "paris" },
+  { from: "hong_kong", to: "frankfurt" },
+  { from: "hong_kong", to: "delhi" },
+  { from: "hong_kong", to: "singapore" },
+  { from: "hong_kong", to: "macau" },
+  { from: "hong_kong", to: "tokyo" },
+  { from: "tokyo", to: "los_angeles" },
+  { from: "tokyo", to: "frankfurt" },
+  { from: "tokyo", to: "delhi" },
+  { from: "tokyo", to: "singapore" },
+  { from: "tokyo", to: "hong_kong" },
 ];
 
-const MAP_LOCATION_LOOKUP = Object.fromEntries(
-  MAP_LOCATIONS.map((item) => [item.key, item])
-) as Record<string, MapLocation>;
-
-function getMapLocation(key: string): MapLocation {
-  const location = MAP_LOCATION_LOOKUP[key];
-
-  if (!location) {
-    throw new Error(`Unknown map location: ${key}`);
-  }
-
+function getMapLocation(key: string) {
+  const location = MAP_LOCATIONS.find((item) => item.key === key);
+  if (!location) throw new Error(`Unknown map location: ${key}`);
   return location;
 }
 
-export function GlobalMap() {
-  const { t } = useTranslation("main");
-  const { t: mapT } = useTranslation("main_map");
+export function GlobalMap({ paused = false }: { paused?: boolean }) {
   const { resolvedTheme } = useTheme();
-  const isDark = resolvedTheme === "dark";
+  const containerRef = useRef<HTMLDivElement>(null);
+  const pausedRef = useRef(paused);
 
-  const colors = {
-    land: isDark ? "#3f2b43" : "#f9d7e7",
-    landStroke: isDark ? "#7d5069" : "#edafc9",
-    routeHongKong: isDark ? "#fb7185" : "#f43f5e",
-    routeTokyo: isDark ? "#c084fc" : "#a855f7",
-    markerNode: isDark ? "#f9a8d4" : "#ec4899",
-    markerHongKong: isDark ? "#fb7185" : "#f43f5e",
-    markerTokyo: isDark ? "#c084fc" : "#a855f7",
-    markerRing: isDark ? "rgba(255,255,255,0.16)" : "rgba(255,255,255,0.95)",
-    label: isDark ? "#f8fafc" : "#111827",
-    labelHalo: isDark ? "#111827" : "#ffffff",
-  };
+  useEffect(() => {
+    pausedRef.current = paused;
+  }, [paused]);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    let disposed = false;
+    let cleanup: (() => void) | undefined;
+    container.dataset.state = "loading";
+
+    const initialize = async () => {
+      const [THREE, { default: ThreeGlobe }, { OrbitControls }, { feature }] =
+        await Promise.all([
+          import("three"),
+          import("three-globe"),
+          import("three/addons/controls/OrbitControls.js"),
+          import("topojson-client"),
+        ]);
+      if (disposed) return;
+
+      const isDark = resolvedTheme === "dark";
+      const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
+      const renderer = new THREE.WebGLRenderer({
+        alpha: true,
+        antialias: true,
+        powerPreference: "low-power",
+      });
+      renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
+      renderer.setClearColor(0x00_00_00, 0);
+      renderer.domElement.setAttribute("aria-hidden", "true");
+      container.appendChild(renderer.domElement);
+
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 1500);
+      const topology = countries as never;
+      const land = feature(topology, "countries") as unknown as {
+        features?: object[];
+      };
+      // WebGL materials need concrete colour values and cannot resolve `var(...)`,
+      // so the palette is read from the theme at mount (same constraint as the
+      // QR canvas). Each value is a `--primary-*` ramp step mapped to the role
+      // its material plays: 200/300 lit land, 400 hubs/nodes, 500 routes.
+      const token = (name: string, fallback: string) =>
+        getComputedStyle(document.documentElement)
+          .getPropertyValue(name)
+          .trim() || fallback;
+      const colorContext = document.createElement("canvas").getContext("2d", {
+        colorSpace: "srgb",
+        willReadFrequently: true,
+      });
+      const palette = new Map<string, string>();
+      const colorToken = (name: string, fallback: string) => {
+        const cached = palette.get(name);
+        if (cached) return cached;
+        if (!colorContext) return fallback;
+        // Three.js cannot parse HeroUI's Lab/OKLCH colours; the canvas resolves
+        // CSS colours into sRGB without substituting a second theme palette.
+        colorContext.clearRect(0, 0, 1, 1);
+        colorContext.fillStyle = fallback;
+        colorContext.fillStyle = token(name, fallback);
+        colorContext.fillRect(0, 0, 1, 1);
+        const [red, green, blue] = colorContext.getImageData(0, 0, 1, 1).data;
+        const color = `rgb(${red}, ${green}, ${blue})`;
+        palette.set(name, color);
+        return color;
+      };
+      const landColor = colorToken("--primary-200", "#fbcfe8");
+      const landSideColor = colorToken("--primary-300", "#f9a8d4");
+      const landCapMaterial = new THREE.MeshBasicMaterial({
+        color: landColor,
+        depthTest: true,
+        depthWrite: true,
+        side: THREE.DoubleSide,
+      });
+      const landSideMaterial = new THREE.MeshBasicMaterial({
+        color: landSideColor,
+        depthTest: true,
+        depthWrite: true,
+        side: THREE.DoubleSide,
+      });
+      const globe = new ThreeGlobe({ animateIn: false })
+        .showAtmosphere(true)
+        .atmosphereColor(colorToken("--primary-300", "#f9a8d4"))
+        .atmosphereAltitude(isDark ? 0.13 : 0.16)
+        .polygonsData(land.features ?? [])
+        .polygonCapMaterial(() => landCapMaterial)
+        .polygonSideMaterial(() => landSideMaterial)
+        .polygonStrokeColor(() => colorToken("--primary-400", "#f472b6"))
+        .polygonAltitude(0.01)
+        .polygonsTransitionDuration(0)
+        .pointsData(MAP_LOCATIONS)
+        .pointLat((location) => (location as MapLocation).coordinates[1])
+        .pointLng((location) => (location as MapLocation).coordinates[0])
+        .pointColor((location) =>
+          (location as MapLocation).isHub
+            ? colorToken("--primary-500", "#ec4899")
+            : colorToken("--primary-400", "#f472b6")
+        )
+        .pointRadius((location) =>
+          (location as MapLocation).isHub ? 0.65 : 0.38
+        )
+        .pointAltitude(0.016)
+        .pointsMerge(true);
+
+      globe.globeMaterial(
+        new THREE.MeshPhongMaterial({
+          color: colorToken("--surface", "#ffffff"),
+          emissive: colorToken("--primary-50", "#fdf2f8"),
+          emissiveIntensity: isDark ? 0.12 : 0.08,
+          shininess: isDark ? 8 : 24,
+          specular: colorToken("--default-200", "#e4e4e7"),
+        })
+      );
+      globe.pauseAnimation();
+      scene.add(globe);
+      scene.add(new THREE.AmbientLight(0xff_ff_ff, isDark ? 2 : 1.65));
+      const light = new THREE.DirectionalLight(0xff_e2_ef, isDark ? 2.5 : 1.8);
+      light.position.set(-200, 300, 400);
+      scene.add(light);
+
+      const controls = new OrbitControls(camera, renderer.domElement);
+      controls.enableZoom = false;
+      controls.enablePan = false;
+      controls.enableDamping = true;
+      controls.autoRotateSpeed = 0.48;
+      controls.minPolarAngle = Math.PI * 0.24;
+      controls.maxPolarAngle = Math.PI * 0.65;
+      renderer.domElement.style.touchAction = "pan-y";
+
+      let isCompactLayout = false;
+      const applyGlobeLayout = () => {
+        const { width } = container.getBoundingClientRect();
+        const nextIsCompactLayout = width < 1024;
+        isCompactLayout = nextIsCompactLayout;
+        const globeOffsetY = isCompactLayout ? -108 : -120;
+        const targetWidthRatio = isCompactLayout ? 0.92 : 0.48;
+        const horizontalFov =
+          2 *
+          Math.atan(
+            Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * camera.aspect
+          );
+        const cameraDistance =
+          100 / (targetWidthRatio * Math.tan(horizontalFov / 2));
+        const globeAltitude = Math.max(cameraDistance / 100 - 1, 0.5);
+        const coordinates = globe.getCoords(24, 112, globeAltitude);
+        globe.position.y = globeOffsetY;
+        camera.position.set(
+          coordinates.x,
+          coordinates.y + globeOffsetY,
+          coordinates.z
+        );
+        controls.target.set(0, globeOffsetY + (isCompactLayout ? 92 : 0), 0);
+        controls.update();
+      };
+      applyGlobeLayout();
+
+      const particleGeometry = new THREE.SphereGeometry(0.72, 10, 8);
+      const routes = MAP_ROUTES.map((route, index) => {
+        const from = getMapLocation(route.from);
+        const to = getMapLocation(route.to);
+        const source = globe.getCoords(
+          from.coordinates[1],
+          from.coordinates[0],
+          0.016
+        );
+        const target = globe.getCoords(
+          to.coordinates[1],
+          to.coordinates[0],
+          0.016
+        );
+        const start = new THREE.Vector3(source.x, source.y, source.z);
+        const end = new THREE.Vector3(target.x, target.y, target.z);
+        const altitude = Math.min(0.5, start.distanceTo(end) / 280);
+        const path = new THREE.CatmullRomCurve3(
+          Array.from({ length: 65 }, (_, sample) => {
+            const progress = sample / 64;
+            return start
+              .clone()
+              .lerp(end, progress)
+              .normalize()
+              .multiplyScalar(
+                101.6 + Math.sin(progress * Math.PI) * altitude * 100
+              );
+          })
+        );
+        const color =
+          route.from === "hong_kong"
+            ? colorToken("--primary-500", "#ec4899")
+            : colorToken("--primary-300", "#f9a8d4");
+        const material = new THREE.MeshBasicMaterial({
+          color,
+          transparent: true,
+          opacity: 0.45,
+        });
+        const geometry = new THREE.TubeGeometry(path, 96, 0.13, 4, false);
+        const line = new THREE.Mesh(geometry, material);
+        const particles = Array.from({ length: 3 }, (_, particle) => {
+          const dot = new THREE.Mesh(
+            particleGeometry,
+            new THREE.MeshBasicMaterial({
+              color:
+                particle === 0 ? colorToken("--primary-100", "#fce7f3") : color,
+              transparent: true,
+              opacity: 1 - particle * 0.25,
+            })
+          );
+          dot.scale.setScalar(1 - particle * 0.2);
+          globe.add(dot);
+          return dot;
+        });
+        globe.add(line);
+        return {
+          path,
+          geometry,
+          material,
+          line,
+          particles,
+          offset: index * 0.73,
+        };
+      });
+
+      const resize = () => {
+        const { width, height } = container.getBoundingClientRect();
+        renderer.setSize(width, height);
+        camera.aspect = width / Math.max(height, 1);
+        camera.updateProjectionMatrix();
+        applyGlobeLayout();
+      };
+      const observer = new ResizeObserver(resize);
+      observer.observe(container);
+      resize();
+
+      let inView = true;
+      const intersection = new IntersectionObserver(([entry]) => {
+        inView = entry?.isIntersecting ?? false;
+      });
+      intersection.observe(container);
+      let frame = 0;
+      let elapsed = 2;
+      let previousTime = 0;
+      let renderCount = 0;
+      const animate = (time: number) => {
+        if (disposed) return;
+        frame = requestAnimationFrame(animate);
+        const delta = previousTime
+          ? Math.min((time - previousTime) / 1000, 0.05)
+          : 0;
+        previousTime = time;
+        if (!inView || document.hidden) return;
+        const moving = !(pausedRef.current || reducedMotion.matches);
+        if (moving) elapsed += delta;
+        controls.autoRotate = moving;
+        controls.update(delta);
+        let activeRoutes = 0;
+        for (const route of routes) {
+          const age = (elapsed + route.offset) % 9;
+          const visible = age < 6.6;
+          route.line.visible = visible;
+          if (visible) activeRoutes += 1;
+          route.material.opacity =
+            0.6 * Math.min(age / 0.7, 1, (6.6 - age) / 0.8);
+          route.geometry.setDrawRange(
+            0,
+            Math.floor(96 * Math.min(age / 0.9, 1)) * 24
+          );
+          route.particles.forEach((particle, index) => {
+            const progress = ((age - 0.5) / 2.6 - index * 0.025) % 1;
+            particle.visible = visible && age > 0.6 && progress >= 0;
+            if (particle.visible) {
+              particle.position.copy(route.path.getPoint(progress));
+            }
+          });
+        }
+        renderer.render(scene, camera);
+        renderCount += 1;
+        if (renderCount % 30 === 0) {
+          container.dataset.frame = String(renderCount);
+          container.dataset.activeRoutes = String(activeRoutes);
+          container.dataset.rotation = camera.position.x.toFixed(2);
+        }
+      };
+      frame = requestAnimationFrame(animate);
+      container.dataset.state = "ready";
+
+      cleanup = () => {
+        cancelAnimationFrame(frame);
+        observer.disconnect();
+        intersection.disconnect();
+        controls.dispose();
+        globe._destructor();
+        const geometries = new Set<import("three").BufferGeometry>();
+        const materials = new Set<import("three").Material>();
+        scene.traverse((object) => {
+          if (object instanceof THREE.Mesh) {
+            geometries.add(object.geometry);
+            for (const material of Array.isArray(object.material)
+              ? object.material
+              : [object.material]) {
+              materials.add(material);
+            }
+          }
+        });
+        for (const geometry of geometries) geometry.dispose();
+        for (const material of materials) material.dispose();
+        renderer.dispose();
+        renderer.forceContextLoss();
+        renderer.domElement.remove();
+      };
+    };
+
+    initialize().catch(() => {
+      cleanup?.();
+      if (!disposed) container.dataset.state = "fallback";
+    });
+    return () => {
+      disposed = true;
+      cleanup?.();
+    };
+  }, [resolvedTheme]);
 
   return (
-    <motion.section
-      initial={{ opacity: 0 }}
-      transition={{ duration: 0.5 }}
-      viewport={{ once: true }}
-      whileInView={{ opacity: 1 }}
-    >
-      <motion.h2
-        className="mb-2 text-center font-bold text-3xl"
-        initial={{ opacity: 0, y: -20 }}
-        transition={{ duration: 0.5 }}
-        whileInView={{ opacity: 1, y: 0 }}
-      >
-        {t("global_map_itle", "Global Connection, Easy and Worry-free")}
-      </motion.h2>
-      <motion.p
-        className="mb-8 text-center text-lg text-muted-foreground"
-        initial={{ opacity: 0, y: -20 }}
-        transition={{ duration: 0.5, delay: 0.1 }}
-        whileInView={{ opacity: 1, y: 0 }}
-      >
-        {t(
-          "global_map_description",
-          "Explore seamless global connectivity. Choose network services that suit your needs and stay connected anytime, anywhere."
-        )}
-      </motion.p>
-      <motion.div
-        animate={{ scale: 1, opacity: 1 }}
-        className="overflow-hidden rounded-[2rem] border bg-gradient-to-b from-rose-50/70 via-background to-background p-3 shadow-sm sm:p-5 dark:from-rose-950/10 dark:via-background dark:to-background"
-        initial={{ scale: 0.96, opacity: 0 }}
-        transition={{
-          type: "spring",
-          stiffness: 100,
-          damping: 15,
-          delay: 0.25,
-        }}
-        viewport={{ once: true, amount: 0.2 }}
-        whileInView={{ scale: 1, opacity: 1 }}
-      >
-        <div className="aspect-[16/9] w-full overflow-hidden rounded-[1.5rem] bg-transparent">
-          <ComposableMap
-            className="size-full"
-            height={430}
-            projection="geoEqualEarth"
-            projectionConfig={{ scale: 175 }}
-            width={980}
-          >
-            <Geographies geography={worldAtlasUrl}>
-              {({ geographies }: { geographies: Array<{ rsmKey: string }> }) =>
-                geographies.map((geo: { rsmKey: string }) => (
-                  <Geography
-                    geography={geo}
-                    key={geo.rsmKey}
-                    style={{
-                      default: {
-                        fill: colors.land,
-                        outline: "none",
-                        stroke: colors.landStroke,
-                        strokeWidth: 0.45,
-                      },
-                      hover: {
-                        fill: colors.land,
-                        outline: "none",
-                        stroke: colors.landStroke,
-                        strokeWidth: 0.45,
-                      },
-                      pressed: {
-                        fill: colors.land,
-                        outline: "none",
-                        stroke: colors.landStroke,
-                        strokeWidth: 0.45,
-                      },
-                    }}
-                  />
-                ))
-              }
-            </Geographies>
-
-            {MAP_ROUTES.map((route) => {
-              const from = getMapLocation(route.from);
-              const to = getMapLocation(route.to);
-
-              return (
-                <Line
-                  from={from.coordinates}
-                  key={`${route.from}-${route.to}-${route.hub}`}
-                  stroke={
-                    route.hub === "hong_kong"
-                      ? colors.routeHongKong
-                      : colors.routeTokyo
-                  }
-                  strokeDasharray="4 3"
-                  strokeLinecap="round"
-                  strokeOpacity={0.72}
-                  strokeWidth={1.6}
-                  to={to.coordinates}
-                />
-              );
-            })}
-
-            {MAP_LOCATIONS.map((item) => {
-              const markerColor = item.isHub
-                ? item.key === "tokyo"
-                  ? colors.markerTokyo
-                  : colors.markerHongKong
-                : colors.markerNode;
-
-              return (
-                <Marker coordinates={item.coordinates} key={item.key}>
-                  <g>
-                    <circle
-                      fill={markerColor}
-                      opacity={0.22}
-                      r={item.isHub ? 11 : 8}
-                    />
-                    <circle
-                      fill={markerColor}
-                      r={item.isHub ? 4.5 : 3.5}
-                      stroke={colors.markerRing}
-                      strokeWidth={1.4}
-                    />
-                    <text
-                      fill={colors.label}
-                      fontSize={item.isHub ? 12 : 11}
-                      fontWeight={item.isHub ? 700 : 600}
-                      paintOrder="stroke fill"
-                      stroke={colors.labelHalo}
-                      strokeLinejoin="round"
-                      strokeWidth={4}
-                      style={{ userSelect: "none" }}
-                      textAnchor={item.labelOffset[0] >= 0 ? "start" : "end"}
-                      x={item.labelOffset[0]}
-                      y={item.labelOffset[1]}
-                    >
-                      {mapT(item.labelKey)}
-                    </text>
-                  </g>
-                </Marker>
-              );
-            })}
-          </ComposableMap>
-        </div>
-      </motion.div>
-    </motion.section>
+    <div
+      aria-hidden="true"
+      className="landing-globe absolute top-0 left-0 h-[calc(100%+19rem)] w-full lg:left-[18%] lg:h-[calc(100%+17rem)] lg:w-[112%] [&>canvas]:block [&>canvas]:max-w-full"
+      ref={containerRef}
+    />
   );
 }

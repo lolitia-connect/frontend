@@ -1,15 +1,9 @@
 "use client";
 
+import { Description, Sheet } from "@heroui/react";
 import { Badge } from "@workspace/ui/components/badge";
 import { Button } from "@workspace/ui/components/button";
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@workspace/ui/components/sheet";
+
 import {
   Globe2,
   MapPin,
@@ -62,9 +56,9 @@ function MetadataSection({
   title: string;
 }) {
   return (
-    <section className="rounded-lg border bg-muted/15 p-4">
+    <section className="rounded-lg border bg-default/15 p-4">
       <h3 className="mb-3 flex items-center gap-2 font-medium text-sm">
-        <span className="text-muted-foreground">{icon}</span>
+        <span className="text-muted">{icon}</span>
         {title}
       </h3>
       <dl className="grid gap-3 text-sm">{children}</dl>
@@ -75,7 +69,7 @@ function MetadataSection({
 function MetadataRow({ label, value }: { label: string; value: ReactNode }) {
   return (
     <div className="grid grid-cols-[7rem_minmax(0,1fr)] items-start gap-3">
-      <dt className="text-muted-foreground">{label}</dt>
+      <dt className="text-muted">{label}</dt>
       <dd className="wrap-break-word min-w-0 text-right">{value || "--"}</dd>
     </div>
   );
@@ -110,12 +104,12 @@ export function RequestSource({
   );
 
   if (!hasMetadata) {
-    return <span className="text-muted-foreground">--</span>;
+    return <span className="text-muted">--</span>;
   }
 
   return (
-    <Sheet>
-      <SheetTrigger asChild>
+    <Sheet placement="right">
+      <Sheet.Trigger>
         <Button
           aria-label={t(
             "requestSource.viewDetails",
@@ -126,7 +120,7 @@ export function RequestSource({
         >
           <span className="grid min-w-0 gap-1">
             <span className="flex min-w-0 items-center gap-1.5">
-              <MapPin className="size-3.5 text-muted-foreground" />
+              <MapPin className="size-3.5 text-muted" />
               <span className="truncate font-mono text-xs">
                 {clientIp || t("requestSource.unknownIp", "IP unavailable")}
               </span>
@@ -137,102 +131,105 @@ export function RequestSource({
               ) : null}
             </span>
             {location ? (
-              <span className="truncate text-muted-foreground text-xs">
-                {location}
-              </span>
+              <span className="truncate text-muted text-xs">{location}</span>
             ) : null}
             {userAgent ? (
-              <span className="flex min-w-0 items-center gap-1.5 text-muted-foreground text-xs">
+              <span className="flex min-w-0 items-center gap-1.5 text-muted text-xs">
                 <MonitorSmartphone className="size-3" />
                 <span className="truncate">{userAgent}</span>
               </span>
             ) : null}
           </span>
         </Button>
-      </SheetTrigger>
+      </Sheet.Trigger>
 
-      <SheetContent className="w-full overflow-y-auto sm:max-w-lg">
-        <SheetHeader>
-          <SheetTitle>
-            {t("requestSource.title", "Request source details")}
-          </SheetTitle>
-          <SheetDescription>
-            {t(
-              "requestSource.description",
-              "Request identity, location and network risk metadata."
-            )}
-          </SheetDescription>
-        </SheetHeader>
+      <Sheet.Backdrop>
+        <Sheet.Content>
+          <Sheet.Dialog className="w-full overflow-y-auto sm:max-w-lg">
+            <Sheet.Header>
+              <Sheet.Heading>
+                {t("requestSource.title", "Request source details")}
+              </Sheet.Heading>
+              <Description slot="description">
+                {t(
+                  "requestSource.description",
+                  "Request identity, location and network risk metadata."
+                )}
+              </Description>
+            </Sheet.Header>
 
-        <div className="grid gap-3 px-4 pb-6">
-          <MetadataSection
-            icon={<Globe2 className="size-4" />}
-            title={t("requestSource.request", "Request")}
-          >
-            <MetadataRow
-              label={t("requestSource.ip", "IP")}
-              value={clientIp ? <IpLink ip={clientIp} /> : "--"}
-            />
-            <MetadataRow label="User-Agent" value={userAgent || "--"} />
-          </MetadataSection>
+            <div className="admin-drawer-body grid content-start gap-3 px-6">
+              <MetadataSection
+                icon={<Globe2 className="size-4" />}
+                title={t("requestSource.request", "Request")}
+              >
+                <MetadataRow
+                  label={t("requestSource.ip", "IP")}
+                  value={clientIp ? <IpLink ip={clientIp} /> : "--"}
+                />
+                <MetadataRow label="User-Agent" value={userAgent || "--"} />
+              </MetadataSection>
 
-          <MetadataSection
-            icon={<MapPin className="size-4" />}
-            title={t("requestSource.location", "Location")}
-          >
-            <MetadataRow
-              label={t("requestSource.country", "Country")}
-              value={
-                country || countryCode ? (
-                  <span className="inline-flex flex-wrap items-center justify-end gap-2">
-                    {countryCode ? (
-                      <Badge variant="outline">{countryCode}</Badge>
-                    ) : null}
-                    {country || null}
-                  </span>
-                ) : (
-                  "--"
-                )
-              }
-            />
-            <MetadataRow
-              label={t("requestSource.region", "Region")}
-              value={region || "--"}
-            />
-            <MetadataRow
-              label={t("requestSource.city", "City")}
-              value={city || "--"}
-            />
-          </MetadataSection>
+              <MetadataSection
+                icon={<MapPin className="size-4" />}
+                title={t("requestSource.location", "Location")}
+              >
+                <MetadataRow
+                  label={t("requestSource.country", "Country")}
+                  value={
+                    country || countryCode ? (
+                      <span className="inline-flex flex-wrap items-center justify-end gap-2">
+                        {countryCode ? (
+                          <Badge variant="outline">{countryCode}</Badge>
+                        ) : null}
+                        {country || null}
+                      </span>
+                    ) : (
+                      "--"
+                    )
+                  }
+                />
+                <MetadataRow
+                  label={t("requestSource.region", "Region")}
+                  value={region || "--"}
+                />
+                <MetadataRow
+                  label={t("requestSource.city", "City")}
+                  value={city || "--"}
+                />
+              </MetadataSection>
 
-          <MetadataSection
-            icon={<Network className="size-4" />}
-            title={t("requestSource.network", "Network")}
-          >
-            <MetadataRow label="ASN" value={asn > 0 ? `AS${asn}` : "--"} />
-            <MetadataRow
-              label={t("requestSource.organization", "Organization")}
-              value={organization || "--"}
-            />
-          </MetadataSection>
+              <MetadataSection
+                icon={<Network className="size-4" />}
+                title={t("requestSource.network", "Network")}
+              >
+                <MetadataRow label="ASN" value={asn > 0 ? `AS${asn}` : "--"} />
+                <MetadataRow
+                  label={t("requestSource.organization", "Organization")}
+                  value={organization || "--"}
+                />
+              </MetadataSection>
 
-          <MetadataSection
-            icon={<UserRound className="size-4" />}
-            title={t("requestSource.actor", "Actor")}
-          >
-            <MetadataRow
-              label={t("requestSource.account", "Account")}
-              value={
-                actorId > 0 ? (
-                  <UserDetail id={actorId} />
-                ) : (
-                  t("requestSource.anonymous", "Anonymous or system")
-                )
-              }
-            />
-          </MetadataSection>
-        </div>
-      </SheetContent>
+              <MetadataSection
+                icon={<UserRound className="size-4" />}
+                title={t("requestSource.actor", "Actor")}
+              >
+                <MetadataRow
+                  label={t("requestSource.account", "Account")}
+                  value={
+                    actorId > 0 ? (
+                      <UserDetail id={actorId} />
+                    ) : (
+                      t("requestSource.anonymous", "Anonymous or system")
+                    )
+                  }
+                />
+              </MetadataSection>
+            </div>
+            <Sheet.CloseTrigger aria-label="Close" />
+          </Sheet.Dialog>
+        </Sheet.Content>
+      </Sheet.Backdrop>
     </Sheet>
   );
 }

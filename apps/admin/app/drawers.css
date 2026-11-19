@@ -1,0 +1,183 @@
+.admin-shell {
+  [data-slot="sheet-content"]:has(
+      > [data-sidebar="sidebar"][data-mobile="true"]
+    ) {
+    width: min(18rem, calc(100vw - 2rem));
+  }
+
+  [data-sidebar="sidebar"][data-mobile="true"] {
+    width: 100%;
+    min-width: 0;
+  }
+
+  [data-slot="sheet-content"]:has(
+      > [data-slot="sheet-dialog"]:not([data-sidebar="sidebar"])
+    ) {
+    width: min(60rem, calc(100vw - 1rem));
+  }
+
+  [data-slot="sheet-dialog"]:not([data-sidebar="sidebar"]) {
+    width: 100%;
+    min-width: 0;
+    /* Older call sites set important breakpoint max-widths on the dialog. */
+    max-width: 100% !important;
+    container: admin-drawer / inline-size;
+    overflow: hidden;
+
+    > [data-slot="sheet-header"] {
+      flex-shrink: 0;
+      padding: 1.25rem 3.25rem 1rem 1.5rem;
+      overflow-wrap: anywhere;
+    }
+
+    > [data-slot="sheet-footer"] {
+      flex-shrink: 0;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      padding: 1rem 1.5rem max(1rem, env(safe-area-inset-bottom));
+      border-top: 1px solid var(--border);
+
+      > .flex {
+        flex-wrap: wrap;
+        min-width: 0;
+      }
+    }
+
+    > [data-slot="scroll-area"],
+    > .admin-drawer-body {
+      flex: 1;
+      min-width: 0;
+      max-width: 100%;
+      height: auto;
+      min-height: 0;
+      padding-bottom: 1.5rem;
+      overflow: auto;
+      overscroll-behavior: contain;
+    }
+
+    :is(form, fieldset, [data-slot="form-item"], .grid > *, .flex > *) {
+      min-width: 0;
+    }
+
+    form > [data-slot="form-item"]:has(input[type="number"]) {
+      max-width: 28rem;
+    }
+
+    [data-slot="form-item"] {
+      align-content: start;
+    }
+
+    :is(
+        [data-slot="form-label"],
+        [data-slot="form-description"],
+        [data-slot="form-message"]
+      ) {
+      overflow-wrap: anywhere;
+    }
+
+    :is(
+        input,
+        textarea,
+        [data-slot="select"],
+        [data-slot="select-trigger"],
+        [data-slot="autocomplete"]
+      ) {
+      min-width: 0;
+      max-width: 100%;
+    }
+
+    :is([data-slot="select"], [data-slot="select-trigger"]) {
+      width: 100%;
+    }
+
+    :is([data-slot="select-value"], [data-slot="autocomplete-value"]) {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    [data-slot="enhanced-input"] > input {
+      flex: 1;
+      min-width: 0;
+    }
+
+    [data-slot="enhanced-input"] > :not(input) {
+      flex-shrink: 0;
+    }
+
+    [data-slot="object-input"]:not(.grid) {
+      > div {
+        flex: 1 1 15rem;
+      }
+    }
+
+    [data-slot="array-input-row"] {
+      align-items: flex-start;
+    }
+
+    [data-slot="array-input-actions"] {
+      flex-shrink: 0;
+    }
+
+    [data-slot="tag-input"] [data-slot="chip"] {
+      max-width: 100%;
+      height: auto;
+      overflow-wrap: anywhere;
+      white-space: normal;
+    }
+
+    .admin-drawer-form {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1.25rem;
+
+      > * {
+        margin-block: 0;
+      }
+    }
+
+    .admin-drawer-wide {
+      grid-column: 1 / -1;
+    }
+  }
+}
+
+@container admin-drawer (width < 42rem) {
+  .admin-shell [data-slot="sheet-dialog"]:not([data-sidebar="sidebar"]) {
+    :is([class*="grid-cols-"], .admin-drawer-form) {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    [class*="col-span-"] {
+      grid-column: 1 / -1;
+    }
+
+    [data-slot="array-input-row"] {
+      flex-wrap: wrap;
+    }
+
+    [data-slot="object-input"] {
+      flex-basis: 100%;
+    }
+
+    [data-slot="array-input-actions"] {
+      margin-left: auto;
+    }
+  }
+}
+
+@media (width < 40rem) {
+  .admin-shell {
+    [data-slot="sheet-content"]:has(
+        > [data-slot="sheet-dialog"]:not([data-sidebar="sidebar"])
+      ) {
+      width: 100vw;
+      border-radius: 0;
+    }
+
+    [data-slot="sheet-dialog"]:not([data-sidebar="sidebar"]) {
+      border-radius: 0;
+    }
+  }
+}

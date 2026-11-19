@@ -2,6 +2,7 @@
   "all": "全部",
   "document": "文件",
   "read": "閱讀",
+  "sections": "分頁",
   "tutorial": "教程",
   "loadingSubscriptionConfig": "正在載入訂閱設定...",
   "subscriptionConfigUnavailable": "訂閱設定暫時無法使用，請重新整理後再試。",

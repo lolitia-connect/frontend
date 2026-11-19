@@ -1,9 +1,5 @@
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@workspace/ui/components/card";
+import { Button, Card } from "@heroui/react";
+import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 
 interface NewsMarqueeProps {
@@ -81,44 +77,51 @@ export function NewsMarquee({
 
   return (
     <Card className="w-full max-w-2xl">
-      <CardHeader>
+      <Card.Header>
         <div className="flex items-center gap-3">
           {siteLogo ? (
-            <img
+            <Image
               alt={siteName || title}
               className="h-12 w-auto object-contain"
+              height={48}
               src={siteLogo}
+              unoptimized
+              width={120}
             />
           ) : siteName ? (
-            <span className="font-semibold text-2xl">{siteName}</span>
+            <span className="font-semibold text-2xl text-foreground">
+              {siteName}
+            </span>
           ) : null}
         </div>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        <CardTitle className="text-3xl">{title}</CardTitle>
+      </Card.Header>
+      <Card.Content className="space-y-6">
+        <Card.Title className="text-3xl">{title}</Card.Title>
 
         <div className="space-y-3" key={`${activeSlide.date}-${activeIndex}`}>
-          <p className="text-muted-foreground text-sm">{activeSlide.date}</p>
-          <h3 className="font-semibold text-xl">{activeSlide.title}</h3>
-          <p className="text-muted-foreground">{activeSlide.description}</p>
+          <p className="text-muted text-sm">{activeSlide.date}</p>
+          <h3 className="font-semibold text-foreground text-xl">
+            {activeSlide.title}
+          </h3>
+          <p className="text-muted">{activeSlide.description}</p>
         </div>
 
-        <div className="flex justify-center gap-2" role="tablist">
+        <div className="flex flex-wrap justify-center gap-2">
           {slides.map((slide, index) => (
-            <button
+            <Button
               aria-label={slide.title}
-              className={`h-2 w-2 rounded-full transition-colors ${
-                index === activeIndex
-                  ? "bg-primary"
-                  : "bg-muted-foreground/30 hover:bg-muted-foreground/50"
-              }`}
+              aria-pressed={index === activeIndex}
+              isIconOnly
               key={`${slide.date}-${index}`}
-              onClick={() => setActiveIndex(index)}
-              type="button"
-            />
+              onPress={() => setActiveIndex(index)}
+              size="sm"
+              variant={index === activeIndex ? "primary" : "tertiary"}
+            >
+              {index + 1}
+            </Button>
           ))}
         </div>
-      </CardContent>
+      </Card.Content>
     </Card>
   );
 }

@@ -87,6 +87,7 @@ export function ColumnFilter<TData>({
         }
         return (
           <Input
+            aria-label={param.label || param.placeholder || param.key}
             className="min-w-32 flex-1"
             key={param.key}
             onChange={(event) => updateFilter(param.key, event.target.value)}

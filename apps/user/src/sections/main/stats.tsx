@@ -1,5 +1,7 @@
-import { DotLottieReact } from "@lottiefiles/dotlottie-react";
-import { motion } from "framer-motion";
+"use client";
+
+import { Card } from "@heroui/react";
+import { Globe2, Server, Users } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 export function Stats() {
@@ -9,14 +11,7 @@ export function Stats() {
     {
       name: t("users", "Users"),
       description: t("users_description", "Trusted by users worldwide"),
-      icon: (
-        <DotLottieReact
-          autoplay
-          className="size-24"
-          loop
-          src="./assets/lotties/users.json"
-        />
-      ),
+      icon: Users,
     },
     {
       name: t("servers", "Servers"),
@@ -24,59 +19,32 @@ export function Stats() {
         "servers_description",
         "High-performance servers globally"
       ),
-      icon: (
-        <DotLottieReact
-          autoplay
-          className="size-24"
-          loop
-          src="./assets/lotties/servers.json"
-        />
-      ),
+      icon: Server,
     },
     {
       name: t("locations", "Locations"),
       description: t("locations_description", "Available in multiple regions"),
-      icon: (
-        <DotLottieReact
-          autoplay
-          className="size-24"
-          loop
-          src="./assets/lotties/locations.json"
-        />
-      ),
+      icon: Globe2,
     },
   ];
   return (
-    <motion.section
-      animate={{ opacity: 1, y: 0 }}
-      className="z-10 grid w-full grid-cols-1 divide-y-2 divide-muted rounded-lg sm:grid-cols-3 sm:divide-x-2 sm:divide-y-0"
-      initial={{ opacity: 0, y: 50 }}
-      transition={{ duration: 1, ease: "easeOut" }}
-      viewport={{ once: true, amount: 0.8 }}
-      whileInView={{ opacity: 1, y: 0 }}
-    >
-      {list.map((item, index) => (
-        <motion.div
-          className="mx-auto flex w-10/12 items-center justify-start px-4 py-4 sm:w-full sm:justify-center sm:py-6"
-          initial={{ opacity: 0, scale: 0.8 }}
-          key={item.name}
-          transition={{ duration: 0.8, delay: index * 0.3, ease: "easeOut" }}
-          viewport={{ once: true, amount: 0.8 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-        >
-          <div className="flex w-full items-center sm:w-auto">
-            <div className="mr-4 flex h-20 w-20 items-center justify-center rounded-full">
-              {item.icon}
-            </div>
-            <div className="flex flex-col">
-              <p className="font-semibold text-lg">{item.name}</p>
-              <p className="text-muted-foreground text-sm">
-                {item.description}
-              </p>
-            </div>
-          </div>
-        </motion.div>
-      ))}
-    </motion.section>
+    <section className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+      {list.map((item) => {
+        const Icon = item.icon;
+        return (
+          <Card key={item.name}>
+            <Card.Header className="flex-row items-center gap-3">
+              <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-accent-soft text-accent-soft-foreground">
+                <Icon aria-hidden="true" className="size-5" />
+              </span>
+              <Card.Title>{item.name}</Card.Title>
+            </Card.Header>
+            <Card.Content>
+              <Card.Description>{item.description}</Card.Description>
+            </Card.Content>
+          </Card>
+        );
+      })}
+    </section>
   );
 }

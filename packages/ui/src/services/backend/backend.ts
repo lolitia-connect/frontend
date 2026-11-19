@@ -5,7 +5,7 @@ export async function putV1AdminAds(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/ads/`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/ads/`,
     {
       method: "PUT",
       headers: {
@@ -22,7 +22,7 @@ export async function postV1AdminAds(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/ads/`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/ads/`,
     {
       method: "POST",
       headers: {
@@ -39,7 +39,7 @@ export async function deleteV1AdminAds(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/ads/`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/ads/`,
     {
       method: "DELETE",
       headers: {
@@ -56,7 +56,7 @@ export async function getV1AdminAdsDetail(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: BackendAPI.Ads }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/ads/detail`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/ads/detail`,
     {
       method: "GET",
       params: {
@@ -75,7 +75,7 @@ export async function getV1AdminAdsList(
     code?: number;
     msg?: string;
     data?: BackendAPI.GetAdsListResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/ads/list`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/ads/list`, {
     method: "GET",
     params: {
       ...params,
@@ -89,7 +89,7 @@ export async function putV1AdminAnnouncement(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/announcement/`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/announcement/`,
     {
       method: "PUT",
       headers: {
@@ -106,7 +106,7 @@ export async function postV1AdminAnnouncement(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/announcement/`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/announcement/`,
     {
       method: "POST",
       headers: {
@@ -123,7 +123,7 @@ export async function deleteV1AdminAnnouncement(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/announcement/`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/announcement/`,
     {
       method: "DELETE",
       headers: {
@@ -143,13 +143,16 @@ export async function getV1AdminAnnouncementDetail(
     code?: number;
     msg?: string;
     data?: BackendAPI.Announcement;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/announcement/detail`, {
-    method: "GET",
-    params: {
-      ...params,
-    },
-    ...(options || {}),
-  });
+  }>(
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/announcement/detail`,
+    {
+      method: "GET",
+      params: {
+        ...params,
+      },
+      ...(options || {}),
+    }
+  );
 }
 
 export async function getV1AdminAnnouncementList(
@@ -160,7 +163,7 @@ export async function getV1AdminAnnouncementList(
     code?: number;
     msg?: string;
     data?: BackendAPI.GetAnnouncementListResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/announcement/list`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/announcement/list`, {
     method: "GET",
     params: {
       ...params,
@@ -177,7 +180,7 @@ export async function postV1AdminApplication(
     code?: number;
     msg?: string;
     data?: BackendAPI.SubscribeApplication;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/application/`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/application/`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -195,13 +198,16 @@ export async function getV1AdminApplicationPreview(
     code?: number;
     msg?: string;
     data?: BackendAPI.PreviewSubscribeTemplateResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/application/preview`, {
-    method: "GET",
-    params: {
-      ...params,
-    },
-    ...(options || {}),
-  });
+  }>(
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/application/preview`,
+    {
+      method: "GET",
+      params: {
+        ...params,
+      },
+      ...(options || {}),
+    }
+  );
 }
 
 export async function putV1AdminApplicationSubscribeApplication(
@@ -214,7 +220,7 @@ export async function putV1AdminApplicationSubscribeApplication(
     data?: BackendAPI.SubscribeApplication;
   }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/application/subscribe_application`,
     {
       method: "PUT",
@@ -233,7 +239,7 @@ export async function deleteV1AdminApplicationSubscribeApplication(
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/application/subscribe_application`,
     {
       method: "DELETE",
@@ -256,7 +262,7 @@ export async function getV1AdminApplicationSubscribeApplicationList(
     data?: BackendAPI.GetSubscribeApplicationListResponse;
   }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/application/subscribe_application_list`,
     {
       method: "GET",
@@ -276,13 +282,16 @@ export async function getV1AdminAuthMethodConfig(
     code?: number;
     msg?: string;
     data?: BackendAPI.AuthMethodConfig;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/auth-method/config`, {
-    method: "GET",
-    params: {
-      ...params,
-    },
-    ...(options || {}),
-  });
+  }>(
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/auth-method/config`,
+    {
+      method: "GET",
+      params: {
+        ...params,
+      },
+      ...(options || {}),
+    }
+  );
 }
 
 export async function putV1AdminAuthMethodConfig(
@@ -293,14 +302,17 @@ export async function putV1AdminAuthMethodConfig(
     code?: number;
     msg?: string;
     data?: BackendAPI.AuthMethodConfig;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/auth-method/config`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    data: body,
-    ...(options || {}),
-  });
+  }>(
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/auth-method/config`,
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: body,
+      ...(options || {}),
+    }
+  );
 }
 
 export async function getV1AdminAuthMethodEmailPlatform(options?: {
@@ -312,7 +324,7 @@ export async function getV1AdminAuthMethodEmailPlatform(options?: {
     data?: BackendAPI.PlatformResponse;
   }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/auth-method/email_platform`,
     {
       method: "GET",
@@ -328,7 +340,7 @@ export async function getV1AdminAuthMethodList(options?: {
     code?: number;
     msg?: string;
     data?: BackendAPI.GetAuthMethodListResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/auth-method/list`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/auth-method/list`, {
     method: "GET",
     ...(options || {}),
   });
@@ -343,7 +355,7 @@ export async function getV1AdminAuthMethodSmsPlatform(options?: {
     data?: BackendAPI.PlatformResponse;
   }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/auth-method/sms_platform`,
     {
       method: "GET",
@@ -358,7 +370,7 @@ export async function postV1AdminAuthMethodTestEmailSend(
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/auth-method/test_email_send`,
     {
       method: "POST",
@@ -377,7 +389,7 @@ export async function postV1AdminAuthMethodTestSmsSend(
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/auth-method/test_sms_send`,
     {
       method: "POST",
@@ -397,7 +409,7 @@ export async function getV1AdminConsoleRevenue(options?: {
     code?: number;
     msg?: string;
     data?: BackendAPI.RevenueStatisticsResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/console/revenue`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/console/revenue`, {
     method: "GET",
     ...(options || {}),
   });
@@ -410,7 +422,7 @@ export async function getV1AdminConsoleServer(options?: {
     code?: number;
     msg?: string;
     data?: BackendAPI.ServerTotalDataResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/console/server`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/console/server`, {
     method: "GET",
     ...(options || {}),
   });
@@ -423,7 +435,7 @@ export async function getV1AdminConsoleTicket(options?: {
     code?: number;
     msg?: string;
     data?: BackendAPI.TicketWaitRelpyResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/console/ticket`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/console/ticket`, {
     method: "GET",
     ...(options || {}),
   });
@@ -434,7 +446,7 @@ export async function getV1AdminConsoleUser(options?: { [key: string]: any }) {
     code?: number;
     msg?: string;
     data?: BackendAPI.UserStatisticsResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/console/user`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/console/user`, {
     method: "GET",
     ...(options || {}),
   });
@@ -445,7 +457,7 @@ export async function putV1AdminCoupon(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/coupon/`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/coupon/`,
     {
       method: "PUT",
       headers: {
@@ -462,7 +474,7 @@ export async function postV1AdminCoupon(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/coupon/`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/coupon/`,
     {
       method: "POST",
       headers: {
@@ -479,7 +491,7 @@ export async function deleteV1AdminCoupon(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/coupon/`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/coupon/`,
     {
       method: "DELETE",
       headers: {
@@ -496,7 +508,7 @@ export async function deleteV1AdminCouponBatch(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/coupon/batch`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/coupon/batch`,
     {
       method: "DELETE",
       headers: {
@@ -516,7 +528,7 @@ export async function getV1AdminCouponList(
     code?: number;
     msg?: string;
     data?: BackendAPI.GetCouponListResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/coupon/list`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/coupon/list`, {
     method: "GET",
     params: {
       ...params,
@@ -530,7 +542,7 @@ export async function putV1AdminDocument(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/document/`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/document/`,
     {
       method: "PUT",
       headers: {
@@ -547,7 +559,7 @@ export async function postV1AdminDocument(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/document/`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/document/`,
     {
       method: "POST",
       headers: {
@@ -564,7 +576,7 @@ export async function deleteV1AdminDocument(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/document/`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/document/`,
     {
       method: "DELETE",
       headers: {
@@ -581,7 +593,7 @@ export async function deleteV1AdminDocumentBatch(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/document/batch`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/document/batch`,
     {
       method: "DELETE",
       headers: {
@@ -598,7 +610,7 @@ export async function getV1AdminDocumentDetail(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: BackendAPI.Document }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/document/detail`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/document/detail`,
     {
       method: "GET",
       params: {
@@ -617,7 +629,7 @@ export async function getV1AdminDocumentList(
     code?: number;
     msg?: string;
     data?: BackendAPI.GetDocumentListResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/document/list`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/document/list`, {
     method: "GET",
     params: {
       ...params,
@@ -634,7 +646,7 @@ export async function getV1AdminGroupConfig(
     code?: number;
     msg?: string;
     data?: BackendAPI.GetGroupConfigResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/group/config`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/group/config`, {
     method: "GET",
     params: {
       ...params,
@@ -648,7 +660,7 @@ export async function putV1AdminGroupConfig(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/group/config`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/group/config`,
     {
       method: "PUT",
       headers: {
@@ -665,7 +677,7 @@ export async function getV1AdminGroupOpenApiExport(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/group/export`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/group/export`,
     {
       method: "GET",
       params: {
@@ -684,7 +696,7 @@ export async function getV1AdminGroupHistory(
     code?: number;
     msg?: string;
     data?: BackendAPI.GetGroupHistoryResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/group/history`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/group/history`, {
     method: "GET",
     params: {
       ...params,
@@ -701,13 +713,16 @@ export async function getV1AdminGroupHistoryDetail(
     code?: number;
     msg?: string;
     data?: BackendAPI.GetGroupHistoryDetailResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/group/history/detail`, {
-    method: "GET",
-    params: {
-      ...params,
-    },
-    ...(options || {}),
-  });
+  }>(
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/group/history/detail`,
+    {
+      method: "GET",
+      params: {
+        ...params,
+      },
+      ...(options || {}),
+    }
+  );
 }
 
 export async function putV1AdminGroupNode(
@@ -715,7 +730,7 @@ export async function putV1AdminGroupNode(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/group/node`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/group/node`,
     {
       method: "PUT",
       headers: {
@@ -732,7 +747,7 @@ export async function postV1AdminGroupNode(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/group/node`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/group/node`,
     {
       method: "POST",
       headers: {
@@ -749,7 +764,7 @@ export async function deleteV1AdminGroupNode(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/group/node`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/group/node`,
     {
       method: "DELETE",
       headers: {
@@ -769,7 +784,7 @@ export async function getV1AdminGroupNodeList(
     code?: number;
     msg?: string;
     data?: BackendAPI.GetNodeGroupListResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/group/node/list`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/group/node/list`, {
     method: "GET",
     params: {
       ...params,
@@ -786,7 +801,7 @@ export async function getV1AdminGroupPreview(
     code?: number;
     msg?: string;
     data?: BackendAPI.PreviewUserNodesResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/group/preview`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/group/preview`, {
     method: "GET",
     params: {
       ...params,
@@ -800,7 +815,7 @@ export async function postV1AdminGroupRecalculate(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/group/recalculate`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/group/recalculate`,
     {
       method: "POST",
       headers: {
@@ -821,7 +836,7 @@ export async function getV1AdminGroupRecalculationStatus(options?: {
     data?: BackendAPI.RecalculationState;
   }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/group/recalculation/status`,
     {
       method: "GET",
@@ -832,7 +847,7 @@ export async function getV1AdminGroupRecalculationStatus(options?: {
 
 export async function postV1AdminGroupReset(options?: { [key: string]: any }) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/group/reset`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/group/reset`,
     {
       method: "POST",
       ...(options || {}),
@@ -848,7 +863,7 @@ export async function getV1AdminGroupSubscribeMapping(options?: {
     msg?: string;
     data?: BackendAPI.GetSubscribeGroupMappingResponse;
   }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/group/subscribe/mapping`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/group/subscribe/mapping`,
     {
       method: "GET",
       ...(options || {}),
@@ -861,7 +876,7 @@ export async function getV1AdminLogAdminActionList(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/log/admin-action/list`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/log/admin-action/list`,
     {
       method: "GET",
       params: {
@@ -880,7 +895,7 @@ export async function getV1AdminLogBalanceList(
     code?: number;
     msg?: string;
     data?: BackendAPI.FilterBalanceLogResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/log/balance/list`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/log/balance/list`, {
     method: "GET",
     params: {
       ...params,
@@ -897,13 +912,16 @@ export async function getV1AdminLogCommissionList(
     code?: number;
     msg?: string;
     data?: BackendAPI.FilterCommissionLogResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/log/commission/list`, {
-    method: "GET",
-    params: {
-      ...params,
-    },
-    ...(options || {}),
-  });
+  }>(
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/log/commission/list`,
+    {
+      method: "GET",
+      params: {
+        ...params,
+      },
+      ...(options || {}),
+    }
+  );
 }
 
 export async function getV1AdminLogEmailList(
@@ -914,7 +932,7 @@ export async function getV1AdminLogEmailList(
     code?: number;
     msg?: string;
     data?: BackendAPI.FilterEmailLogResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/log/email/list`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/log/email/list`, {
     method: "GET",
     params: {
       ...params,
@@ -931,7 +949,7 @@ export async function getV1AdminLogGiftList(
     code?: number;
     msg?: string;
     data?: BackendAPI.FilterGiftLogResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/log/gift/list`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/log/gift/list`, {
     method: "GET",
     params: {
       ...params,
@@ -948,7 +966,7 @@ export async function getV1AdminLogLoginList(
     code?: number;
     msg?: string;
     data?: BackendAPI.FilterLoginLogResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/log/login/list`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/log/login/list`, {
     method: "GET",
     params: {
       ...params,
@@ -965,7 +983,7 @@ export async function getV1AdminLogMessageList(
     code?: number;
     msg?: string;
     data?: BackendAPI.GetMessageLogListResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/log/message/list`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/log/message/list`, {
     method: "GET",
     params: {
       ...params,
@@ -982,7 +1000,7 @@ export async function getV1AdminLogMobileList(
     code?: number;
     msg?: string;
     data?: BackendAPI.FilterMobileLogResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/log/mobile/list`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/log/mobile/list`, {
     method: "GET",
     params: {
       ...params,
@@ -999,7 +1017,7 @@ export async function getV1AdminLogOrderList(
     code?: number;
     msg?: string;
     data?: BackendAPI.FilterOrderLogResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/log/order/list`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/log/order/list`, {
     method: "GET",
     params: {
       ...params,
@@ -1016,7 +1034,7 @@ export async function getV1AdminLogRegisterList(
     code?: number;
     msg?: string;
     data?: BackendAPI.FilterRegisterLogResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/log/register/list`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/log/register/list`, {
     method: "GET",
     params: {
       ...params,
@@ -1034,7 +1052,7 @@ export async function getV1AdminLogServerTrafficList(
     msg?: string;
     data?: BackendAPI.FilterServerTrafficLogResponse;
   }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/log/server/traffic/list`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/log/server/traffic/list`,
     {
       method: "GET",
       params: {
@@ -1047,7 +1065,7 @@ export async function getV1AdminLogServerTrafficList(
 
 export async function getV1AdminLogSetting(options?: { [key: string]: any }) {
   return request<{ code?: number; msg?: string; data?: BackendAPI.LogSetting }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/log/setting`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/log/setting`,
     {
       method: "GET",
       ...(options || {}),
@@ -1060,7 +1078,7 @@ export async function postV1AdminLogSetting(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/log/setting`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/log/setting`,
     {
       method: "POST",
       headers: {
@@ -1080,13 +1098,16 @@ export async function getV1AdminLogSubscribeList(
     code?: number;
     msg?: string;
     data?: BackendAPI.FilterSubscribeLogResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/log/subscribe/list`, {
-    method: "GET",
-    params: {
-      ...params,
-    },
-    ...(options || {}),
-  });
+  }>(
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/log/subscribe/list`,
+    {
+      method: "GET",
+      params: {
+        ...params,
+      },
+      ...(options || {}),
+    }
+  );
 }
 
 export async function getV1AdminLogSubscribeResetList(
@@ -1099,7 +1120,7 @@ export async function getV1AdminLogSubscribeResetList(
     data?: BackendAPI.FilterResetSubscribeLogResponse;
   }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/log/subscribe/reset/list`,
     {
       method: "GET",
@@ -1121,7 +1142,7 @@ export async function getV1AdminLogSubscribeTrafficList(
     data?: BackendAPI.FilterSubscribeTrafficResponse;
   }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/log/subscribe/traffic/list`,
     {
       method: "GET",
@@ -1141,13 +1162,16 @@ export async function getV1AdminLogTrafficDetails(
     code?: number;
     msg?: string;
     data?: BackendAPI.FilterTrafficLogDetailsResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/log/traffic/details`, {
-    method: "GET",
-    params: {
-      ...params,
-    },
-    ...(options || {}),
-  });
+  }>(
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/log/traffic/details`,
+    {
+      method: "GET",
+      params: {
+        ...params,
+      },
+      ...(options || {}),
+    }
+  );
 }
 
 export async function getV1AdminLogUnmatchedPaymentList(
@@ -1156,7 +1180,7 @@ export async function getV1AdminLogUnmatchedPaymentList(
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/log/unmatched-payment/list`,
     {
       method: "GET",
@@ -1178,7 +1202,7 @@ export async function getV1AdminMarketingEmailBatchList(
     data?: BackendAPI.GetBatchSendEmailTaskListResponse;
   }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/marketing/email/batch/list`,
     {
       method: "GET",
@@ -1200,7 +1224,7 @@ export async function postV1AdminMarketingEmailBatchPreSendCount(
     data?: BackendAPI.GetPreSendEmailCountResponse;
   }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/marketing/email/batch/pre-send-count`,
     {
       method: "POST",
@@ -1219,7 +1243,7 @@ export async function postV1AdminMarketingEmailBatchSend(
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/marketing/email/batch/send`,
     {
       method: "POST",
@@ -1242,7 +1266,7 @@ export async function postV1AdminMarketingEmailBatchStatus(
     data?: BackendAPI.GetBatchSendEmailTaskStatusResponse;
   }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/marketing/email/batch/status`,
     {
       method: "POST",
@@ -1261,7 +1285,7 @@ export async function postV1AdminMarketingEmailBatchStop(
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/marketing/email/batch/stop`,
     {
       method: "POST",
@@ -1279,7 +1303,7 @@ export async function postV1AdminMarketingQuotaCreate(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/marketing/quota/create`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/marketing/quota/create`,
     {
       method: "POST",
       headers: {
@@ -1299,13 +1323,16 @@ export async function getV1AdminMarketingQuotaList(
     code?: number;
     msg?: string;
     data?: BackendAPI.QueryQuotaTaskListResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/marketing/quota/list`, {
-    method: "GET",
-    params: {
-      ...params,
-    },
-    ...(options || {}),
-  });
+  }>(
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/marketing/quota/list`,
+    {
+      method: "GET",
+      params: {
+        ...params,
+      },
+      ...(options || {}),
+    }
+  );
 }
 
 export async function postV1AdminMarketingQuotaPreCount(
@@ -1318,7 +1345,7 @@ export async function postV1AdminMarketingQuotaPreCount(
     data?: BackendAPI.QueryQuotaTaskPreCountResponse;
   }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/marketing/quota/pre-count`,
     {
       method: "POST",
@@ -1336,7 +1363,7 @@ export async function postV1AdminOrder(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/order/`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/order/`,
     {
       method: "POST",
       headers: {
@@ -1356,7 +1383,7 @@ export async function getV1AdminOrderList(
     code?: number;
     msg?: string;
     data?: BackendAPI.GetOrderListResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/order/list`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/order/list`, {
     method: "GET",
     params: {
       ...params,
@@ -1370,7 +1397,7 @@ export async function putV1AdminOrderStatus(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/order/status`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/order/status`,
     {
       method: "PUT",
       headers: {
@@ -1390,7 +1417,7 @@ export async function putV1AdminPayment(
     code?: number;
     msg?: string;
     data?: BackendAPI.PaymentConfig;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/payment/`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/payment/`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -1408,7 +1435,7 @@ export async function postV1AdminPayment(
     code?: number;
     msg?: string;
     data?: BackendAPI.PaymentConfig;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/payment/`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/payment/`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -1423,7 +1450,7 @@ export async function deleteV1AdminPayment(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/payment/`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/payment/`,
     {
       method: "DELETE",
       headers: {
@@ -1443,7 +1470,7 @@ export async function getV1AdminPaymentList(
     code?: number;
     msg?: string;
     data?: BackendAPI.GetPaymentMethodListResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/payment/list`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/payment/list`, {
     method: "GET",
     params: {
       ...params,
@@ -1459,7 +1486,7 @@ export async function getV1AdminPaymentPlatform(options?: {
     code?: number;
     msg?: string;
     data?: BackendAPI.PlatformResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/payment/platform`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/payment/platform`, {
     method: "GET",
     ...(options || {}),
   });
@@ -1467,7 +1494,7 @@ export async function getV1AdminPaymentPlatform(options?: {
 
 export async function getV1AdminPluginDetail(options?: { [key: string]: any }) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/plugin/detail`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/plugin/detail`,
     {
       method: "GET",
       ...(options || {}),
@@ -1479,7 +1506,7 @@ export async function postV1AdminPluginDisable(options?: {
   [key: string]: any;
 }) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/plugin/disable`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/plugin/disable`,
     {
       method: "POST",
       ...(options || {}),
@@ -1491,7 +1518,7 @@ export async function postV1AdminPluginEnable(options?: {
   [key: string]: any;
 }) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/plugin/enable`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/plugin/enable`,
     {
       method: "POST",
       ...(options || {}),
@@ -1501,7 +1528,7 @@ export async function postV1AdminPluginEnable(options?: {
 
 export async function getV1AdminPluginList(options?: { [key: string]: any }) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/plugin/list`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/plugin/list`,
     {
       method: "GET",
       ...(options || {}),
@@ -1513,7 +1540,7 @@ export async function postV1AdminPluginReload(options?: {
   [key: string]: any;
 }) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/plugin/reload`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/plugin/reload`,
     {
       method: "POST",
       ...(options || {}),
@@ -1523,7 +1550,7 @@ export async function postV1AdminPluginReload(options?: {
 
 export async function getV1AdminPlugins2(options?: { [key: string]: any }) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/plugins`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/plugins`,
     {
       method: "GET",
       ...(options || {}),
@@ -1533,7 +1560,7 @@ export async function getV1AdminPlugins2(options?: { [key: string]: any }) {
 
 export async function getV1AdminPlugins(options?: { [key: string]: any }) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/plugins/`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/plugins/`,
     {
       method: "GET",
       ...(options || {}),
@@ -1547,7 +1574,7 @@ export async function getV1AdminPluginsName(
 ) {
   const { name: param0, ...queryParams } = params;
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/plugins/${param0}`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/plugins/${param0}`,
     {
       method: "GET",
       params: { ...queryParams },
@@ -1563,7 +1590,7 @@ export async function postV1AdminPluginsNameDisable(
   const { name: param0, ...queryParams } = params;
   return request<{ code?: number; msg?: string; data?: any }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/plugins/${param0}/disable`,
     {
       method: "POST",
@@ -1580,7 +1607,7 @@ export async function postV1AdminPluginsNameEnable(
   const { name: param0, ...queryParams } = params;
   return request<{ code?: number; msg?: string; data?: any }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/plugins/${param0}/enable`,
     {
       method: "POST",
@@ -1597,7 +1624,7 @@ export async function getV1AdminPluginsNameEvents(
   const { name: param0, ...queryParams } = params;
   return request<{ code?: number; msg?: string; data?: any }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/plugins/${param0}/events`,
     {
       method: "GET",
@@ -1614,7 +1641,7 @@ export async function getV1AdminPluginsNameHealth(
   const { name: param0, ...queryParams } = params;
   return request<{ code?: number; msg?: string; data?: any }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/plugins/${param0}/health`,
     {
       method: "GET",
@@ -1631,7 +1658,7 @@ export async function getV1AdminPluginsNameManifest(
   const { name: param0, ...queryParams } = params;
   return request<{ code?: number; msg?: string; data?: any }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/plugins/${param0}/manifest`,
     {
       method: "GET",
@@ -1648,7 +1675,7 @@ export async function getV1AdminPluginsNameMiddlewares(
   const { name: param0, ...queryParams } = params;
   return request<{ code?: number; msg?: string; data?: any }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/plugins/${param0}/middlewares`,
     {
       method: "GET",
@@ -1665,7 +1692,7 @@ export async function postV1AdminPluginsNameReload(
   const { name: param0, ...queryParams } = params;
   return request<{ code?: number; msg?: string; data?: any }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/plugins/${param0}/reload`,
     {
       method: "POST",
@@ -1682,7 +1709,7 @@ export async function postV1AdminPluginsNameRestart(
   const { name: param0, ...queryParams } = params;
   return request<{ code?: number; msg?: string; data?: any }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/plugins/${param0}/restart`,
     {
       method: "POST",
@@ -1699,7 +1726,7 @@ export async function getV1AdminPluginsNameRoutes(
   const { name: param0, ...queryParams } = params;
   return request<{ code?: number; msg?: string; data?: any }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/plugins/${param0}/routes`,
     {
       method: "GET",
@@ -1716,7 +1743,7 @@ export async function postV1AdminPluginsNameValidate(
   const { name: param0, ...queryParams } = params;
   return request<{ code?: number; msg?: string; data?: any }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/plugins/${param0}/validate`,
     {
       method: "POST",
@@ -1730,7 +1757,7 @@ export async function postV1AdminPluginsReloadAll(options?: {
   [key: string]: any;
 }) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/plugins/reload-all`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/plugins/reload-all`,
     {
       method: "POST",
       ...(options || {}),
@@ -1742,7 +1769,7 @@ export async function postV1AdminPluginsUpload(options?: {
   [key: string]: any;
 }) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/plugins/upload`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/plugins/upload`,
     {
       method: "POST",
       ...(options || {}),
@@ -1755,7 +1782,7 @@ export async function putV1AdminRedemptionCode(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/redemption/code`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/redemption/code`,
     {
       method: "PUT",
       headers: {
@@ -1772,7 +1799,7 @@ export async function postV1AdminRedemptionCode(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/redemption/code`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/redemption/code`,
     {
       method: "POST",
       headers: {
@@ -1789,7 +1816,7 @@ export async function deleteV1AdminRedemptionCode(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/redemption/code`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/redemption/code`,
     {
       method: "DELETE",
       headers: {
@@ -1806,7 +1833,7 @@ export async function deleteV1AdminRedemptionCodeBatch(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/redemption/code/batch`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/redemption/code/batch`,
     {
       method: "DELETE",
       headers: {
@@ -1826,13 +1853,16 @@ export async function getV1AdminRedemptionCodeList(
     code?: number;
     msg?: string;
     data?: BackendAPI.GetRedemptionCodeListResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/redemption/code/list`, {
-    method: "GET",
-    params: {
-      ...params,
-    },
-    ...(options || {}),
-  });
+  }>(
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/redemption/code/list`,
+    {
+      method: "GET",
+      params: {
+        ...params,
+      },
+      ...(options || {}),
+    }
+  );
 }
 
 export async function putV1AdminRedemptionCodeStatus(
@@ -1840,7 +1870,7 @@ export async function putV1AdminRedemptionCodeStatus(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/redemption/code/status`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/redemption/code/status`,
     {
       method: "PUT",
       headers: {
@@ -1861,7 +1891,7 @@ export async function getV1AdminRedemptionRecordList(
     msg?: string;
     data?: BackendAPI.GetRedemptionRecordListResponse;
   }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/redemption/record/list`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/redemption/record/list`,
     {
       method: "GET",
       params: {
@@ -1877,7 +1907,7 @@ export async function postV1AdminServerCreate(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/server/create`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/server/create`,
     {
       method: "POST",
       headers: {
@@ -1894,7 +1924,7 @@ export async function postV1AdminServerOpenApiDelete(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/server/delete`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/server/delete`,
     {
       method: "POST",
       headers: {
@@ -1914,7 +1944,7 @@ export async function getV1AdminServerList(
     code?: number;
     msg?: string;
     data?: BackendAPI.FilterServerListResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/server/list`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/server/list`, {
     method: "GET",
     params: {
       ...params,
@@ -1931,13 +1961,16 @@ export async function getV1AdminServerNodeConfig(
     code?: number;
     msg?: string;
     data?: BackendAPI.GetServerNodeConfigResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/server/node_config`, {
-    method: "GET",
-    params: {
-      ...params,
-    },
-    ...(options || {}),
-  });
+  }>(
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/server/node_config`,
+    {
+      method: "GET",
+      params: {
+        ...params,
+      },
+      ...(options || {}),
+    }
+  );
 }
 
 export async function postV1AdminServerNodeConfigUpdate(
@@ -1946,7 +1979,7 @@ export async function postV1AdminServerNodeConfigUpdate(
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/server/node_config/update`,
     {
       method: "POST",
@@ -1964,7 +1997,7 @@ export async function postV1AdminServerNodeCreate(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/server/node/create`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/server/node/create`,
     {
       method: "POST",
       headers: {
@@ -1981,7 +2014,7 @@ export async function postV1AdminServerNodeOpenApiDelete(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/server/node/delete`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/server/node/delete`,
     {
       method: "POST",
       headers: {
@@ -2001,7 +2034,7 @@ export async function getV1AdminServerNodeList(
     code?: number;
     msg?: string;
     data?: BackendAPI.FilterNodeListResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/server/node/list`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/server/node/list`, {
     method: "GET",
     params: {
       ...params,
@@ -2015,7 +2048,7 @@ export async function postV1AdminServerNodeSort(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/server/node/sort`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/server/node/sort`,
     {
       method: "POST",
       headers: {
@@ -2032,7 +2065,7 @@ export async function postV1AdminServerNodeSortByName(options?: {
 }) {
   return request<{ code?: number; msg?: string; data?: any }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/server/node/sort-by-name`,
     {
       method: "POST",
@@ -2047,7 +2080,7 @@ export async function postV1AdminServerNodeStatusToggle(
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/server/node/status/toggle`,
     {
       method: "POST",
@@ -2067,7 +2100,7 @@ export async function getV1AdminServerNodeTags(options?: {
     code?: number;
     msg?: string;
     data?: BackendAPI.QueryNodeTagResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/server/node/tags`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/server/node/tags`, {
     method: "GET",
     ...(options || {}),
   });
@@ -2078,7 +2111,7 @@ export async function postV1AdminServerNodeUpdate(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/server/node/update`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/server/node/update`,
     {
       method: "POST",
       headers: {
@@ -2098,7 +2131,7 @@ export async function getV1AdminServerProtocols(
     code?: number;
     msg?: string;
     data?: BackendAPI.GetServerProtocolsResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/server/protocols`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/server/protocols`, {
     method: "GET",
     params: {
       ...params,
@@ -2112,7 +2145,7 @@ export async function postV1AdminServerServerSort(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/server/server/sort`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/server/server/sort`,
     {
       method: "POST",
       headers: {
@@ -2129,7 +2162,7 @@ export async function postV1AdminServerServerSortByName(options?: {
 }) {
   return request<{ code?: number; msg?: string; data?: any }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/server/server/sort-by-name`,
     {
       method: "POST",
@@ -2143,7 +2176,7 @@ export async function postV1AdminServerUpdate(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/server/update`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/server/update`,
     {
       method: "POST",
       headers: {
@@ -2160,7 +2193,7 @@ export async function putV1AdminSubscribe(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/subscribe/`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/subscribe/`,
     {
       method: "PUT",
       headers: {
@@ -2177,7 +2210,7 @@ export async function postV1AdminSubscribe(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/subscribe/`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/subscribe/`,
     {
       method: "POST",
       headers: {
@@ -2194,7 +2227,7 @@ export async function deleteV1AdminSubscribe(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/subscribe/`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/subscribe/`,
     {
       method: "DELETE",
       headers: {
@@ -2211,7 +2244,7 @@ export async function deleteV1AdminSubscribeBatch(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/subscribe/batch`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/subscribe/batch`,
     {
       method: "DELETE",
       headers: {
@@ -2228,7 +2261,7 @@ export async function getV1AdminSubscribeDetails(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: BackendAPI.Subscribe }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/subscribe/details`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/subscribe/details`,
     {
       method: "GET",
       params: {
@@ -2244,7 +2277,7 @@ export async function putV1AdminSubscribeGroup(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/subscribe/group`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/subscribe/group`,
     {
       method: "PUT",
       headers: {
@@ -2261,7 +2294,7 @@ export async function postV1AdminSubscribeGroup(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/subscribe/group`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/subscribe/group`,
     {
       method: "POST",
       headers: {
@@ -2278,7 +2311,7 @@ export async function deleteV1AdminSubscribeGroup(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/subscribe/group`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/subscribe/group`,
     {
       method: "DELETE",
       headers: {
@@ -2295,7 +2328,7 @@ export async function deleteV1AdminSubscribeGroupBatch(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/subscribe/group/batch`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/subscribe/group/batch`,
     {
       method: "DELETE",
       headers: {
@@ -2314,10 +2347,13 @@ export async function getV1AdminSubscribeGroupList(options?: {
     code?: number;
     msg?: string;
     data?: BackendAPI.GetSubscribeGroupListResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/subscribe/group/list`, {
-    method: "GET",
-    ...(options || {}),
-  });
+  }>(
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/subscribe/group/list`,
+    {
+      method: "GET",
+      ...(options || {}),
+    }
+  );
 }
 
 export async function getV1AdminSubscribeList(
@@ -2328,7 +2364,7 @@ export async function getV1AdminSubscribeList(
     code?: number;
     msg?: string;
     data?: BackendAPI.GetSubscribeListResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/subscribe/list`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/subscribe/list`, {
     method: "GET",
     params: {
       ...params,
@@ -2346,7 +2382,7 @@ export async function postV1AdminSubscribeResetAllToken(options?: {
     data?: BackendAPI.ResetAllSubscribeTokenResponse;
   }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/subscribe/reset_all_token`,
     {
       method: "POST",
@@ -2360,7 +2396,7 @@ export async function postV1AdminSubscribeSort(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/subscribe/sort`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/subscribe/sort`,
     {
       method: "POST",
       headers: {
@@ -2380,7 +2416,7 @@ export async function getV1AdminSystemCurrencyConfig(options?: {
     msg?: string;
     data?: BackendAPI.CurrencyConfig;
   }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/system/currency_config`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/system/currency_config`,
     {
       method: "GET",
       ...(options || {}),
@@ -2393,7 +2429,7 @@ export async function putV1AdminSystemCurrencyConfig(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/system/currency_config`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/system/currency_config`,
     {
       method: "PUT",
       headers: {
@@ -2414,7 +2450,7 @@ export async function getV1AdminSystemGetNodeMultiplier(options?: {
     data?: BackendAPI.GetNodeMultiplierResponse;
   }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/system/get_node_multiplier`,
     {
       method: "GET",
@@ -2430,10 +2466,13 @@ export async function getV1AdminSystemInviteConfig(options?: {
     code?: number;
     msg?: string;
     data?: BackendAPI.InviteConfig;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/system/invite_config`, {
-    method: "GET",
-    ...(options || {}),
-  });
+  }>(
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/system/invite_config`,
+    {
+      method: "GET",
+      ...(options || {}),
+    }
+  );
 }
 
 export async function putV1AdminSystemInviteConfig(
@@ -2441,7 +2480,7 @@ export async function putV1AdminSystemInviteConfig(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/system/invite_config`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/system/invite_config`,
     {
       method: "PUT",
       headers: {
@@ -2458,7 +2497,7 @@ export async function getV1AdminSystemModule(options?: { [key: string]: any }) {
     code?: number;
     msg?: string;
     data?: BackendAPI.ModuleConfig;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/system/module`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/system/module`, {
     method: "GET",
     ...(options || {}),
   });
@@ -2468,7 +2507,7 @@ export async function getV1AdminSystemNodeConfig(options?: {
   [key: string]: any;
 }) {
   return request<{ code?: number; msg?: string; data?: BackendAPI.NodeConfig }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/system/node_config`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/system/node_config`,
     {
       method: "GET",
       ...(options || {}),
@@ -2481,7 +2520,7 @@ export async function putV1AdminSystemNodeConfig(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/system/node_config`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/system/node_config`,
     {
       method: "PUT",
       headers: {
@@ -2502,7 +2541,7 @@ export async function getV1AdminSystemNodeMultiplierPreview(options?: {
     data?: BackendAPI.PreViewNodeMultiplierResponse;
   }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/system/node_multiplier/preview`,
     {
       method: "GET",
@@ -2518,7 +2557,7 @@ export async function getV1AdminSystemPrivacy(options?: {
     code?: number;
     msg?: string;
     data?: BackendAPI.PrivacyPolicyConfig;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/system/privacy`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/system/privacy`, {
     method: "GET",
     ...(options || {}),
   });
@@ -2529,7 +2568,7 @@ export async function putV1AdminSystemPrivacy(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/system/privacy`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/system/privacy`,
     {
       method: "PUT",
       headers: {
@@ -2549,7 +2588,7 @@ export async function getV1AdminSystemRegisterConfig(options?: {
     msg?: string;
     data?: BackendAPI.RegisterConfig;
   }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/system/register_config`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/system/register_config`,
     {
       method: "GET",
       ...(options || {}),
@@ -2562,7 +2601,7 @@ export async function putV1AdminSystemRegisterConfig(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/system/register_config`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/system/register_config`,
     {
       method: "PUT",
       headers: {
@@ -2580,7 +2619,7 @@ export async function postV1AdminSystemSetNodeMultiplier(
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/system/set_node_multiplier`,
     {
       method: "POST",
@@ -2598,7 +2637,7 @@ export async function postV1AdminSystemSettingTelegramBot(options?: {
 }) {
   return request<{ code?: number; msg?: string; data?: any }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/system/setting_telegram_bot`,
     {
       method: "POST",
@@ -2611,7 +2650,7 @@ export async function getV1AdminSystemSiteConfig(options?: {
   [key: string]: any;
 }) {
   return request<{ code?: number; msg?: string; data?: BackendAPI.SiteConfig }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/system/site_config`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/system/site_config`,
     {
       method: "GET",
       ...(options || {}),
@@ -2624,7 +2663,7 @@ export async function putV1AdminSystemSiteConfig(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/system/site_config`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/system/site_config`,
     {
       method: "PUT",
       headers: {
@@ -2644,7 +2683,7 @@ export async function getV1AdminSystemSubscribeConfig(options?: {
     msg?: string;
     data?: BackendAPI.SubscribeConfig;
   }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/system/subscribe_config`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/system/subscribe_config`,
     {
       method: "GET",
       ...(options || {}),
@@ -2657,7 +2696,7 @@ export async function putV1AdminSystemSubscribeConfig(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/system/subscribe_config`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/system/subscribe_config`,
     {
       method: "PUT",
       headers: {
@@ -2673,7 +2712,7 @@ export async function getV1AdminSystemTosConfig(options?: {
   [key: string]: any;
 }) {
   return request<{ code?: number; msg?: string; data?: BackendAPI.TosConfig }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/system/tos_config`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/system/tos_config`,
     {
       method: "GET",
       ...(options || {}),
@@ -2686,7 +2725,7 @@ export async function putV1AdminSystemTosConfig(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/system/tos_config`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/system/tos_config`,
     {
       method: "PUT",
       headers: {
@@ -2707,7 +2746,7 @@ export async function getV1AdminSystemVerifyCodeConfig(options?: {
     data?: BackendAPI.VerifyCodeConfig;
   }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/system/verify_code_config`,
     {
       method: "GET",
@@ -2722,7 +2761,7 @@ export async function putV1AdminSystemVerifyCodeConfig(
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/system/verify_code_config`,
     {
       method: "PUT",
@@ -2742,10 +2781,13 @@ export async function getV1AdminSystemVerifyConfig(options?: {
     code?: number;
     msg?: string;
     data?: BackendAPI.VerifyConfig;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/system/verify_config`, {
-    method: "GET",
-    ...(options || {}),
-  });
+  }>(
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/system/verify_config`,
+    {
+      method: "GET",
+      ...(options || {}),
+    }
+  );
 }
 
 export async function putV1AdminSystemVerifyConfig(
@@ -2753,7 +2795,7 @@ export async function putV1AdminSystemVerifyConfig(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/system/verify_config`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/system/verify_config`,
     {
       method: "PUT",
       headers: {
@@ -2770,7 +2812,7 @@ export async function putV1AdminTicket(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/ticket/`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/ticket/`,
     {
       method: "PUT",
       headers: {
@@ -2787,7 +2829,7 @@ export async function getV1AdminTicketDetail(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: BackendAPI.Ticket }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/ticket/detail`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/ticket/detail`,
     {
       method: "GET",
       params: {
@@ -2803,7 +2845,7 @@ export async function postV1AdminTicketFollow(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/ticket/follow`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/ticket/follow`,
     {
       method: "POST",
       headers: {
@@ -2823,7 +2865,7 @@ export async function getV1AdminTicketList(
     code?: number;
     msg?: string;
     data?: BackendAPI.GetTicketListResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/ticket/list`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/ticket/list`, {
     method: "GET",
     params: {
       ...params,
@@ -2840,7 +2882,7 @@ export async function getV1AdminToolIpLocation(
     code?: number;
     msg?: string;
     data?: BackendAPI.QueryIPLocationResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/tool/ip/location`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/tool/ip/location`, {
     method: "GET",
     params: {
       ...params,
@@ -2854,7 +2896,7 @@ export async function getV1AdminToolLog(options?: { [key: string]: any }) {
     code?: number;
     msg?: string;
     data?: BackendAPI.LogResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/tool/log`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/tool/log`, {
     method: "GET",
     ...(options || {}),
   });
@@ -2862,7 +2904,7 @@ export async function getV1AdminToolLog(options?: { [key: string]: any }) {
 
 export async function getV1AdminToolRestart(options?: { [key: string]: any }) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/tool/restart`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/tool/restart`,
     {
       method: "GET",
       ...(options || {}),
@@ -2875,7 +2917,7 @@ export async function getV1AdminToolVersion(options?: { [key: string]: any }) {
     code?: number;
     msg?: string;
     data?: BackendAPI.VersionResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/tool/version`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/tool/version`, {
     method: "GET",
     ...(options || {}),
   });
@@ -2886,7 +2928,7 @@ export async function postV1AdminUser(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/`,
     {
       method: "POST",
       headers: {
@@ -2903,7 +2945,7 @@ export async function deleteV1AdminUser(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/`,
     {
       method: "DELETE",
       params: {
@@ -2922,7 +2964,7 @@ export async function getV1AdminUserAuthMethod(
     code?: number;
     msg?: string;
     data?: BackendAPI.GetUserAuthMethodResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/auth_method`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/auth_method`, {
     method: "GET",
     params: {
       ...params,
@@ -2936,7 +2978,7 @@ export async function putV1AdminUserAuthMethod(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/auth_method`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/auth_method`,
     {
       method: "PUT",
       headers: {
@@ -2953,7 +2995,7 @@ export async function postV1AdminUserAuthMethod(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/auth_method`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/auth_method`,
     {
       method: "POST",
       headers: {
@@ -2970,7 +3012,7 @@ export async function deleteV1AdminUserAuthMethod(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/auth_method`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/auth_method`,
     {
       method: "DELETE",
       headers: {
@@ -2987,7 +3029,7 @@ export async function putV1AdminUserBasic(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/basic`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/basic`,
     {
       method: "PUT",
       headers: {
@@ -3004,7 +3046,7 @@ export async function deleteV1AdminUserBatch(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/batch`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/batch`,
     {
       method: "DELETE",
       headers: {
@@ -3018,7 +3060,7 @@ export async function deleteV1AdminUserBatch(
 
 export async function getV1AdminUserCurrent(options?: { [key: string]: any }) {
   return request<{ code?: number; msg?: string; data?: BackendAPI.User }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/current`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/current`,
     {
       method: "GET",
       ...(options || {}),
@@ -3031,7 +3073,7 @@ export async function getV1AdminUserDetail(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: BackendAPI.User }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/detail`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/detail`,
     {
       method: "GET",
       params: {
@@ -3047,7 +3089,7 @@ export async function putV1AdminUserDevice(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/device`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/device`,
     {
       method: "PUT",
       headers: {
@@ -3064,7 +3106,7 @@ export async function deleteV1AdminUserDevice(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/device`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/device`,
     {
       method: "DELETE",
       headers: {
@@ -3082,7 +3124,7 @@ export async function putV1AdminUserDeviceKickOffline(
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/user/device/kick_offline`,
     {
       method: "PUT",
@@ -3103,7 +3145,7 @@ export async function getV1AdminUserList(
     code?: number;
     msg?: string;
     data?: BackendAPI.GetUserListResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/list`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/list`, {
     method: "GET",
     params: {
       ...params,
@@ -3120,7 +3162,7 @@ export async function getV1AdminUserLoginLogs(
     code?: number;
     msg?: string;
     data?: BackendAPI.GetUserLoginLogsResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/login/logs`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/login/logs`, {
     method: "GET",
     params: {
       ...params,
@@ -3134,7 +3176,7 @@ export async function putV1AdminUserNotify(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/notify`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/notify`,
     {
       method: "PUT",
       headers: {
@@ -3154,7 +3196,7 @@ export async function getV1AdminUserSubscribe(
     code?: number;
     msg?: string;
     data?: BackendAPI.GetUserSubscribeListResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/subscribe`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/subscribe`, {
     method: "GET",
     params: {
       ...params,
@@ -3168,7 +3210,7 @@ export async function putV1AdminUserSubscribe(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/subscribe`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/subscribe`,
     {
       method: "PUT",
       headers: {
@@ -3185,7 +3227,7 @@ export async function postV1AdminUserSubscribe(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/subscribe`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/subscribe`,
     {
       method: "POST",
       headers: {
@@ -3202,7 +3244,7 @@ export async function deleteV1AdminUserSubscribe(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/subscribe`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/subscribe`,
     {
       method: "DELETE",
       headers: {
@@ -3223,7 +3265,7 @@ export async function getV1AdminUserSubscribeDetail(
     msg?: string;
     data?: BackendAPI.UserSubscribeDetail;
   }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/subscribe/detail`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/subscribe/detail`,
     {
       method: "GET",
       params: {
@@ -3243,7 +3285,7 @@ export async function getV1AdminUserSubscribeDevice(
     msg?: string;
     data?: BackendAPI.GetUserSubscribeDevicesResponse;
   }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/subscribe/device`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/subscribe/device`,
     {
       method: "GET",
       params: {
@@ -3262,13 +3304,16 @@ export async function getV1AdminUserSubscribeLogs(
     code?: number;
     msg?: string;
     data?: BackendAPI.GetUserSubscribeLogsResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/subscribe/logs`, {
-    method: "GET",
-    params: {
-      ...params,
-    },
-    ...(options || {}),
-  });
+  }>(
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/subscribe/logs`,
+    {
+      method: "GET",
+      params: {
+        ...params,
+      },
+      ...(options || {}),
+    }
+  );
 }
 
 export async function getV1AdminUserSubscribeResetLogs(
@@ -3281,7 +3326,7 @@ export async function getV1AdminUserSubscribeResetLogs(
     data?: BackendAPI.GetUserSubscribeResetTrafficLogsResponse;
   }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/user/subscribe/reset/logs`,
     {
       method: "GET",
@@ -3299,7 +3344,7 @@ export async function postV1AdminUserSubscribeResetToken(
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/user/subscribe/reset/token`,
     {
       method: "POST",
@@ -3318,7 +3363,7 @@ export async function postV1AdminUserSubscribeResetTraffic(
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/user/subscribe/reset/traffic`,
     {
       method: "POST",
@@ -3336,7 +3381,7 @@ export async function postV1AdminUserSubscribeToggle(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/subscribe/toggle`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/subscribe/toggle`,
     {
       method: "POST",
       headers: {
@@ -3358,7 +3403,7 @@ export async function getV1AdminUserSubscribeTrafficLogs(
     data?: BackendAPI.GetUserSubscribeTrafficLogsResponse;
   }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/user/subscribe/traffic_logs`,
     {
       method: "GET",
@@ -3378,7 +3423,7 @@ export async function postV1AuthAdminCaptchaGenerate(options?: {
     msg?: string;
     data?: BackendAPI.GenerateCaptchaResponse;
   }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/auth/admin/captcha/generate`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/auth/admin/captcha/generate`,
     {
       method: "POST",
       ...(options || {}),
@@ -3396,7 +3441,7 @@ export async function postV1AuthAdminCaptchaSliderVerify(
     data?: BackendAPI.SliderVerifyCaptchaResponse;
   }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/auth/admin/captcha/slider/verify`,
     {
       method: "POST",
@@ -3417,7 +3462,7 @@ export async function postV1AuthAdminLogin(
     code?: number;
     msg?: string;
     data?: BackendAPI.LoginResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/auth/admin/login`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/auth/admin/login`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -3435,7 +3480,7 @@ export async function postV1AuthAdminReset(
     code?: number;
     msg?: string;
     data?: BackendAPI.LoginResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/auth/admin/reset`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/auth/admin/reset`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -3452,7 +3497,7 @@ export async function postV1AuthCaptchaGenerate(options?: {
     code?: number;
     msg?: string;
     data?: BackendAPI.GenerateCaptchaResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/auth/captcha/generate`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/auth/captcha/generate`, {
     method: "POST",
     ...(options || {}),
   });
@@ -3466,14 +3511,17 @@ export async function postV1AuthCaptchaSliderVerify(
     code?: number;
     msg?: string;
     data?: BackendAPI.SliderVerifyCaptchaResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/auth/captcha/slider/verify`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    data: body,
-    ...(options || {}),
-  });
+  }>(
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/auth/captcha/slider/verify`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: body,
+      ...(options || {}),
+    }
+  );
 }
 
 export async function getV1AuthCheck(
@@ -3484,7 +3532,7 @@ export async function getV1AuthCheck(
     code?: number;
     msg?: string;
     data?: BackendAPI.CheckUserResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/auth/check`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/auth/check`, {
     method: "GET",
     params: {
       ...params,
@@ -3501,7 +3549,7 @@ export async function getV1AuthCheckTelephone(
     code?: number;
     msg?: string;
     data?: BackendAPI.TelephoneCheckUserResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/auth/check/telephone`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/auth/check/telephone`, {
     method: "GET",
     params: {
       ...params,
@@ -3518,7 +3566,7 @@ export async function postV1AuthLogin(
     code?: number;
     msg?: string;
     data?: BackendAPI.LoginResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/auth/login`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/auth/login`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -3536,7 +3584,7 @@ export async function postV1AuthLoginDevice(
     code?: number;
     msg?: string;
     data?: BackendAPI.LoginResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/auth/login/device`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/auth/login/device`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -3554,7 +3602,7 @@ export async function postV1AuthLoginTelephone(
     code?: number;
     msg?: string;
     data?: BackendAPI.LoginResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/auth/login/telephone`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/auth/login/telephone`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -3569,7 +3617,7 @@ export async function postV1AuthOauthCallbackApple(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/auth/oauth/callback/apple`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/auth/oauth/callback/apple`,
     {
       method: "POST",
       params: {
@@ -3588,7 +3636,7 @@ export async function postV1AuthOauthLogin(
     code?: number;
     msg?: string;
     data?: BackendAPI.OAuthLoginResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/auth/oauth/login`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/auth/oauth/login`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -3606,7 +3654,7 @@ export async function postV1AuthOauthLoginToken(
     code?: number;
     msg?: string;
     data?: BackendAPI.LoginResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/auth/oauth/login/token`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/auth/oauth/login/token`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -3624,7 +3672,7 @@ export async function postV1AuthRegister(
     code?: number;
     msg?: string;
     data?: BackendAPI.LoginResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/auth/register`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/auth/register`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -3642,7 +3690,7 @@ export async function postV1AuthRegisterTelephone(
     code?: number;
     msg?: string;
     data?: BackendAPI.LoginResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/auth/register/telephone`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/auth/register/telephone`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -3660,7 +3708,7 @@ export async function postV1AuthReset(
     code?: number;
     msg?: string;
     data?: BackendAPI.LoginResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/auth/reset`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/auth/reset`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -3678,7 +3726,7 @@ export async function postV1AuthResetTelephone(
     code?: number;
     msg?: string;
     data?: BackendAPI.LoginResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/auth/reset/telephone`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/auth/reset/telephone`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -3696,7 +3744,7 @@ export async function getV1CommonAds(
     code?: number;
     msg?: string;
     data?: BackendAPI.GetAdsResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/common/ads`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/common/ads`, {
     method: "GET",
     params: {
       ...params,
@@ -3715,7 +3763,7 @@ export async function postV1CommonCheckVerificationCode(
     data?: BackendAPI.CheckVerificationCodeRespone;
   }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/common/check_verification_code`,
     {
       method: "POST",
@@ -3733,7 +3781,7 @@ export async function getV1CommonClient(options?: { [key: string]: any }) {
     code?: number;
     msg?: string;
     data?: BackendAPI.GetSubscribeClientResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/common/client`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/common/client`, {
     method: "GET",
     ...(options || {}),
   });
@@ -3744,7 +3792,7 @@ export async function getV1CommonHeartbeat(options?: { [key: string]: any }) {
     code?: number;
     msg?: string;
     data?: BackendAPI.HeartbeatResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/common/heartbeat`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/common/heartbeat`, {
     method: "GET",
     ...(options || {}),
   });
@@ -3758,7 +3806,7 @@ export async function postV1CommonSendCode(
     code?: number;
     msg?: string;
     data?: BackendAPI.SendCodeResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/common/send_code`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/common/send_code`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -3776,7 +3824,7 @@ export async function postV1CommonSendSmsCode(
     code?: number;
     msg?: string;
     data?: BackendAPI.SendCodeResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/common/send_sms_code`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/common/send_sms_code`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -3791,7 +3839,7 @@ export async function getV1CommonSiteConfig(options?: { [key: string]: any }) {
     code?: number;
     msg?: string;
     data?: BackendAPI.GetGlobalConfigResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/common/site/config`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/common/site/config`, {
     method: "GET",
     ...(options || {}),
   });
@@ -3802,7 +3850,7 @@ export async function getV1CommonSitePrivacy(options?: { [key: string]: any }) {
     code?: number;
     msg?: string;
     data?: BackendAPI.PrivacyPolicyConfig;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/common/site/privacy`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/common/site/privacy`, {
     method: "GET",
     ...(options || {}),
   });
@@ -3813,7 +3861,7 @@ export async function getV1CommonSiteStat(options?: { [key: string]: any }) {
     code?: number;
     msg?: string;
     data?: BackendAPI.GetStatResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/common/site/stat`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/common/site/stat`, {
     method: "GET",
     ...(options || {}),
   });
@@ -3824,7 +3872,7 @@ export async function getV1CommonSiteTos(options?: { [key: string]: any }) {
     code?: number;
     msg?: string;
     data?: BackendAPI.GetTosResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/common/site/tos`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/common/site/tos`, {
     method: "GET",
     ...(options || {}),
   });
@@ -3838,13 +3886,16 @@ export async function getV1PublicAnnouncementList(
     code?: number;
     msg?: string;
     data?: BackendAPI.QueryAnnouncementResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/public/announcement/list`, {
-    method: "GET",
-    params: {
-      ...params,
-    },
-    ...(options || {}),
-  });
+  }>(
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/public/announcement/list`,
+    {
+      method: "GET",
+      params: {
+        ...params,
+      },
+      ...(options || {}),
+    }
+  );
 }
 
 export async function getV1PublicDocumentDetail(
@@ -3852,7 +3903,7 @@ export async function getV1PublicDocumentDetail(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: BackendAPI.Document }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/public/document/detail`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/public/document/detail`,
     {
       method: "GET",
       params: {
@@ -3870,7 +3921,7 @@ export async function getV1PublicDocumentList(options?: {
     code?: number;
     msg?: string;
     data?: BackendAPI.QueryDocumentListResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/public/document/list`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/public/document/list`, {
     method: "GET",
     ...(options || {}),
   });
@@ -3881,7 +3932,7 @@ export async function postV1PublicOrderClose(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/public/order/close`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/public/order/close`,
     {
       method: "POST",
       headers: {
@@ -3901,7 +3952,7 @@ export async function getV1PublicOrderDetail(
     code?: number;
     msg?: string;
     data?: BackendAPI.OrderDetail;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/public/order/detail`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/public/order/detail`, {
     method: "GET",
     params: {
       ...params,
@@ -3918,7 +3969,7 @@ export async function getV1PublicOrderList(
     code?: number;
     msg?: string;
     data?: BackendAPI.QueryOrderListResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/public/order/list`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/public/order/list`, {
     method: "GET",
     params: {
       ...params,
@@ -3935,7 +3986,7 @@ export async function postV1PublicOrderPre(
     code?: number;
     msg?: string;
     data?: BackendAPI.PreOrderResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/public/order/pre`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/public/order/pre`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -3953,7 +4004,7 @@ export async function postV1PublicOrderPurchase(
     code?: number;
     msg?: string;
     data?: BackendAPI.PurchaseOrderResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/public/order/purchase`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/public/order/purchase`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -3971,7 +4022,7 @@ export async function postV1PublicOrderRecharge(
     code?: number;
     msg?: string;
     data?: BackendAPI.RechargeOrderResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/public/order/recharge`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/public/order/recharge`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -3989,7 +4040,7 @@ export async function postV1PublicOrderRenewal(
     code?: number;
     msg?: string;
     data?: BackendAPI.RenewalOrderResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/public/order/renewal`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/public/order/renewal`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -4007,7 +4058,7 @@ export async function postV1PublicOrderReset(
     code?: number;
     msg?: string;
     data?: BackendAPI.ResetTrafficOrderResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/public/order/reset`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/public/order/reset`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -4024,7 +4075,7 @@ export async function getV1PublicPaymentMethods(options?: {
     code?: number;
     msg?: string;
     data?: BackendAPI.GetAvailablePaymentMethodsResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/public/payment/methods`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/public/payment/methods`, {
     method: "GET",
     ...(options || {}),
   });
@@ -4039,7 +4090,7 @@ export async function postV1PublicPortalOrderCheckout(
     msg?: string;
     data?: BackendAPI.CheckoutOrderResponse;
   }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/public/portal/order/checkout`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/public/portal/order/checkout`,
     {
       method: "POST",
       headers: {
@@ -4059,13 +4110,16 @@ export async function getV1PublicPortalOrderStatus(
     code?: number;
     msg?: string;
     data?: BackendAPI.QueryPurchaseOrderResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/public/portal/order/status`, {
-    method: "GET",
-    params: {
-      ...params,
-    },
-    ...(options || {}),
-  });
+  }>(
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/public/portal/order/status`,
+    {
+      method: "GET",
+      params: {
+        ...params,
+      },
+      ...(options || {}),
+    }
+  );
 }
 
 export async function getV1PublicPortalPaymentMethod(options?: {
@@ -4076,7 +4130,7 @@ export async function getV1PublicPortalPaymentMethod(options?: {
     msg?: string;
     data?: BackendAPI.GetAvailablePaymentMethodsResponse;
   }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/public/portal/payment-method`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/public/portal/payment-method`,
     {
       method: "GET",
       ...(options || {}),
@@ -4092,7 +4146,7 @@ export async function postV1PublicPortalPre(
     code?: number;
     msg?: string;
     data?: BackendAPI.PrePurchaseOrderResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/public/portal/pre`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/public/portal/pre`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -4110,7 +4164,7 @@ export async function postV1PublicPortalPurchase(
     code?: number;
     msg?: string;
     data?: BackendAPI.PortalPurchaseResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/public/portal/purchase`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/public/portal/purchase`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -4128,7 +4182,7 @@ export async function getV1PublicPortalSubscribe(
     code?: number;
     msg?: string;
     data?: BackendAPI.GetSubscriptionResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/public/portal/subscribe`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/public/portal/subscribe`, {
     method: "GET",
     params: {
       ...params,
@@ -4145,7 +4199,7 @@ export async function postV1PublicRedemption(
     code?: number;
     msg?: string;
     data?: BackendAPI.RedeemCodeResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/public/redemption/`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/public/redemption/`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -4160,7 +4214,7 @@ export async function getV1PublicServerList(options?: { [key: string]: any }) {
     code?: number;
     msg?: string;
     data?: BackendAPI.GetServerNodeListResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/public/server/list`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/public/server/list`, {
     method: "GET",
     ...(options || {}),
   });
@@ -4174,7 +4228,7 @@ export async function getV1PublicSubscribeList(
     code?: number;
     msg?: string;
     data?: BackendAPI.QuerySubscribeListResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/public/subscribe/list`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/public/subscribe/list`, {
     method: "GET",
     params: {
       ...params,
@@ -4190,10 +4244,13 @@ export async function getV1PublicSubscribeNodeList(options?: {
     code?: number;
     msg?: string;
     data?: BackendAPI.QueryUserSubscribeNodeListResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/public/subscribe/node/list`, {
-    method: "GET",
-    ...(options || {}),
-  });
+  }>(
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/public/subscribe/node/list`,
+    {
+      method: "GET",
+      ...(options || {}),
+    }
+  );
 }
 
 export async function putV1PublicTicket(
@@ -4201,7 +4258,7 @@ export async function putV1PublicTicket(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/public/ticket/`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/public/ticket/`,
     {
       method: "PUT",
       headers: {
@@ -4218,7 +4275,7 @@ export async function postV1PublicTicket(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/public/ticket/`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/public/ticket/`,
     {
       method: "POST",
       headers: {
@@ -4235,7 +4292,7 @@ export async function getV1PublicTicketDetail(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: BackendAPI.Ticket }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/public/ticket/detail`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/public/ticket/detail`,
     {
       method: "GET",
       params: {
@@ -4251,7 +4308,7 @@ export async function postV1PublicTicketFollow(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/public/ticket/follow`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/public/ticket/follow`,
     {
       method: "POST",
       headers: {
@@ -4271,7 +4328,7 @@ export async function getV1PublicTicketList(
     code?: number;
     msg?: string;
     data?: BackendAPI.GetUserTicketListResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/public/ticket/list`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/public/ticket/list`, {
     method: "GET",
     params: {
       ...params,
@@ -4288,7 +4345,7 @@ export async function getV1PublicUserAffiliateCount(options?: {
     msg?: string;
     data?: BackendAPI.QueryUserAffiliateCountResponse;
   }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/public/user/affiliate/count`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/public/user/affiliate/count`,
     {
       method: "GET",
       ...(options || {}),
@@ -4304,13 +4361,16 @@ export async function getV1PublicUserAffiliateList(
     code?: number;
     msg?: string;
     data?: BackendAPI.QueryUserAffiliateListResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/public/user/affiliate/list`, {
-    method: "GET",
-    params: {
-      ...params,
-    },
-    ...(options || {}),
-  });
+  }>(
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/public/user/affiliate/list`,
+    {
+      method: "GET",
+      params: {
+        ...params,
+      },
+      ...(options || {}),
+    }
+  );
 }
 
 export async function getV1PublicUserBalanceLog(options?: {
@@ -4320,7 +4380,7 @@ export async function getV1PublicUserBalanceLog(options?: {
     code?: number;
     msg?: string;
     data?: BackendAPI.QueryUserBalanceLogListResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/public/user/balance_log`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/public/user/balance_log`, {
     method: "GET",
     ...(options || {}),
   });
@@ -4331,7 +4391,7 @@ export async function putV1PublicUserBindEmail(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/public/user/bind_email`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/public/user/bind_email`,
     {
       method: "PUT",
       headers: {
@@ -4348,7 +4408,7 @@ export async function putV1PublicUserBindMobile(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/public/user/bind_mobile`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/public/user/bind_mobile`,
     {
       method: "PUT",
       headers: {
@@ -4368,7 +4428,7 @@ export async function postV1PublicUserBindOauth(
     code?: number;
     msg?: string;
     data?: BackendAPI.BindOAuthResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/public/user/bind_oauth`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/public/user/bind_oauth`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -4384,7 +4444,7 @@ export async function postV1PublicUserBindOauthCallback(
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/public/user/bind_oauth/callback`,
     {
       method: "POST",
@@ -4404,10 +4464,13 @@ export async function getV1PublicUserBindTelegram(options?: {
     code?: number;
     msg?: string;
     data?: BackendAPI.BindTelegramResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/public/user/bind_telegram`, {
-    method: "GET",
-    ...(options || {}),
-  });
+  }>(
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/public/user/bind_telegram`,
+    {
+      method: "GET",
+      ...(options || {}),
+    }
+  );
 }
 
 export async function getV1PublicUserCommissionLog(
@@ -4418,13 +4481,16 @@ export async function getV1PublicUserCommissionLog(
     code?: number;
     msg?: string;
     data?: BackendAPI.QueryUserCommissionLogListResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/public/user/commission_log`, {
-    method: "GET",
-    params: {
-      ...params,
-    },
-    ...(options || {}),
-  });
+  }>(
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/public/user/commission_log`,
+    {
+      method: "GET",
+      params: {
+        ...params,
+      },
+      ...(options || {}),
+    }
+  );
 }
 
 export async function postV1PublicUserCommissionWithdraw(
@@ -4437,7 +4503,7 @@ export async function postV1PublicUserCommissionWithdraw(
     data?: BackendAPI.WithdrawalLog;
   }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/public/user/commission_withdraw`,
     {
       method: "POST",
@@ -4455,7 +4521,7 @@ export async function deleteV1PublicUserCurrentUserAccount(options?: {
 }) {
   return request<{ code?: number; msg?: string; data?: any }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/public/user/current_user_account`,
     {
       method: "DELETE",
@@ -4473,7 +4539,7 @@ export async function getV1PublicUserDeviceOnlineStatistics(options?: {
     data?: BackendAPI.GetDeviceOnlineStatsResponse;
   }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/public/user/device_online_statistics`,
     {
       method: "GET",
@@ -4487,7 +4553,7 @@ export async function getV1PublicUserDevices(options?: { [key: string]: any }) {
     code?: number;
     msg?: string;
     data?: BackendAPI.GetDeviceListResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/public/user/devices`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/public/user/devices`, {
     method: "GET",
     ...(options || {}),
   });
@@ -4495,7 +4561,7 @@ export async function getV1PublicUserDevices(options?: { [key: string]: any }) {
 
 export async function getV1PublicUserInfo(options?: { [key: string]: any }) {
   return request<{ code?: number; msg?: string; data?: BackendAPI.User }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/public/user/info`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/public/user/info`,
     {
       method: "GET",
       ...(options || {}),
@@ -4511,7 +4577,7 @@ export async function getV1PublicUserLoginLog(
     code?: number;
     msg?: string;
     data?: BackendAPI.GetLoginLogResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/public/user/login_log`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/public/user/login_log`, {
     method: "GET",
     params: {
       ...params,
@@ -4522,7 +4588,7 @@ export async function getV1PublicUserLoginLog(
 
 export async function postV1PublicUserLogout(options?: { [key: string]: any }) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/public/user/logout`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/public/user/logout`,
     {
       method: "POST",
       ...(options || {}),
@@ -4535,7 +4601,7 @@ export async function putV1PublicUserNotify(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/public/user/notify`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/public/user/notify`,
     {
       method: "PUT",
       headers: {
@@ -4554,10 +4620,13 @@ export async function getV1PublicUserOauthMethods(options?: {
     code?: number;
     msg?: string;
     data?: BackendAPI.GetOAuthMethodsResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/public/user/oauth_methods`, {
-    method: "GET",
-    ...(options || {}),
-  });
+  }>(
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/public/user/oauth_methods`,
+    {
+      method: "GET",
+      ...(options || {}),
+    }
+  );
 }
 
 export async function putV1PublicUserPassword(
@@ -4565,7 +4634,7 @@ export async function putV1PublicUserPassword(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/public/user/password`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/public/user/password`,
     {
       method: "PUT",
       headers: {
@@ -4582,7 +4651,7 @@ export async function putV1PublicUserRules(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/public/user/rules`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/public/user/rules`,
     {
       method: "PUT",
       headers: {
@@ -4601,7 +4670,7 @@ export async function getV1PublicUserSubscribe(options?: {
     code?: number;
     msg?: string;
     data?: BackendAPI.QueryUserSubscribeListResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/public/user/subscribe`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/public/user/subscribe`, {
     method: "GET",
     ...(options || {}),
   });
@@ -4615,13 +4684,16 @@ export async function getV1PublicUserSubscribeLog(
     code?: number;
     msg?: string;
     data?: BackendAPI.GetSubscribeLogResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/public/user/subscribe_log`, {
-    method: "GET",
-    params: {
-      ...params,
-    },
-    ...(options || {}),
-  });
+  }>(
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/public/user/subscribe_log`,
+    {
+      method: "GET",
+      params: {
+        ...params,
+      },
+      ...(options || {}),
+    }
+  );
 }
 
 export async function putV1PublicUserSubscribeNote(
@@ -4629,7 +4701,7 @@ export async function putV1PublicUserSubscribeNote(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/public/user/subscribe_note`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/public/user/subscribe_note`,
     {
       method: "PUT",
       headers: {
@@ -4646,7 +4718,7 @@ export async function putV1PublicUserSubscribeToken(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/public/user/subscribe_token`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/public/user/subscribe_token`,
     {
       method: "PUT",
       headers: {
@@ -4666,13 +4738,16 @@ export async function getV1PublicUserTrafficStats(
     code?: number;
     msg?: string;
     data?: BackendAPI.GetUserTrafficStatsResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/public/user/traffic_stats`, {
-    method: "GET",
-    params: {
-      ...params,
-    },
-    ...(options || {}),
-  });
+  }>(
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/public/user/traffic_stats`,
+    {
+      method: "GET",
+      params: {
+        ...params,
+      },
+      ...(options || {}),
+    }
+  );
 }
 
 export async function putV1PublicUserUnbindDevice(
@@ -4680,7 +4755,7 @@ export async function putV1PublicUserUnbindDevice(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/public/user/unbind_device`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/public/user/unbind_device`,
     {
       method: "PUT",
       headers: {
@@ -4697,7 +4772,7 @@ export async function postV1PublicUserUnbindOauth(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/public/user/unbind_oauth`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/public/user/unbind_oauth`,
     {
       method: "POST",
       headers: {
@@ -4713,7 +4788,7 @@ export async function postV1PublicUserUnbindTelegram(options?: {
   [key: string]: any;
 }) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/public/user/unbind_telegram`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/public/user/unbind_telegram`,
     {
       method: "POST",
       ...(options || {}),
@@ -4726,7 +4801,7 @@ export async function postV1PublicUserUnsubscribe(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/public/user/unsubscribe`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/public/user/unsubscribe`,
     {
       method: "POST",
       headers: {
@@ -4747,7 +4822,7 @@ export async function postV1PublicUserUnsubscribePre(
     msg?: string;
     data?: BackendAPI.PreUnsubscribeResponse;
   }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/public/user/unsubscribe/pre`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/public/user/unsubscribe/pre`,
     {
       method: "POST",
       headers: {
@@ -4764,7 +4839,7 @@ export async function postV1PublicUserVerifyEmail(
   options?: { [key: string]: any }
 ) {
   return request<{ code?: number; msg?: string; data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/public/user/verify_email`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/public/user/verify_email`,
     {
       method: "POST",
       headers: {
@@ -4784,13 +4859,16 @@ export async function getV1PublicUserWithdrawalLog(
     code?: number;
     msg?: string;
     data?: BackendAPI.QueryWithdrawalLogListResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v1/public/user/withdrawal_log`, {
-    method: "GET",
-    params: {
-      ...params,
-    },
-    ...(options || {}),
-  });
+  }>(
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/public/user/withdrawal_log`,
+    {
+      method: "GET",
+      params: {
+        ...params,
+      },
+      ...(options || {}),
+    }
+  );
 }
 
 export async function postV2PublicOrders(
@@ -4801,7 +4879,7 @@ export async function postV2PublicOrders(
     code?: number;
     msg?: string;
     data?: BackendAPI.V2OrderResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v2/public/orders`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v2/public/orders`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -4820,7 +4898,7 @@ export async function getV2PublicOrdersOrderNo(
     code?: number;
     msg?: string;
     data?: BackendAPI.V2OrderResponse;
-  }>(`${import.meta.env.VITE_API_PREFIX || ""}/v2/public/orders/${param0}`, {
+  }>(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v2/public/orders/${param0}`, {
     method: "GET",
     params: { ...queryParams },
     ...(options || {}),
@@ -4839,7 +4917,7 @@ export async function postV2PublicOrdersOrderNoCheckout(
     data?: BackendAPI.V2OrderResponse;
   }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v2/public/orders/${param0}/checkout`,
     {
       method: "POST",
@@ -4865,7 +4943,7 @@ export async function postV2PublicOrdersOrderNoEventTicket(
     data?: BackendAPI.V2EventTicketResponse;
   }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v2/public/orders/${param0}/event-ticket`,
     {
       method: "POST",
@@ -4886,7 +4964,7 @@ export async function getV2PublicOrdersOrderNoEvents(
   const { orderNo: param0, ...queryParams } = params;
   return request<string>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v2/public/orders/${param0}/events`,
     {
       method: "GET",
@@ -4908,7 +4986,7 @@ export async function postV2PublicOrdersOrderNoSession(
     data?: BackendAPI.V2OrderSessionResponse;
   }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v2/public/orders/${param0}/session`,
     {
       method: "POST",

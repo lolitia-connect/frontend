@@ -23,10 +23,10 @@ export function SubscribeBilling({ order }: Readonly<SubscribeBillingProps>) {
       <div className="font-semibold">
         {t("billing.billingTitle", "Billing Detail")}
       </div>
-      <ul className="grid grid-cols-2 gap-3 *:flex *:items-center *:justify-between lg:grid-cols-1">
+      <ul className="wrap-anywhere grid grid-cols-1 gap-3 *:flex *:min-w-0 *:flex-wrap *:items-center *:justify-between *:gap-x-3 sm:grid-cols-2 lg:grid-cols-1">
         {order?.type && [1, 2].includes(order?.type) && (
           <li>
-            <span className="text-muted-foreground">
+            <span className="text-muted">
               {t("billing.duration", "Duration")}
             </span>
             <span>
@@ -39,7 +39,7 @@ export function SubscribeBilling({ order }: Readonly<SubscribeBillingProps>) {
           order?.type &&
           [1, 2].includes(order?.type) && (
             <li>
-              <span className="text-muted-foreground">
+              <span className="text-muted">
                 {t("billing.originalPrice", "Original Price (Monthly)")}
               </span>
               <span>
@@ -48,9 +48,7 @@ export function SubscribeBilling({ order }: Readonly<SubscribeBillingProps>) {
             </li>
           )}{" "}
         <li>
-          <span className="text-muted-foreground">
-            {t("billing.price", "Price")}
-          </span>
+          <span className="text-muted">{t("billing.price", "Price")}</span>
           <span>
             <Display
               type="currency"
@@ -59,7 +57,7 @@ export function SubscribeBilling({ order }: Readonly<SubscribeBillingProps>) {
           </span>
         </li>
         <li>
-          <span className="text-muted-foreground">
+          <span className="text-muted">
             {t("billing.productDiscount", "Product Discount")}
           </span>
           <span>
@@ -67,7 +65,7 @@ export function SubscribeBilling({ order }: Readonly<SubscribeBillingProps>) {
           </span>
         </li>
         <li>
-          <span className="text-muted-foreground">
+          <span className="text-muted">
             {t("billing.couponDiscount", "Coupon Discount")}
           </span>
           <span>
@@ -75,27 +73,21 @@ export function SubscribeBilling({ order }: Readonly<SubscribeBillingProps>) {
           </span>
         </li>
         <li>
-          <span className="text-muted-foreground">
-            {t("billing.fee", "Fee")}
-          </span>
+          <span className="text-muted">{t("billing.fee", "Fee")}</span>
           <span>
             <Display type="currency" value={order?.fee_amount} />
           </span>
         </li>
         <li>
-          <span className="text-muted-foreground">
-            {t("billing.gift", "Gift")}
-          </span>
+          <span className="text-muted">{t("billing.gift", "Gift")}</span>
           <span>
             <Display type="currency" value={order?.gift_amount} />
           </span>
         </li>
       </ul>
       <Separator />
-      <div className="flex items-center justify-between font-semibold">
-        <span className="text-muted-foreground">
-          {t("billing.total", "Total")}
-        </span>
+      <div className="wrap-anywhere flex flex-wrap items-center justify-between gap-x-3 font-semibold">
+        <span className="text-muted">{t("billing.total", "Total")}</span>
         <span>
           <Display type="currency" value={order?.amount} />
         </span>

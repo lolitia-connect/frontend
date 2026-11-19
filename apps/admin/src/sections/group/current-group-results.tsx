@@ -1,29 +1,14 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@workspace/ui/components/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@workspace/ui/components/dialog";
+} from "@heroui/react";
+import { useQuery } from "@tanstack/react-query";
 import { Spinner } from "@workspace/ui/components/spinner";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@workspace/ui/components/table";
 import {
   getGroupHistory,
   getGroupHistoryDetail,
@@ -32,20 +17,16 @@ import {
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
+import { GroupDetailStats, GroupDetailTable } from "./group-detail-table";
+
 export default function CurrentGroupResults() {
   const { t } = useTranslation("group");
   const [loading, setLoading] = useState(true);
   const [latestResult, setLatestResult] = useState<any>(null);
-  const [latestDetails, setLatestDetails] = useState<any[]>([]);
+  const [latestDetails, setLatestDetails] = useState<
+    API.GroupHistoryDetailItem[]
+  >([]);
   const [detailsLoading, setDetailsLoading] = useState(false);
-
-  // User list dialog state
-  const [userListOpen, setUserListOpen] = useState(false);
-  const [selectedNodeGroupName, setSelectedNodeGroupName] =
-    useState<string>("");
-  const [userList, setUserList] = useState<any[]>([]);
-  const [userListLoading, setUserListLoading] = useState(false);
-  const [userListTotal, setUserListTotal] = useState(0);
 
   // Fetch node groups
   const { data: nodeGroups } = useQuery({
@@ -99,43 +80,6 @@ export default function CurrentGroupResults() {
     loadData();
   }, []);
 
-  const handleShowUserList = async (
-    nodeGroupId: string,
-    nodeGroupName: string
-  ) => {
-    setSelectedNodeGroupName(nodeGroupName);
-    setUserListOpen(true);
-    setUserListLoading(true);
-
-    // 从历史详情记录中获取用户数据
-    const detail = latestDetails.find((d: any) => {
-      const detailNodeGroupId = d.NodeGroupId || d.node_group_id;
-      return String(detailNodeGroupId) === String(nodeGroupId);
-    });
-
-    if (detail) {
-      const userDataJSON = detail.UserData || detail.user_data;
-      if (userDataJSON) {
-        try {
-          const userData = JSON.parse(userDataJSON);
-          setUserList(userData);
-          setUserListTotal(userData.length);
-        } catch (error) {
-          console.error("Failed to parse user data:", error);
-          setUserList([]);
-          setUserListTotal(0);
-        }
-      } else {
-        setUserList([]);
-        setUserListTotal(0);
-      }
-    } else {
-      setUserList([]);
-      setUserListTotal(0);
-    }
-    setUserListLoading(false);
-  };
-
   if (loading) {
     return (
       <Card>
@@ -171,9 +115,9 @@ export default function CurrentGroupResults() {
               <h3 className="font-medium text-sm">
                 {t("calculationInfo", "Calculation Information")}
               </h3>
-              <div className="grid grid-cols-2 gap-4 rounded-lg bg-muted/50 p-4">
+              <div className="grid grid-cols-2 gap-4 rounded-lg bg-default/50 p-4">
                 <div>
-                  <div className="text-muted-foreground text-xs">
+                  <div className="text-muted text-xs">
                     {t("groupMode", "Group Mode")}
                   </div>
                   <div className="font-medium">
@@ -187,7 +131,7 @@ export default function CurrentGroupResults() {
                   </div>
                 </div>
                 <div>
-                  <div className="text-muted-foreground text-xs">
+                  <div className="text-muted text-xs">
                     {t("state", "State")}
                   </div>
                   <div className="font-medium">
@@ -202,7 +146,7 @@ export default function CurrentGroupResults() {
                   </div>
                 </div>
                 <div>
-                  <div className="text-muted-foreground text-xs">
+                  <div className="text-muted text-xs">
                     {t("triggerType", "Trigger Type")}
                   </div>
                   <div className="font-medium">
@@ -216,7 +160,7 @@ export default function CurrentGroupResults() {
                   </div>
                 </div>
                 <div>
-                  <div className="text-muted-foreground text-xs">
+                  <div className="text-muted text-xs">
                     {t("successFailedCount", "Success/Failed")}
                   </div>
                   <div className="font-medium">
@@ -228,7 +172,7 @@ export default function CurrentGroupResults() {
                   </div>
                 </div>
                 <div>
-                  <div className="text-muted-foreground text-xs">
+                  <div className="text-muted text-xs">
                     {t("startTime", "Start Time")}
                   </div>
                   <div className="font-medium">
@@ -241,7 +185,7 @@ export default function CurrentGroupResults() {
                   </div>
                 </div>
                 <div>
-                  <div className="text-muted-foreground text-xs">
+                  <div className="text-muted text-xs">
                     {t("endTime", "End Time")}
                   </div>
                   <div className="font-medium">
@@ -260,120 +204,23 @@ export default function CurrentGroupResults() {
               <h3 className="font-medium text-sm">
                 {t("groupingDetailsStatistics", "Grouping Details Statistics")}
               </h3>
-              <div className="grid grid-cols-3 gap-4 rounded-lg bg-muted/50 p-4">
-                <div className="text-center">
-                  <div className="font-bold text-2xl">
-                    {latestDetails.reduce(
-                      (sum: number, d: any) =>
-                        sum + (d.UserCount || d.user_count || 0),
-                      0
-                    )}
-                  </div>
-                  <div className="text-muted-foreground text-xs">
-                    {t("totalUsers", "Total Users")}
-                  </div>
-                </div>
-                <div className="text-center">
-                  <div className="font-bold text-2xl">
-                    {latestDetails.reduce(
-                      (sum: number, d: any) =>
-                        sum + (d.NodeCount || d.node_count || 0),
-                      0
-                    )}
-                  </div>
-                  <div className="text-muted-foreground text-xs">
-                    {t("totalNodes", "Total Nodes")}
-                  </div>
-                </div>
-                <div className="text-center">
-                  <div className="font-bold text-2xl">
-                    {latestDetails.length}
-                  </div>
-                  <div className="text-muted-foreground text-xs">
-                    {t("totalNodeGroups", "Total Node Groups")}
-                  </div>
-                </div>
-              </div>
+              <GroupDetailStats details={latestDetails} />
             </div>
 
             {detailsLoading ? (
               <div className="flex items-center justify-center py-8">
-                <Spinner className="size-6 text-muted-foreground" />
-                <span className="ml-2 text-muted-foreground text-sm">
+                <Spinner className="size-6 text-muted" />
+                <span className="ml-2 text-muted text-sm">
                   {t("loading", "Loading...")}
                 </span>
               </div>
             ) : latestDetails.length > 0 ? (
-              <>
-                {/* Details Table */}
-                <div className="rounded-md border">
-                  <table className="w-full text-sm">
-                    <thead className="bg-muted">
-                      <tr>
-                        <th className="border-b px-4 py-2 text-left">
-                          {t("nodeGroup", "Node Group")}
-                        </th>
-                        <th className="border-b px-4 py-2 text-right">
-                          {t("userCount", "User Count")}
-                        </th>
-                        <th className="border-b px-4 py-2 text-right">
-                          {t("nodeCount", "Node Count")}
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {latestDetails.map((detail: any, index: number) => {
-                        const nodeGroupId =
-                          detail.NodeGroupId || detail.node_group_id;
-                        const nodeGroup = nodeGroups?.find(
-                          (ng) => String(ng.id) === String(nodeGroupId)
-                        );
-                        const nodeGroupName =
-                          nodeGroup?.name ||
-                          `${t("idPrefix", "#")}${nodeGroupId}`;
-                        const userCount =
-                          detail.UserCount || detail.user_count || 0;
-
-                        return (
-                          <tr key={index}>
-                            <td className="border-b px-4 py-2">
-                              <div>
-                                <div className="font-medium">
-                                  {nodeGroupName}
-                                </div>
-                                <div className="text-muted-foreground text-xs">
-                                  {t("id", "ID")}: {nodeGroupId}
-                                </div>
-                              </div>
-                            </td>
-                            <td className="border-b px-4 py-2 text-right">
-                              <button
-                                className={`font-semibold hover:underline ${
-                                  userCount === 0
-                                    ? "cursor-not-allowed text-muted-foreground"
-                                    : "cursor-pointer"
-                                }`}
-                                disabled={userCount === 0}
-                                onClick={() =>
-                                  handleShowUserList(nodeGroupId, nodeGroupName)
-                                }
-                                type="button"
-                              >
-                                {userCount}
-                              </button>
-                            </td>
-                            <td className="border-b px-4 py-2 text-right">
-                              {detail.NodeCount || detail.node_count || 0}
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                </div>
-              </>
+              <GroupDetailTable
+                details={latestDetails}
+                nodeGroups={nodeGroups}
+              />
             ) : (
-              <div className="py-8 text-center text-muted-foreground text-sm">
+              <div className="py-8 text-center text-muted text-sm">
                 {t("noDetails", "No details available")}
               </div>
             )}
@@ -387,57 +234,12 @@ export default function CurrentGroupResults() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="py-8 text-center text-muted-foreground text-sm">
+            <div className="py-8 text-center text-muted text-sm">
               {t("noDetails", "No details available")}
             </div>
           </CardContent>
         </Card>
       )}
-
-      {/* User List Dialog */}
-      <Dialog onOpenChange={setUserListOpen} open={userListOpen}>
-        <DialogContent className="max-h-[80vh] overflow-y-auto sm:max-w-[700px]">
-          <DialogHeader>
-            <DialogTitle>
-              {selectedNodeGroupName} - {t("userList", "User List")}
-            </DialogTitle>
-            <DialogDescription>
-              {t("totalUsers", "Total Users")}: {userListTotal}
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4">
-            {userListLoading ? (
-              <div className="flex items-center justify-center py-8">
-                <Spinner className="size-6 text-muted-foreground" />
-                <span className="ml-2 text-muted-foreground text-sm">
-                  {t("loading", "Loading...")}
-                </span>
-              </div>
-            ) : userList.length > 0 ? (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>{t("id", "ID")}</TableHead>
-                    <TableHead>{t("email", "Email")}</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {userList.map((user) => (
-                    <TableRow key={user.id}>
-                      <TableCell className="font-medium">{user.id}</TableCell>
-                      <TableCell>{user.email || "-"}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            ) : (
-              <div className="py-8 text-center text-muted-foreground text-sm">
-                {t("noUsers", "No users found")}
-              </div>
-            )}
-          </div>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }

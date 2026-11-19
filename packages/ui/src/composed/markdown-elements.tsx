@@ -74,7 +74,7 @@ export const markdownComponents: Components = {
   a: ({ node, className, ...props }) => (
     <a
       className={cn(
-        "font-medium text-primary underline underline-offset-4",
+        "font-medium text-accent underline underline-offset-4",
         className
       )}
       rel="noreferrer"
@@ -104,18 +104,20 @@ export const markdownComponents: Components = {
     <hr className={cn("my-5 border-b", className)} {...props} />
   ),
   table: ({ node, className, ...props }) => (
-    <table
-      className={cn(
-        "my-5 w-full border-separate border-spacing-0 overflow-y-auto",
-        className
-      )}
-      {...props}
-    />
+    <div
+      className="my-5 max-w-full overflow-x-auto"
+      data-slot="markdown-table-scroll"
+    >
+      <table
+        className={cn("w-full border-separate border-spacing-0", className)}
+        {...props}
+      />
+    </div>
   ),
   th: ({ node, className, ...props }) => (
     <th
       className={cn(
-        "bg-muted px-4 py-2 text-left font-bold first:rounded-tl-lg last:rounded-tr-lg [&[align=center]]:text-center [&[align=right]]:text-right",
+        "bg-default px-4 py-2 text-left font-bold first:rounded-tl-lg last:rounded-tr-lg [&[align=center]]:text-center [&[align=right]]:text-right",
         className
       )}
       {...props}
@@ -154,7 +156,7 @@ export const markdownComponents: Components = {
   code: ({ node, className, ...props }) => (
     <code
       className={cn(
-        "rounded border bg-muted/50 px-1 py-0.5 font-mono font-semibold",
+        "rounded border bg-default/50 px-1 py-0.5 font-mono font-semibold",
         className
       )}
       {...props}

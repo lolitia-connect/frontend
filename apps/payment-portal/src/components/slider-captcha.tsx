@@ -1,15 +1,10 @@
-import { Button } from "@workspace/ui/components/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@workspace/ui/components/dialog";
+import { Button, Modal, Spinner } from "@heroui/react";
 import {
   generateCaptcha,
   verifyCaptchaSlider,
 } from "@workspace/ui/services/common/auth";
 import { CheckCircle, RefreshCw } from "lucide-react";
+import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -50,7 +45,6 @@ export function SliderCaptcha({
   const [verified, setVerified] = useState(Boolean(value));
   const [status, setStatus] = useState<"idle" | "success" | "fail">("idle");
   const [blockPos, setBlockPos] = useState({ x: 0, y: 50 });
-  const [shaking, setShaking] = useState(false);
 
   const getContainerSize = () => {
     const element = containerRef.current;
@@ -94,9 +88,7 @@ export function SliderCaptcha({
 
   const triggerFail = () => {
     setStatus("fail");
-    setShaking(true);
     window.setTimeout(() => {
-      setShaking(false);
       fetchCaptcha();
     }, 800);
   };
@@ -202,13 +194,13 @@ export function SliderCaptcha({
     <>
       <Button
         className="w-full"
-        onClick={() => {
+        onPress={() => {
           if (verified) return;
           setOpen(true);
           fetchCaptcha();
         }}
         type="button"
-        variant={verified ? "default" : "outline"}
+        variant={verified ? "primary" : "outline"}
       >
         {verified ? (
           <>
@@ -220,86 +212,98 @@ export function SliderCaptcha({
         )}
       </Button>
 
-      <Dialog onOpenChange={setOpen} open={open}>
-        <DialogContent className="p-6 sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>{t("captcha.slider.title", "滑块验证")}</DialogTitle>
-          </DialogHeader>
+      <Modal.Backdrop isOpen={open} onOpenChange={setOpen}>
+        <Modal.Container size="sm">
+          <Modal.Dialog>
+            <Modal.Header>
+              <Modal.Heading>
+                {t("captcha.slider.title", "滑块验证")}
+              </Modal.Heading>
+            </Modal.Header>
 
-          <div
-            className={`relative w-full overflow-hidden rounded-md bg-muted ${
-              shaking ? "animate-[shake_0.4s_ease-in-out]" : ""
-            }`}
-            ref={containerRef}
-            style={{
-              paddingTop: `${(BG_NATURAL_HEIGHT / BG_NATURAL_WIDTH) * 100}%`,
-            }}
-          >
-            <div className="absolute inset-0">
-              {loading ? (
-                <div className="flex h-full items-center justify-center text-muted-foreground text-sm">
-                  {t("captcha.loading", "加载中...")}
-                </div>
-              ) : bgImage ? (
-                <>
-                  <img
-                    alt="captcha background"
-                    className="absolute inset-0 h-full w-full"
-                    draggable={false}
-                    src={bgImage}
-                  />
-                  {blockImage ? (
-                    <img
-                      alt="captcha block"
-                      className="absolute cursor-grab active:cursor-grabbing"
-                      draggable={false}
-                      onPointerDown={onPointerDown}
-                      onPointerMove={onPointerMove}
-                      onPointerUp={onPointerUp}
-                      src={blockImage}
-                      style={{
-                        left: `${blockLeftPct}%`,
-                        top: `${blockTopPct}%`,
-                        width: `${blockSizeWPct}%`,
-                        height: `${blockSizeHPct}%`,
-                        touchAction: "none",
-                      }}
-                    />
-                  ) : null}
-                  {status !== "idle" && (
-                    <div
-                      className={`absolute inset-0 flex items-center justify-center font-medium text-sm ${
-                        status === "success"
-                          ? "bg-green-500/20 text-green-700"
-                          : "bg-red-500/20 text-red-700"
-                      }`}
-                    >
-                      {status === "success"
-                        ? t("captcha.slider.verified", "验证已通过")
-                        : t("captcha.slider.retry", "请重试")}
+            <Modal.Body className="space-y-3">
+              <div
+                className="relative aspect-2/1 w-full overflow-hidden rounded-field bg-default"
+                ref={containerRef}
+              >
+                <div className="absolute inset-0">
+                  {loading ? (
+                    <div className="flex h-full items-center justify-center text-muted text-sm">
+                      <Spinner
+                        aria-label={t("captcha.loading", "加载中...")}
+                        size="sm"
+                      />
                     </div>
-                  )}
-                </>
-              ) : null}
-            </div>
-          </div>
+                  ) : bgImage ? (
+                    <>
+                      <Image
+                        alt="captcha background"
+                        className="absolute inset-0 h-full w-full"
+                        draggable={false}
+                        height={280}
+                        src={bgImage}
+                        unoptimized
+                        width={560}
+                      />
+                      {blockImage ? (
+                        <Image
+                          alt="captcha block"
+                          className="absolute cursor-grab active:cursor-grabbing"
+                          draggable={false}
+                          height={100}
+                          onPointerDown={onPointerDown}
+                          onPointerMove={onPointerMove}
+                          onPointerUp={onPointerUp}
+                          src={blockImage}
+                          style={{
+                            left: `${blockLeftPct}%`,
+                            top: `${blockTopPct}%`,
+                            width: `${blockSizeWPct}%`,
+                            height: `${blockSizeHPct}%`,
+                            touchAction: "none",
+                          }}
+                          unoptimized
+                          width={100}
+                        />
+                      ) : null}
+                      {status !== "idle" && (
+                        <div
+                          className={`absolute inset-0 flex items-center justify-center font-medium text-sm ${
+                            status === "success"
+                              ? "bg-success-soft text-success-soft-foreground"
+                              : "bg-danger-soft text-danger-soft-foreground"
+                          }`}
+                        >
+                          {status === "success"
+                            ? t("captcha.slider.verified", "验证已通过")
+                            : t("captcha.slider.retry", "请重试")}
+                        </div>
+                      )}
+                    </>
+                  ) : null}
+                </div>
+              </div>
 
-          <p className="text-center text-muted-foreground text-xs">
-            {t("captcha.slider.hint", "拖动拼图块完成验证")}
-          </p>
-
-          <Button
-            className="w-full"
-            disabled={loading}
-            onClick={fetchCaptcha}
-            type="button"
-            variant="outline"
-          >
-            <RefreshCw className="mr-2 h-4 w-4" />
-            {t("captcha.slider.refresh", "刷新验证")}
-          </Button>
-        </DialogContent>
-      </Dialog>
+              <p className="text-center text-muted text-xs">
+                {t("captcha.slider.hint", "拖动拼图块完成验证")}
+              </p>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button
+                className="w-full"
+                isDisabled={loading}
+                onPress={fetchCaptcha}
+                type="button"
+                variant="outline"
+              >
+                <RefreshCw className="mr-2 h-4 w-4" />
+                {t("captcha.slider.refresh", "刷新验证")}
+              </Button>
+            </Modal.Footer>
+            <Modal.CloseTrigger aria-label={t("components:close", "Close")} />
+          </Modal.Dialog>
+        </Modal.Container>
+      </Modal.Backdrop>
     </>
   );
 }

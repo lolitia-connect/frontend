@@ -1,3 +1,5 @@
+"use client";
+
 import { useTranslation } from "react-i18next";
 import {
   Cell,
@@ -24,7 +26,9 @@ export default function TrafficRatioChart({
     { name: t("download", "Download"), value: download },
   ];
 
-  const COLORS = ["#10b981", "#3b82f6"];
+  // Tonal rose pair rather than the previous green/blue, which belonged to no
+  // palette the rest of the app uses.
+  const COLORS = ["var(--color-primary-500)", "var(--color-primary-300)"];
 
   // 格式化流量显示
   const formatTraffic = (value: number) => {
@@ -48,7 +52,7 @@ export default function TrafficRatioChart({
           cy="50%"
           data={data}
           dataKey="value"
-          fill="#8884d8"
+          fill="var(--color-primary-500)"
           label={({ name, percent }) =>
             `${name}: ${(percent * 100).toFixed(1)}%`
           }

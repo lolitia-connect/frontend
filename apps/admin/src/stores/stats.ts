@@ -1,3 +1,5 @@
+"use client";
+
 import { create } from "zustand";
 
 // Fixed remote stats endpoint and required header

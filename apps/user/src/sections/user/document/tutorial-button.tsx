@@ -94,7 +94,7 @@ export function TutorialButton({ items }: { items: Item[] }) {
               <CloseIcon />
             </motion.button>
             <motion.div
-              className="flex size-full flex-col overflow-auto bg-muted p-6 sm:rounded"
+              className="flex size-full flex-col overflow-auto bg-default p-6 sm:rounded"
               layoutId={`card-${active.title}-${id}`}
               ref={ref}
             >
@@ -120,7 +120,7 @@ export function TutorialButton({ items }: { items: Item[] }) {
       <div className="flex w-full flex-col gap-4">
         {items.map((item) => (
           <motion.div
-            className="flex cursor-pointer items-center justify-between rounded-xl border bg-background p-4 hover:bg-accent"
+            className="flex cursor-pointer items-center justify-between rounded-xl border bg-background p-4 hover:bg-default"
             key={`card-${item.title}-${id}`}
             layoutId={`card-${item.title}-${id}`}
             onClick={() => setActive(item)}
@@ -129,7 +129,7 @@ export function TutorialButton({ items }: { items: Item[] }) {
               <motion.div layoutId={`image-${item.title}-${id}`}>
                 <Avatar className="size-12">
                   <AvatarImage alt={item.title ?? ""} src={item.icon ?? ""} />
-                  <AvatarFallback className="bg-primary/80 text-white">
+                  <AvatarFallback className="bg-accent/80 text-white">
                     {item.title.split("")[0]}
                   </AvatarFallback>
                 </Avatar>
@@ -143,7 +143,7 @@ export function TutorialButton({ items }: { items: Item[] }) {
                 </motion.h3>
                 {item.updated_at && (
                   <motion.p
-                    className="text-center text-neutral-600 md:text-left dark:text-neutral-400"
+                    className="text-center text-default-600 md:text-left"
                     layoutId={`description-${item.title}-${id}`}
                   >
                     {formatDate(new Date(item.updated_at), false)}

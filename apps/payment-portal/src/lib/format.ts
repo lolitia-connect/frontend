@@ -28,13 +28,13 @@ export function formatTimestamp(timestamp: number, _language: string): string {
 }
 
 export function getOrderTypeLabel(type: number, t: TFunction): string {
-  if (type === 4) return t("type.recharge", "Recharge");
-  return t("type.unknown", "Unknown Type");
+  if (type === 4) return t("app:type.recharge", "Recharge");
+  return t("app:type.unknown", "Unknown Type");
 }
 
 export function getOrderStatusLabel(status: number, t: TFunction): string {
-  const key = `status.${status}`;
+  const key = `app:status.${status}`;
   return t(key, {
-    defaultValue: t("status.unknown", "Unknown Status"),
+    defaultValue: t("app:status.unknown", "Unknown Status"),
   });
 }

@@ -1,15 +1,29 @@
-import { useRouter } from "@tanstack/react-router";
+"use client";
+
+import {
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from "@workspace/ui/lib/router-compat";
 import { useCallback } from "react";
 
+/**
+ * Sync the table's filter state into the URL query string.
+ *
+ * Migrated off the TanStack `router.history` object: the Next.js compat shim
+ * exposes `next/navigation`'s router, so we read the current location from
+ * `usePathname()` / `useSearchParams()` and write it back with `router.replace`.
+ */
 export function useTableSearchParams(filterKeys: readonly string[]) {
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const filterKeysSnapshot = filterKeys.join("|");
 
   return useCallback(
     (filters: Record<string, unknown>) => {
       const keys = filterKeysSnapshot.split("|").filter(Boolean);
-      const location = router.history.location;
-      const search = new URLSearchParams(location.search);
+      const search = new URLSearchParams(searchParams.toString());
 
       for (const key of keys) {
         const value = filters[key];
@@ -21,11 +35,11 @@ export function useTableSearchParams(filterKeys: readonly string[]) {
       }
 
       const query = search.toString();
-      const nextHref = `${location.pathname}${query ? `?${query}` : ""}${location.hash}`;
-      if (nextHref !== location.href) {
-        router.history.replace(nextHref, location.state);
+      const currentQuery = searchParams.toString();
+      if (query !== currentQuery) {
+        router.replace(query ? `${pathname}?${query}` : pathname);
       }
     },
-    [filterKeysSnapshot, router]
+    [filterKeysSnapshot, router, pathname, searchParams]
   );
 }

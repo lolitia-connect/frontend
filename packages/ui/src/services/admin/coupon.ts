@@ -8,7 +8,7 @@ export async function updateCoupon(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/coupon/`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/coupon/`,
     {
       method: "PUT",
       headers: {
@@ -26,7 +26,7 @@ export async function createCoupon(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/coupon/`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/coupon/`,
     {
       method: "POST",
       headers: {
@@ -44,7 +44,7 @@ export async function deleteCoupon(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/coupon/`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/coupon/`,
     {
       method: "DELETE",
       headers: {
@@ -62,7 +62,7 @@ export async function batchDeleteCoupon(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/coupon/batch`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/coupon/batch`,
     {
       method: "DELETE",
       headers: {
@@ -81,7 +81,7 @@ export async function getCouponList(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: API.GetCouponListResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/coupon/list`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/coupon/list`,
     {
       method: "GET",
       params: {

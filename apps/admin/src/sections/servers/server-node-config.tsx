@@ -1,5 +1,22 @@
 "use client";
 
+import {
+  Description,
+  ListBox,
+  Select,
+  SelectPopover as SelectContent,
+  SelectIndicator,
+  ListBoxItem as SelectItem,
+  SelectTrigger,
+  SelectValue,
+  Sheet,
+  TabIndicator,
+  Tabs,
+  TabPanel as TabsContent,
+  TabList as TabsList,
+  TabListContainer as TabsListContainer,
+  Tab as TabsTrigger,
+} from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -18,30 +35,8 @@ import {
   FormMessage,
 } from "@workspace/ui/components/form";
 import { ScrollArea } from "@workspace/ui/components/scroll-area";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@workspace/ui/components/select";
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@workspace/ui/components/sheet";
 import { Skeleton } from "@workspace/ui/components/skeleton";
 import { Switch } from "@workspace/ui/components/switch";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@workspace/ui/components/tabs";
 import { Textarea } from "@workspace/ui/components/textarea";
 import { ArrayInput } from "@workspace/ui/composed/dynamic-inputs";
 import { Icon } from "@workspace/ui/composed/icon";
@@ -120,7 +115,7 @@ function ToggleField({
         <div
           className={cn(
             "flex items-center justify-between gap-4 rounded-lg border p-4 transition-colors",
-            field.value ? "bg-muted/30" : "border-primary/30 bg-primary/5"
+            field.value ? "bg-default/30" : "border-accent/30 bg-accent/5"
           )}
         >
           <div className="min-w-0 space-y-1">
@@ -130,7 +125,7 @@ function ToggleField({
                 {field.value ? inheritedText : customText}
               </Badge>
             </div>
-            <p className="text-muted-foreground text-xs">{description}</p>
+            <p className="text-muted text-xs">{description}</p>
           </div>
           <Switch
             aria-label={label}
@@ -151,16 +146,13 @@ function InheritedPreview({
   description: string;
 }) {
   return (
-    <div className="flex items-start gap-3 rounded-lg border border-dashed bg-muted/20 p-4">
-      <div className="flex size-9 shrink-0 items-center justify-center rounded-md bg-secondary">
-        <Icon
-          className="size-4 text-muted-foreground"
-          icon="mdi:source-branch-sync"
-        />
+    <div className="flex items-start gap-3 rounded-lg border border-dashed bg-default/20 p-4">
+      <div className="flex size-9 shrink-0 items-center justify-center rounded-md bg-accent-soft">
+        <Icon className="size-4 text-muted" icon="mdi:source-branch-sync" />
       </div>
       <div className="space-y-1">
         <p className="font-medium text-sm">{title}</p>
-        <p className="text-muted-foreground text-xs">{description}</p>
+        <p className="text-muted text-xs">{description}</p>
       </div>
     </div>
   );
@@ -273,480 +265,540 @@ export default function ServerNodeConfig({ server }: { server: API.Server }) {
   }
 
   return (
-    <Sheet onOpenChange={handleOpenChange} open={open}>
-      <SheetTrigger asChild>
+    <Sheet isOpen={open} onOpenChange={handleOpenChange} placement="right">
+      <Sheet.Trigger>
         <Button variant="outline">
           <Icon className="mr-2 h-4 w-4" icon="mdi:tune-variant" />
           {t("server_node_config.trigger", "Node Config")}
         </Button>
-      </SheetTrigger>
-      <SheetContent className="w-full max-w-full gap-0 sm:max-w-4xl">
-        <SheetHeader className="border-b pr-12">
-          <SheetTitle>
-            {t("server_node_config.title", "Node configuration overrides")}
-          </SheetTitle>
-          <SheetDescription>
-            {t(
-              "server_node_config.description",
-              "Choose which global settings this server inherits and which ones it overrides."
-            )}
-          </SheetDescription>
-          <div className="flex flex-wrap gap-2 pt-2">
-            <Badge>{server.name}</Badge>
-            <Badge variant="outline">#{server.id}</Badge>
-            {server.address ? (
-              <Badge variant="secondary">{server.address}</Badge>
-            ) : null}
-          </div>
-        </SheetHeader>
-
-        <ScrollArea className="min-h-0 flex-1">
-          <div className="px-4 pb-4">
-            {isLoading && !cfgResp ? (
-              <div className="space-y-4 pt-4" role="status">
-                <Skeleton className="h-10 w-full" />
-                <Skeleton className="h-28 w-full" />
-                <Skeleton className="h-40 w-full" />
-                <span className="sr-only">
-                  {t("server_node_config.loading", "Loading configuration")}
-                </span>
+      </Sheet.Trigger>
+      <Sheet.Backdrop>
+        <Sheet.Content>
+          <Sheet.Dialog className="w-full max-w-full gap-0 sm:max-w-4xl">
+            <Sheet.Header className="border-b pr-12">
+              <Sheet.Heading>
+                {t("server_node_config.title", "Node configuration overrides")}
+              </Sheet.Heading>
+              <Description slot="description">
+                {t(
+                  "server_node_config.description",
+                  "Choose which global settings this server inherits and which ones it overrides."
+                )}
+              </Description>
+              <div className="flex flex-wrap gap-2 pt-2">
+                <Badge>{server.name}</Badge>
+                <Badge variant="outline">#{server.id}</Badge>
+                {server.address ? (
+                  <Badge variant="secondary">{server.address}</Badge>
+                ) : null}
               </div>
-            ) : null}
-            {isError || !(isLoading || cfgResp) ? (
-              <Alert className="mt-4" variant="destructive">
-                <Icon icon="mdi:alert-circle-outline" />
-                <AlertTitle>
-                  {t(
-                    "server_node_config.loadErrorTitle",
-                    "Unable to load configuration"
-                  )}
-                </AlertTitle>
-                <AlertDescription>
-                  <p>
-                    {t(
-                      "server_node_config.loadError",
-                      "Nothing can be changed until the current server configuration is loaded."
-                    )}
-                  </p>
-                  <Button onClick={() => refetch()} size="sm" variant="outline">
-                    <Icon icon="mdi:refresh" />
-                    {t("server_node_config.retry", "Retry")}
-                  </Button>
-                </AlertDescription>
-              </Alert>
-            ) : null}
-            {cfgResp ? (
-              <Tabs className="mt-4" defaultValue="dns">
-                <TabsList className="grid h-auto w-full grid-cols-1 sm:grid-cols-3">
-                  <TabsTrigger className="gap-2" value="dns">
-                    <span>
-                      {t("server_config.tabs.dns", "DNS Configuration")}
-                    </span>
-                    <Badge
-                      className="px-1.5 py-0"
-                      variant={
-                        inheritIPStrategy && inheritDNS
-                          ? "secondary"
-                          : "outline"
-                      }
-                    >
-                      {inheritIPStrategy && inheritDNS
-                        ? t("server_node_config.modeInherited", "Inherited")
-                        : t("server_node_config.modeCustom", "Custom")}
-                    </Badge>
-                  </TabsTrigger>
-                  <TabsTrigger className="gap-2" value="outbound">
-                    <span>
-                      {t("server_config.tabs.outbound", "Outbound Rules")}
-                    </span>
-                    <Badge
-                      className="px-1.5 py-0"
-                      variant={inheritOutbound ? "secondary" : "outline"}
-                    >
-                      {inheritOutbound
-                        ? t("server_node_config.modeInherited", "Inherited")
-                        : t("server_node_config.modeCustom", "Custom")}
-                    </Badge>
-                  </TabsTrigger>
-                  <TabsTrigger className="gap-2" value="block">
-                    <span>{t("server_config.tabs.block", "Block Rules")}</span>
-                    <Badge
-                      className="px-1.5 py-0"
-                      variant={inheritBlock ? "secondary" : "outline"}
-                    >
-                      {inheritBlock
-                        ? t("server_node_config.modeInherited", "Inherited")
-                        : t("server_node_config.modeCustom", "Custom")}
-                    </Badge>
-                  </TabsTrigger>
-                </TabsList>
+            </Sheet.Header>
 
-                <Form {...form}>
-                  <form
-                    className="space-y-4 pt-4"
-                    id="server-node-config-form"
-                    onSubmit={form.handleSubmit(onSubmit)}
+            <ScrollArea className="min-h-0 flex-1">
+              <div className="px-4 pb-4">
+                {isLoading && !cfgResp ? (
+                  <div className="space-y-4 pt-4" role="status">
+                    <Skeleton className="h-10 w-full" />
+                    <Skeleton className="h-28 w-full" />
+                    <Skeleton className="h-40 w-full" />
+                    <span className="sr-only">
+                      {t("server_node_config.loading", "Loading configuration")}
+                    </span>
+                  </div>
+                ) : null}
+                {isError || !(isLoading || cfgResp) ? (
+                  <Alert className="mt-4" variant="destructive">
+                    <Icon icon="mdi:alert-circle-outline" />
+                    <AlertTitle>
+                      {t(
+                        "server_node_config.loadErrorTitle",
+                        "Unable to load configuration"
+                      )}
+                    </AlertTitle>
+                    <AlertDescription>
+                      <p>
+                        {t(
+                          "server_node_config.loadError",
+                          "Nothing can be changed until the current server configuration is loaded."
+                        )}
+                      </p>
+                      <Button
+                        onClick={() => refetch()}
+                        size="sm"
+                        variant="outline"
+                      >
+                        <Icon icon="mdi:refresh" />
+                        {t("server_node_config.retry", "Retry")}
+                      </Button>
+                    </AlertDescription>
+                  </Alert>
+                ) : null}
+                {cfgResp ? (
+                  <Tabs
+                    className="mt-4 min-w-0 max-w-full"
+                    defaultSelectedKey="dns"
                   >
-                    <TabsContent className="space-y-4" value="dns">
-                      <section className="space-y-3">
-                        <ToggleField
-                          control={form.control}
-                          customText={t(
-                            "server_node_config.modeCustom",
-                            "Custom"
-                          )}
-                          description={t(
-                            "server_node_config.inherit_ip_strategy_desc",
-                            "Turn this off to choose a different IP preference for this server."
-                          )}
-                          inheritedText={t(
-                            "server_node_config.modeInherited",
-                            "Inherited"
-                          )}
-                          label={t(
-                            "server_node_config.inherit_ip_strategy",
-                            "Use global IP strategy"
-                          )}
-                          name="inherit_ip_strategy"
-                        />
-                        {inheritIPStrategy ? (
-                          <InheritedPreview
-                            description={t(
-                              "server_node_config.global_ip_strategy_summary",
-                              "Current global value: {{value}}",
-                              {
-                                value: getIPStrategyLabel(
-                                  cfgResp.global.ip_strategy
-                                ),
-                              }
+                    <TabsListContainer className="min-w-0 max-w-full">
+                      <TabsList aria-label={t("sections", "Sections")}>
+                        <TabsTrigger
+                          className="w-auto flex-1 gap-2 whitespace-nowrap"
+                          id="dns"
+                        >
+                          <span>
+                            {t("server_config.tabs.dns", "DNS Configuration")}
+                          </span>
+                          <Badge
+                            className="px-1.5 py-0"
+                            variant={
+                              inheritIPStrategy && inheritDNS
+                                ? "secondary"
+                                : "outline"
+                            }
+                          >
+                            {inheritIPStrategy && inheritDNS
+                              ? t(
+                                  "server_node_config.modeInherited",
+                                  "Inherited"
+                                )
+                              : t("server_node_config.modeCustom", "Custom")}
+                          </Badge>
+                          <TabIndicator />
+                        </TabsTrigger>
+                        <TabsTrigger
+                          className="w-auto flex-1 gap-2 whitespace-nowrap"
+                          id="outbound"
+                        >
+                          <span>
+                            {t("server_config.tabs.outbound", "Outbound Rules")}
+                          </span>
+                          <Badge
+                            className="px-1.5 py-0"
+                            variant={inheritOutbound ? "secondary" : "outline"}
+                          >
+                            {inheritOutbound
+                              ? t(
+                                  "server_node_config.modeInherited",
+                                  "Inherited"
+                                )
+                              : t("server_node_config.modeCustom", "Custom")}
+                          </Badge>
+                          <TabIndicator />
+                        </TabsTrigger>
+                        <TabsTrigger
+                          className="w-auto flex-1 gap-2 whitespace-nowrap"
+                          id="block"
+                        >
+                          <span>
+                            {t("server_config.tabs.block", "Block Rules")}
+                          </span>
+                          <Badge
+                            className="px-1.5 py-0"
+                            variant={inheritBlock ? "secondary" : "outline"}
+                          >
+                            {inheritBlock
+                              ? t(
+                                  "server_node_config.modeInherited",
+                                  "Inherited"
+                                )
+                              : t("server_node_config.modeCustom", "Custom")}
+                          </Badge>
+                          <TabIndicator />
+                        </TabsTrigger>
+                      </TabsList>
+                    </TabsListContainer>
+
+                    <Form {...form}>
+                      <form
+                        className="space-y-4 pt-4"
+                        id="server-node-config-form"
+                        onSubmit={form.handleSubmit(onSubmit)}
+                      >
+                        <TabsContent className="space-y-4" id="dns">
+                          <section className="space-y-3">
+                            <ToggleField
+                              control={form.control}
+                              customText={t(
+                                "server_node_config.modeCustom",
+                                "Custom"
+                              )}
+                              description={t(
+                                "server_node_config.inherit_ip_strategy_desc",
+                                "Turn this off to choose a different IP preference for this server."
+                              )}
+                              inheritedText={t(
+                                "server_node_config.modeInherited",
+                                "Inherited"
+                              )}
+                              label={t(
+                                "server_node_config.inherit_ip_strategy",
+                                "Use global IP strategy"
+                              )}
+                              name="inherit_ip_strategy"
+                            />
+                            {inheritIPStrategy ? (
+                              <InheritedPreview
+                                description={t(
+                                  "server_node_config.global_ip_strategy_summary",
+                                  "Current global value: {{value}}",
+                                  {
+                                    value: getIPStrategyLabel(
+                                      cfgResp.global.ip_strategy
+                                    ),
+                                  }
+                                )}
+                                title={t(
+                                  "server_node_config.globalPreview",
+                                  "Using global configuration"
+                                )}
+                              />
+                            ) : (
+                              <FormField
+                                control={form.control}
+                                name="ip_strategy"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>
+                                      {t(
+                                        "server_config.fields.ip_strategy",
+                                        "IP Strategy"
+                                      )}
+                                    </FormLabel>
+                                    <Select
+                                      aria-label={t(
+                                        "server_config.fields.ip_strategy_placeholder",
+                                        "Select IP strategy"
+                                      )}
+                                      onSelectionChange={(key) => {
+                                        if (key != null)
+                                          field.onChange(String(key));
+                                      }}
+                                      placeholder={t(
+                                        "server_config.fields.ip_strategy_placeholder",
+                                        "Select IP strategy"
+                                      )}
+                                      selectedKey={
+                                        field.value == null
+                                          ? undefined
+                                          : String(field.value)
+                                      }
+                                    >
+                                      <FormControl>
+                                        <SelectTrigger>
+                                          <SelectValue />
+                                          <SelectIndicator />
+                                        </SelectTrigger>
+                                      </FormControl>
+                                      <SelectContent>
+                                        <ListBox>
+                                          <SelectItem id="prefer_ipv4">
+                                            {t(
+                                              "server_config.fields.ip_strategy_ipv4",
+                                              "Prefer IPv4"
+                                            )}
+                                          </SelectItem>
+                                          <SelectItem id="prefer_ipv6">
+                                            {t(
+                                              "server_config.fields.ip_strategy_ipv6",
+                                              "Prefer IPv6"
+                                            )}
+                                          </SelectItem>
+                                        </ListBox>
+                                      </SelectContent>
+                                    </Select>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
                             )}
-                            title={t(
-                              "server_node_config.globalPreview",
-                              "Using global configuration"
-                            )}
-                          />
-                        ) : (
-                          <FormField
-                            control={form.control}
-                            name="ip_strategy"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>
-                                  {t(
-                                    "server_config.fields.ip_strategy",
-                                    "IP Strategy"
-                                  )}
-                                </FormLabel>
-                                <Select
-                                  onValueChange={field.onChange}
-                                  value={field.value}
-                                >
-                                  <FormControl>
-                                    <SelectTrigger>
-                                      <SelectValue
-                                        placeholder={t(
-                                          "server_config.fields.ip_strategy_placeholder",
-                                          "Select IP strategy"
+                          </section>
+
+                          <section className="space-y-3 border-t pt-4">
+                            <ToggleField
+                              control={form.control}
+                              customText={t(
+                                "server_node_config.modeCustom",
+                                "Custom"
+                              )}
+                              description={t(
+                                "server_node_config.inherit_dns_desc",
+                                "Turn this off to maintain a DNS list only for this server."
+                              )}
+                              inheritedText={t(
+                                "server_node_config.modeInherited",
+                                "Inherited"
+                              )}
+                              label={t(
+                                "server_node_config.inherit_dns",
+                                "Use global DNS configuration"
+                              )}
+                              name="inherit_dns"
+                            />
+                            {inheritDNS ? (
+                              <InheritedPreview
+                                description={t(
+                                  "server_node_config.global_dns_summary",
+                                  "{{count}} DNS entries are provided by the global configuration.",
+                                  { count: cfgResp.global.dns?.length || 0 }
+                                )}
+                                title={t(
+                                  "server_node_config.globalPreview",
+                                  "Using global configuration"
+                                )}
+                              />
+                            ) : (
+                              <FormField
+                                control={form.control}
+                                name="dns"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>
+                                      {t(
+                                        "server_config.fields.dns_config",
+                                        "DNS Configuration"
+                                      )}
+                                    </FormLabel>
+                                    <FormControl>
+                                      <ArrayInput
+                                        className="grid grid-cols-1 gap-2 sm:grid-cols-2"
+                                        fields={[
+                                          {
+                                            name: "proto",
+                                            type: "select",
+                                            placeholder: t(
+                                              "server_config.fields.dns_proto_placeholder",
+                                              "Select type"
+                                            ),
+                                            options: [
+                                              { label: "TCP", value: "tcp" },
+                                              { label: "UDP", value: "udp" },
+                                              { label: "TLS", value: "tls" },
+                                              {
+                                                label: "HTTPS",
+                                                value: "https",
+                                              },
+                                              { label: "QUIC", value: "quic" },
+                                            ],
+                                          },
+                                          {
+                                            name: "address",
+                                            type: "text",
+                                            placeholder: "8.8.8.8:53",
+                                          },
+                                          {
+                                            name: "server_name",
+                                            type: "text",
+                                            placeholder: t(
+                                              "server_config.fields.dns_server_name_placeholder",
+                                              "TLS server name (optional)"
+                                            ),
+                                          },
+                                          {
+                                            name: "domains",
+                                            type: "textarea",
+                                            className: "sm:col-span-2",
+                                            placeholder: t(
+                                              "server_config.fields.dns_domains_placeholder",
+                                              "One domain rule per line"
+                                            ),
+                                          },
+                                        ]}
+                                        onChange={(values) => {
+                                          const converted = values.map(
+                                            (item: any) => ({
+                                              proto: item.proto,
+                                              address: item.address,
+                                              server_name:
+                                                item.server_name || "",
+                                              domains:
+                                                typeof item.domains === "string"
+                                                  ? splitLines(item.domains)
+                                                  : item.domains || [],
+                                            })
+                                          );
+                                          field.onChange(converted);
+                                        }}
+                                        value={(field.value || []).map(
+                                          (item) => ({
+                                            ...item,
+                                            domains: Array.isArray(item.domains)
+                                              ? item.domains.join("\n")
+                                              : "",
+                                          })
                                         )}
                                       />
-                                    </SelectTrigger>
-                                  </FormControl>
-                                  <SelectContent>
-                                    <SelectItem value="prefer_ipv4">
-                                      {t(
-                                        "server_config.fields.ip_strategy_ipv4",
-                                        "Prefer IPv4"
-                                      )}
-                                    </SelectItem>
-                                    <SelectItem value="prefer_ipv6">
-                                      {t(
-                                        "server_config.fields.ip_strategy_ipv6",
-                                        "Prefer IPv6"
-                                      )}
-                                    </SelectItem>
-                                  </SelectContent>
-                                </Select>
-                                <FormMessage />
-                              </FormItem>
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
                             )}
-                          />
-                        )}
-                      </section>
+                          </section>
+                        </TabsContent>
 
-                      <section className="space-y-3 border-t pt-4">
-                        <ToggleField
-                          control={form.control}
-                          customText={t(
-                            "server_node_config.modeCustom",
-                            "Custom"
-                          )}
-                          description={t(
-                            "server_node_config.inherit_dns_desc",
-                            "Turn this off to maintain a DNS list only for this server."
-                          )}
-                          inheritedText={t(
-                            "server_node_config.modeInherited",
-                            "Inherited"
-                          )}
-                          label={t(
-                            "server_node_config.inherit_dns",
-                            "Use global DNS configuration"
-                          )}
-                          name="inherit_dns"
-                        />
-                        {inheritDNS ? (
-                          <InheritedPreview
-                            description={t(
-                              "server_node_config.global_dns_summary",
-                              "{{count}} DNS entries are provided by the global configuration.",
-                              { count: cfgResp.global.dns?.length || 0 }
+                        <TabsContent className="space-y-4" id="outbound">
+                          <section className="space-y-3">
+                            <ToggleField
+                              control={form.control}
+                              customText={t(
+                                "server_node_config.modeCustom",
+                                "Custom"
+                              )}
+                              description={t(
+                                "server_node_config.inherit_outbound_desc",
+                                "Turn this off to define outbound routing only for this server."
+                              )}
+                              inheritedText={t(
+                                "server_node_config.modeInherited",
+                                "Inherited"
+                              )}
+                              label={t(
+                                "server_node_config.inherit_outbound",
+                                "Use global outbound rules"
+                              )}
+                              name="inherit_outbound"
+                            />
+                            {inheritOutbound ? (
+                              <InheritedPreview
+                                description={t(
+                                  "server_node_config.global_outbound_summary",
+                                  "{{count}} outbound rules are provided by the global configuration.",
+                                  {
+                                    count: cfgResp.global.outbound?.length || 0,
+                                  }
+                                )}
+                                title={t(
+                                  "server_node_config.globalPreview",
+                                  "Using global configuration"
+                                )}
+                              />
+                            ) : (
+                              <FormField
+                                control={form.control}
+                                name="outbound"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormControl>
+                                      <OutboundConfigInput
+                                        onChange={(values) => {
+                                          field.onChange(
+                                            values.map((item) =>
+                                              normalizeOutboundConfig(item)
+                                            )
+                                          );
+                                        }}
+                                        value={field.value || []}
+                                      />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
                             )}
-                            title={t(
-                              "server_node_config.globalPreview",
-                              "Using global configuration"
-                            )}
-                          />
-                        ) : (
-                          <FormField
-                            control={form.control}
-                            name="dns"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>
-                                  {t(
-                                    "server_config.fields.dns_config",
-                                    "DNS Configuration"
-                                  )}
-                                </FormLabel>
-                                <FormControl>
-                                  <ArrayInput
-                                    className="grid grid-cols-1 gap-2 sm:grid-cols-2"
-                                    fields={[
-                                      {
-                                        name: "proto",
-                                        type: "select",
-                                        placeholder: t(
-                                          "server_config.fields.dns_proto_placeholder",
-                                          "Select type"
-                                        ),
-                                        options: [
-                                          { label: "TCP", value: "tcp" },
-                                          { label: "UDP", value: "udp" },
-                                          { label: "TLS", value: "tls" },
-                                          { label: "HTTPS", value: "https" },
-                                          { label: "QUIC", value: "quic" },
-                                        ],
-                                      },
-                                      {
-                                        name: "address",
-                                        type: "text",
-                                        placeholder: "8.8.8.8:53",
-                                      },
-                                      {
-                                        name: "server_name",
-                                        type: "text",
-                                        placeholder: t(
-                                          "server_config.fields.dns_server_name_placeholder",
-                                          "TLS server name (optional)"
-                                        ),
-                                      },
-                                      {
-                                        name: "domains",
-                                        type: "textarea",
-                                        className: "sm:col-span-2",
-                                        placeholder: t(
-                                          "server_config.fields.dns_domains_placeholder",
+                          </section>
+                        </TabsContent>
+
+                        <TabsContent className="space-y-4" id="block">
+                          <section className="space-y-3">
+                            <ToggleField
+                              control={form.control}
+                              customText={t(
+                                "server_node_config.modeCustom",
+                                "Custom"
+                              )}
+                              description={t(
+                                "server_node_config.inherit_block_desc",
+                                "Turn this off to define a block list only for this server."
+                              )}
+                              inheritedText={t(
+                                "server_node_config.modeInherited",
+                                "Inherited"
+                              )}
+                              label={t(
+                                "server_node_config.inherit_block",
+                                "Use global block rules"
+                              )}
+                              name="inherit_block"
+                            />
+                            {inheritBlock ? (
+                              <InheritedPreview
+                                description={t(
+                                  "server_node_config.global_block_summary",
+                                  "{{count}} block rules are provided by the global configuration.",
+                                  { count: cfgResp.global.block?.length || 0 }
+                                )}
+                                title={t(
+                                  "server_node_config.globalPreview",
+                                  "Using global configuration"
+                                )}
+                              />
+                            ) : (
+                              <FormField
+                                control={form.control}
+                                name="block"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormControl>
+                                      <Textarea
+                                        onChange={(e) => {
+                                          field.onChange(
+                                            splitLines(e.target.value)
+                                          );
+                                        }}
+                                        placeholder={t(
+                                          "server_config.fields.block_rules_placeholder",
                                           "One domain rule per line"
-                                        ),
-                                      },
-                                    ]}
-                                    onChange={(values) => {
-                                      const converted = values.map(
-                                        (item: any) => ({
-                                          proto: item.proto,
-                                          address: item.address,
-                                          server_name: item.server_name || "",
-                                          domains:
-                                            typeof item.domains === "string"
-                                              ? splitLines(item.domains)
-                                              : item.domains || [],
-                                        })
-                                      );
-                                      field.onChange(converted);
-                                    }}
-                                    value={(field.value || []).map((item) => ({
-                                      ...item,
-                                      domains: Array.isArray(item.domains)
-                                        ? item.domains.join("\n")
-                                        : "",
-                                    }))}
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
+                                        )}
+                                        rows={12}
+                                        value={(field.value || []).join("\n")}
+                                      />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
                             )}
-                          />
-                        )}
-                      </section>
-                    </TabsContent>
+                          </section>
+                        </TabsContent>
+                      </form>
+                    </Form>
+                  </Tabs>
+                ) : null}
+              </div>
+            </ScrollArea>
 
-                    <TabsContent className="space-y-4" value="outbound">
-                      <section className="space-y-3">
-                        <ToggleField
-                          control={form.control}
-                          customText={t(
-                            "server_node_config.modeCustom",
-                            "Custom"
-                          )}
-                          description={t(
-                            "server_node_config.inherit_outbound_desc",
-                            "Turn this off to define outbound routing only for this server."
-                          )}
-                          inheritedText={t(
-                            "server_node_config.modeInherited",
-                            "Inherited"
-                          )}
-                          label={t(
-                            "server_node_config.inherit_outbound",
-                            "Use global outbound rules"
-                          )}
-                          name="inherit_outbound"
-                        />
-                        {inheritOutbound ? (
-                          <InheritedPreview
-                            description={t(
-                              "server_node_config.global_outbound_summary",
-                              "{{count}} outbound rules are provided by the global configuration.",
-                              { count: cfgResp.global.outbound?.length || 0 }
-                            )}
-                            title={t(
-                              "server_node_config.globalPreview",
-                              "Using global configuration"
-                            )}
-                          />
-                        ) : (
-                          <FormField
-                            control={form.control}
-                            name="outbound"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormControl>
-                                  <OutboundConfigInput
-                                    onChange={(values) => {
-                                      field.onChange(
-                                        values.map((item) =>
-                                          normalizeOutboundConfig(item)
-                                        )
-                                      );
-                                    }}
-                                    value={field.value || []}
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                        )}
-                      </section>
-                    </TabsContent>
-
-                    <TabsContent className="space-y-4" value="block">
-                      <section className="space-y-3">
-                        <ToggleField
-                          control={form.control}
-                          customText={t(
-                            "server_node_config.modeCustom",
-                            "Custom"
-                          )}
-                          description={t(
-                            "server_node_config.inherit_block_desc",
-                            "Turn this off to define a block list only for this server."
-                          )}
-                          inheritedText={t(
-                            "server_node_config.modeInherited",
-                            "Inherited"
-                          )}
-                          label={t(
-                            "server_node_config.inherit_block",
-                            "Use global block rules"
-                          )}
-                          name="inherit_block"
-                        />
-                        {inheritBlock ? (
-                          <InheritedPreview
-                            description={t(
-                              "server_node_config.global_block_summary",
-                              "{{count}} block rules are provided by the global configuration.",
-                              { count: cfgResp.global.block?.length || 0 }
-                            )}
-                            title={t(
-                              "server_node_config.globalPreview",
-                              "Using global configuration"
-                            )}
-                          />
-                        ) : (
-                          <FormField
-                            control={form.control}
-                            name="block"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormControl>
-                                  <Textarea
-                                    onChange={(e) => {
-                                      field.onChange(
-                                        splitLines(e.target.value)
-                                      );
-                                    }}
-                                    placeholder={t(
-                                      "server_config.fields.block_rules_placeholder",
-                                      "One domain rule per line"
-                                    )}
-                                    rows={12}
-                                    value={(field.value || []).join("\n")}
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                        )}
-                      </section>
-                    </TabsContent>
-                  </form>
-                </Form>
-              </Tabs>
-            ) : null}
-          </div>
-        </ScrollArea>
-
-        <SheetFooter className="flex-row items-center justify-between gap-3 border-t">
-          <p className="text-muted-foreground text-xs">
-            {isDirty
-              ? t("server_node_config.unsavedChanges", "Unsaved changes")
-              : t("server_node_config.noChanges", "No unsaved changes")}
-          </p>
-          <div className="flex gap-2">
-            <Button
-              disabled={saving}
-              onClick={() => handleOpenChange(false)}
-              variant="outline"
-            >
-              {t("actions.cancel", "Cancel")}
-            </Button>
-            <Button
-              disabled={saving || isLoading || isError || !cfgResp || !isDirty}
-              form="server-node-config-form"
-              type="submit"
-            >
-              <Icon
-                className={saving ? "animate-spin" : "hidden"}
-                icon="mdi:loading"
-              />
-              {t("actions.save", "Save")}
-            </Button>
-          </div>
-        </SheetFooter>
-      </SheetContent>
+            <Sheet.Footer className="flex-row items-center justify-between gap-3 border-t">
+              <p className="text-muted text-xs">
+                {isDirty
+                  ? t("server_node_config.unsavedChanges", "Unsaved changes")
+                  : t("server_node_config.noChanges", "No unsaved changes")}
+              </p>
+              <div className="flex gap-2">
+                <Button
+                  disabled={saving}
+                  onClick={() => handleOpenChange(false)}
+                  variant="outline"
+                >
+                  {t("actions.cancel", "Cancel")}
+                </Button>
+                <Button
+                  disabled={
+                    saving || isLoading || isError || !cfgResp || !isDirty
+                  }
+                  form="server-node-config-form"
+                  type="submit"
+                >
+                  <Icon
+                    className={saving ? "animate-spin" : "hidden"}
+                    icon="mdi:loading"
+                  />
+                  {t("actions.save", "Save")}
+                </Button>
+              </div>
+            </Sheet.Footer>
+            <Sheet.CloseTrigger aria-label="Close" />
+          </Sheet.Dialog>
+        </Sheet.Content>
+      </Sheet.Backdrop>
     </Sheet>
   );
 }

@@ -1,40 +1,31 @@
+"use client";
+
+import {
+  buttonVariants,
+  Dropdown,
+  Modal,
+  Sheet,
+  TabIndicator,
+  Table,
+  Tabs,
+  TabPanel as TabsContent,
+  TabList as TabsList,
+  TabListContainer as TabsListContainer,
+  Tab as TabsTrigger,
+} from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
-import { Link, useSearch } from "@tanstack/react-router";
 import { Badge } from "@workspace/ui/components/badge";
 import { Button } from "@workspace/ui/components/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@workspace/ui/components/dialog";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@workspace/ui/components/dropdown-menu";
+
 import { ScrollArea } from "@workspace/ui/components/scroll-area";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@workspace/ui/components/sheet";
+
 import { Switch } from "@workspace/ui/components/switch";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@workspace/ui/components/tabs";
 import { ConfirmButton } from "@workspace/ui/composed/confirm-button";
 import {
   ProTable,
   type ProTableActions,
 } from "@workspace/ui/composed/pro-table/pro-table";
+import { buildHref, useSearch } from "@workspace/ui/lib/router-compat";
 import {
   // getUserGroupList,
   previewUserNodes,
@@ -116,53 +107,56 @@ export default function User() {
               <Button variant="destructive">{t("delete", "Delete")}</Button>
             }
           />,
-          <DropdownMenu key="more" modal={false}>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline">{t("more", "More")}</Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem asChild>
-                <Link
-                  search={{ user_id: String(row.id) }}
-                  to="/dashboard/order"
+          <Dropdown key="more">
+            <Dropdown.Trigger
+              className={buttonVariants({
+                variant: "outline",
+                size: "md",
+                class: undefined,
+              })}
+            >
+              {t("more", "More")}
+            </Dropdown.Trigger>
+            <Dropdown.Popover placement="bottom end">
+              <Dropdown.Menu aria-label="Actions">
+                <Dropdown.Item
+                  href={buildHref("/dashboard/order", {
+                    user_id: String(row.id),
+                  })}
                 >
                   {t("orderList", "Order List")}
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link
-                  search={{ user_id: String(row.id) }}
-                  to="/dashboard/log/login"
+                </Dropdown.Item>
+                <Dropdown.Item
+                  href={buildHref("/dashboard/log/login", {
+                    user_id: String(row.id),
+                  })}
                 >
                   {t("loginLogs", "Login Logs")}
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link
-                  search={{ user_id: String(row.id) }}
-                  to="/dashboard/log/balance"
+                </Dropdown.Item>
+                <Dropdown.Item
+                  href={buildHref("/dashboard/log/balance", {
+                    user_id: String(row.id),
+                  })}
                 >
                   {t("balanceLogs", "Balance Logs")}
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link
-                  search={{ user_id: String(row.id) }}
-                  to="/dashboard/log/commission"
+                </Dropdown.Item>
+                <Dropdown.Item
+                  href={buildHref("/dashboard/log/commission", {
+                    user_id: String(row.id),
+                  })}
                 >
                   {t("commissionLogs", "Commission Logs")}
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link
-                  search={{ user_id: String(row.id) }}
-                  to="/dashboard/log/gift"
+                </Dropdown.Item>
+                <Dropdown.Item
+                  href={buildHref("/dashboard/log/gift", {
+                    user_id: String(row.id),
+                  })}
                 >
                   {t("giftLogs", "Gift Logs")}
-                </Link>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>,
+                </Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown.Popover>
+          </Dropdown>,
         ],
       }}
       columns={[
@@ -397,46 +391,62 @@ function ProfileSheet({
     return Promise.resolve();
   };
   return (
-    <Sheet onOpenChange={setOpen} open={open}>
-      <SheetTrigger asChild>
+    <Sheet isOpen={open} onOpenChange={setOpen} placement="right">
+      <Sheet.Trigger>
         <Button variant="default">{t("edit", "Edit")}</Button>
-      </SheetTrigger>
-      <SheetContent
-        className="w-[700px] max-w-full md:max-w-screen-lg"
-        side="right"
-      >
-        <SheetHeader>
-          <SheetTitle>
-            {t("userProfile", "User Profile")} · ID: {userId}
-          </SheetTitle>
-        </SheetHeader>
-        {user && (
-          <ScrollArea className="h-[calc(100dvh-140px)] p-2">
-            <Tabs defaultValue="basic">
-              <TabsList className="mb-3">
-                <TabsTrigger value="basic">
-                  {t("basicInfoTitle", "Basic Info")}
-                </TabsTrigger>
-                <TabsTrigger value="notify">
-                  {t("notifySettingsTitle", "Notify Settings")}
-                </TabsTrigger>
-                <TabsTrigger value="auth">
-                  {t("authMethodsTitle", "Auth Methods")}
-                </TabsTrigger>
-              </TabsList>
-              <TabsContent className="mt-0" value="basic">
-                <BasicInfoForm refetch={refetchAll} user={user} />
-              </TabsContent>
-              <TabsContent className="mt-0" value="notify">
-                <NotifySettingsForm refetch={refetchAll} user={user} />
-              </TabsContent>
-              <TabsContent className="mt-0" value="auth">
-                <AuthMethodsForm refetch={refetchAll} user={user} />
-              </TabsContent>
-            </Tabs>
-          </ScrollArea>
-        )}
-      </SheetContent>
+      </Sheet.Trigger>
+      <Sheet.Backdrop>
+        <Sheet.Content>
+          <Sheet.Dialog className="w-[700px] max-w-full md:max-w-screen-lg">
+            <Sheet.Header>
+              <Sheet.Heading>
+                {t("userProfile", "User Profile")} · ID: {userId}
+              </Sheet.Heading>
+            </Sheet.Header>
+            {user && (
+              <ScrollArea className="h-[calc(100dvh-140px)] p-2">
+                <Tabs className="min-w-0 max-w-full" defaultSelectedKey="basic">
+                  <TabsListContainer className="mb-3 min-w-0 max-w-full">
+                    <TabsList aria-label={t("sections", "Sections")}>
+                      <TabsTrigger
+                        className="w-auto flex-1 whitespace-nowrap"
+                        id="basic"
+                      >
+                        {t("basicInfoTitle", "Basic Info")}
+                        <TabIndicator />
+                      </TabsTrigger>
+                      <TabsTrigger
+                        className="w-auto flex-1 whitespace-nowrap"
+                        id="notify"
+                      >
+                        {t("notifySettingsTitle", "Notify Settings")}
+                        <TabIndicator />
+                      </TabsTrigger>
+                      <TabsTrigger
+                        className="w-auto flex-1 whitespace-nowrap"
+                        id="auth"
+                      >
+                        {t("authMethodsTitle", "Auth Methods")}
+                        <TabIndicator />
+                      </TabsTrigger>
+                    </TabsList>
+                  </TabsListContainer>
+                  <TabsContent className="mt-0" id="basic">
+                    <BasicInfoForm refetch={refetchAll} user={user} />
+                  </TabsContent>
+                  <TabsContent className="mt-0" id="notify">
+                    <NotifySettingsForm refetch={refetchAll} user={user} />
+                  </TabsContent>
+                  <TabsContent className="mt-0" id="auth">
+                    <AuthMethodsForm refetch={refetchAll} user={user} />
+                  </TabsContent>
+                </Tabs>
+              </ScrollArea>
+            )}
+            <Sheet.CloseTrigger aria-label="Close" />
+          </Sheet.Dialog>
+        </Sheet.Content>
+      </Sheet.Backdrop>
     </Sheet>
   );
 }
@@ -445,20 +455,25 @@ function SubscriptionSheet({ userId }: { userId: string | number }) {
   const { t } = useTranslation("user");
   const [open, setOpen] = useState(false);
   return (
-    <Sheet onOpenChange={setOpen} open={open}>
-      <SheetTrigger asChild>
+    <Sheet isOpen={open} onOpenChange={setOpen} placement="right">
+      <Sheet.Trigger>
         <Button variant="secondary">{t("subscription", "Subscription")}</Button>
-      </SheetTrigger>
-      <SheetContent className="w-[1000px] max-w-full md:max-w-7xl" side="right">
-        <SheetHeader>
-          <SheetTitle>
-            {t("subscriptionList", "Subscription List")} · ID: {userId}
-          </SheetTitle>
-        </SheetHeader>
-        <div className="mt-2 px-4">
-          <UserSubscription userId={userId} />
-        </div>
-      </SheetContent>
+      </Sheet.Trigger>
+      <Sheet.Backdrop>
+        <Sheet.Content>
+          <Sheet.Dialog className="w-[1000px] max-w-full md:max-w-7xl">
+            <Sheet.Header>
+              <Sheet.Heading>
+                {t("subscriptionList", "Subscription List")} · ID: {userId}
+              </Sheet.Heading>
+            </Sheet.Header>
+            <div className="admin-drawer-body mt-2 px-4">
+              <UserSubscription userId={userId} />
+            </div>
+            <Sheet.CloseTrigger aria-label="Close" />
+          </Sheet.Dialog>
+        </Sheet.Content>
+      </Sheet.Backdrop>
     </Sheet>
   );
 }
@@ -476,80 +491,94 @@ function PreviewNodesDialog({ userId }: { userId: string | number }) {
   });
 
   return (
-    <Dialog onOpenChange={setOpen} open={open}>
-      <DialogTrigger asChild>
-        <Button variant="outline">{t("previewNodes", "Preview Nodes")}</Button>
-      </DialogTrigger>
-      <DialogContent className="max-w-2xl">
-        <DialogHeader>
-          <DialogTitle>
-            {t("previewNodes", "Preview Nodes")} · ID: {userId}
-          </DialogTitle>
-        </DialogHeader>
-        {isLoading ? (
-          <div className="py-8 text-center text-muted-foreground">
-            {t("loading", "Loading...")}
-          </div>
-        ) : previewData ? (
-          <div className="space-y-4">
-            <div>
-              <span className="font-medium text-muted-foreground text-sm">
-                {t("availableNodes", "Available Nodes")}:
-              </span>{" "}
-              {previewData.node_groups?.reduce(
-                (sum, group) => sum + (group.nodes?.length || 0),
-                0
-              ) || 0}
-            </div>
-            {previewData.node_groups && previewData.node_groups.length > 0 ? (
-              <div className="max-h-[400px] space-y-4 overflow-y-auto">
-                {previewData.node_groups.map((group) => (
-                  <div key={group.id}>
-                    <h4 className="mb-2 font-semibold text-sm">
-                      {group.name ||
-                        (group.id === "-1"
-                          ? t("subscriptionNodes", "Subscription Nodes")
-                          : group.id === "0"
-                            ? t("publicNodes", "Public Nodes")
-                            : `${t("nodeGroup", "Node Group")} ${group.id}`)}
-                    </h4>
-                    {group.nodes && group.nodes.length > 0 ? (
-                      <table className="w-full text-sm">
-                        <thead>
-                          <tr className="border-b">
-                            <th className="p-2 text-left font-medium">ID</th>
-                            <th className="p-2 text-left font-medium">
-                              {t("name", "Name")}
-                            </th>
-                            <th className="p-2 text-left font-medium">
-                              {t("address", "Address")}
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {group.nodes.map((node) => (
-                            <tr className="border-b" key={node.id}>
-                              <td className="p-2">{node.id}</td>
-                              <td className="p-2">{node.name}</td>
-                              <td className="p-2">
-                                {node.address}:{node.port}
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    ) : null}
+    <Modal isOpen={open} onOpenChange={setOpen}>
+      <Button variant="outline">{t("previewNodes", "Preview Nodes")}</Button>
+
+      <Modal.Backdrop>
+        <Modal.Container>
+          <Modal.Dialog className="max-w-2xl">
+            <Modal.Header>
+              <Modal.Heading>
+                {t("previewNodes", "Preview Nodes")} · ID: {userId}
+              </Modal.Heading>
+            </Modal.Header>
+            {isLoading ? (
+              <div className="py-8 text-center text-muted">
+                {t("loading", "Loading...")}
+              </div>
+            ) : previewData ? (
+              <div className="space-y-4">
+                <div>
+                  <span className="font-medium text-muted text-sm">
+                    {t("availableNodes", "Available Nodes")}:
+                  </span>{" "}
+                  {previewData.node_groups?.reduce(
+                    (sum, group) => sum + (group.nodes?.length || 0),
+                    0
+                  ) || 0}
+                </div>
+                {previewData.node_groups &&
+                previewData.node_groups.length > 0 ? (
+                  <div className="max-h-[400px] space-y-4 overflow-y-auto">
+                    {previewData.node_groups.map((group) => (
+                      <div key={group.id}>
+                        <h4 className="mb-2 font-semibold text-sm">
+                          {group.name ||
+                            (group.id === "-1"
+                              ? t("subscriptionNodes", "Subscription Nodes")
+                              : group.id === "0"
+                                ? t("publicNodes", "Public Nodes")
+                                : `${t("nodeGroup", "Node Group")} ${group.id}`)}
+                        </h4>
+                        {group.nodes && group.nodes.length > 0 ? (
+                          <Table>
+                            <Table.ScrollContainer>
+                              <Table.Content
+                                aria-label={
+                                  group.name ||
+                                  t("availableNodes", "Available Nodes")
+                                }
+                              >
+                                <Table.Header>
+                                  <Table.Column id="id" isRowHeader>
+                                    ID
+                                  </Table.Column>
+                                  <Table.Column id="name">
+                                    {t("name", "Name")}
+                                  </Table.Column>
+                                  <Table.Column id="address">
+                                    {t("address", "Address")}
+                                  </Table.Column>
+                                </Table.Header>
+                                <Table.Body>
+                                  {group.nodes.map((node) => (
+                                    <Table.Row id={node.id} key={node.id}>
+                                      <Table.Cell>{node.id}</Table.Cell>
+                                      <Table.Cell>{node.name}</Table.Cell>
+                                      <Table.Cell>
+                                        {node.address}:{node.port}
+                                      </Table.Cell>
+                                    </Table.Row>
+                                  ))}
+                                </Table.Body>
+                              </Table.Content>
+                            </Table.ScrollContainer>
+                          </Table>
+                        ) : null}
+                      </div>
+                    ))}
                   </div>
-                ))}
+                ) : (
+                  <div className="py-4 text-center text-muted">
+                    {t("noNodesAvailable", "No nodes available")}
+                  </div>
+                )}
               </div>
-            ) : (
-              <div className="py-4 text-center text-muted-foreground">
-                {t("noNodesAvailable", "No nodes available")}
-              </div>
-            )}
-          </div>
-        ) : null}
-      </DialogContent>
-    </Dialog>
+            ) : null}
+            <Modal.CloseTrigger aria-label="Close" />
+          </Modal.Dialog>
+        </Modal.Container>
+      </Modal.Backdrop>
+    </Modal>
   );
 }

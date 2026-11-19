@@ -105,7 +105,7 @@ export const UploadImage = ({
           "cursor-pointer",
           !children &&
             "flex items-center justify-center rounded-lg border-2 border-dashed p-4",
-          isDragging && "border-primary bg-muted/50",
+          isDragging && "border-accent bg-default/50",
           className
         )}
         htmlFor={id}

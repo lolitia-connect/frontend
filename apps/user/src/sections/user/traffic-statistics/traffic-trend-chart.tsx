@@ -1,3 +1,5 @@
+"use client";
+
 import type { GetUserTrafficStatsResponse } from "@workspace/ui/services/user/traffic";
 import { format } from "date-fns";
 import { useTranslation } from "react-i18next";
@@ -57,7 +59,7 @@ export default function TrafficTrendChart({ data }: TrafficTrendChartProps) {
         />
         <Tooltip
           formatter={(value: number | string) => formatTraffic(value)}
-          labelStyle={{ color: "#000" }}
+          labelStyle={{ color: "var(--foreground)" }}
         />
         <Legend
           height={36}
@@ -69,14 +71,14 @@ export default function TrafficTrendChart({ data }: TrafficTrendChartProps) {
         <Line
           dataKey="upload"
           name={t("upload", "Upload")}
-          stroke="#10b981"
+          stroke="var(--color-primary-500)"
           strokeWidth={2}
           type="monotone"
         />
         <Line
           dataKey="download"
           name={t("download", "Download")}
-          stroke="#3b82f6"
+          stroke="var(--color-primary-300)"
           strokeWidth={2}
           type="monotone"
         />

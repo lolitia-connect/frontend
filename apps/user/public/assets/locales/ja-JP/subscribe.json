@@ -34,6 +34,8 @@
   "Minute": "分",
   "Month": "月",
   "NoLimit": "無制限",
+  "orBrowsePlans": "他のプランを見る",
+  "renewCurrent": "現在のサブスクリプションを更新する",
   "passwordHint": "パスワードを入力しない場合、自動生成してメールでお送りします。",
   "paymentMethod": "支払い方法",
   "productDescription": "商品説明",

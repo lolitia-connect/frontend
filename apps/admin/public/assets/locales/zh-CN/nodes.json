@@ -41,5 +41,12 @@
   "tags_description": "权限分组标签（包含计划绑定和投递策略）。",
   "tags_groupMode_description": "可选标签，用于显示和过滤（如果为空，节点组名称将作为标签使用）。",
   "tags_placeholder": "使用回车或逗号 (,) 添加多个标签",
-  "updated": "已更新"
+  "updated": "已更新",
+  "errors": {
+    "protocolRequired": "请选择协议",
+    "nameRequired": "请输入名称",
+    "serverAddrRequired": "请输入入口地址",
+    "serverRequired": "请选择服务器",
+    "portRange": "端口必须在 1 到 65535 之间"
+  }
 }

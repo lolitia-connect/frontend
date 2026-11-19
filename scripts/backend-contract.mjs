@@ -249,13 +249,17 @@ function visitModule(path, appRoot) {
   inspect(source);
 }
 for (const app of ["admin", "user"]) {
-  visitModule(
-    join(root, "apps", app, "src/main.tsx"),
-    join(root, "apps", app, "src")
-  );
+  const appRoot = join(root, "apps", app, "src");
+  // Next.js has no single entry module (the Vite-era `src/main.tsx`); every
+  // file under the `app/` router directory is an entry point.
+  for (const entry of filesIn(join(root, "apps", app, "app")))
+    visitModule(entry, appRoot);
 }
 for (const app of ["admin", "user"]) {
-  for (const path of filesIn(join(root, "apps", app, "src"))) {
+  for (const path of [
+    ...filesIn(join(root, "apps", app, "app")),
+    ...filesIn(join(root, "apps", app, "src")),
+  ]) {
     if (/\.(test|spec)\./.test(path) || !reachable.has(path)) continue;
     const source = ts.createSourceFile(
       path,

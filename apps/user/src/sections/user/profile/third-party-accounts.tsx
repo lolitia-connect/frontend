@@ -1,20 +1,9 @@
 "use client";
 
+import { Card, Modal } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@workspace/ui/components/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@workspace/ui/components/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@workspace/ui/components/dialog";
+
 import {
   Form,
   FormControl,
@@ -99,75 +88,83 @@ function EmailBindDialog({ children }: { children: React.ReactNode }) {
     }
   };
   return (
-    <Dialog onOpenChange={setOpen} open={open}>
-      <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="max-h-[calc(100dvh-2rem)] overflow-y-auto sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>
-            {t("thirdParty.bindEmail", "Connect Email")}
-          </DialogTitle>
-        </DialogHeader>
-        <Form {...form}>
-          <form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
-            {email && (
-              <CurrentCredentialFields
-                email={email}
-                onVerifyByChange={setVerifyBy}
-                passwordName="password"
-                verifyBy={verifyBy}
-              />
-            )}
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input
-                      placeholder={t(
-                        "thirdParty.newEmail",
-                        "New email address"
-                      )}
-                      type="email"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="code"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <div className="flex gap-2">
-                      <Input
-                        autoComplete="one-time-code"
-                        placeholder={t(
-                          "thirdParty.newCode",
-                          "Code sent to the new address"
-                        )}
-                        {...field}
-                      />
-                      <SendCode
-                        params={{ email: form.watch("email"), type: 1 }}
-                        type="email"
-                      />
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <Button className="w-full" loading={loading} type="submit">
-              {t("thirdParty.confirm", "Confirm")}
-            </Button>
-          </form>
-        </Form>
-      </DialogContent>
-    </Dialog>
+    <Modal isOpen={open} onOpenChange={setOpen}>
+      {children}
+      <Modal.Backdrop>
+        <Modal.Container>
+          <Modal.Dialog className="max-h-[calc(100dvh-2rem)] overflow-y-auto sm:max-w-[425px]">
+            <Modal.Header>
+              <Modal.Heading>
+                {t("thirdParty.bindEmail", "Connect Email")}
+              </Modal.Heading>
+            </Modal.Header>
+            <Form {...form}>
+              <form
+                className="space-y-4"
+                onSubmit={form.handleSubmit(onSubmit)}
+              >
+                {email && (
+                  <CurrentCredentialFields
+                    email={email}
+                    onVerifyByChange={setVerifyBy}
+                    passwordName="password"
+                    verifyBy={verifyBy}
+                  />
+                )}
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input
+                          placeholder={t(
+                            "thirdParty.newEmail",
+                            "New email address"
+                          )}
+                          type="email"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="code"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <div className="flex gap-2">
+                          <Input
+                            autoComplete="one-time-code"
+                            placeholder={t(
+                              "thirdParty.newCode",
+                              "Code sent to the new address"
+                            )}
+                            {...field}
+                          />
+                          <SendCode
+                            params={{ email: form.watch("email"), type: 1 }}
+                            type="email"
+                          />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Button className="w-full" loading={loading} type="submit">
+                  {t("thirdParty.confirm", "Confirm")}
+                </Button>
+              </form>
+            </Form>
+            <Modal.CloseTrigger aria-label="Close" />
+          </Modal.Dialog>
+        </Modal.Container>
+      </Modal.Backdrop>
+    </Modal>
   );
 }
 
@@ -228,99 +225,109 @@ function MobileBindDialog({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <Dialog onOpenChange={setOpen} open={open}>
-      <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="max-h-[calc(100dvh-2rem)] overflow-y-auto sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>
-            {t("thirdParty.bindMobile", "Connect Mobile")}
-          </DialogTitle>
-        </DialogHeader>
-        <Form {...form}>
-          <form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
-            <CurrentCredentialFields
-              email={email}
-              onVerifyByChange={setVerifyBy}
-              passwordName="password"
-              verifyBy={verifyBy}
-            />
-            <FormField
-              control={form.control}
-              name="mobile"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <div className="flex">
-                      <FormField
-                        control={form.control}
-                        name="area_code"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormControl>
-                              <AreaCodeSelect
-                                className="w-32 rounded-r-none border-r-0"
-                                onChange={(value) => {
-                                  if (value.phone) {
-                                    form.setValue(field.name, value.phone);
-                                  }
-                                }}
-                                placeholder="Area code..."
-                                simple
-                                value={field.value}
-                                whitelist={enable_whitelist ? whitelist : []}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <Input
-                        className="rounded-l-none"
-                        placeholder="Enter your telephone..."
-                        type="tel"
-                        {...field}
-                      />
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+    <Modal isOpen={open} onOpenChange={setOpen}>
+      {children}
+      <Modal.Backdrop>
+        <Modal.Container>
+          <Modal.Dialog className="max-h-[calc(100dvh-2rem)] overflow-y-auto sm:max-w-[425px]">
+            <Modal.Header>
+              <Modal.Heading>
+                {t("thirdParty.bindMobile", "Connect Mobile")}
+              </Modal.Heading>
+            </Modal.Header>
+            <Form {...form}>
+              <form
+                className="space-y-4"
+                onSubmit={form.handleSubmit(onSubmit)}
+              >
+                <CurrentCredentialFields
+                  email={email}
+                  onVerifyByChange={setVerifyBy}
+                  passwordName="password"
+                  verifyBy={verifyBy}
+                />
+                <FormField
+                  control={form.control}
+                  name="mobile"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <div className="flex">
+                          <FormField
+                            control={form.control}
+                            name="area_code"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormControl>
+                                  <AreaCodeSelect
+                                    className="w-32 rounded-r-none border-r-0"
+                                    onChange={(value) => {
+                                      if (value.phone) {
+                                        form.setValue(field.name, value.phone);
+                                      }
+                                    }}
+                                    placeholder="Area code..."
+                                    simple
+                                    value={field.value}
+                                    whitelist={
+                                      enable_whitelist ? whitelist : []
+                                    }
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <Input
+                            className="rounded-l-none"
+                            placeholder="Enter your telephone..."
+                            type="tel"
+                            {...field}
+                          />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-            <FormField
-              control={form.control}
-              name="code"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <div className="flex gap-2">
-                      <Input
-                        placeholder="Enter code..."
-                        type="text"
-                        {...field}
-                      />
-                      <SendCode
-                        params={{
-                          telephone_area_code: form.watch("area_code"),
-                          telephone: form.watch("mobile"),
-                          type: 1,
-                        }}
-                        type="phone"
-                      />
-                    </div>
-                  </FormControl>
+                <FormField
+                  control={form.control}
+                  name="code"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <div className="flex gap-2">
+                          <Input
+                            placeholder="Enter code..."
+                            type="text"
+                            {...field}
+                          />
+                          <SendCode
+                            params={{
+                              telephone_area_code: form.watch("area_code"),
+                              telephone: form.watch("mobile"),
+                              type: 1,
+                            }}
+                            type="phone"
+                          />
+                        </div>
+                      </FormControl>
 
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <Button className="w-full" loading={loading} type="submit">
-              {t("thirdParty.confirm", "Confirm")}
-            </Button>
-          </form>
-        </Form>
-      </DialogContent>
-    </Dialog>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Button className="w-full" loading={loading} type="submit">
+                  {t("thirdParty.confirm", "Confirm")}
+                </Button>
+              </form>
+            </Form>
+            <Modal.CloseTrigger aria-label="Close" />
+          </Modal.Dialog>
+        </Modal.Container>
+      </Modal.Backdrop>
+    </Modal>
   );
 }
 
@@ -430,10 +437,10 @@ export default function ThirdPartyAccounts() {
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>{t("thirdParty.title", "Connected Accounts")}</CardTitle>
-      </CardHeader>
-      <CardContent>
+      <Card.Header>
+        <Card.Title>{t("thirdParty.title", "Connected Accounts")}</Card.Title>
+      </Card.Header>
+      <Card.Content>
         <div className="space-y-4">
           {accounts.map((account) => {
             const method = user?.auth_methods?.find(
@@ -462,7 +469,7 @@ export default function ThirdPartyAccounts() {
                 </span>
                 <div className="flex items-center gap-2">
                   <Input
-                    className="flex-1 truncate bg-muted"
+                    className="flex-1 truncate bg-default"
                     disabled
                     value={displayValue}
                   />
@@ -514,7 +521,7 @@ export default function ThirdPartyAccounts() {
             );
           })}
         </div>
-      </CardContent>
+      </Card.Content>
     </Card>
   );
 }

@@ -1,11 +1,8 @@
+"use client";
+
+import { Card, CardContent, CardHeader, CardTitle } from "@heroui/react";
 import { Badge } from "@workspace/ui/components/badge";
 import { Button } from "@workspace/ui/components/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@workspace/ui/components/card";
 import { EnhancedInput } from "@workspace/ui/composed/enhanced-input";
 import {
   createUserAuthMethod,
@@ -166,7 +163,7 @@ export function AuthMethodsForm({
                 </div>
                 <div className="flex items-center gap-4">
                   <div className="flex-1">
-                    <div className="text-muted-foreground text-sm">
+                    <div className="text-muted text-sm">
                       {method.auth_identifier}
                     </div>
                   </div>

@@ -7,9 +7,9 @@
   "count": "Count",
   "create": "Create",
   "createCoupon": "Create Coupon",
-  "createSuccess": "Create Success",
+  "createSuccess": "Created successfully",
   "delete": "Delete",
-  "deleteSuccess": "Delete Success",
+  "deleteSuccess": "Deleted successfully",
   "deleteWarning": "Once deleted, data cannot be recovered. Please proceed with caution.",
   "discount": "Discount",
   "edit": "Edit",
@@ -41,7 +41,7 @@
   "subscribe": "Subscribe",
   "type": "Type",
   "unlimited": "Unlimited",
-  "updateSuccess": "Update Success",
+  "updateSuccess": "Updated successfully",
   "usedTimes": "Usage Times",
   "validityPeriod": "Validity Period"
 }

@@ -18,6 +18,7 @@
     "subscribe": "訂閱通知",
     "updateSuccess": "通知設定更新成功"
   },
+  "sections": "分頁",
   "thirdParty": {
     "bind": "綁定",
     "bindFailed": "綁定失敗",
@@ -34,6 +35,11 @@
     "newCode": "傳送至新地址的驗證碼"
   },
   "currentCredential": {
+    "codeRequired": "請輸入驗證碼",
+    "passwordRequired": "請輸入目前密碼",
+    "useCode": "尚未設定密碼？改用傳送至 {{email}} 的驗證碼",
+    "usePassword": "改用目前密碼驗證",
+    "mobileNeedsPassword": "未設定密碼的帳戶需要先設定密碼，才能更換手機號碼",
     "password": "目前密碼",
     "verificationCode": "驗證碼",
     "code": "傳送至 {{email}} 的驗證碼",

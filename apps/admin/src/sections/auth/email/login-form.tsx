@@ -1,4 +1,6 @@
-﻿import { zodResolver } from "@hookform/resolvers/zod";
+"use client";
+
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@workspace/ui/components/button";
 import {
   Form,

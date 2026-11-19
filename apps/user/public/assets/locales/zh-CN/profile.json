@@ -33,6 +33,7 @@
     "subscribe": "订阅通知",
     "updateSuccess": "通知设置更新成功"
   },
+  "sections": "标签页",
   "thirdParty": {
     "bind": "绑定",
     "bindEmail": "绑定邮箱",

@@ -8,7 +8,7 @@ export async function createServer(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/server/create`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/server/create`,
     {
       method: "POST",
       headers: {
@@ -26,7 +26,7 @@ export async function deleteServer(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/server/delete`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/server/delete`,
     {
       method: "POST",
       headers: {
@@ -45,7 +45,7 @@ export async function filterServerList(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: API.FilterServerListResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/server/list`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/server/list`,
     {
       method: "GET",
       params: {
@@ -62,7 +62,7 @@ export async function createNode(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/server/node/create`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/server/node/create`,
     {
       method: "POST",
       headers: {
@@ -80,7 +80,7 @@ export async function deleteNode(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/server/node/delete`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/server/node/delete`,
     {
       method: "POST",
       headers: {
@@ -99,7 +99,7 @@ export async function filterNodeList(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: API.FilterNodeListResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/server/node/list`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/server/node/list`,
     {
       method: "GET",
       params: {
@@ -116,7 +116,7 @@ export async function resetSortWithNode(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/server/node/sort`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/server/node/sort`,
     {
       method: "POST",
       headers: {
@@ -131,7 +131,7 @@ export async function resetSortWithNode(
 /** Sort nodes by name POST /v1/admin/server/node/sort-by-name */
 export async function sortNodeByName(options?: { [key: string]: any }) {
   return request<API.Response & { data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/server/node/sort-by-name`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/server/node/sort-by-name`,
     {
       method: "POST",
       ...(options || {}),
@@ -146,7 +146,7 @@ export async function toggleNodeStatus(
 ) {
   return request<API.Response & { data?: any }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/server/node/status/toggle`,
     {
       method: "POST",
@@ -162,7 +162,7 @@ export async function toggleNodeStatus(
 /** Query all node tags GET /v1/admin/server/node/tags */
 export async function queryNodeTag(options?: { [key: string]: any }) {
   return request<API.Response & { data?: API.QueryNodeTagResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/server/node/tags`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/server/node/tags`,
     {
       method: "GET",
       ...(options || {}),
@@ -176,7 +176,7 @@ export async function updateNode(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/server/node/update`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/server/node/update`,
     {
       method: "POST",
       headers: {
@@ -195,7 +195,7 @@ export async function getServerProtocols(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: API.GetServerProtocolsResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/server/protocols`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/server/protocols`,
     {
       method: "GET",
       params: {
@@ -213,7 +213,7 @@ export async function getServerNodeConfig(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: API.GetServerNodeConfigResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/server/node_config`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/server/node_config`,
     {
       method: "GET",
       params: {
@@ -231,7 +231,7 @@ export async function updateServerNodeConfig(
 ) {
   return request<API.Response & { data?: any }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/server/node_config/update`,
     {
       method: "POST",
@@ -250,7 +250,7 @@ export async function resetSortWithServer(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/server/server/sort`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/server/server/sort`,
     {
       method: "POST",
       headers: {
@@ -265,7 +265,7 @@ export async function resetSortWithServer(
 /** Sort servers by name POST /v1/admin/server/server/sort-by-name */
 export async function sortServerByName(options?: { [key: string]: any }) {
   return request<API.Response & { data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/server/server/sort-by-name`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/server/server/sort-by-name`,
     {
       method: "POST",
       ...(options || {}),
@@ -279,7 +279,7 @@ export async function updateServer(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/server/update`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/server/update`,
     {
       method: "POST",
       headers: {

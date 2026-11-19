@@ -103,6 +103,7 @@
   "migrateUsersWarning": "这将把 {count} 个用户从 \"{group}\" 迁移到目标用户组。此操作无法撤销。",
   "migrateUsersSuccess": "成功将 {count} 个用户迁移到目标用户组",
   "migrateUsersFailed": "迁移用户失败",
+  "sections": "标签页",
   "targetUserGroup": "目标用户组",
   "selectTargetGroup": "选择目标用户组...",
   "selectTargetGroupFirst": "请先选择目标用户组",

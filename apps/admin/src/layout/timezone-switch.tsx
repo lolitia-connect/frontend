@@ -1,16 +1,7 @@
-import { Button } from "@workspace/ui/components/button";
-import {
-  Command,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@workspace/ui/components/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@workspace/ui/components/popover";
+"use client";
+
+import { Popover } from "@heroui/react";
+import { buttonVariants } from "@workspace/ui/components/button";
 import { Icon } from "@workspace/ui/composed/icon";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -168,11 +159,70 @@ export function getTimezoneOffset(timezone: string, date = new Date()): string {
   }
 }
 
+interface TimezoneRowProps {
+  active?: boolean;
+  onSelect: (value: string) => void;
+  option: TimezoneOption;
+}
+
+function TimezoneRow({ active, onSelect, option }: TimezoneRowProps) {
+  return (
+    <button
+      className={`flex w-full cursor-pointer select-none items-center gap-3 rounded-sm px-2 py-1.5 text-left text-sm outline-hidden hover:bg-default ${active ? "bg-accent/10" : ""}`}
+      onClick={() => onSelect(option.value)}
+      type="button"
+    >
+      <div className="flex flex-1 flex-col">
+        <span className="font-medium">{option.value}</span>
+        <span className="text-muted text-xs">
+          {option.timezone} • {getCurrentTime(option.value)}
+        </span>
+      </div>
+      <Icon
+        className={active ? "h-4 w-4 opacity-100" : "h-4 w-4 opacity-0"}
+        icon="uil:check"
+      />
+    </button>
+  );
+}
+
+interface TimezoneGroupProps {
+  heading: string;
+  onSelect: (value: string) => void;
+  options: TimezoneOption[];
+  selected: string;
+}
+
+function TimezoneGroup({
+  heading,
+  onSelect,
+  options,
+  selected,
+}: TimezoneGroupProps) {
+  if (options.length === 0) return null;
+  return (
+    <div className="overflow-hidden p-1">
+      <div className="px-2 py-1.5 font-medium text-muted text-xs">
+        {heading}
+      </div>
+      {options.map((option) => (
+        <TimezoneRow
+          active={option.value === selected}
+          key={`${heading}-${option.value}`}
+          onSelect={onSelect}
+          option={option}
+        />
+      ))}
+    </div>
+  );
+}
+
 export default function TimezoneSwitch() {
   const { i18n } = useTranslation();
   const locale = i18n.language;
   const [timezone, setTimezone] = useState<string>("UTC");
   const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState("");
 
   const timezoneOptions = useMemo(() => getAllTimezones(locale), [locale]);
 
@@ -195,6 +245,7 @@ export default function TimezoneSwitch() {
   const handleTimezoneChange = (newTimezone: string) => {
     setTimezone(newTimezone);
     localStorage.setItem("timezone", newTimezone);
+    setSearch("");
     setOpen(false);
 
     window.dispatchEvent(
@@ -203,122 +254,112 @@ export default function TimezoneSwitch() {
       })
     );
   };
-  const serverTimezones = timezoneOptions.filter(
+
+  const matchesSearch = (option: TimezoneOption) => {
+    const query = search.trim().toLocaleLowerCase();
+    if (!query) return true;
+    return `${option.label} ${option.value}`
+      .toLocaleLowerCase()
+      .includes(query);
+  };
+
+  const recommended = getRecommendedTimezones();
+  const servers = getServerTimezones();
+
+  const currentGroup = timezoneOptions.filter(
+    (option) => option.value === timezone && matchesSearch(option)
+  );
+  const serverGroup = timezoneOptions.filter(
     (option) =>
-      getServerTimezones().includes(option.value) && option.value !== timezone
+      servers.includes(option.value) &&
+      option.value !== timezone &&
+      matchesSearch(option)
+  );
+  const recommendedGroup = timezoneOptions.filter(
+    (option) =>
+      recommended.includes(option.value) &&
+      option.value !== timezone &&
+      matchesSearch(option)
+  );
+  const allGroup = timezoneOptions.filter(
+    (option) =>
+      !(servers.includes(option.value) || recommended.includes(option.value)) &&
+      option.value !== timezone &&
+      matchesSearch(option)
   );
 
+  const isEmpty =
+    currentGroup.length === 0 &&
+    serverGroup.length === 0 &&
+    recommendedGroup.length === 0 &&
+    allGroup.length === 0;
+
   return (
-    <Popover onOpenChange={setOpen} open={open}>
-      <PopoverTrigger asChild>
-        <Button className="p-0" size="icon" variant="ghost">
-          <Icon className="!size-6" icon="flat-color-icons:overtime" />
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent align="end" className="w-80 p-0">
-        <Command>
-          <CommandInput placeholder="Search..." />
-          <CommandList>
-            <CommandGroup heading="Current">
-              {timezoneOptions
-                .filter((option) => option.value === timezone)
-                .map((option) => (
-                  <CommandItem
-                    className="bg-primary/10"
-                    key={option.value}
-                    onSelect={() => handleTimezoneChange(option.value)}
-                    value={`${option.label} ${option.value}`}
-                  >
-                    <div className="flex w-full items-center gap-3">
-                      <div className="flex flex-1 flex-col">
-                        <span className="font-medium">{option.value}</span>
-                        <span className="text-muted-foreground text-xs">
-                          {option.timezone} • {getCurrentTime(option.value)}
-                        </span>
-                      </div>
-                      <Icon className="h-4 w-4 opacity-100" icon="uil:check" />
-                    </div>
-                  </CommandItem>
-                ))}
-            </CommandGroup>
-            {serverTimezones.length > 0 && (
-              <CommandGroup heading="Server">
-                {serverTimezones.map((option) => (
-                  <CommandItem
-                    key={option.value}
-                    onSelect={() => handleTimezoneChange(option.value)}
-                    value={`${option.label} ${option.value}`}
-                  >
-                    <div className="flex w-full items-center gap-3">
-                      <div className="flex flex-1 flex-col">
-                        <span className="font-medium">{option.value}</span>
-                        <span className="text-muted-foreground text-xs">
-                          {option.timezone} • {getCurrentTime(option.value)}
-                        </span>
-                      </div>
-                      <Icon className="h-4 w-4 opacity-0" icon="uil:check" />
-                    </div>
-                  </CommandItem>
-                ))}
-              </CommandGroup>
-            )}
-
-            <CommandGroup heading="Recommended">
-              {timezoneOptions
-                .filter(
-                  (option) =>
-                    getRecommendedTimezones().includes(option.value) &&
-                    option.value !== timezone
-                )
-                .map((option) => (
-                  <CommandItem
-                    key={option.value}
-                    onSelect={() => handleTimezoneChange(option.value)}
-                    value={`${option.label} ${option.value}`}
-                  >
-                    <div className="flex w-full items-center gap-3">
-                      <div className="flex flex-1 flex-col">
-                        <span className="font-medium">{option.value}</span>
-                        <span className="text-muted-foreground text-xs">
-                          {option.timezone} • {getCurrentTime(option.value)}
-                        </span>
-                      </div>
-                      <Icon className="h-4 w-4 opacity-0" icon="uil:check" />
-                    </div>
-                  </CommandItem>
-                ))}
-            </CommandGroup>
-
-            <CommandGroup heading="All">
-              {timezoneOptions
-                .filter(
-                  (option) =>
-                    !(
-                      getServerTimezones().includes(option.value) ||
-                      getRecommendedTimezones().includes(option.value)
-                    ) && option.value !== timezone
-                )
-                .map((option) => (
-                  <CommandItem
-                    key={option.value}
-                    onSelect={() => handleTimezoneChange(option.value)}
-                    value={`${option.label} ${option.value}`}
-                  >
-                    <div className="flex w-full items-center gap-3">
-                      <div className="flex flex-1 flex-col">
-                        <span className="font-medium">{option.value}</span>
-                        <span className="text-muted-foreground text-xs">
-                          {option.timezone} • {getCurrentTime(option.value)}
-                        </span>
-                      </div>
-                      <Icon className="h-4 w-4 opacity-0" icon="uil:check" />
-                    </div>
-                  </CommandItem>
-                ))}
-            </CommandGroup>
-          </CommandList>
-        </Command>
-      </PopoverContent>
+    <Popover
+      isOpen={open}
+      onOpenChange={(next) => {
+        setOpen(next);
+        if (!next) setSearch("");
+      }}
+    >
+      <Popover.Trigger
+        aria-label="Timezone"
+        className={`${buttonVariants({ className: "inline-flex items-center justify-center", size: "icon", variant: "ghost" })}`}
+      >
+        <Icon className="size-6" icon="uil:clock" />
+      </Popover.Trigger>
+      <Popover.Content
+        className="w-80 max-w-[calc(100vw-2rem)] p-0"
+        placement="bottom end"
+      >
+        <Popover.Dialog aria-label="Timezone" className="outline-hidden">
+          <div className="flex flex-col">
+            <div className="flex h-9 items-center gap-2 border-b px-3">
+              <Icon className="size-4 shrink-0 opacity-50" icon="uil:search" />
+              <input
+                className="flex h-10 w-full bg-transparent py-3 text-sm outline-hidden placeholder:text-muted"
+                onChange={(event) => setSearch(event.target.value)}
+                placeholder="Search..."
+                value={search}
+              />
+            </div>
+            <div className="max-h-[300px] overflow-y-auto overflow-x-hidden">
+              {isEmpty ? (
+                <div className="py-6 text-center text-muted text-sm">
+                  No results found
+                </div>
+              ) : (
+                <>
+                  <TimezoneGroup
+                    heading="Current"
+                    onSelect={handleTimezoneChange}
+                    options={currentGroup}
+                    selected={timezone}
+                  />
+                  <TimezoneGroup
+                    heading="Server"
+                    onSelect={handleTimezoneChange}
+                    options={serverGroup}
+                    selected={timezone}
+                  />
+                  <TimezoneGroup
+                    heading="Recommended"
+                    onSelect={handleTimezoneChange}
+                    options={recommendedGroup}
+                    selected={timezone}
+                  />
+                  <TimezoneGroup
+                    heading="All"
+                    onSelect={handleTimezoneChange}
+                    options={allGroup}
+                    selected={timezone}
+                  />
+                </>
+              )}
+            </div>
+          </div>
+        </Popover.Dialog>
+      </Popover.Content>
     </Popover>
   );
 }

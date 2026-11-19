@@ -97,7 +97,10 @@ export function ObjectInput<T extends Record<string, any>>({
     }
   };
   return (
-    <div className={cn("flex flex-1 flex-wrap gap-4", className)}>
+    <div
+      className={cn("flex flex-1 flex-wrap gap-4", className)}
+      data-slot="object-input"
+    >
       {fields.map((field) => {
         const node = renderField(field);
         if (node === null) return null; // don't render wrapper if field hidden
@@ -176,17 +179,24 @@ export function ArrayInput<T extends Record<string, any>>({
   return (
     <div className="flex flex-col gap-4">
       {displayItems.map((item, index) => (
-        <div className="flex items-center gap-4" key={index}>
+        <div
+          className="flex items-center gap-4"
+          data-slot="array-input-row"
+          key={index}
+        >
           <ObjectInput
             className={className}
             fields={fields}
             onChange={(updatedItem) => handleItemChange(index, updatedItem)}
             value={item}
           />
-          <div className="flex min-w-20 items-center">
+          <div
+            className="flex min-w-20 items-center"
+            data-slot="array-input-actions"
+          >
             {displayItems.length > 1 && (
               <Button
-                className="p-0 text-destructive text-lg"
+                className="p-0 text-danger text-lg"
                 onClick={() => deleteField(index)}
                 size="icon"
                 type="button"
@@ -197,7 +207,7 @@ export function ArrayInput<T extends Record<string, any>>({
             )}
             {(isReverse ? index === 0 : index === displayItems.length - 1) && (
               <Button
-                className="p-0 text-lg text-primary"
+                className="p-0 text-accent text-lg"
                 onClick={createField}
                 size="icon"
                 type="button"

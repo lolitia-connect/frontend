@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter, useSearch } from "@tanstack/react-router";
+import { useNavigate, useSearch } from "@workspace/ui/lib/router-compat";
 import { postV1PublicUserBindOauthCallback as bindOAuthCallback } from "@workspace/ui/services/user/user";
 import { useEffect, useRef } from "react";
 import { useGlobalStore } from "@/stores/global";
@@ -14,12 +14,11 @@ export default function Certification({
   platform,
   children,
 }: CertificationProps) {
-  const router = useRouter();
+  const navigate = useNavigate();
   const getUserInfo = useGlobalStore((state) => state.getUserInfo);
   const submitted = useRef(false);
   const searchParams = useSearch({
     strict: false,
-    structuralSharing: false,
   }) as Record<string, unknown>;
 
   useEffect(() => {
@@ -36,12 +35,12 @@ export default function Certification({
     })
       .then(async () => {
         await getUserInfo();
-        router.navigate({ to: "/profile" });
+        navigate({ to: "/profile" });
       })
       .catch(() => {
-        router.navigate({ to: "/profile" });
+        navigate({ to: "/profile" });
       });
-  }, [platform, router, searchParams, getUserInfo]);
+  }, [platform, navigate, searchParams, getUserInfo]);
 
   return children;
 }

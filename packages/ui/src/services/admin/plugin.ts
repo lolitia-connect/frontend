@@ -107,7 +107,7 @@ export interface UploadPluginOptions {
   replace?: boolean;
 }
 
-const prefix = `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/plugins`;
+const prefix = `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/plugins`;
 
 export async function getPluginList(
   params: GetPluginListParams,

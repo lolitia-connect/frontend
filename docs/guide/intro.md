@@ -54,7 +54,7 @@ PPanel uses Monorepo architecture for unified management and maintenance:
 - **UI Components**: shadcn/ui
 - **Build Tools**: Vite + Turbo
 - **Code Standards**: Biome
-- **Git Standards**: Lefthook + Gitmoji
+- **Git Standards**: Lefthook
 
 ## Key Features
 

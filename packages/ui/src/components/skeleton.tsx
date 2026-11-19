@@ -1,11 +1,13 @@
+import { Skeleton as HeroUISkeleton } from "@heroui/react";
 import { cn } from "@workspace/ui/lib/utils";
+
+type HeroUISkeletonProps = React.ComponentProps<typeof HeroUISkeleton>;
 
 function Skeleton({ className, ...props }: React.ComponentProps<"div">) {
   return (
-    <div
-      className={cn("animate-pulse rounded-md bg-accent", className)}
-      data-slot="skeleton"
-      {...props}
+    <HeroUISkeleton
+      className={cn("rounded-md", className)}
+      {...(props as HeroUISkeletonProps)}
     />
   );
 }

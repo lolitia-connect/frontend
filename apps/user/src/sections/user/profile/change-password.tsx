@@ -1,13 +1,8 @@
 "use client";
 
+import { Card } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@workspace/ui/components/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@workspace/ui/components/card";
 import {
   Form,
   FormControl,
@@ -105,9 +100,9 @@ export default function ChangePassword() {
   }
 
   return (
-    <Card className="min-w-80">
-      <CardHeader>
-        <CardTitle className="flex items-center justify-between">
+    <Card className="min-w-0 lg:min-w-80">
+      <Card.Header>
+        <Card.Title className="flex flex-wrap items-center justify-between gap-3">
           {t("accountSettings.accountSettings", "Password Settings")}
           <Button
             disabled={loading}
@@ -117,9 +112,9 @@ export default function ChangePassword() {
           >
             {t("accountSettings.updatePassword", "Update Password")}
           </Button>
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
+        </Card.Title>
+      </Card.Header>
+      <Card.Content>
         <Form {...form}>
           <form
             className="space-y-4"
@@ -176,7 +171,7 @@ export default function ChangePassword() {
             />
           </form>
         </Form>
-      </CardContent>
+      </Card.Content>
     </Card>
   );
 }

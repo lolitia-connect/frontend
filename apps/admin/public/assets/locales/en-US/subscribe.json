@@ -96,7 +96,9 @@
       "template": "Templates"
     },
     "validation": {
-      "invalidDefaultParams": "Invalid query-string parameters"
+      "invalidDefaultParams": "Invalid query-string parameters",
+      "userAgentRequiredSuffix": "is required",
+      "nameRequired": "Client name is required"
     }
   },
   "outputFormats": {
@@ -109,6 +111,7 @@
   "protocol": {
     "title": "Client Management"
   },
+  "sections": "Sections",
   "table": {
     "columns": {
       "default": "Default",

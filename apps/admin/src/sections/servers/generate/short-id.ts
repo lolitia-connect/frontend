@@ -1,3 +1,5 @@
+"use client";
+
 /**
  * Generate a short ID for Reality
  * @returns A random hexadecimal string of length 2, 4, 6, 8, 10, 12, 14, or 16

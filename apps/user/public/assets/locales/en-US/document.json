@@ -3,6 +3,7 @@
   "noSubscription": "Please purchase a subscription",
   "document": "Document",
   "read": "Read",
+  "sections": "Sections",
   "tutorial": "Tutorial",
   "loadingSubscriptionConfig": "Loading subscription configuration...",
   "subscriptionConfigUnavailable": "Subscription configuration is unavailable. Please refresh and try again."

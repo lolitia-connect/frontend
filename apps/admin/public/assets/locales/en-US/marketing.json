@@ -75,6 +75,7 @@
   "scheduledSendTimeMustBeLater": "Scheduled send time must be later than current time",
   "scheduleSend": "Schedule Send",
   "scope": "Send Scope",
+  "sections": "Sections",
   "selectSendScope": "Select send scope",
   "selectSendTime": "Select send time, leave empty for immediate send",
   "selectValidSubscriptionsOnly": "Select currently valid subscriptions only",

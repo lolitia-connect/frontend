@@ -1,15 +1,9 @@
 "use client";
 
+import { Modal } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@workspace/ui/components/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@workspace/ui/components/dialog";
+
 import { Input } from "@workspace/ui/components/input";
 import { Label } from "@workspace/ui/components/label";
 import { getSystemNodeConfig as getNodeConfig } from "@workspace/ui/services/admin/admin";
@@ -80,52 +74,60 @@ export default function ServerInstall({ server, trigger }: Props) {
     localStorage.setItem("API_HOST", e.target.value);
   }, []);
   return (
-    <Dialog onOpenChange={setOpen} open={open}>
-      <DialogTrigger asChild>
-        {trigger || (
-          <Button variant="secondary">{t("connect", "Connect")}</Button>
-        )}
-      </DialogTrigger>
+    <Modal isOpen={open} onOpenChange={setOpen}>
+      {trigger || (
+        <Button variant="secondary">{t("connect", "Connect")}</Button>
+      )}
 
-      <DialogContent className="w-[720px] max-w-full md:max-w-3xl">
-        <DialogHeader>
-          <DialogTitle>{t("oneClickInstall", "One-click Install")}</DialogTitle>
-        </DialogHeader>
+      <Modal.Backdrop>
+        <Modal.Container>
+          <Modal.Dialog className="w-[720px] max-w-full md:max-w-3xl">
+            <Modal.Header>
+              <Modal.Heading>
+                {t("oneClickInstall", "One-click Install")}
+              </Modal.Heading>
+            </Modal.Header>
 
-        <div className="space-y-4">
-          <div>
-            <Label>{t("apiHost", "API Host")}</Label>
-            <div className="flex items-center gap-2">
-              <Input
-                onChange={onDomainChange}
-                placeholder={t("apiHostPlaceholder", "http(s)://example.com")}
-                value={domain}
-              />
+            <div className="space-y-4">
+              <div>
+                <Label>{t("apiHost", "API Host")}</Label>
+                <div className="flex items-center gap-2">
+                  <Input
+                    onChange={onDomainChange}
+                    placeholder={t(
+                      "apiHostPlaceholder",
+                      "http(s)://example.com"
+                    )}
+                    value={domain}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <Label>{t("installCommand", "Install command")}</Label>
+                <div className="flex flex-col gap-2">
+                  <textarea
+                    aria-label={t("installCommand", "Install command")}
+                    className="min-h-[88px] w-full rounded border p-2 font-mono text-sm"
+                    readOnly
+                    value={installCommand}
+                  />
+                </div>
+              </div>
             </div>
-          </div>
 
-          <div>
-            <Label>{t("installCommand", "Install command")}</Label>
-            <div className="flex flex-col gap-2">
-              <textarea
-                aria-label={t("installCommand", "Install command")}
-                className="min-h-[88px] w-full rounded border p-2 font-mono text-sm"
-                readOnly
-                value={installCommand}
-              />
-            </div>
-          </div>
-        </div>
-
-        <DialogFooter className="flex-row justify-end gap-2 pt-3">
-          <Button onClick={() => setOpen(false)} variant="outline">
-            {t("close", "Close")}
-          </Button>
-          <Button onClick={handleCopy}>
-            {t("copyAndClose", "Copy and Close")}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+            <Modal.Footer className="flex-row justify-end gap-2 pt-3">
+              <Button onClick={() => setOpen(false)} variant="outline">
+                {t("close", "Close")}
+              </Button>
+              <Button onClick={handleCopy}>
+                {t("copyAndClose", "Copy and Close")}
+              </Button>
+            </Modal.Footer>
+            <Modal.CloseTrigger aria-label="Close" />
+          </Modal.Dialog>
+        </Modal.Container>
+      </Modal.Backdrop>
+    </Modal>
   );
 }

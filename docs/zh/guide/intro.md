@@ -54,7 +54,7 @@ PPanel 采用 Monorepo 架构，便于统一管理和维护：
 - **UI 组件**: shadcn/ui
 - **构建工具**: Vite + Turbo
 - **代码规范**: Biome
-- **Git 规范**: Lefthook + Gitmoji
+- **Git 规范**: Lefthook
 
 ## 主要功能
 

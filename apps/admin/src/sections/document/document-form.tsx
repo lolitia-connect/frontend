@@ -1,3 +1,6 @@
+"use client";
+
+import { Sheet } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@workspace/ui/components/button";
 import {
@@ -10,14 +13,7 @@ import {
 } from "@workspace/ui/components/form";
 import { Input } from "@workspace/ui/components/input";
 import { ScrollArea } from "@workspace/ui/components/scroll-area";
-import {
-  Sheet,
-  SheetContent,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@workspace/ui/components/sheet";
+
 import { MarkdownEditor } from "@workspace/ui/composed/editor/markdown";
 import { TagInput } from "@workspace/ui/composed/tag-input";
 import { useEffect, useState } from "react";
@@ -69,8 +65,8 @@ export default function DocumentForm<T extends Record<string, any>>({
   }
 
   return (
-    <Sheet onOpenChange={setOpen} open={open}>
-      <SheetTrigger asChild>
+    <Sheet isOpen={open} onOpenChange={setOpen} placement="right">
+      <Sheet.Trigger>
         <Button
           onClick={() => {
             form.reset();
@@ -79,181 +75,194 @@ export default function DocumentForm<T extends Record<string, any>>({
         >
           {trigger}
         </Button>
-      </SheetTrigger>
-      <SheetContent className="w-[500px] max-w-full md:max-w-screen-md">
-        <SheetHeader>
-          <SheetTitle>{title}</SheetTitle>
-        </SheetHeader>
-        <ScrollArea className="h-[calc(100vh-48px-36px-36px-env(safe-area-inset-top))]">
-          <Form {...form}>
-            <form
-              className="space-y-4 px-6 pt-4"
-              onSubmit={form.handleSubmit(handleSubmit)}
-            >
-              <FormField
-                control={form.control}
-                name="title"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t("form.title", "Title")}</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder={t(
-                          "form.titlePlaceholder",
-                          "Enter document title"
-                        )}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="tags"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t("form.tags", "Tags")}</FormLabel>
-                    <FormControl>
-                      <TagInput
-                        onChange={(value) => form.setValue(field.name, value)}
-                        placeholder={t("form.tagsPlaceholder", "Enter tags")}
-                        value={field.value}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="content"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t("form.content", "Content")}</FormLabel>
-                    <FormControl>
-                      <MarkdownEditor
-                        onChange={(value) => {
-                          form.setValue(field.name, value);
-                        }}
-                        value={field.value}
-                      />
-                    </FormControl>
-                    <div className="mt-4 space-y-2 border-t pt-4">
-                      <p className="font-medium text-muted-foreground text-sm">
-                        {t(
-                          "form.variables.title",
-                          "Template variables (replaced with the viewing user's own data)"
-                        )}
-                      </p>
-                      <div className="space-y-2 text-muted-foreground text-xs">
-                        <div className="flex items-center gap-2">
-                          <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-foreground">
-                            {"{{subscribe_url}}"}
-                          </code>
-                          <span>
-                            {t(
-                              "form.variables.subscribeUrl",
-                              "Subscription link (raw)"
+      </Sheet.Trigger>
+      <Sheet.Backdrop>
+        <Sheet.Content>
+          <Sheet.Dialog className="w-[500px] max-w-full md:max-w-screen-md">
+            <Sheet.Header>
+              <Sheet.Heading>{title}</Sheet.Heading>
+            </Sheet.Header>
+            <ScrollArea className="h-[calc(100vh-48px-36px-36px-env(safe-area-inset-top))]">
+              <Form {...form}>
+                <form
+                  className="space-y-4 px-6 pt-4"
+                  onSubmit={form.handleSubmit(handleSubmit)}
+                >
+                  <FormField
+                    control={form.control}
+                    name="title"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{t("form.title", "Title")}</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder={t(
+                              "form.titlePlaceholder",
+                              "Enter document title"
                             )}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-foreground">
-                            {"{{subscribe_url_encoded}}"}
-                          </code>
-                          <span>
-                            {t(
-                              "form.variables.subscribeUrlEncoded",
-                              "Subscription link, URL-encoded (most client deep links)"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="tags"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{t("form.tags", "Tags")}</FormLabel>
+                        <FormControl>
+                          <TagInput
+                            onChange={(value) =>
+                              form.setValue(field.name, value)
+                            }
+                            placeholder={t(
+                              "form.tagsPlaceholder",
+                              "Enter tags"
                             )}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-foreground">
-                            {"{{subscribe_url_base64}}"}
-                          </code>
-                          <span>
+                            value={field.value}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="content"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{t("form.content", "Content")}</FormLabel>
+                        <FormControl>
+                          <MarkdownEditor
+                            onChange={(value) => {
+                              form.setValue(field.name, value);
+                            }}
+                            value={field.value}
+                          />
+                        </FormControl>
+                        <div className="mt-4 space-y-2 border-t pt-4">
+                          <p className="font-medium text-muted text-sm">
                             {t(
-                              "form.variables.subscribeUrlBase64",
-                              "Subscription link, Base64 (Shadowrocket)"
+                              "form.variables.title",
+                              "Template variables (replaced with the viewing user's own data)"
                             )}
-                          </span>
+                          </p>
+                          <div className="space-y-2 text-muted text-xs">
+                            <div className="flex items-center gap-2">
+                              <code className="rounded bg-default px-1.5 py-0.5 font-mono text-foreground">
+                                {"{{subscribe_url}}"}
+                              </code>
+                              <span>
+                                {t(
+                                  "form.variables.subscribeUrl",
+                                  "Subscription link (raw)"
+                                )}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <code className="rounded bg-default px-1.5 py-0.5 font-mono text-foreground">
+                                {"{{subscribe_url_encoded}}"}
+                              </code>
+                              <span>
+                                {t(
+                                  "form.variables.subscribeUrlEncoded",
+                                  "Subscription link, URL-encoded (most client deep links)"
+                                )}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <code className="rounded bg-default px-1.5 py-0.5 font-mono text-foreground">
+                                {"{{subscribe_url_base64}}"}
+                              </code>
+                              <span>
+                                {t(
+                                  "form.variables.subscribeUrlBase64",
+                                  "Subscription link, Base64 (Shadowrocket)"
+                                )}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <code className="rounded bg-default px-1.5 py-0.5 font-mono text-foreground">
+                                {"{{subscribe_url_qx}}"}
+                              </code>
+                              <span>
+                                {t(
+                                  "form.variables.subscribeUrlQx",
+                                  "For Quantumult X add-resource"
+                                )}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <code className="rounded bg-default px-1.5 py-0.5 font-mono text-foreground">
+                                {"{{site_name}}"}
+                              </code>
+                              <span>
+                                {t("form.variables.siteName", "Site name")}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <code className="rounded bg-default px-1.5 py-0.5 font-mono text-foreground">
+                                {"{{site_name_encoded}}"}
+                              </code>
+                              <span>
+                                {t(
+                                  "form.variables.siteNameEncoded",
+                                  "Site name (URL-encoded)"
+                                )}
+                              </span>
+                            </div>
+                            <div className="pl-6 text-default-600">
+                              💡{" "}
+                              {t(
+                                "form.variables.example",
+                                "Example: clash://install-config?url={{subscribe_url_encoded}}"
+                              )}
+                            </div>
+                            <div className="flex items-start gap-2 pt-1">
+                              <code className="rounded bg-default px-1.5 py-0.5 font-mono text-foreground">
+                                {"{{#if_subscribed}}…{{/if_subscribed}}"}
+                              </code>
+                              <span>
+                                {t(
+                                  "form.variables.ifSubscribed",
+                                  "Conditional block: shows the wrapped content only to users with an active subscription (use {{#if_not_subscribed}}…{{/if_not_subscribed}} for the opposite)."
+                                )}
+                              </span>
+                            </div>
+                          </div>
                         </div>
-                        <div className="flex items-center gap-2">
-                          <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-foreground">
-                            {"{{subscribe_url_qx}}"}
-                          </code>
-                          <span>
-                            {t(
-                              "form.variables.subscribeUrlQx",
-                              "For Quantumult X add-resource"
-                            )}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-foreground">
-                            {"{{site_name}}"}
-                          </code>
-                          <span>
-                            {t("form.variables.siteName", "Site name")}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-foreground">
-                            {"{{site_name_encoded}}"}
-                          </code>
-                          <span>
-                            {t(
-                              "form.variables.siteNameEncoded",
-                              "Site name (URL-encoded)"
-                            )}
-                          </span>
-                        </div>
-                        <div className="pl-6 text-orange-600 dark:text-orange-400">
-                          💡{" "}
-                          {t(
-                            "form.variables.example",
-                            "Example: clash://install-config?url={{subscribe_url_encoded}}"
-                          )}
-                        </div>
-                        <div className="flex items-start gap-2 pt-1">
-                          <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-foreground">
-                            {"{{#if_subscribed}}…{{/if_subscribed}}"}
-                          </code>
-                          <span>
-                            {t(
-                              "form.variables.ifSubscribed",
-                              "Conditional block: shows the wrapped content only to users with an active subscription (use {{#if_not_subscribed}}…{{/if_not_subscribed}} for the opposite)."
-                            )}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </form>
-          </Form>
-        </ScrollArea>
-        <SheetFooter className="flex-row justify-end gap-2 pt-3">
-          <Button
-            loading={loading}
-            onClick={() => {
-              setOpen(false);
-            }}
-            variant="outline"
-          >
-            {t("form.cancel", "Cancel")}
-          </Button>
-          <Button loading={loading} onClick={form.handleSubmit(handleSubmit)}>
-            {" "}
-            {t("form.confirm", "Confirm")}
-          </Button>
-        </SheetFooter>
-      </SheetContent>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </form>
+              </Form>
+            </ScrollArea>
+            <Sheet.Footer className="flex-row justify-end gap-2 pt-3">
+              <Button
+                loading={loading}
+                onClick={() => {
+                  setOpen(false);
+                }}
+                variant="outline"
+              >
+                {t("form.cancel", "Cancel")}
+              </Button>
+              <Button
+                loading={loading}
+                onClick={form.handleSubmit(handleSubmit)}
+              >
+                {" "}
+                {t("form.confirm", "Confirm")}
+              </Button>
+            </Sheet.Footer>
+            <Sheet.CloseTrigger aria-label="Close" />
+          </Sheet.Dialog>
+        </Sheet.Content>
+      </Sheet.Backdrop>
     </Sheet>
   );
 }

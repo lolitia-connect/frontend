@@ -1,13 +1,17 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
-import { Link } from "@tanstack/react-router";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from "@workspace/ui/components/card";
+  TabIndicator,
+  Tabs,
+  TabList as TabsList,
+  TabListContainer as TabsListContainer,
+  Tab as TabsTrigger,
+} from "@heroui/react";
+import { useQuery } from "@tanstack/react-query";
 import {
   ChartContainer,
   ChartTooltip,
@@ -15,9 +19,9 @@ import {
 } from "@workspace/ui/components/chart";
 // (Select imports removed)
 import { Separator } from "@workspace/ui/components/separator";
-import { Tabs, TabsList, TabsTrigger } from "@workspace/ui/components/tabs";
 import Empty from "@workspace/ui/composed/empty";
 import { Icon } from "@workspace/ui/composed/icon";
+import { Link } from "@workspace/ui/lib/router-compat";
 import {
   getConsoleServer as queryServerTotalData,
   getConsoleTicket as queryTicketWaitReply,
@@ -94,19 +98,35 @@ export default function Statistics() {
 
     return (
       <Card>
-        <CardHeader className="!flex-row flex items-center justify-between">
-          <CardTitle>
+        <CardHeader className="!flex-row flex items-center justify-between gap-2">
+          <CardTitle className="min-w-0">
             {type === "nodes"
               ? t("nodeTraffic", "Node Traffic")
               : t("userTraffic", "User Traffic")}
           </CardTitle>
-          <Tabs onValueChange={setTimeFrame} value={timeFrame}>
-            <TabsList>
-              <TabsTrigger value="today">{t("today", "Today")}</TabsTrigger>
-              <TabsTrigger value="yesterday">
-                {t("yesterday", "Yesterday")}
-              </TabsTrigger>
-            </TabsList>
+          <Tabs
+            className="min-w-0 max-w-full shrink-0"
+            onSelectionChange={(key) => setTimeFrame(String(key))}
+            selectedKey={timeFrame}
+          >
+            <TabsListContainer className="min-w-0 max-w-full">
+              <TabsList aria-label={t("sections", "Sections")}>
+                <TabsTrigger
+                  className="w-auto flex-1 whitespace-nowrap"
+                  id="today"
+                >
+                  {t("today", "Today")}
+                  <TabIndicator />
+                </TabsTrigger>
+                <TabsTrigger
+                  className="w-auto flex-1 whitespace-nowrap"
+                  id="yesterday"
+                >
+                  {t("yesterday", "Yesterday")}
+                  <TabIndicator />
+                </TabsTrigger>
+              </TabsList>
+            </TabsListContainer>
           </Tabs>
         </CardHeader>
         <CardContent className="h-80">
@@ -116,11 +136,16 @@ export default function Statistics() {
               config={{
                 traffic: {
                   label: t("traffic", "Traffic"),
-                  color: "var(--primary)",
+                  // `--primary` was the legacy bridge alias of `--accent`; read
+                  // HeroUI's brand token directly instead of through the bridge.
+                  color: "var(--accent)",
                 },
                 type: {
                   label: t("type", "Type"),
-                  color: "var(--muted-foreground)",
+                  // `--muted-foreground` is defined NOWHERE (neither HeroUI nor
+                  // the bridge) so this chart series had no colour at all.
+                  // HeroUI's quiet-text token is `--muted`.
+                  color: "var(--muted)",
                 },
                 label: {
                   color: "var(--foreground)",
@@ -180,11 +205,14 @@ export default function Statistics() {
                 />
                 <Bar
                   dataKey="traffic"
-                  fill="var(--primary)"
+                  fill="var(--accent)"
                   radius={[0, 4, 4, 0]}
                 >
+                  {/* The series name is drawn *on top of* the rose bar, so it
+                      has to read as text on the brand fill — `--foreground`
+                      (near-black) was unreadable there. */}
                   <LabelList
-                    className="fill-foreground"
+                    className="fill-accent-foreground"
                     dataKey="name"
                     fontSize={12}
                     offset={8}
@@ -205,7 +233,7 @@ export default function Statistics() {
 
   return (
     <>
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid auto-rows-fr grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
         {[
           {
             title: t("onlineUsersCount", "Online Users"),
@@ -213,10 +241,7 @@ export default function Statistics() {
             subtitle: t("currentlyOnline", "Currently Online"),
             icon: "uil:users-alt",
             href: "/dashboard/servers",
-            color: "text-blue-600 dark:text-blue-400",
-            iconBg: "bg-blue-100 dark:bg-blue-900/30",
           },
-
           {
             title: t("todayTraffic", "Today Traffic"),
             value: formatBytes(
@@ -225,8 +250,6 @@ export default function Statistics() {
             ),
             subtitle: `↑${formatBytes(ServerTotal?.today_upload || 0)} ↓${formatBytes(ServerTotal?.today_download || 0)}`,
             icon: "uil:exchange-alt",
-            color: "text-purple-600 dark:text-purple-400",
-            iconBg: "bg-purple-100 dark:bg-purple-900/30",
           },
           {
             title: t("monthTraffic", "Month Traffic"),
@@ -236,8 +259,6 @@ export default function Statistics() {
             ),
             subtitle: `↑${formatBytes(ServerTotal?.monthly_upload || 0)} ↓${formatBytes(ServerTotal?.monthly_download || 0)}`,
             icon: "uil:cloud-data-connection",
-            color: "text-orange-600 dark:text-orange-400",
-            iconBg: "bg-orange-100 dark:bg-orange-900/30",
           },
           {
             title: t("totalServers", "Total Servers"),
@@ -247,17 +268,16 @@ export default function Statistics() {
             subtitle: `${t("online", "Online")} ${ServerTotal?.online_servers || 0} ${t("offline", "Offline")} ${ServerTotal?.offline_servers || 0}`,
             icon: "uil:server-network",
             href: "/dashboard/servers",
-            color: "text-green-600 dark:text-green-400",
-            iconBg: "bg-green-100 dark:bg-green-900/30",
           },
           {
+            // The only genuinely alarming metric, so it keeps a semantic
+            // warning colour instead of the shared rose icon plate.
             title: t("pendingTickets", "Pending Tickets"),
             value: TicketTotal || 0,
             subtitle: t("pending", "Pending"),
             icon: "uil:clipboard-notes",
             href: "/dashboard/ticket",
-            color: "text-red-600 dark:text-red-400",
-            iconBg: "bg-red-100 dark:bg-red-900/30",
+            alert: true,
           },
         ].map((item, index) => (
           <Link
@@ -265,27 +285,30 @@ export default function Statistics() {
             key={index}
             to={item.href || "#"}
           >
-            <Card className={`group ${item.href ? "cursor-pointer" : ""}`}>
-              <CardContent>
-                <div className="flex items-center justify-between">
+            <Card
+              className={`group h-full ${item.href ? "cursor-pointer" : ""}`}
+            >
+              <CardContent className="flex flex-1 items-center justify-center">
+                <div className="flex w-full items-center justify-between">
                   <div className="flex-1">
-                    <p className="mb-2 font-medium text-muted-foreground text-sm">
+                    <p className="mb-2 font-medium text-default-600 text-sm">
                       {item.title}
                     </p>
-                    <div className={`mb-1 font-bold text-2xl ${item.color}`}>
+                    <div className="mb-1 font-bold text-2xl text-foreground">
                       {item.value}
                     </div>
-                    <div className="h-4 text-muted-foreground text-xs">
+                    <div className="h-4 text-muted text-xs">
                       {item.subtitle}
                     </div>
                   </div>
                   <div
-                    className={`rounded-full p-3 ${item.iconBg} transition-transform duration-300 group-hover:scale-110`}
+                    className={`rounded-full p-3 transition-transform duration-300 group-hover:scale-110 ${
+                      item.alert
+                        ? "bg-warning-soft text-warning-soft-foreground"
+                        : "bg-primary-50 text-primary-500"
+                    }`}
                   >
-                    <Icon
-                      className={`h-6 w-6 ${item.color}`}
-                      icon={item.icon}
-                    />
+                    <Icon className="h-6 w-6" icon={item.icon} />
                   </div>
                 </div>
               </CardContent>

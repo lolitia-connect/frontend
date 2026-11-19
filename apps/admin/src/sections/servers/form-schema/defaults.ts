@@ -1,3 +1,5 @@
+"use client";
+
 import { XHTTP_MODES } from "./constants";
 import type { ProtocolType } from "./types";
 

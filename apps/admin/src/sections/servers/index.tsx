@@ -53,9 +53,11 @@ function PctBar({ value }: { value: number }) {
                       : "w-0";
   return (
     <div className="min-w-24">
-      <div className="text-xs leading-none">{v}%</div>
-      <div className="h-1.5 w-full rounded bg-muted">
-        <div className={cn("h-1.5 rounded bg-primary", widthClass)} />
+      <div className="text-right font-medium text-foreground text-xs leading-none">
+        {v}%
+      </div>
+      <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-primary-100">
+        <div className={cn("h-1.5 rounded-full bg-accent", widthClass)} />
       </div>
     </div>
   );
@@ -278,7 +280,7 @@ export default function Servers() {
                   <span
                     className={cn(
                       "inline-block h-2.5 w-2.5 rounded-full",
-                      offline ? "bg-zinc-400" : "bg-emerald-500"
+                      offline ? "bg-default-500" : "bg-success-soft-foreground"
                     )}
                   />
                   <span className="text-sm">
@@ -329,7 +331,7 @@ export default function Servers() {
         header={{
           title: t("pageTitle", "Servers"),
           toolbar: (
-            <div className="flex gap-2">
+            <div className="flex min-w-0 max-w-full flex-wrap justify-end gap-2 [&>*]:shrink-0">
               <Button
                 onClick={async () => {
                   await sortServerByName();

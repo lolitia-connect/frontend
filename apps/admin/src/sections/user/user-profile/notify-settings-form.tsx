@@ -1,11 +1,8 @@
+"use client";
+
+import { Card, CardContent, CardHeader, CardTitle } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@workspace/ui/components/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@workspace/ui/components/card";
 import {
   Form,
   FormControl,

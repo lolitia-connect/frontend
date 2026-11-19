@@ -9,7 +9,7 @@ export async function getAds(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: API.GetAdsResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/common/ads`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/common/ads`,
     {
       method: "GET",
       params: {
@@ -27,7 +27,7 @@ export async function checkVerificationCode(
 ) {
   return request<API.Response & { data?: API.CheckVerificationCodeRespone }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/common/check_verification_code`,
     {
       method: "POST",
@@ -43,7 +43,7 @@ export async function checkVerificationCode(
 /** Get Client GET /v1/common/client */
 export async function getClient(options?: { [key: string]: any }) {
   return request<API.Response & { data?: API.GetSubscribeClientResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/common/client`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/common/client`,
     {
       method: "GET",
       ...(options || {}),
@@ -54,7 +54,7 @@ export async function getClient(options?: { [key: string]: any }) {
 /** 此处后端没有提供注释 GET /v1/common/heartbeat */
 export async function heartbeat(options?: { [key: string]: any }) {
   return request<API.Response & { data?: API.HeartbeatResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/common/heartbeat`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/common/heartbeat`,
     {
       method: "GET",
       ...(options || {}),
@@ -68,7 +68,7 @@ export async function sendEmailCode(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: API.SendCodeResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/common/send_code`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/common/send_code`,
     {
       method: "POST",
       headers: {
@@ -86,7 +86,7 @@ export async function sendSmsCode(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: API.SendCodeResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/common/send_sms_code`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/common/send_sms_code`,
     {
       method: "POST",
       headers: {
@@ -101,7 +101,7 @@ export async function sendSmsCode(
 /** Get global config GET /v1/common/site/config */
 export async function getGlobalConfig(options?: { [key: string]: any }) {
   return request<API.Response & { data?: API.GetGlobalConfigResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/common/site/config`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/common/site/config`,
     {
       method: "GET",
       ...(options || {}),
@@ -112,7 +112,7 @@ export async function getGlobalConfig(options?: { [key: string]: any }) {
 /** Get Privacy Policy GET /v1/common/site/privacy */
 export async function getPrivacyPolicy(options?: { [key: string]: any }) {
   return request<API.Response & { data?: API.PrivacyPolicyConfig }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/common/site/privacy`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/common/site/privacy`,
     {
       method: "GET",
       ...(options || {}),
@@ -123,7 +123,7 @@ export async function getPrivacyPolicy(options?: { [key: string]: any }) {
 /** Get stat GET /v1/common/site/stat */
 export async function getStat(options?: { [key: string]: any }) {
   return request<API.Response & { data?: API.GetStatResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/common/site/stat`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/common/site/stat`,
     {
       method: "GET",
       ...(options || {}),
@@ -134,7 +134,7 @@ export async function getStat(options?: { [key: string]: any }) {
 /** Get Tos Content GET /v1/common/site/tos */
 export async function getTos(options?: { [key: string]: any }) {
   return request<API.Response & { data?: API.GetTosResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/common/site/tos`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/common/site/tos`,
     {
       method: "GET",
       ...(options || {}),
@@ -145,7 +145,7 @@ export async function getTos(options?: { [key: string]: any }) {
 /** Liveness probe Reports that the process serves HTTP. It answers 200 whenever the listener is up, regardless of the database and Redis; use /readyz for those. GET /healthz */
 export async function getHealthz(options?: { [key: string]: any }) {
   return request<Record<string, any>>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/healthz`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/healthz`,
     {
       method: "GET",
       ...(options || {}),
@@ -156,7 +156,7 @@ export async function getHealthz(options?: { [key: string]: any }) {
 /** Readiness probe Reports whether the server can serve requests: the runtime bootstrap has loaded the settings and the database and Redis answer a ping (the ping result is cached for a few seconds). Otherwise it answers 503 with the reason. GET /readyz */
 export async function getReadyz(options?: { [key: string]: any }) {
   return request<Record<string, any>>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/readyz`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/readyz`,
     {
       method: "GET",
       ...(options || {}),
@@ -171,7 +171,7 @@ export async function getAuthCheck(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean & { data?: API.CheckUserResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/auth/check`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/auth/check`,
     {
       method: "GET",
       params: {
@@ -190,7 +190,7 @@ export async function getAuthCheckTelephone(
 ) {
   return request<
     API.ResponseSuccessBean & { data?: API.TelephoneCheckUserResponse }
-  >(`${import.meta.env.VITE_API_PREFIX || ""}/v1/auth/check/telephone`, {
+  >(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/auth/check/telephone`, {
     method: "GET",
     params: {
       ...params,
@@ -205,7 +205,7 @@ export async function postAuthLogin(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean & { data?: API.LoginResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/auth/login`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/auth/login`,
     {
       method: "POST",
       headers: {
@@ -223,7 +223,7 @@ export async function postAuthLoginDevice(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean & { data?: API.LoginResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/auth/login/device`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/auth/login/device`,
     {
       method: "POST",
       headers: {
@@ -241,7 +241,7 @@ export async function postAuthLoginTelephone(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean & { data?: API.LoginResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/auth/login/telephone`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/auth/login/telephone`,
     {
       method: "POST",
       headers: {
@@ -266,7 +266,7 @@ export async function postAuthOauthCallbackApple(
   options?: { [key: string]: any }
 ) {
   return request<any>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/auth/oauth/callback/apple`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/auth/oauth/callback/apple`,
     {
       method: "POST",
       headers: {
@@ -284,7 +284,7 @@ export async function postAuthOauthLogin(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean & { data?: API.OAuthLoginResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/auth/oauth/login`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/auth/oauth/login`,
     {
       method: "POST",
       headers: {
@@ -302,7 +302,7 @@ export async function postAuthOauthLoginToken(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean & { data?: API.LoginResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/auth/oauth/login/token`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/auth/oauth/login/token`,
     {
       method: "POST",
       headers: {
@@ -320,7 +320,7 @@ export async function postAuthRegister(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean & { data?: API.LoginResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/auth/register`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/auth/register`,
     {
       method: "POST",
       headers: {
@@ -338,7 +338,7 @@ export async function postAuthRegisterTelephone(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean & { data?: API.LoginResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/auth/register/telephone`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/auth/register/telephone`,
     {
       method: "POST",
       headers: {
@@ -356,7 +356,7 @@ export async function postAuthReset(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean & { data?: API.LoginResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/auth/reset`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/auth/reset`,
     {
       method: "POST",
       headers: {
@@ -374,7 +374,7 @@ export async function postAuthResetTelephone(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean & { data?: API.LoginResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/auth/reset/telephone`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/auth/reset/telephone`,
     {
       method: "POST",
       headers: {
@@ -393,7 +393,7 @@ export async function getCommonAds(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean & { data?: API.GetAdsResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/common/ads`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/common/ads`,
     {
       method: "GET",
       params: {
@@ -413,7 +413,7 @@ export async function postCommonCheckVerificationCode(
     API.ResponseSuccessBean & { data?: API.CheckVerificationCodeRespone }
   >(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/common/check_verification_code`,
     {
       method: "POST",
@@ -430,7 +430,7 @@ export async function postCommonCheckVerificationCode(
 export async function getCommonClient(options?: { [key: string]: any }) {
   return request<
     API.ResponseSuccessBean & { data?: API.GetSubscribeClientResponse }
-  >(`${import.meta.env.VITE_API_PREFIX || ""}/v1/common/client`, {
+  >(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/common/client`, {
     method: "GET",
     ...(options || {}),
   });
@@ -439,7 +439,7 @@ export async function getCommonClient(options?: { [key: string]: any }) {
 /** Heartbeat GET /v1/common/heartbeat */
 export async function getCommonHeartbeat(options?: { [key: string]: any }) {
   return request<API.ResponseSuccessBean & { data?: API.HeartbeatResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/common/heartbeat`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/common/heartbeat`,
     {
       method: "GET",
       ...(options || {}),
@@ -453,7 +453,7 @@ export async function postCommonSendCode(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean & { data?: API.SendCodeResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/common/send_code`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/common/send_code`,
     {
       method: "POST",
       headers: {
@@ -471,7 +471,7 @@ export async function postCommonSendSmsCode(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean & { data?: API.SendCodeResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/common/send_sms_code`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/common/send_sms_code`,
     {
       method: "POST",
       headers: {
@@ -487,7 +487,7 @@ export async function postCommonSendSmsCode(
 export async function getCommonSiteConfig(options?: { [key: string]: any }) {
   return request<
     API.ResponseSuccessBean & { data?: API.GetGlobalConfigResponse }
-  >(`${import.meta.env.VITE_API_PREFIX || ""}/v1/common/site/config`, {
+  >(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/common/site/config`, {
     method: "GET",
     ...(options || {}),
   });
@@ -496,7 +496,7 @@ export async function getCommonSiteConfig(options?: { [key: string]: any }) {
 /** Get Privacy Policy GET /v1/common/site/privacy */
 export async function getCommonSitePrivacy(options?: { [key: string]: any }) {
   return request<API.ResponseSuccessBean & { data?: API.PrivacyPolicyConfig }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/common/site/privacy`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/common/site/privacy`,
     {
       method: "GET",
       ...(options || {}),
@@ -507,7 +507,7 @@ export async function getCommonSitePrivacy(options?: { [key: string]: any }) {
 /** Get stat GET /v1/common/site/stat */
 export async function getCommonSiteStat(options?: { [key: string]: any }) {
   return request<API.ResponseSuccessBean & { data?: API.GetStatResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/common/site/stat`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/common/site/stat`,
     {
       method: "GET",
       ...(options || {}),
@@ -518,7 +518,7 @@ export async function getCommonSiteStat(options?: { [key: string]: any }) {
 /** Get Tos Content GET /v1/common/site/tos */
 export async function getCommonSiteTos(options?: { [key: string]: any }) {
   return request<API.ResponseSuccessBean & { data?: API.GetTosResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/common/site/tos`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/common/site/tos`,
     {
       method: "GET",
       ...(options || {}),
@@ -534,7 +534,7 @@ export async function getNotifyPlatformToken(
 ) {
   const { platform: param0, token: param1, ...queryParams } = params;
   return request<API.ResponseSuccessBean>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/notify/${param0}/${param1}`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/notify/${param0}/${param1}`,
     {
       method: "GET",
       params: { ...queryParams },
@@ -551,7 +551,7 @@ export async function putNotifyPlatformToken(
 ) {
   const { platform: param0, token: param1, ...queryParams } = params;
   return request<API.ResponseSuccessBean>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/notify/${param0}/${param1}`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/notify/${param0}/${param1}`,
     {
       method: "PUT",
       params: { ...queryParams },
@@ -568,7 +568,7 @@ export async function postNotifyPlatformToken(
 ) {
   const { platform: param0, token: param1, ...queryParams } = params;
   return request<API.ResponseSuccessBean>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/notify/${param0}/${param1}`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/notify/${param0}/${param1}`,
     {
       method: "POST",
       params: { ...queryParams },
@@ -585,7 +585,7 @@ export async function deleteNotifyPlatformToken(
 ) {
   const { platform: param0, token: param1, ...queryParams } = params;
   return request<API.ResponseSuccessBean>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/notify/${param0}/${param1}`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/notify/${param0}/${param1}`,
     {
       method: "DELETE",
       params: { ...queryParams },
@@ -602,7 +602,7 @@ export async function patchNotifyPlatformToken(
 ) {
   const { platform: param0, token: param1, ...queryParams } = params;
   return request<API.ResponseSuccessBean>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/notify/${param0}/${param1}`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/notify/${param0}/${param1}`,
     {
       method: "PATCH",
       params: { ...queryParams },
@@ -617,7 +617,7 @@ export async function postTelegramWebhook(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/telegram/webhook`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/telegram/webhook`,
     {
       method: "POST",
       headers: {

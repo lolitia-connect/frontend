@@ -1,3 +1,5 @@
+"use client";
+
 import yaml from "js-yaml";
 import { CDN_URL } from "@/config";
 

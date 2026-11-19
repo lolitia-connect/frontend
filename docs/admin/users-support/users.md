@@ -172,6 +172,8 @@ View user online devices:
 
 ## User Grouping
 
+In **Group Management → Config**, turn on **Enable Grouping** and choose the average, subscription, or traffic mode. Each change saves immediately. Turning grouping off keeps the selected mode for the next time you enable it.
+
 ### Group Management
 
 Create and manage user groups:

@@ -1,5 +1,6 @@
 "use client";
 
+import { Sheet } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@workspace/ui/components/button";
@@ -15,14 +16,7 @@ import {
 } from "@workspace/ui/components/form";
 import { Label } from "@workspace/ui/components/label";
 import { ScrollArea } from "@workspace/ui/components/scroll-area";
-import {
-  Sheet,
-  SheetContent,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@workspace/ui/components/sheet";
+
 import { Combobox } from "@workspace/ui/composed/combobox";
 import { EnhancedInput } from "@workspace/ui/composed/enhanced-input";
 import TagInput from "@workspace/ui/composed/tag-input";
@@ -371,8 +365,8 @@ export default function NodeForm(props: {
   }
 
   return (
-    <Sheet onOpenChange={setOpen} open={open}>
-      <SheetTrigger asChild>
+    <Sheet isOpen={open} onOpenChange={setOpen} placement="right">
+      <Sheet.Trigger>
         <Button
           onClick={() => {
             form.reset({
@@ -391,303 +385,317 @@ export default function NodeForm(props: {
         >
           {trigger}
         </Button>
-      </SheetTrigger>
+      </Sheet.Trigger>
 
-      <SheetContent className="w-[560px] max-w-full">
-        <SheetHeader>
-          <SheetTitle>{title}</SheetTitle>
-        </SheetHeader>
-        <ScrollArea className="h-[calc(100dvh-48px-36px-36px-env(safe-area-inset-top))] px-6 pt-4">
-          <Form {...form}>
-            <form
-              className="grid grid-cols-1 gap-4"
-              id={formId}
-              onSubmit={form.handleSubmit(handleSubmit)}
-            >
-              <FormField
-                control={form.control}
-                name="node_type"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t("node_type", "Node Type")}</FormLabel>
-                    <FormControl>
-                      <Combobox<NodeFormValues["node_type"], false>
-                        onChange={(v) =>
-                          form.setValue("node_type", v || "landing", {
-                            shouldDirty: true,
-                            shouldValidate: true,
-                          })
-                        }
-                        options={[
-                          {
-                            value: "landing",
-                            label: t("node_type_landing", "Landing Node"),
-                          },
-                          {
-                            value: "front",
-                            label: t("node_type_front", "Frontend Node"),
-                          },
-                        ]}
-                        placeholder={t("select_node_type", "Select node type…")}
-                        value={field.value}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              {!isFrontNode && (
-                <FormField
-                  control={form.control}
-                  name="server_id"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t("server", "Server")}</FormLabel>
-                      <FormControl>
-                        <Combobox<string, false>
-                          onChange={(v) => handleServerChange(v)}
-                          options={servers.map((s) => ({
-                            value: s.id,
-                            label: `${s.name} (${(s.address as any) || ""})`,
-                          }))}
-                          placeholder={t("select_server", "Select server…")}
-                          value={field.value}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
+      <Sheet.Backdrop>
+        <Sheet.Content>
+          <Sheet.Dialog className="w-[560px] max-w-full">
+            <Sheet.Header>
+              <Sheet.Heading>{title}</Sheet.Heading>
+            </Sheet.Header>
+            <ScrollArea className="h-[calc(100dvh-48px-36px-36px-env(safe-area-inset-top))] px-6 pt-4">
+              <Form {...form}>
+                <form
+                  className="admin-drawer-form"
+                  id={formId}
+                  onSubmit={form.handleSubmit(handleSubmit)}
+                >
+                  <FormField
+                    control={form.control}
+                    name="node_type"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{t("node_type", "Node Type")}</FormLabel>
+                        <FormControl>
+                          <Combobox<NodeFormValues["node_type"], false>
+                            onChange={(v) =>
+                              form.setValue("node_type", v || "landing", {
+                                shouldDirty: true,
+                                shouldValidate: true,
+                              })
+                            }
+                            options={[
+                              {
+                                value: "landing",
+                                label: t("node_type_landing", "Landing Node"),
+                              },
+                              {
+                                value: "front",
+                                label: t("node_type_front", "Frontend Node"),
+                              },
+                            ]}
+                            placeholder={t(
+                              "select_node_type",
+                              "Select node type…"
+                            )}
+                            value={field.value}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  {!isFrontNode && (
+                    <FormField
+                      control={form.control}
+                      name="server_id"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{t("server", "Server")}</FormLabel>
+                          <FormControl>
+                            <Combobox<string, false>
+                              onChange={(v) => handleServerChange(v)}
+                              options={servers.map((s) => ({
+                                value: s.id,
+                                label: `${s.name} (${(s.address as any) || ""})`,
+                              }))}
+                              placeholder={t("select_server", "Select server…")}
+                              value={field.value}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                   )}
-                />
-              )}
-              {!isFrontNode && (
-                <FormField
-                  control={form.control}
-                  name="protocol"
-                  render={() => (
-                    <FormItem>
-                      <FormLabel>{t("protocol", "Protocol")}</FormLabel>
-                      <FormControl>
-                        <Combobox<string, false>
-                          onChange={(v) => handleProtocolChange(v || null)}
-                          options={availableProtocols.map((p) => ({
-                            value: `${p.protocol}:${p.id}`,
-                            label: `${p.name || p.protocol} / ${p.protocol}#${p.id}${p.port ? ` (${p.port})` : ""}`,
-                          }))}
-                          placeholder={t("select_protocol", "Select protocol…")}
-                          value={
-                            form.watch("protocol") && form.watch("protocol_id")
-                              ? `${form.watch("protocol")}:${form.watch("protocol_id")}`
-                              : ""
-                          }
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
+                  {!isFrontNode && (
+                    <FormField
+                      control={form.control}
+                      name="protocol"
+                      render={() => (
+                        <FormItem className="admin-drawer-wide">
+                          <FormLabel>{t("protocol", "Protocol")}</FormLabel>
+                          <FormControl>
+                            <Combobox<string, false>
+                              onChange={(v) => handleProtocolChange(v || null)}
+                              options={availableProtocols.map((p) => ({
+                                value: `${p.protocol}:${p.id}`,
+                                label: `${p.name || p.protocol} / ${p.protocol}#${p.id}${p.port ? ` (${p.port})` : ""}`,
+                              }))}
+                              placeholder={t(
+                                "select_protocol",
+                                "Select protocol…"
+                              )}
+                              value={
+                                form.watch("protocol") &&
+                                form.watch("protocol_id")
+                                  ? `${form.watch("protocol")}:${form.watch("protocol_id")}`
+                                  : ""
+                              }
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                   )}
-                />
-              )}
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t("name", "Name")}</FormLabel>
-                    <FormControl>
-                      <EnhancedInput
-                        {...field}
-                        onValueChange={(v) =>
-                          handleManualFieldChange("name", v as string)
-                        }
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{t("name", "Name")}</FormLabel>
+                        <FormControl>
+                          <EnhancedInput
+                            {...field}
+                            onValueChange={(v) =>
+                              handleManualFieldChange("name", v as string)
+                            }
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-              <FormField
-                control={form.control}
-                name="address"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t("address", "Address")}</FormLabel>
-                    <FormControl>
-                      <EnhancedInput
-                        {...field}
-                        onValueChange={(v) =>
-                          handleManualFieldChange("address", v as string)
-                        }
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                  <FormField
+                    control={form.control}
+                    name="address"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{t("address", "Address")}</FormLabel>
+                        <FormControl>
+                          <EnhancedInput
+                            {...field}
+                            onValueChange={(v) =>
+                              handleManualFieldChange("address", v as string)
+                            }
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-              <FormField
-                control={form.control}
-                name="port"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t("port", "Port")}</FormLabel>
-                    <FormControl>
-                      <EnhancedInput
-                        {...field}
-                        max={65_535}
-                        min={1}
-                        onValueChange={(v) =>
-                          handleManualFieldChange("port", Number(v))
-                        }
-                        placeholder="1-65535"
-                        type="number"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="tags"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t("tags", "Tags")}</FormLabel>
-                    <FormControl>
-                      <TagInput
-                        onChange={(v) => form.setValue(field.name, v)}
-                        options={existingTags}
-                        placeholder={t(
-                          "tags_placeholder",
-                          "Use Enter or comma (,) to add multiple tags"
-                        )}
-                        value={field.value || []}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      {isGroupEnabled
-                        ? t(
-                            "tags_groupMode_description",
-                            "Optional tags for display and filtering (node group will be used as tag if empty)."
-                          )
-                        : t(
-                            "tags_description",
-                            "Permission grouping tag (incl. plan binding and delivery policies)."
-                          )}
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              {isGroupEnabled && (
-                <FormField
-                  control={form.control}
-                  name="node_group_ids"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t("nodeGroup", "Node Group")}</FormLabel>
-                      <FormControl>
-                        <div className="grid grid-cols-2 gap-2">
-                          {nodeGroupsData?.map((g) => (
-                            <div
-                              className="flex items-center space-x-2"
-                              key={g.id}
-                            >
-                              <Checkbox
-                                checked={field.value?.includes(String(g.id))}
-                                id={`node-group-${g.id}`}
-                                onCheckedChange={(checked) => {
-                                  const currentValue = Array.isArray(
-                                    field.value
-                                  )
-                                    ? field.value
-                                    : [];
+                  <FormField
+                    control={form.control}
+                    name="port"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{t("port", "Port")}</FormLabel>
+                        <FormControl>
+                          <EnhancedInput
+                            {...field}
+                            max={65_535}
+                            min={1}
+                            onValueChange={(v) =>
+                              handleManualFieldChange("port", Number(v))
+                            }
+                            placeholder="1-65535"
+                            type="number"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="tags"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{t("tags", "Tags")}</FormLabel>
+                        <FormControl>
+                          <TagInput
+                            onChange={(v) => form.setValue(field.name, v)}
+                            options={existingTags}
+                            placeholder={t(
+                              "tags_placeholder",
+                              "Use Enter or comma (,) to add multiple tags"
+                            )}
+                            value={field.value || []}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          {isGroupEnabled
+                            ? t(
+                                "tags_groupMode_description",
+                                "Optional tags for display and filtering (node group will be used as tag if empty)."
+                              )
+                            : t(
+                                "tags_description",
+                                "Permission grouping tag (incl. plan binding and delivery policies)."
+                              )}
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  {isGroupEnabled && (
+                    <FormField
+                      control={form.control}
+                      name="node_group_ids"
+                      render={({ field }) => (
+                        <FormItem className="admin-drawer-wide">
+                          <FormLabel>{t("nodeGroup", "Node Group")}</FormLabel>
+                          <FormControl>
+                            <div className="grid grid-cols-2 gap-2">
+                              {nodeGroupsData?.map((g) => (
+                                <div
+                                  className="flex items-center space-x-2"
+                                  key={g.id}
+                                >
+                                  <Checkbox
+                                    checked={field.value?.includes(
+                                      String(g.id)
+                                    )}
+                                    id={`node-group-${g.id}`}
+                                    onCheckedChange={(checked) => {
+                                      const currentValue = Array.isArray(
+                                        field.value
+                                      )
+                                        ? field.value
+                                        : [];
 
-                                  if (checked) {
-                                    form.setValue(
-                                      field.name,
-                                      [...currentValue, String(g.id)],
-                                      {
-                                        shouldValidate: true,
-                                        shouldDirty: true,
+                                      if (checked) {
+                                        form.setValue(
+                                          field.name,
+                                          [...currentValue, String(g.id)],
+                                          {
+                                            shouldValidate: true,
+                                            shouldDirty: true,
+                                          }
+                                        );
+                                        return;
                                       }
-                                    );
-                                    return;
-                                  }
 
-                                  form.setValue(
-                                    field.name,
-                                    currentValue.filter(
-                                      (v: string) => v !== String(g.id)
-                                    ),
-                                    {
-                                      shouldValidate: true,
-                                      shouldDirty: true,
-                                    }
-                                  );
-                                }}
-                              />
-                              <Label
-                                className="cursor-pointer"
-                                htmlFor={`node-group-${g.id}`}
-                              >
-                                {g.name}
-                              </Label>
+                                      form.setValue(
+                                        field.name,
+                                        currentValue.filter(
+                                          (v: string) => v !== String(g.id)
+                                        ),
+                                        {
+                                          shouldValidate: true,
+                                          shouldDirty: true,
+                                        }
+                                      );
+                                    }}
+                                  />
+                                  <Label
+                                    className="cursor-pointer"
+                                    htmlFor={`node-group-${g.id}`}
+                                  >
+                                    {g.name}
+                                  </Label>
+                                </div>
+                              ))}
                             </div>
-                          ))}
-                        </div>
-                      </FormControl>
-                      <FormDescription>
-                        {t(
-                          "nodeGroup_description",
-                          "Assign this node to multiple groups for user access control."
-                        )}
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
+                          </FormControl>
+                          <FormDescription>
+                            {t(
+                              "nodeGroup_description",
+                              "Assign this node to multiple groups for user access control."
+                            )}
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                   )}
-                />
-              )}
-              {/* Is Hidden field - hidden nodes are not visible to users */}
-              <FormField
-                control={form.control}
-                name="is_hidden"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
-                    <FormControl>
-                      <Checkbox
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                    <div className="space-y-1 leading-none">
-                      <FormLabel>{t("is_hidden", "Hidden")}</FormLabel>
-                      <FormDescription>
-                        {t(
-                          "is_hidden_description",
-                          "Hidden nodes are not visible to users in subscribe"
-                        )}
-                      </FormDescription>
-                    </div>
-                  </FormItem>
-                )}
-              />
-            </form>
-          </Form>
-        </ScrollArea>
+                  {/* Is Hidden field - hidden nodes are not visible to users */}
+                  <FormField
+                    control={form.control}
+                    name="is_hidden"
+                    render={({ field }) => (
+                      <FormItem className="admin-drawer-wide flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                        <FormControl>
+                          <Checkbox
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                          />
+                        </FormControl>
+                        <div className="space-y-1 leading-none">
+                          <FormLabel>{t("is_hidden", "Hidden")}</FormLabel>
+                          <FormDescription>
+                            {t(
+                              "is_hidden_description",
+                              "Hidden nodes are not visible to users in subscribe"
+                            )}
+                          </FormDescription>
+                        </div>
+                      </FormItem>
+                    )}
+                  />
+                </form>
+              </Form>
+            </ScrollArea>
 
-        <SheetFooter className="flex-row justify-end gap-2 pt-3">
-          <Button
-            disabled={loading}
-            onClick={() => setOpen(false)}
-            variant="outline"
-          >
-            {t("cancel", "Cancel")}
-          </Button>
-          <Button disabled={loading} form={formId} type="submit">
-            {t("confirm", "Confirm")}
-          </Button>
-        </SheetFooter>
-      </SheetContent>
+            <Sheet.Footer className="flex-row justify-end gap-2 pt-3">
+              <Button
+                disabled={loading}
+                onClick={() => setOpen(false)}
+                variant="outline"
+              >
+                {t("cancel", "Cancel")}
+              </Button>
+              <Button disabled={loading} form={formId} type="submit">
+                {t("confirm", "Confirm")}
+              </Button>
+            </Sheet.Footer>
+            <Sheet.CloseTrigger aria-label="Close" />
+          </Sheet.Dialog>
+        </Sheet.Content>
+      </Sheet.Backdrop>
     </Sheet>
   );
 }

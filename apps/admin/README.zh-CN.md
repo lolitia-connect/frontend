@@ -39,6 +39,7 @@
 #### 目录
 
 - [⌨️ 本地开发](#️-本地开发)
+- [抽屉布局约定](#抽屉布局约定)
 - [🚀 在 Vercel 上部署](#-在-vercel-上部署)
 - [🤝 贡献](#-贡献)
 - [📝 许可证](#-许可证)
@@ -72,6 +73,36 @@ bun dev
 ```
 
 在浏览器中打开 <http://localhost:3000> 查看结果。
+
+## 抽屉布局约定
+
+管理端业务抽屉的统一样式位于 [app/drawers.css](./app/drawers.css)，仅由管理端根布局加载：
+
+- 桌面端宽度上限为 **60rem（960px）**，保留少量视口边距；小于 40rem 的手机视口使用全宽。移动导航单独将外层 `Sheet.Content` 限制为 **18rem（288px）**，并至少留出 2rem 遮罩空间；内部侧栏填满该宽度，不套用业务抽屉规则。
+- 宽度应设置在 `Sheet.Content`，而不只是 `Sheet.Dialog`，避免被 HeroUI 外层默认宽度限制；新表单不要再单独写固定抽屉宽度。
+- 标题与底部操作区放在滚动内容外。正文使用直接位于对话框下的 `ScrollArea`，表格或编辑器可用 `admin-drawer-body`，不再依赖硬编码的页头/页脚高度相减。
+- 短字段可用 `admin-drawer-form` 两列排布，长内容用 `admin-drawer-wide` 独占一行。网格按照抽屉实际宽度切换为单列，重复输入组自动换行，保留可用的输入宽度和增删按钮。
+- 长标签、说明、工单消息自动换行；下拉框已选值可省略显示但不改变原值。工单正文独立滚动，回复栏保持可见。
+
+[抽屉浏览器回归测试](./tests/e2e/drawers.spec.ts) 覆盖桌面/手机布局、嵌套抽屉、长内容及原有表单提交数据。从仓库根目录运行：
+
+```bash
+bun x playwright test --config apps/admin/playwright.config.ts drawers.spec.ts
+```
+
+## 页头面包屑
+
+[页头](./src/layout/header.tsx) 的面包屑保持单行，空间不足时可横向滚动查看完整路径。左侧区域允许收缩，右侧语言、时区、主题和账户按钮保持可见。[布局回归测试](./tests/e2e/layout.spec.ts) 中的 `breadcrumbs scroll` 用例覆盖中英文、320–1280px 宽度、滚动和上级链接导航。
+
+## 设置入口交互
+
+系统设置、认证控制、营销的各个入口，以及订阅配置入口和服务器管理顶部的两个入口，统一使用整卡片式的 `settings-option` 触发：整张卡片就是一个可点击按钮，样式与 HeroUI 卡片一致（表面背景、`shadow-surface` 阴影、圆角，浅色模式下带一条细边），并沿用 HeroUI 原生悬浮、按下缩放和键盘焦点反馈。每个入口点击后打开对应配置抽屉；入口之间用间距（`space-y-3`）堆叠，而不是放进列表容器。共同的尺寸和文字布局位于 [共享样式](../../packages/ui/src/styles/globals.css)。入口内容采用“图标 + 可收缩的文字容器 + 箭头”结构，长文字自动换行，图标和箭头保持尺寸；服务器列表工具栏在窄屏下自动换行，避免横向溢出。
+
+[布局回归测试](./tests/e2e/layout.spec.ts) 覆盖中英文、明暗主题、320–1280px 宽度及点击打开抽屉：
+
+```bash
+bun x playwright test --config apps/admin/playwright.config.ts layout.spec.ts --grep "settings options wrap|settings lists open"
+```
 
 ## 🚀 在 Vercel 上部署
 

@@ -1,15 +1,9 @@
 "use client";
 
-import { Link, useLocation, useSearch } from "@tanstack/react-router";
-import { Button } from "@workspace/ui/components/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-} from "@workspace/ui/components/dropdown-menu";
+import { buttonVariants, Dropdown, Header, Surface } from "@heroui/react";
+import { buildHref, useSearch } from "@workspace/ui/lib/router-compat";
 import { Check, ChevronDown, ListFilter } from "lucide-react";
+import { usePathname } from "next/navigation";
 import { useTranslation } from "react-i18next";
 
 const logGroups = [
@@ -51,18 +45,18 @@ const logGroups = [
 
 export function LogNavigation() {
   const { t } = useTranslation("log");
-  const pathname = useLocation({ select: (location) => location.pathname });
+  const pathname = usePathname();
   const search = useSearch({ strict: false });
 
   return (
-    <div className="flex flex-col gap-3 rounded-lg border bg-card p-3 shadow-xs">
+    <Surface className="flex flex-col gap-3 rounded-lg border p-3 shadow-xs">
       <div className="flex items-center gap-2">
-        <ListFilter className="size-4 text-muted-foreground" />
+        <ListFilter className="size-4 text-muted" />
         <div>
           <div className="font-medium text-sm">
             {t("navigation.title", "Log explorer")}
           </div>
-          <div className="text-muted-foreground text-xs">
+          <div className="text-muted text-xs">
             {t(
               "navigation.description",
               "Switch log sources without leaving the current investigation."
@@ -79,38 +73,42 @@ export function LogNavigation() {
           const groupLabel = t(`navigation.group.${group.key}`, group.key);
 
           return (
-            <DropdownMenu key={group.key}>
-              <DropdownMenuTrigger asChild>
-                <Button variant={activeRoute ? "secondary" : "outline"}>
-                  <span>
-                    {activeRoute
-                      ? `${groupLabel} · ${t(`navigation.item.${activeRoute.key}`, activeRoute.key)}`
-                      : groupLabel}
-                  </span>
-                  <ChevronDown className="size-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="min-w-52">
-                <DropdownMenuLabel>{groupLabel}</DropdownMenuLabel>
-                {group.routes.map((route) => (
-                  <DropdownMenuItem asChild key={route.key}>
-                    <Link
+            <Dropdown key={group.key}>
+              <Dropdown.Trigger
+                className={buttonVariants({
+                  variant: activeRoute ? "secondary" : "outline",
+                  size: "md",
+                  class: undefined,
+                })}
+              >
+                <span>
+                  {activeRoute
+                    ? `${groupLabel} · ${t(`navigation.item.${activeRoute.key}`, activeRoute.key)}`
+                    : groupLabel}
+                </span>
+                <ChevronDown className="size-4" />
+              </Dropdown.Trigger>
+              <Dropdown.Popover className="min-w-52" placement="bottom start">
+                <Header>{groupLabel}</Header>
+                <Dropdown.Menu aria-label="Actions">
+                  {group.routes.map((route) => (
+                    <Dropdown.Item
                       className="flex justify-between"
-                      search={search}
-                      to={route.url}
+                      href={buildHref(route.url, search)}
+                      key={route.key}
                     >
                       <span>
                         {t(`navigation.item.${route.key}`, route.key)}
                       </span>
                       {route.url === pathname && <Check className="size-4" />}
-                    </Link>
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
+                    </Dropdown.Item>
+                  ))}
+                </Dropdown.Menu>
+              </Dropdown.Popover>
+            </Dropdown>
           );
         })}
       </div>
-    </div>
+    </Surface>
   );
 }

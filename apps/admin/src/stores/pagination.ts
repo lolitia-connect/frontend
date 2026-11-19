@@ -1,3 +1,5 @@
+"use client";
+
 const PAGE_SIZE = 100;
 
 type PaginatedListFetcher<T> = (params: {

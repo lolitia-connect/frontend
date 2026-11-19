@@ -86,6 +86,7 @@
   "saving": "保存中...",
   "resetTokenSuccess": "订阅地址重置成功",
   "resumeSubscribe": "恢复订阅",
+  "sections": "标签页",
   "selectGroup": "选择一个组",
   "resumeSubscribeDescription": "这将恢复订阅，允许用户继续使用。",
   "resumeSubscribeSuccess": "订阅已恢复",

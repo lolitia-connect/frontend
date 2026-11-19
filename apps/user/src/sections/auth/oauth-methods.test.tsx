@@ -83,7 +83,7 @@ describe("OAuth methods", () => {
     await waitFor(() => {
       expect(mocks.oauthLogin).toHaveBeenCalledWith({
         method: "google",
-        redirect: "http://localhost:3000/oauth/google",
+        redirect: "http://localhost:3000/oauth/google/",
       });
     });
   });

@@ -312,6 +312,7 @@ export default function Ticket() {
                         >
                           {item.type === 1 && item.content}
                           {item.type === 2 && (
+                            // biome-ignore lint/performance/noImgElement: user-uploaded ticket attachment URL
                             <img
                               alt="ticket attachment"
                               className="!size-auto object-cover"

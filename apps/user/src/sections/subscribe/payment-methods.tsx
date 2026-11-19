@@ -71,6 +71,7 @@ const PaymentMethods: React.FC<PaymentMethodsProps> = ({
                 <Radio.Control>
                   <Radio.Indicator />
                 </Radio.Control>
+                {/* biome-ignore lint/performance/noImgElement: dynamic remote payment-method icon URL */}
                 <img
                   alt=""
                   className="size-8 shrink-0 object-contain"

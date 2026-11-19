@@ -74,6 +74,7 @@ const LocalCaptcha = ({
             <Spinner className="size-4 text-muted" />
           </div>
         ) : captchaImage ? (
+          // biome-ignore lint/performance/noImgElement: backend-generated captcha image; next/image optimization not applicable
           <img
             alt="captcha"
             className="h-full w-full cursor-pointer object-contain"

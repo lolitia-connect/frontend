@@ -101,6 +101,7 @@ export function TutorialButton({ items }: { items: Item[] }) {
               <Markdown
                 components={{
                   img: ({ node, className, ...props }: any) => (
+                    // biome-ignore lint/performance/noImgElement: image rendered from user markdown content
                     <img
                       {...props}
                       alt=""

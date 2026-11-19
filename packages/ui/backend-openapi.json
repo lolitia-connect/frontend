@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Lolitia local backend",
-    "version": "1fab00a261993e717b724c4ca6d62cf6546e23cd"
+    "version": "dc46571fe94d2be00c9718ede28ce5c3914242c3"
   },
   "paths": {
     "/v1/admin/ads/": {
@@ -7609,6 +7609,37 @@
         }
       }
     },
+    "/v1/auth/oauth/register": {
+      "post": {
+        "tags": ["backend"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Local backend result envelope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": { "type": "integer" },
+                    "msg": { "type": "string" },
+                    "data": { "$ref": "#/components/schemas/LoginResponse" }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/OAuthRegisterRequest" }
+            }
+          }
+        }
+      }
+    },
     "/v1/auth/register/telephone": {
       "post": {
         "tags": ["backend"],
@@ -12940,7 +12971,11 @@
       },
       "LoginResponse": {
         "type": "object",
-        "properties": { "token": { "type": "string" } },
+        "properties": {
+          "token": { "type": "string" },
+          "invite_required": { "type": "boolean" },
+          "oauth_token": { "type": "string" }
+        },
         "required": ["token"]
       },
       "MessageLog": {
@@ -13164,13 +13199,25 @@
       },
       "OAuthLoginGetTokenRequest": {
         "type": "object",
-        "properties": { "method": { "type": "string" }, "callback": {} },
+        "properties": {
+          "method": { "type": "string" },
+          "callback": {},
+          "invite": { "type": "string" }
+        },
         "required": ["method", "callback"]
       },
       "OAuthLoginResponse": {
         "type": "object",
         "properties": { "redirect": { "type": "string" } },
         "required": ["redirect"]
+      },
+      "OAuthRegisterRequest": {
+        "type": "object",
+        "properties": {
+          "oauth_token": { "type": "string" },
+          "invite": { "type": "string" }
+        },
+        "required": ["oauth_token", "invite"]
       },
       "OnlineUser": {
         "type": "object",
@@ -14536,10 +14583,12 @@
       "ServerNodeProtocol": {
         "type": "object",
         "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
           "type": { "type": "string" },
           "ratio": { "type": "number" }
         },
-        "required": ["type", "ratio"]
+        "required": ["id", "name", "type", "ratio"]
       },
       "ServerOnlineIP": {
         "type": "object",

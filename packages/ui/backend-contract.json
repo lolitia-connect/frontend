@@ -4555,6 +4555,16 @@
         "name": "Token",
         "type": "string",
         "tag": "json:\"token\""
+      },
+      {
+        "name": "InviteRequired",
+        "type": "bool",
+        "tag": "json:\"invite_required,omitempty\""
+      },
+      {
+        "name": "OAuthToken",
+        "type": "string",
+        "tag": "json:\"oauth_token,omitempty\""
       }
     ],
     "MessageLog": [
@@ -5071,6 +5081,11 @@
         "name": "Callback",
         "type": "unknown",
         "tag": "json:\"callback\" validate:\"required\""
+      },
+      {
+        "name": "Invite",
+        "type": "string",
+        "tag": "json:\"invite,optional\""
       }
     ],
     "OAuthLoginResponse": [
@@ -5078,6 +5093,18 @@
         "name": "Redirect",
         "type": "string",
         "tag": "json:\"redirect\""
+      }
+    ],
+    "OAuthRegisterRequest": [
+      {
+        "name": "OAuthToken",
+        "type": "string",
+        "tag": "json:\"oauth_token\" validate:\"required\""
+      },
+      {
+        "name": "Invite",
+        "type": "string",
+        "tag": "json:\"invite\" validate:\"required\""
       }
     ],
     "OnlineUser": [
@@ -7659,6 +7686,16 @@
       }
     ],
     "ServerNodeProtocol": [
+      {
+        "name": "Id",
+        "type": "string",
+        "tag": "json:\"id\""
+      },
+      {
+        "name": "Name",
+        "type": "string",
+        "tag": "json:\"name\""
+      },
       {
         "name": "Type",
         "type": "string",
@@ -12725,6 +12762,12 @@
     },
     {
       "method": "POST",
+      "path": "/v1/auth/oauth/register",
+      "request": "OAuthRegisterRequest",
+      "response": "LoginResponse"
+    },
+    {
+      "method": "POST",
       "path": "/v1/auth/register/telephone",
       "request": "TelephoneRegisterRequest",
       "response": "LoginResponse"
@@ -13187,6 +13230,6 @@
       "path": "/v2/server/:server_id"
     }
   ],
-  "backendCommit": "1fab00a261993e717b724c4ca6d62cf6546e23cd",
+  "backendCommit": "dc46571fe94d2be00c9718ede28ce5c3914242c3",
   "backendDirty": true
 }

@@ -357,48 +357,15 @@ for (const path of filesIn(join(ui, "src/services")).filter(
   };
   inspect(source);
 }
-
-// Endpoints the UI already calls but the backend has not registered yet. They
-// are tracked explicitly so a typo or an accidental removal still fails the
-// check, while the parallel backend port can land them without breaking CI.
-const pendingPath = join(ui, "backend-pending.json");
-const pendingEntries = existsSync(pendingPath)
-  ? JSON.parse(readFileSync(pendingPath, "utf8").replace(/^\uFEFF/, ""))
-  : [];
-const pendingKeys = new Set(
-  pendingEntries.map((entry) => `${entry.method} ${canonicalPath(entry.path)}`)
-);
-const pending = [];
-const unexpected = [];
-for (const item of mismatches) {
-  (pendingKeys.has(`${item.method} ${canonicalPath(item.route)}`)
-    ? pending
-    : unexpected
-  ).push(item);
-}
-const stalePending = pendingEntries.filter((entry) =>
-  known.has(`${entry.method} ${canonicalPath(entry.path)}`)
-);
-
 console.log(
   `Backend ${contract.backendCommit}: ${browserEndpoints.length} browser routes, ${Object.keys(schemas).length} types.`
 );
 console.log(
   `${usedImports.size} imported service functions checked; ${unusedMismatches.length} unused legacy/callback endpoints excluded.`
 );
-if (pending.length) {
-  console.warn(
-    `Awaiting backend routes (${pending.length}):\n${pending.map((item) => `${item.message} - ${pendingEntries.find((entry) => `${entry.method} ${canonicalPath(entry.path)}` === `${item.method} ${canonicalPath(item.route)}`)?.reason || "no reason recorded"}`).join("\n")}`
-  );
-}
-for (const entry of stalePending) {
-  console.warn(
-    `Pending route is now available, remove it from backend-pending.json: ${entry.method} ${entry.path}`
-  );
-}
-if (unexpected.length) {
+if (mismatches.length) {
   console.error(
-    `Legacy/unsupported routes requiring review:\n${unexpected.map((item) => item.message).join("\n")}`
+    `Legacy/unsupported routes requiring review:\n${mismatches.map((item) => item.message).join("\n")}`
   );
   if (process.argv.includes("--check")) process.exitCode = 1;
 }

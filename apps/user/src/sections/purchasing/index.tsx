@@ -27,7 +27,7 @@ export default function Purchasing() {
   const subscription = data?.find((item: API.Subscribe) => item.id === id);
 
   return (
-    <main className="container space-y-16">
+    <main className="container space-y-16 pb-8">
       <Content subscription={subscription} />
     </main>
   );

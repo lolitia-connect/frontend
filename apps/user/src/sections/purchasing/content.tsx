@@ -321,8 +321,8 @@ export default function Content({
 
       <div className="flex flex-col gap-6">
         <Card>
-          <Card.Content className="p-6">
-            <div className="grid gap-6">
+          <Card.Content className="flex flex-col gap-5 pb-4">
+            <section className="grid gap-3">
               <DurationSelector
                 discounts={subscription?.discount}
                 onChange={(value: number) => handleChange("quantity", value)}
@@ -331,16 +331,22 @@ export default function Content({
                   unitTimeMap[subscription.unit_time!] || subscription.unit_time
                 }
               />
+            </section>
+            <Separator />
+            <section className="grid gap-3">
               <CouponInput
                 coupon={params.coupon}
                 onChange={(value: string) => handleChange("coupon", value)}
               />
+            </section>
+            <Separator />
+            <section className="grid gap-3">
               <PaymentMethods
                 balance={false}
                 onChange={(value: string) => handleChange("payment", value)}
                 value={params.payment!}
               />
-            </div>
+            </section>
           </Card.Content>
         </Card>
 

@@ -248,7 +248,7 @@ export default function Order() {
   }
 
   return (
-    <main className="container mb-16 lg:mt-16">
+    <main className="container lg:mt-16">
       <div className="grid gap-4 xl:grid-cols-2">
         <Card className="order-2 xl:order-1">
           <Card.Header className="flex flex-row items-start bg-default/50">
@@ -294,7 +294,7 @@ export default function Order() {
           </Card.Content>
         </Card>
         <Card className="order-1 flex flex-auto items-center justify-center xl:order-2">
-          <Card.Content className="flex items-center justify-center py-16">
+          <Card.Content className="py-16">
             {currentStatus && [2, 5].includes(currentStatus) && (
               <div className="flex flex-col items-center gap-8 text-center">
                 <h3 className="font-bold text-2xl tracking-tight">

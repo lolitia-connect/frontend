@@ -147,7 +147,7 @@ export default function Page() {
     );
 
   return (
-    <div className="container grid gap-4 pt-16 xl:grid-cols-2">
+    <div className="container grid gap-4 py-16 xl:grid-cols-2">
       {isError && (
         <div className="col-span-full flex items-center gap-3" role="alert">
           <span>{t("orderUnavailable", "Order unavailable")}</span>
@@ -242,7 +242,7 @@ export default function Page() {
         </Card.Content>
       </Card>
       <Card className="order-1 flex min-w-0 flex-auto items-center justify-center xl:order-2">
-        <Card.Content className="min-w-0 max-w-full py-16">
+        <Card.Content className="flex min-w-0 max-w-full items-center justify-center py-16">
           {currentStatus && [2, 5].includes(currentStatus) && (
             <div className="flex flex-col items-center gap-8 text-center">
               <h3 className="font-bold text-2xl tracking-tight">

@@ -65,7 +65,7 @@ import { UserNav } from "./user-nav";
 export function Header() {
   const pathname = usePathname();
   const navs = useNavs();
-  const items = useMemo(() => findNavByUrl(navs, pathname), [pathname]);
+  const items = useMemo(() => findNavByUrl(navs, pathname), [navs, pathname]);
   return (
     <HeroUIHeader className="sticky top-0 z-50 flex h-14 shrink-0 items-center gap-2 border-default-200 border-b bg-surface px-0 pt-0 pb-0 text-foreground [font-size:inherit] [font-weight:inherit]">
       <div className="flex min-w-0 flex-1 items-center gap-2 px-3">

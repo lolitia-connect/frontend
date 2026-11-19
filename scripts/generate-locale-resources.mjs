@@ -52,7 +52,12 @@ const imports = namespaces
   .join("\n");
 
 const entries = namespaces
-  .map((ns) => `    ${ns.replace(/[^A-Za-z0-9_]/g, "_")},`)
+  .map((ns) => {
+    const identifier = ns.replace(/[^A-Za-z0-9_]/g, "_");
+    return ns === identifier
+      ? `    ${identifier},`
+      : `    ${JSON.stringify(ns)}: ${identifier},`;
+  })
   .join("\n");
 
 const out = `/**

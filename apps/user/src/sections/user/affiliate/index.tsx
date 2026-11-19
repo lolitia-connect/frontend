@@ -13,6 +13,7 @@ import {
   getV1PublicUserAffiliateList as queryUserAffiliateList,
 } from "@workspace/ui/services/user/user";
 import { formatDate } from "@workspace/ui/utils/formatting";
+import { unitConversion } from "@workspace/ui/utils/unit-conversions";
 import { Copy } from "lucide-react";
 import { type FormEvent, useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
@@ -51,10 +52,16 @@ export default function Affiliate() {
 
   const handleWithdraw = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const amount = Number(withdrawAmount);
+    const amount = unitConversion("dollarsToCents", withdrawAmount);
     const content = withdrawContent.trim();
 
-    if (!Number.isFinite(amount) || amount <= 0) {
+    if (
+      !(
+        /^\d*(?:\.\d{0,2})?$/.test(withdrawAmount) &&
+        Number.isSafeInteger(amount)
+      ) ||
+      amount <= 0
+    ) {
       toast.error(t("invalidWithdrawAmount", "Please enter a valid amount"));
       return;
     }
@@ -129,7 +136,11 @@ export default function Affiliate() {
                           </label>
                           <Input
                             id="amount"
-                            min="0"
+                            max={unitConversion(
+                              "centsToDollars",
+                              availableCommission
+                            )}
+                            min="0.01"
                             onChange={(event) =>
                               setWithdrawAmount(event.target.value)
                             }
@@ -141,13 +152,35 @@ export default function Affiliate() {
                             type="number"
                             value={withdrawAmount}
                           />
-                          <p className="text-muted text-sm">
-                            {t("availableCommission", "Available Commission")}:{" "}
-                            <Display
-                              type="currency"
-                              value={availableCommission}
-                            />
-                          </p>
+                          <div className="flex flex-wrap items-center justify-between gap-2">
+                            <p className="text-muted text-sm">
+                              {t("availableCommission", "Available Commission")}
+                              :{" "}
+                              <Display
+                                type="currency"
+                                value={availableCommission}
+                              />
+                            </p>
+                            <Button
+                              disabled={
+                                availableCommission <= 0 ||
+                                withdrawMutation.isPending
+                              }
+                              onClick={() =>
+                                setWithdrawAmount(
+                                  unitConversion(
+                                    "centsToDollars",
+                                    availableCommission
+                                  ).toFixed(2)
+                                )
+                              }
+                              size="sm"
+                              type="button"
+                              variant="ghost"
+                            >
+                              {t("withdrawAll", "Withdraw All")}
+                            </Button>
+                          </div>
                         </div>
                         <div className="grid gap-2">
                           <label
@@ -205,7 +238,7 @@ export default function Affiliate() {
                   toast.success(t("copySuccess", "Copy Success"));
                 }
               }}
-              text={`${location?.origin}/auth?invite=${user?.refer_code}`}
+              text={`${globalThis.location?.origin ?? ""}/auth?invite=${user?.refer_code}`}
             >
               <Button className="shrink-0 gap-2" size="sm" variant="secondary">
                 <Copy className="h-4 w-4" />

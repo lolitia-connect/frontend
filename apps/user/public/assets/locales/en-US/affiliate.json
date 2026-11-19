@@ -13,6 +13,7 @@
   "totalCommission": "Total Commission",
   "userIdentifier": "User Identifier",
   "withdraw": "Withdraw",
+  "withdrawAll": "Withdraw All",
   "withdrawAmount": "Withdrawal Amount",
   "withdrawAmountExceeds": "Amount exceeds available commission",
   "withdrawCommission": "Withdraw Commission",

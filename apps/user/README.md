@@ -39,6 +39,7 @@ English
 #### TOC
 
 - [⌨️ Local Development](#️-local-development)
+- [📚 Documentation](#-documentation)
 - [🚀 Deploy on Vercel](#-deploy-on-vercel)
 - [🤝 Contributing](#-contributing)
 - [📝 License](#-license)
@@ -71,37 +72,12 @@ cd apps/user
 bun dev
 ```
 
-Open <http://localhost:3000> with your browser to see the result.
+Open <http://localhost:3000> with your browser to see the result. Configure `NEXT_PUBLIC_API_BASE_URL` using [.env.example](.env.example); the backend must allow this site's origin.
 
-### Landing page components
+## 📚 Documentation
 
-The landing page follows the user dashboard's HeroUI `Card`, `Card.Title`,
-`Card.Description`, `Chip`, and shared button patterns, using the theme's default
-background, surfaces, radii, and interaction states. Service and plan cards do not
-override these with glass backgrounds, custom shadows, or hover movement. The
-hero's WebGL globe animation remains independent.
-
-### Main-content empty states
-
-Page-level empty states use [MainEmpty](./src/components/main-empty.tsx), with the same
-`py-24` spacing as the ticket support list. Keep this wrapper limited to main
-content; do not change shared empty-state defaults or placeholders inside
-sidebars, dialogs, or charts. Cards wrapping a main empty state must not add
-vertical padding.
-
-
-### OAuth callbacks
-
-Login and account binding callbacks are handled by the Next.js App Router at
-`/oauth/[platform]` and `/bind/[platform]`. Keep the registered redirect URLs as
-`<origin>/oauth/<provider>/` and `<origin>/bind/<provider>/`, including the trailing
-slash. Next.js normalizes the slash while preserving query parameters; no static
-HTML bridge pages or static-host fallback rules are required.
-
-Telegram callbacks support query parameters and URL fragments (`#tgAuthResult=...`),
-as well as individual signed fields. Popup callbacks relay results to the opener;
-full-page callbacks perform the exchange directly. Both paths use the existing
-backend `tgAuthResult` format. Deploy this app with a Next.js runtime.
+- [Development guide](../../docs/guide/frontend-development.md#user-app-maintenance): landing-page UI, empty-state conventions, OAuth callbacks, and testing.
+- [Shared setup and project documentation](../../README.md#-documentation).
 
 ## 🚀 Deploy on Vercel
 

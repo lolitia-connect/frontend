@@ -92,7 +92,13 @@ test("dashboard summary cards have consistent heights across grid rows", async (
 }) => {
   await mockLayoutApi(page);
   await signInFixture(page, baseURL!);
-  await page.goto("/dashboard", { waitUntil: "domcontentloaded" });
+  await Promise.all([
+    page.waitForResponse(
+      (response) =>
+        response.url().includes("/common/site/config") && response.ok()
+    ),
+    page.goto("/dashboard", { waitUntil: "domcontentloaded" }),
+  ]);
   const grid = page.locator("main [class~='grid-cols-1']").first();
   await expect
     .poll(() => grid.evaluate((node) => node.children.length))
@@ -222,7 +228,13 @@ for (const language of ["en-US", "zh-CN"]) {
   }) => {
     await mockLayoutApi(page);
     await signInFixture(page, baseURL!, language);
-    await page.goto("/dashboard/auth-control");
+    await Promise.all([
+      page.waitForResponse(
+        (response) =>
+          response.url().includes("/common/site/config") && response.ok()
+      ),
+      page.goto("/dashboard/auth-control"),
+    ]);
     await expect(page.locator("html")).toHaveAttribute("lang", language);
     const breadcrumb = page.locator('header [data-slot="breadcrumb"]');
     const currentPage = breadcrumb.locator('[aria-current="page"]');

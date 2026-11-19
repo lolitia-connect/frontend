@@ -39,7 +39,7 @@ English
 #### TOC
 
 - [⌨️ Local Development](#️-local-development)
-- [Drawer layout](#drawer-layout)
+- [📚 Documentation](#-documentation)
 - [🚀 Deploy on Vercel](#-deploy-on-vercel)
 - [🤝 Contributing](#-contributing)
 - [📝 License](#-license)
@@ -72,37 +72,12 @@ cd apps/admin
 bun dev
 ```
 
-Open <http://localhost:3000> with your browser to see the result.
+Open <http://localhost:3001> with your browser to see the result. Configure `NEXT_PUBLIC_API_BASE_URL` using [.env.example](.env.example); the backend must allow this site's origin.
 
-## Drawer layout
+## 📚 Documentation
 
-Admin business sheets share the sizing and responsive rules in [app/drawers.css](./app/drawers.css), loaded only by the admin root layout:
-
-- Desktop sheets are capped at **60rem (960px)** with a small viewport gutter; phones below 40rem use the full viewport width. Mobile navigation separately caps its outer `Sheet.Content` at **18rem (288px)**, leaving at least 2rem of backdrop space. Its inner sidebar fills that width and does not use business-sheet sizing.
-- Size `Sheet.Content`, not only `Sheet.Dialog`: HeroUI's content wrapper otherwise limits the visible panel. Avoid introducing per-form fixed widths.
-- Keep the header and footer outside the scrolling body. Use the existing `ScrollArea` as a direct dialog child, or `admin-drawer-body` for table/editor content, rather than calculating a height from assumed header/footer sizes.
-- Use `admin-drawer-form` for paired short fields and `admin-drawer-wide` for full-row content. Grid columns collapse according to the **panel width**, not the page width. Repeatable input rows wrap while retaining readable input widths and accessible add/remove actions.
-- Long labels, tags, and ticket messages wrap; selects truncate their displayed value without changing it. Ticket conversations keep an independent scroll area and a visible reply bar.
-
-The focused [drawer browser regressions](./tests/e2e/drawers.spec.ts) cover desktop/mobile layout, nested sheets, long content, and unchanged form submission payloads. Run from the repository root:
-
-```bash
-bun x playwright test --config apps/admin/playwright.config.ts drawers.spec.ts
-```
-
-## Header breadcrumbs
-
-The [header](./src/layout/header.tsx) keeps breadcrumbs on one line and allows horizontal scrolling when the full path exceeds the available space. The left group can shrink while the language, timezone, theme and account controls remain visible. The `breadcrumbs scroll` cases in the [layout regression tests](./tests/e2e/layout.spec.ts) cover English and Chinese at 320–1280px, scrolling and ancestor link navigation.
-
-## Settings option interactions
-
-System, authentication, and marketing option entries, the subscription configuration entry, and the two server management shortcuts all use the same full-card `settings-option` trigger: the whole card is a single clickable button styled like a HeroUI card (surface background, `shadow-surface`, rounded corners, and a light-mode hairline) with HeroUI's native hover, press-scale, and keyboard focus feedback. Each option opens its configuration sheet; stack entries with spacing (`space-y-3`) rather than wrapping them in a list container. The shared sizing and text layout live in the [shared stylesheet](../../packages/ui/src/styles/globals.css). Keep the icon, shrinkable text container, and chevron as separate layout items. Long text wraps while icons and chevrons retain their size; the server toolbar wraps on narrow screens to prevent horizontal overflow.
-
-The [layout regressions](./tests/e2e/layout.spec.ts) cover English/Chinese, light/dark themes, widths from 320 to 1280px, and opening sheets:
-
-```bash
-bun x playwright test --config apps/admin/playwright.config.ts layout.spec.ts --grep "settings options wrap|settings lists open"
-```
+- [Development guide](../../docs/guide/frontend-development.md#admin-app-maintenance): drawers, breadcrumbs, settings interactions, and browser checks.
+- [Shared setup and project documentation](../../README.md#-documentation).
 
 ## 🚀 Deploy on Vercel
 

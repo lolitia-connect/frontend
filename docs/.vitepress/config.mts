@@ -60,6 +60,7 @@ export default defineConfig({
               text: "Guide",
               items: [
                 { text: "Introduction", link: "/guide/intro" },
+                { text: "Frontend Development", link: "/guide/frontend-development" },
                 { text: "Contributing", link: "/guide/contributing" },
               ],
             },
@@ -247,6 +248,7 @@ export default defineConfig({
               text: "指南",
               items: [
                 { text: "简介", link: "/zh/guide/intro" },
+                { text: "前端开发", link: "/zh/guide/frontend-development" },
                 { text: "贡献指南", link: "/zh/guide/contributing" },
               ],
             },

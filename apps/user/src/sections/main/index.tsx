@@ -3,13 +3,15 @@
 import { useNavigate } from "@workspace/ui/lib/router-compat";
 import { useEffect } from "react";
 import { useGlobalStore } from "@/stores/global";
-import { GlobalMap } from "./global-map";
+import { DeferredGlobe } from "./deferred-globe";
 import { Hero } from "./hero";
 import { ProductShowcase } from "./product-showcase";
 import { Stats } from "./stats";
 
 export default function Main() {
-  const { user, isLoadingUser } = useGlobalStore();
+  const user = useGlobalStore((state) => state.user);
+  const isLoadingUser = useGlobalStore((state) => state.isLoadingUser);
+  const isLoadingCommon = useGlobalStore((state) => state.isLoadingCommon);
   const navigate = useNavigate();
 
   const showLanding = process.env.NEXT_PUBLIC_SHOW_LANDING_PAGE !== "false";
@@ -35,7 +37,7 @@ export default function Main() {
   return (
     <main className="relative isolate overflow-hidden bg-background text-foreground">
       <section className="relative min-h-[calc(100svh-4rem)] overflow-hidden">
-        <GlobalMap />
+        <DeferredGlobe enabled={!(isLoadingCommon || isLoadingUser || user)} />
         <div className="container relative z-10 flex min-h-[calc(100svh-4rem)] flex-col">
           <Hero />
         </div>

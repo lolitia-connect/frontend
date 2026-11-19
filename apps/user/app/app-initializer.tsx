@@ -1,7 +1,7 @@
 "use client";
 
 import { getCookie } from "@workspace/ui/lib/cookies";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { toast } from "sonner";
 import { useGlobalStore } from "@/stores/global";
 import { fetchInitialConfig } from "@/utils/bootstrap";
@@ -14,8 +14,16 @@ import { Logout } from "@/utils/common";
  * `app/layout.tsx` can stay a Server Component.
  */
 export function AppInitializer() {
-  const { clearUserLoading, common, getUserInfo, setCommon, setCommonError } =
-    useGlobalStore();
+  const common = useGlobalStore((state) => state.common);
+  const setCommon = useGlobalStore((state) => state.setCommon);
+  const setCommonError = useGlobalStore((state) => state.setCommonError);
+  const getUserInfo = useGlobalStore((state) => state.getUserInfo);
+  const clearUserLoading = useGlobalStore((state) => state.clearUserLoading);
+  const userStarted = useRef(false);
+
+  useEffect(() => {
+    window.logout = Logout;
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -34,16 +42,6 @@ export function AppInitializer() {
           "Failed to load site configuration. Please refresh and try again."
         );
       }
-
-      try {
-        if (getCookie("Authorization")) {
-          await getUserInfo();
-        } else {
-          clearUserLoading();
-        }
-      } catch {
-        clearUserLoading();
-      }
     };
 
     initializeApp();
@@ -51,11 +49,19 @@ export function AppInitializer() {
     return () => {
       cancelled = true;
     };
-  }, [clearUserLoading, getUserInfo, setCommon, setCommonError]);
+  }, [setCommon, setCommonError]);
 
   useEffect(() => {
-    window.logout = Logout;
-  }, []);
+    if (userStarted.current) return;
+    userStarted.current = true;
+
+    // Session recovery must not wait for the public config request or its retries.
+    if (getCookie("Authorization")) {
+      getUserInfo().catch(clearUserLoading);
+    } else {
+      clearUserLoading();
+    }
+  }, [clearUserLoading, getUserInfo]);
 
   return (
     <div

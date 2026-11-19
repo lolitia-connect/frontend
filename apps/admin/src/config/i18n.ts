@@ -4,7 +4,7 @@ export const fallbackLng = "en-US";
 export const supportedLngs = ["en-US", "zh-CN"];
 
 // Shared translations needed by every screen. Dashboard shell and page
-// namespaces are selected from the current hash route during bootstrap.
+// namespaces are selected from the current pathname during bootstrap.
 export const sharedI18nNamespaces = ["components"];
 
 export const routeI18nNamespaces: Record<string, string[]> = {

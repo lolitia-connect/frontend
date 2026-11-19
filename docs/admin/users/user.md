@@ -9,6 +9,8 @@ Manage all users in the system, including user information editing, subscription
 ### Enable
 Switch button to control whether user account is active. Disabled users cannot login.
 
+The switch is temporarily unavailable while saving and refreshes the account status after success. If saving fails, it keeps the previous status and displays an error so you can retry. Existing third-party login avatars do not prevent disabling or re-enabling an account; no avatar upload is needed when changing its status.
+
 ### ID
 User unique identifier ID.
 
@@ -23,6 +25,8 @@ Amount gifted by system.
 
 ### Commission
 Commission earned through user referrals.
+
+On the affiliate page, withdrawal amounts are entered in the displayed currency with up to two decimal places. They are converted to integer cents before submission and checked against the available commission in the same unit. **Withdraw All** fills the current withdrawable balance without submitting; users must still provide payment information and select **Submit Withdrawal**.
 
 ### Invite Code
 User's exclusive invite code.

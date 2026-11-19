@@ -1,5 +1,9 @@
+import { getRequestLanguage } from "@workspace/ui/lib/request-language";
 import type { Metadata, Viewport } from "next";
+import { headers } from "next/headers";
 import { Suspense } from "react";
+import { fallbackLng, supportedLngs } from "@/config/i18n";
+import { loadInitialTranslations } from "@/config/i18n-server";
 import { Providers } from "./providers";
 import { SiteMetadata } from "./site-metadata";
 // Shared design system entry: Tailwind v4 + HeroUI v3 (pink theme overrides).
@@ -23,13 +27,7 @@ export const viewport: Viewport = {
   ],
 };
 
-/**
- * The shared router shim reads `useSearchParams()` through `useSearch()` /
- * `useLocation()`. Next.js requires any such client component to sit under a
- * Suspense boundary, otherwise the whole route bails out of static prerendering
- * ("useSearchParams() should be wrapped in a suspense boundary"). This single
- * root boundary covers every route instead of repeating one per page.
- */
+/** Keep route-level client suspension behind a stable loading shell. */
 function RouteFallback() {
   return (
     <div className="grid min-h-screen place-items-center">
@@ -42,19 +40,29 @@ function RouteFallback() {
   );
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const initialLanguage = getRequestLanguage(
+    (await headers()).get("accept-language"),
+    supportedLngs,
+    fallbackLng
+  );
+  const initialTranslations = await loadInitialTranslations(initialLanguage);
+
   return (
-    <html lang="en-US" suppressHydrationWarning>
+    <html lang={initialLanguage} suppressHydrationWarning>
       <head>
         <link href="/site.webmanifest" rel="manifest" />
       </head>
       <body className="bg-background text-foreground">
         <Suspense fallback={<RouteFallback />}>
-          <Providers>
+          <Providers
+            initialLanguage={initialLanguage}
+            initialTranslations={initialTranslations}
+          >
             <SiteMetadata />
             {children}
           </Providers>

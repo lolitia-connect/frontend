@@ -12,12 +12,13 @@ import { Logout } from "@/utils/common";
  * Loads the global site config into the store and, when an Authorization cookie
  * is present, refreshes the current admin user. It runs in an effect so
  * `next build` never issues a backend request while prerendering, and it is
- * guarded with a ref so React StrictMode's double invocation does not fire it
- * twice.
+ * guarded with a ref so React StrictMode does not refresh the user twice.
+ * The config helper shares its in-flight request between effect invocations.
  */
 export function Bootstrap() {
-  const { setCommon, getUserInfo } = useGlobalStore();
-  const started = useRef(false);
+  const setCommon = useGlobalStore((state) => state.setCommon);
+  const getUserInfo = useGlobalStore((state) => state.getUserInfo);
+  const userStarted = useRef(false);
 
   /**
    * The former entry (`main.tsx`) installed the session-expiry handler with
@@ -36,29 +37,34 @@ export function Bootstrap() {
   }, []);
 
   useEffect(() => {
-    if (started.current) return;
-    started.current = true;
+    let cancelled = false;
 
-    const initializeApp = async () => {
-      try {
-        const configResponse = await fetchInitialConfig();
-        if (configResponse.data?.data) {
-          setCommon(configResponse.data.data);
+    fetchInitialConfig()
+      .then((response) => {
+        if (!cancelled && response.data?.data) {
+          setCommon(response.data.data);
         }
-        try {
-          if (getCookie("Authorization")) {
-            await getUserInfo();
-          }
-        } catch {
-          /* empty */
-        }
-      } catch (error) {
-        console.error("Failed to initialize app:", error);
-      }
+      })
+      .catch((error) => {
+        if (!cancelled) console.error("Failed to initialize app:", error);
+      });
+
+    return () => {
+      cancelled = true;
     };
+  }, [setCommon]);
 
-    initializeApp();
-  }, [setCommon, getUserInfo]);
+  useEffect(() => {
+    if (userStarted.current) return;
+    userStarted.current = true;
+
+    // Restore the session independently, even if public config is slow or fails.
+    if (getCookie("Authorization")) {
+      getUserInfo().catch(() => {
+        /* handled by the store and request interceptor */
+      });
+    }
+  }, [getUserInfo]);
 
   return null;
 }

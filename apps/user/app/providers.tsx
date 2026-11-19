@@ -7,9 +7,11 @@ import {
   TanStackQueryProvider,
 } from "@workspace/ui/integrations/tanstack-query";
 import { ThemeProvider } from "@workspace/ui/integrations/theme";
-import { initializeI18n } from "@workspace/ui/lib/i18n";
+import { createI18nInstance } from "@workspace/ui/lib/i18n";
+import type { Resource } from "i18next";
 import dynamic from "next/dynamic";
 import { useState } from "react";
+import { I18nextProvider } from "react-i18next";
 import {
   fallbackLng,
   fallbackResources,
@@ -42,48 +44,43 @@ const NavigationProgress = dynamic(
   { ssr: false }
 );
 
-// i18next is initialised once per bundle. Guarded so React strict-mode double
-// invocation and Fast Refresh do not re-run detection/backend setup. It also
-// runs during SSR (without the browser-only plugins) so `useTranslation()`
-// finds an instance while prerendering instead of warning NO_I18NEXT_INSTANCE.
-let i18nReady = false;
-
-function ensureI18n() {
-  if (i18nReady) return;
-  i18nReady = true;
-  // Route-specific namespaces for the entry route; deeper navigation loads the
-  // rest on demand (same behaviour as the previous hash-based lookup).
-  const initialPath =
-    typeof window === "undefined" ? "/" : window.location.pathname || "/";
-  initializeI18n({
-    fallbackLng,
-    supportedLngs: [...supportedLngs],
-    ns: getInitialI18nNamespaces(initialPath),
-    // Bundle the fallback language synchronously so the server HTML and the
-    // client's hydration render produce identical text. Without this, SSR falls
-    // back to each call's inline defaultValue while the client hydrates real
-    // translations → React hydration mismatch. Other languages are applied
-    // after mount by LanguageProvider (a normal re-render, not a mismatch).
-    resources: fallbackResources,
-  });
-}
-
-export function Providers({ children }: { children: React.ReactNode }) {
-  // Lazy state keeps a single QueryClient per browser session (mirrors the
-  // previous module-level `TanStackQueryContext()` call in main.tsx).
+export function Providers({
+  children,
+  initialLanguage,
+  initialTranslations,
+}: {
+  children: React.ReactNode;
+  initialLanguage: string;
+  initialTranslations: Resource;
+}) {
   const [queryContext] = useState(() => TanStackQueryContext());
-  ensureI18n();
+  const [i18n] = useState(() =>
+    createI18nInstance({
+      fallbackLng,
+      lng: initialLanguage,
+      supportedLngs: [...supportedLngs],
+      ns: getInitialI18nNamespaces(
+        typeof window === "undefined" ? "/" : window.location.pathname
+      ),
+      resources: { ...fallbackResources, ...initialTranslations },
+    })
+  );
 
   return (
-    <TanStackQueryProvider {...queryContext}>
-      <LanguageProvider supportedLanguages={supportedLngs}>
-        <ThemeProvider>
-          <AppInitializer />
-          <NavigationProgress />
-          {children}
-          <Toaster closeButton richColors />
-        </ThemeProvider>
-      </LanguageProvider>
-    </TanStackQueryProvider>
+    <I18nextProvider i18n={i18n}>
+      <TanStackQueryProvider {...queryContext}>
+        <LanguageProvider
+          defaultLanguage={initialLanguage}
+          supportedLanguages={supportedLngs}
+        >
+          <ThemeProvider>
+            <AppInitializer />
+            <NavigationProgress />
+            {children}
+            <Toaster closeButton richColors />
+          </ThemeProvider>
+        </LanguageProvider>
+      </TanStackQueryProvider>
+    </I18nextProvider>
   );
 }

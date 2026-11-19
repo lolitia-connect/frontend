@@ -139,6 +139,14 @@ describe("detectBrowserLanguage", () => {
     expect(mod.detectBrowserLanguage()).toMatch(/^zh-/);
   });
 
+  it("keeps Traditional Chinese script and region matching consistent with SSR", async () => {
+    const { mod } = await freshI18n();
+    setNavigatorLanguage("zh-Hant");
+    expect(mod.detectBrowserLanguage()).toBe("zh-TW");
+    setNavigatorLanguage("zh-Hant-HK");
+    expect(mod.detectBrowserLanguage()).toBe("zh-HK");
+  });
+
   it("prefers localStorage over navigator", async () => {
     const { mod } = await freshI18n();
     window.localStorage.setItem("language", "ja-JP");

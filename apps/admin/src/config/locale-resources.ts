@@ -39,7 +39,7 @@ export const fallbackResources = {
     ads,
     announcement,
     auth,
-    auth_control,
+    "auth-control": auth_control,
     components,
     coupon,
     dashboard,

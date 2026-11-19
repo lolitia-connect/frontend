@@ -74,68 +74,11 @@ cd frontend
 bun install
 ```
 
-## 🔤 字体
+## 📚 文档
 
-三个应用共用 `packages/ui/src/styles/` 中的 CJK 字体配置。用户端和管理端的英文保留现有
-Fredoka / Sen 字体栈，支付门户的英文保留其原有系统字体栈；CJK 使用本地托管的
-[Swei Gothic（獅尾圓體）](https://github.com/max32002/swei-gothic)
-WOFF2 字体，按页面或元素的 `lang` 选择版本：`ja` / `ja-JP` 使用 JP，
-`zh-CN` / `zh-Hans` 使用 SC，`zh-TW` / `zh-HK` / `zh-MO` / `zh-Hant` 使用 TC。
-未标注语言的 CJK 文本默认使用 SC。语言切换、已保存的偏好、语言菜单中的母语名称以及
-显式的 `font-sans` 样式均遵循此映射。
-
-CJK 字体通过 Unicode 范围限制，不会替换英文字母和 ASCII 数字；即使原有英文网络字体
-未能加载，也不会改用 Swei Gothic 显示英文。包含 Regular（400）、Medium（500）、
-Bold（700）、Black（900），中间字重按 CSS 规则选择最接近的字体。字体文件未经修改，
-来自上游提交
-[`c363a1d`](https://github.com/max32002/swei-gothic/tree/c363a1d845aa782a71b7a068b5db0aff3f83ee86/WebFont)，
-随应用构建分发，运行时不依赖 CJK 字体 CDN。再分发时须保留
-[SIL Open Font License 1.1](./packages/ui/src/styles/fonts/swei-gothic/OFL.txt)。
-
-## 🧪 测试与文件归属
-
-- 应用单元/组件测试：`apps/{user,admin,payment-portal}/src/**/*.test.{ts,tsx}`，与被测源码相邻，由各 app 的 `vitest.config.ts` 执行。
-- 应用浏览器测试：`apps/{user,admin,payment-portal}/tests/e2e/*.spec.ts`，各 app 自己维护 `playwright.config.ts`、预热逻辑和专用 fixtures。
-- 共享 UI 测试：`packages/ui/src/**/*.test.{ts,tsx}`，不归入某个 app。
-- 跨应用契约/代理测试：保留在根目录 `tests/contract` 和 `tests/functions`，统一由根 Vitest 配置执行；`tests/e2e` 只保留多个 app 共用的辅助代码。
-- `tests/vitest` 保存共享测试运行辅助代码；所有 Vitest 配置在 worker 启动前初始化各自工作区的 `.tmp-vitest/`，无需手动设置临时目录环境变量。Turbo 将这些辅助代码纳入测试缓存输入。
-- 文件使用 kebab-case，Vitest 用 `*.test.ts(x)`，E2E 用 `*.spec.ts`，fixture 用 `*.fixtures.ts`。已有同位单元测试不再重复搬动。
-- `scripts` 仅保留持续使用的生成工具：后端契约/OpenAPI（`backend-contract.mjs` 及其 Go 提取器）、语言资源和版本信息。可重复检查归入 Vitest / E2E；一次性迁移、死代码推断和迁移进度脚本已删除，不再新增独立检查脚本。CI triage 工具归入 `.github/automation`。API 重写由各 app 的 `next.config.ts` 维护；`tests/functions` 测试独立的 Cloudflare Pages 代理，旧 Vite 代理及其测试已删除。
-
-测试是否过时以生产入口和调用关系为准：管理端已不再引用旧赞助卡片，对应测试已删除。路由适配层实际调用 `next/navigation`，UI 适配层实际渲染 HeroUI，仍有生产调用；这些测试不能仅因名称包含 `compat` 或 `legacy` 而删除。
-
-```bash
-# 所有工作区单元/组件测试及共享检查
-bun run test
-# 仅共享测试，也可以使用 test:contract / test:proxy
-bun run test:shared
-# 三个 app 的全部 E2E；test:e2e:all 为兼容别名
-bun run test:e2e
-# 按 app 执行，可继续传 Playwright 文件过滤、--grep、--list 等参数
-bun run test:e2e:user
-bun run test:e2e:admin drawers.spec.ts
-bun run test:e2e:payment-portal --list
-# 管理端布局/抽屉与用户端布局
-bun run test:e2e:layout
-# app 内也有相同入口；报告保存在各 app 内
-bun run --cwd apps/payment-portal test:e2e
-bun run --cwd apps/payment-portal test:e2e:report
-```
-
-契约测试会运行 Go 提取器，需要 `PATH` 中有 Go，或设置 `GO_BINARY`。
-根 `bun run test` 包含这些共享检查；app 内的 `test` 只运行该 app 的 Vitest 测试。
-首次运行浏览器测试可用 `bun x playwright install chromium` 安装 Chromium。
-测试使用独立服务器，不复用开发端口 3000–3002：用户端默认 3010（`E2E_PORT`）、
-管理端 3014（`ADMIN_E2E_PORT`）、支付门户 3013（`PAYMENT_PORTAL_E2E_PORT`）。
-并发运行时还需通过 `NEXT_DIST_DIR` 指定不同构建目录。
-`test-results/`、`playwright-report/`、`.tmp-e2e/` 均归各 app 所有。
-Bun 命令在载入配置前设置 `PLAYWRIGHT_TRANSFORM_CACHE_DIR`，避免 Windows 系统临时目录权限问题，无需额外脚本。
-
-## 响应式布局回归
-
-以 320px、375px 手机宽度、768px 平板及桌面视口检查布局。卡片和表单的 flex/grid 子项应允许收缩，长订单号、支付名称和文档标题应换行；手机账单优先单列，操作按钮允许换行。宽 Markdown 表格与代码块使用局部横向滚动，不能依赖整页 `overflow-x-hidden` 裁掉内容。
-
-用户端 `layout.spec.ts` 覆盖账户卡片、长文档和支付账单；管理端 `drawers.spec.ts` 覆盖创建抽屉的 320px/375px 布局；支付门户 `recharge.spec.ts` 覆盖长支付名称的确认弹窗与二维码。测试使用模拟 API，不产生真实业务订单。并发测试除端口和构建目录外，还应使用不同的 Playwright `--output` 目录，避免测试产物互相覆盖。
+- [前端开发指南](docs/zh/guide/frontend-development.md)：测试、字体、UI 约定、OAuth 回调和支付门户维护。
+- 应用快速开始：[用户端](apps/user/README.zh-CN.md)、[管理端](apps/admin/README.zh-CN.md)。
+- 维护者参考：[自定义改动与同步记录](.ai/sync-diffs/README.md)、[开发 agent 指引](.ai/prompts/README.md)。
 
 ## 🤝 贡献
 

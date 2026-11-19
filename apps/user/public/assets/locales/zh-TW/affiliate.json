@@ -14,6 +14,7 @@
   "withdrawAmountExceeds": "金額超過可用佣金",
   "withdrawContentRequired": "請輸入提領資料",
   "withdraw": "提領",
+  "withdrawAll": "全部提領",
   "withdrawCommission": "提領佣金",
   "withdrawDescription": "送出佣金提領申請，等待管理員審核。",
   "withdrawAmount": "提領金額",

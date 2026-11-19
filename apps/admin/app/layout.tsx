@@ -1,5 +1,9 @@
+import { getRequestLanguage } from "@workspace/ui/lib/request-language";
 import type { Metadata, Viewport } from "next";
+import { headers } from "next/headers";
 import { Suspense } from "react";
+import { fallbackLng, supportedLngs } from "@/config/i18n";
+import { loadInitialTranslations } from "@/config/i18n-server";
 import { Bootstrap } from "./bootstrap";
 import { NavigationProgressClient } from "./navigation-progress";
 import { Providers } from "./providers";
@@ -26,16 +30,26 @@ export const viewport: Viewport = {
   ],
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const initialLanguage = getRequestLanguage(
+    (await headers()).get("accept-language"),
+    supportedLngs,
+    fallbackLng
+  );
+  const initialTranslations = await loadInitialTranslations(initialLanguage);
+
   return (
-    <html lang="en-US" suppressHydrationWarning>
+    <html lang={initialLanguage} suppressHydrationWarning>
       <body className="admin-shell bg-background text-foreground">
         <Suspense fallback={null}>
-          <Providers>
+          <Providers
+            initialLanguage={initialLanguage}
+            initialTranslations={initialTranslations}
+          >
             <Bootstrap />
             <SiteMetadata />
             <NavigationProgressClient />

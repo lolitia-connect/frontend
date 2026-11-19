@@ -4,6 +4,7 @@ import i18n from "i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 import Backend from "i18next-http-backend";
 import { initReactI18next } from "react-i18next";
+import { matchSupportedLanguage as canonical } from "./request-language";
 
 const DEFAULT_LANGUAGE = "en-US";
 
@@ -31,22 +32,6 @@ let initSettled = false;
  * event consumes the flag.
  */
 let suppressNextPersist = false;
-
-/** Case-insensitive lookup that returns the canonical supported code. */
-function canonical(
-  code: string | undefined,
-  supported: string[]
-): string | undefined {
-  if (!code) return;
-  const lower = code.toLowerCase();
-  return (
-    supported.find((s) => s.toLowerCase() === lower) ??
-    // Fall back to the base language ("zh-HK" -> "zh-CN" if that is what ships).
-    supported.find(
-      (s) => s.split("-")[0]?.toLowerCase() === lower.split("-")[0]
-    )
-  );
-}
 
 /**
  * Read the browser's preferred language (localStorage first, then navigator).
@@ -314,6 +299,21 @@ export function initializeI18n(i18nConfig?: InitOptions) {
   }
 
   return i18n;
+}
+
+/** Keep server renders isolated while retaining one browser instance for navigation. */
+export function createI18nInstance(config: InitOptions) {
+  if (typeof window !== "undefined") return initializeI18n(config);
+
+  const instance = i18n.createInstance();
+  instance.use(initReactI18next).init({
+    defaultNS: "components",
+    fallbackLng: DEFAULT_LANGUAGE,
+    interpolation: { escapeValue: false },
+    ...config,
+    initAsync: false,
+  });
+  return instance;
 }
 
 /**

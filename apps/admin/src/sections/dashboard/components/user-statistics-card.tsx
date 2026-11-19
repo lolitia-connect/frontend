@@ -205,8 +205,12 @@ export function UserStatisticsCard() {
 
         <TabsContent className="h-full" id="month">
           <CardContent className="h-80">
-            {UserStatistics?.monthly.list &&
-            UserStatistics?.monthly.list.length > 0 ? (
+            {UserStatistics?.monthly.list?.some(
+              (item) =>
+                item.register ||
+                item.new_order_users ||
+                item.renewal_order_users
+            ) ? (
               <ChartContainer
                 className="max-h-80 w-full"
                 config={UserStatisticsConfig}
@@ -304,7 +308,12 @@ export function UserStatisticsCard() {
 
         <TabsContent className="h-full" id="total">
           <CardContent className="h-80">
-            {UserStatistics?.all.list && UserStatistics?.all.list.length > 0 ? (
+            {UserStatistics?.all.list?.some(
+              (item) =>
+                item.register ||
+                item.new_order_users ||
+                item.renewal_order_users
+            ) ? (
               <ChartContainer
                 className="max-h-80 w-full"
                 config={UserStatisticsConfig}

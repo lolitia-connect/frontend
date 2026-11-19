@@ -64,6 +64,8 @@ Click cards with links to quickly jump to the corresponding management page.
 
 ## Statistics Charts
 
+Revenue and user statistics show the same empty-state prompt as the traffic rankings below when the selected period has no data or all chart metrics are zero. A nonzero value in any series keeps the chart visible, including its zero-value dates; footer summaries are unchanged.
+
 ### Revenue Statistics Chart
 
 Displays system revenue data with three time dimensions:

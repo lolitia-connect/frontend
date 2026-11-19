@@ -1,9 +1,13 @@
 "use client";
 
 import { getV1PublicPortalSubscribe as getSubscription } from "@workspace/ui/services/user/user";
+import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Content } from "./content";
+
+const Content = dynamic(() =>
+  import("./content").then((module) => module.Content)
+);
 
 export function ProductShowcase() {
   const { i18n } = useTranslation();

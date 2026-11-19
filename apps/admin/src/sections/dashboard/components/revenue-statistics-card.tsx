@@ -214,8 +214,9 @@ export function RevenueStatisticsCard() {
 
         <TabsContent className="h-full" id="month">
           <CardContent className="h-80">
-            {RevenueStatistics?.monthly.list &&
-            RevenueStatistics?.monthly.list.length > 0 ? (
+            {RevenueStatistics?.monthly.list?.some(
+              (item) => item.new_order_amount || item.renewal_order_amount
+            ) ? (
               <ChartContainer
                 className="max-h-80 w-full"
                 config={IncomeStatisticsConfig}
@@ -354,8 +355,9 @@ export function RevenueStatisticsCard() {
 
         <TabsContent className="h-full" id="total">
           <CardContent className="h-80">
-            {RevenueStatistics?.all.list &&
-            RevenueStatistics?.all.list.length > 0 ? (
+            {RevenueStatistics?.all.list?.some(
+              (item) => item.new_order_amount || item.renewal_order_amount
+            ) ? (
               <ChartContainer
                 className="max-h-80 w-full"
                 config={IncomeStatisticsConfig}

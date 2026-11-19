@@ -94,6 +94,87 @@ test.afterEach(({ page }) => {
   expect(pageErrors.get(page), "Uncaught browser errors").toEqual([]);
 });
 
+test("resolves scoped globe CSS colors and refreshes them on theme changes", async ({
+  page,
+}) => {
+  test.setTimeout(120_000);
+  await page.emulateMedia({ reducedMotion: "reduce", colorScheme: "light" });
+  await page.addInitScript(() => {
+    const getImageData = CanvasRenderingContext2D.prototype.getImageData;
+    CanvasRenderingContext2D.prototype.getImageData = function (...args) {
+      const image = getImageData.apply(this, args);
+      const samples = new Set<string>(
+        JSON.parse(document.documentElement.dataset.globeColorSamples ?? "[]")
+      );
+      samples.add(Array.from(image.data.slice(0, 3)).join(","));
+      document.documentElement.dataset.globeColorSamples = JSON.stringify([
+        ...samples,
+      ]);
+      return image;
+    };
+    document.addEventListener("DOMContentLoaded", () => {
+      const style = document.createElement("style");
+      style.textContent = `
+        :root .landing-globe {
+          --globe-land: color-mix(in srgb, rgb(20, 120, 160) 50%, rgb(40, 160, 200));
+          --globe-route-yellow: rgb(215, 160, 30);
+          --globe-route-green: rgb(80, 160, 40);
+          --globe-route-blue: rgb(40, 100, 215);
+        }
+        :root[data-theme="dark"] .landing-globe {
+          --globe-land: color-mix(in srgb, rgb(160, 120, 60) 50%, rgb(200, 160, 100));
+          --globe-route-yellow: rgb(235, 185, 50);
+          --globe-route-green: rgb(100, 200, 80);
+          --globe-route-blue: rgb(90, 140, 245);
+        }
+      `;
+      document.head.append(style);
+    });
+  });
+  await page.goto("/", { waitUntil: "domcontentloaded" });
+  const globe = page.locator(".landing-globe");
+  await expect(globe).toHaveAttribute("data-state", "ready", {
+    timeout: 30_000,
+  });
+  const bounds = await globe.boundingBox();
+
+  for (const [theme, colors] of [
+    ["light", ["30,140,180", "215,160,30", "80,160,40", "40,100,215"]],
+    ["dark", ["180,140,80", "235,185,50", "100,200,80", "90,140,245"]],
+    ["light", ["30,140,180", "215,160,30", "80,160,40", "40,100,215"]],
+  ] as const) {
+    if ((await page.locator("html").getAttribute("data-theme")) !== theme) {
+      const previousCanvas = await globe.locator("canvas").elementHandle();
+      await page.evaluate(() => {
+        document.documentElement.dataset.globeColorSamples = "[]";
+      });
+      await page
+        .getByRole("button", { name: "Toggle theme", exact: true })
+        .click();
+      await page
+        .getByRole("menuitem", {
+          name: theme === "dark" ? "Dark" : "Light",
+          exact: true,
+        })
+        .click();
+      await expect
+        .poll(() => previousCanvas!.evaluate((canvas) => canvas.isConnected))
+        .toBe(false);
+    }
+    await expect(page.locator("html")).toHaveAttribute("data-theme", theme);
+    await expect(globe).toHaveAttribute("data-state", "ready");
+    await expect(globe.locator("canvas")).toHaveCount(1);
+    await expect
+      .poll(() =>
+        page.evaluate(() =>
+          JSON.parse(document.documentElement.dataset.globeColorSamples ?? "[]")
+        )
+      )
+      .toEqual(expect.arrayContaining([...colors]));
+    expect(await globe.boundingBox()).toEqual(bounds);
+  }
+});
+
 test("preserves the API site title after client navigation settles", async ({
   page,
 }) => {

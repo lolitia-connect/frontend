@@ -14,6 +14,7 @@
   "withdrawAmountExceeds": "利用可能な報酬額を超えています",
   "withdrawContentRequired": "出金情報を入力してください",
   "withdraw": "出金",
+  "withdrawAll": "全額出金",
   "withdrawCommission": "報酬の出金",
   "withdrawDescription": "報酬の出金申請を送信し、管理者の承認をお待ちください。",
   "withdrawAmount": "出金額",

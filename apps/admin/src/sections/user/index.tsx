@@ -19,7 +19,6 @@ import { Button } from "@workspace/ui/components/button";
 
 import { ScrollArea } from "@workspace/ui/components/scroll-area";
 
-import { Switch } from "@workspace/ui/components/switch";
 import { ConfirmButton } from "@workspace/ui/composed/confirm-button";
 import {
   ProTable,
@@ -35,7 +34,6 @@ import {
   deleteUser,
   getUserDetail,
   getUserList,
-  updateUserBasicInfo,
 } from "@workspace/ui/services/admin/user";
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -44,6 +42,7 @@ import { Display } from "@/components/display";
 import { useSubscribe } from "@/stores/subscribe";
 import { formatDate } from "@/utils/common";
 import { UserDetail } from "./user-detail";
+import { UserEnableSwitch } from "./user-enable-switch";
 import UserForm from "./user-form";
 import { AuthMethodsForm } from "./user-profile/auth-methods-form";
 import { BasicInfoForm } from "./user-profile/basic-info-form";
@@ -165,29 +164,9 @@ export default function User() {
           accessorKey: "enable",
           header: t("enable", "Enable"),
           cell: ({ row }) => (
-            <Switch
-              defaultChecked={row.getValue("enable")}
-              onCheckedChange={async (checked) => {
-                const {
-                  auth_methods: _auth_methods,
-                  user_devices: _user_devices,
-                  enable_balance_notify: _enable_balance_notify,
-                  enable_login_notify: _enable_login_notify,
-                  enable_subscribe_notify: _enable_subscribe_notify,
-                  enable_trade_notify: _enable_trade_notify,
-                  updated_at: _updated_at,
-                  created_at: _created_at,
-                  id,
-                  ...rest
-                } = row.original;
-                await updateUserBasicInfo({
-                  user_id: id,
-                  ...rest,
-                  enable: checked,
-                } as unknown as API.UpdateUserBasiceInfoRequest);
-                toast.success(t("updateSuccess", "Updated successfully"));
-                ref.current?.refresh();
-              }}
+            <UserEnableSwitch
+              onUpdated={() => ref.current?.refresh()}
+              user={row.original}
             />
           ),
         },

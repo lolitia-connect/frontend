@@ -48,7 +48,7 @@ export function LanguageProvider({
 }: LanguageProviderProps) {
   const { i18n } = useTranslation();
 
-  // Initialise with fallback, will be updated when i18n is ready.
+  // Match the server-selected language for hydration; detect saved preferences after mount.
   const [language, setLanguage] = useState<Language>(defaultLanguage);
 
   const [isLoading, setIsLoading] = useState(false);

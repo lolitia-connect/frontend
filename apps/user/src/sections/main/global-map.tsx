@@ -3,6 +3,8 @@
 import { useTheme } from "@workspace/ui/integrations/theme";
 import { useEffect, useRef } from "react";
 import countries from "world-atlas/countries-110m.json";
+import { createGlobeRoutePoints } from "./globe-route";
+import "./global-map.css";
 
 interface MapLocation {
   coordinates: [number, number];
@@ -20,6 +22,9 @@ const MAP_LOCATIONS: MapLocation[] = [
   { key: "delhi", coordinates: [77.1025, 28.7041] },
   { key: "singapore", coordinates: [103.8198, 1.3521] },
   { key: "macau", coordinates: [113.5439, 22.1987] },
+  { key: "sofia", coordinates: [23.3219, 42.6977] },
+  { key: "manila", coordinates: [120.9842, 14.5995] },
+  { key: "changhua", coordinates: [120.544, 24.0756] },
 ];
 
 const MAP_ROUTES = [
@@ -35,6 +40,15 @@ const MAP_ROUTES = [
   { from: "tokyo", to: "delhi" },
   { from: "tokyo", to: "singapore" },
   { from: "tokyo", to: "hong_kong" },
+  { from: "hong_kong", to: "sofia" },
+  { from: "hong_kong", to: "manila" },
+  { from: "hong_kong", to: "changhua" },
+];
+
+const ROUTE_COLOR_TOKENS = [
+  "--globe-route-yellow",
+  "--globe-route-green",
+  "--globe-route-blue",
 ];
 
 function getMapLocation(key: string) {
@@ -71,6 +85,29 @@ export function GlobalMap({ paused = false }: { paused?: boolean }) {
       if (disposed) return;
 
       const isDark = resolvedTheme === "dark";
+      const theme = getComputedStyle(container);
+      const colorContext = document.createElement("canvas").getContext("2d", {
+        colorSpace: "srgb",
+        willReadFrequently: true,
+      });
+      if (!colorContext) {
+        container.dataset.state = "fallback";
+        return;
+      }
+      const palette = new Map<string, string>();
+      const colorToken = (name: string) => {
+        const cached = palette.get(name);
+        if (cached) return cached;
+        // WebGL cannot resolve CSS variables or OKLCH/color-mix colours.
+        // Convert the scoped CSS palette to sRGB before creating materials.
+        colorContext.clearRect(0, 0, 1, 1);
+        colorContext.fillStyle = theme.getPropertyValue(name).trim();
+        colorContext.fillRect(0, 0, 1, 1);
+        const [red, green, blue] = colorContext.getImageData(0, 0, 1, 1).data;
+        const color = `rgb(${red}, ${green}, ${blue})`;
+        palette.set(name, color);
+        return color;
+      };
       const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
       const renderer = new THREE.WebGLRenderer({
         alpha: true,
@@ -88,36 +125,8 @@ export function GlobalMap({ paused = false }: { paused?: boolean }) {
       const land = feature(topology, "countries") as unknown as {
         features?: object[];
       };
-      // WebGL materials need concrete colour values and cannot resolve `var(...)`,
-      // so the palette is read from the theme at mount (same constraint as the
-      // QR canvas). Each value is a `--primary-*` ramp step mapped to the role
-      // its material plays: 200/300 lit land, 400 hubs/nodes, 500 routes.
-      const token = (name: string, fallback: string) =>
-        getComputedStyle(document.documentElement)
-          .getPropertyValue(name)
-          .trim() || fallback;
-      const colorContext = document.createElement("canvas").getContext("2d", {
-        colorSpace: "srgb",
-        willReadFrequently: true,
-      });
-      const palette = new Map<string, string>();
-      const colorToken = (name: string, fallback: string) => {
-        const cached = palette.get(name);
-        if (cached) return cached;
-        if (!colorContext) return fallback;
-        // Three.js cannot parse HeroUI's Lab/OKLCH colours; the canvas resolves
-        // CSS colours into sRGB without substituting a second theme palette.
-        colorContext.clearRect(0, 0, 1, 1);
-        colorContext.fillStyle = fallback;
-        colorContext.fillStyle = token(name, fallback);
-        colorContext.fillRect(0, 0, 1, 1);
-        const [red, green, blue] = colorContext.getImageData(0, 0, 1, 1).data;
-        const color = `rgb(${red}, ${green}, ${blue})`;
-        palette.set(name, color);
-        return color;
-      };
-      const landColor = colorToken("--primary-200", "#fbcfe8");
-      const landSideColor = colorToken("--primary-300", "#f9a8d4");
+      const landColor = colorToken("--globe-land");
+      const landSideColor = colorToken("--globe-land-side");
       const landCapMaterial = new THREE.MeshBasicMaterial({
         color: landColor,
         depthTest: true,
@@ -132,12 +141,12 @@ export function GlobalMap({ paused = false }: { paused?: boolean }) {
       });
       const globe = new ThreeGlobe({ animateIn: false })
         .showAtmosphere(true)
-        .atmosphereColor(colorToken("--primary-300", "#f9a8d4"))
+        .atmosphereColor(colorToken("--globe-atmosphere"))
         .atmosphereAltitude(isDark ? 0.13 : 0.16)
         .polygonsData(land.features ?? [])
         .polygonCapMaterial(() => landCapMaterial)
         .polygonSideMaterial(() => landSideMaterial)
-        .polygonStrokeColor(() => colorToken("--primary-400", "#f472b6"))
+        .polygonStrokeColor(() => colorToken("--globe-border"))
         .polygonAltitude(0.01)
         .polygonsTransitionDuration(0)
         .pointsData(MAP_LOCATIONS)
@@ -145,8 +154,8 @@ export function GlobalMap({ paused = false }: { paused?: boolean }) {
         .pointLng((location) => (location as MapLocation).coordinates[0])
         .pointColor((location) =>
           (location as MapLocation).isHub
-            ? colorToken("--primary-500", "#ec4899")
-            : colorToken("--primary-400", "#f472b6")
+            ? colorToken("--globe-hub")
+            : colorToken("--globe-node")
         )
         .pointRadius((location) =>
           (location as MapLocation).isHub ? 0.65 : 0.38
@@ -156,17 +165,25 @@ export function GlobalMap({ paused = false }: { paused?: boolean }) {
 
       globe.globeMaterial(
         new THREE.MeshPhongMaterial({
-          color: colorToken("--surface", "#ffffff"),
-          emissive: colorToken("--primary-50", "#fdf2f8"),
+          color: colorToken("--globe-ocean"),
+          emissive: colorToken("--globe-emissive"),
           emissiveIntensity: isDark ? 0.12 : 0.08,
           shininess: isDark ? 8 : 24,
-          specular: colorToken("--default-200", "#e4e4e7"),
+          specular: colorToken("--globe-specular"),
         })
       );
       globe.pauseAnimation();
       scene.add(globe);
-      scene.add(new THREE.AmbientLight(0xff_ff_ff, isDark ? 2 : 1.65));
-      const light = new THREE.DirectionalLight(0xff_e2_ef, isDark ? 2.5 : 1.8);
+      scene.add(
+        new THREE.AmbientLight(
+          colorToken("--globe-ambient-light"),
+          isDark ? 2 : 1.65
+        )
+      );
+      const light = new THREE.DirectionalLight(
+        colorToken("--globe-directional-light"),
+        isDark ? 2.5 : 1.8
+      );
       light.position.set(-200, 300, 400);
       scene.add(light);
 
@@ -222,23 +239,12 @@ export function GlobalMap({ paused = false }: { paused?: boolean }) {
         );
         const start = new THREE.Vector3(source.x, source.y, source.z);
         const end = new THREE.Vector3(target.x, target.y, target.z);
-        const altitude = Math.min(0.5, start.distanceTo(end) / 280);
         const path = new THREE.CatmullRomCurve3(
-          Array.from({ length: 65 }, (_, sample) => {
-            const progress = sample / 64;
-            return start
-              .clone()
-              .lerp(end, progress)
-              .normalize()
-              .multiplyScalar(
-                101.6 + Math.sin(progress * Math.PI) * altitude * 100
-              );
-          })
+          createGlobeRoutePoints(start, end)
         );
-        const color =
-          route.from === "hong_kong"
-            ? colorToken("--primary-500", "#ec4899")
-            : colorToken("--primary-300", "#f9a8d4");
+        const color = colorToken(
+          ROUTE_COLOR_TOKENS[index % ROUTE_COLOR_TOKENS.length]!
+        );
         const material = new THREE.MeshBasicMaterial({
           color,
           transparent: true,
@@ -250,8 +256,7 @@ export function GlobalMap({ paused = false }: { paused?: boolean }) {
           const dot = new THREE.Mesh(
             particleGeometry,
             new THREE.MeshBasicMaterial({
-              color:
-                particle === 0 ? colorToken("--primary-100", "#fce7f3") : color,
+              color: particle === 0 ? colorToken("--globe-particle") : color,
               transparent: true,
               opacity: 1 - particle * 0.25,
             })

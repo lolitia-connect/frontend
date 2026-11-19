@@ -39,6 +39,7 @@
 #### 目录
 
 - [⌨️ 本地开发](#️-本地开发)
+- [📚 文档](#-文档)
 - [🚀 在 Vercel 上部署](#-在-vercel-上部署)
 - [🤝 贡献](#-贡献)
 - [📝 许可证](#-许可证)
@@ -71,31 +72,12 @@ cd apps/user
 bun dev
 ```
 
-在浏览器中打开 <http://localhost:3000> 查看结果。
+在浏览器中打开 <http://localhost:3000> 查看结果。按 [.env.example](.env.example) 配置 `NEXT_PUBLIC_API_BASE_URL`，并让后端允许该站点来源。
 
-### 首页组件风格
+## 📚 文档
 
-首页沿用用户主界面的 HeroUI `Card`、`Card.Title`、`Card.Description`、`Chip` 和共享按钮封装，
-使用主题默认的背景、表面色、圆角和交互状态。首页服务介绍和套餐卡片不单独覆盖玻璃背景、
-阴影或悬浮位移动效；首屏的 WebGL 地球动画保持独立。
-
-### 主内容区空状态
-
-页面级空状态使用 [MainEmpty](./src/components/main-empty.tsx)，采用与工单支持列表一致的
-`py-24` 上下留白。该组件仅用于主内容区域，不修改共享空状态的默认样式，也不用于
-侧栏、弹窗或图表内部的局部占位。包裹主区域空状态的卡片不应额外增加上下内边距。
-
-
-### OAuth 回调
-
-登录和账号绑定回调分别由 Next.js App Router 的 `/oauth/[platform]` 和
-`/bind/[platform]` 路由处理。服务商已注册的回调地址继续使用
-`<origin>/oauth/<provider>/` 和 `<origin>/bind/<provider>/`，保留尾部斜杠。
-Next.js 会规范化尾部斜杠并保留查询参数，无需静态 HTML 桥接页或静态托管回退规则。
-
-Telegram 回调支持查询参数、URL 片段（`#tgAuthResult=...`）以及独立的签名字段。
-弹窗回调将结果转发给打开它的窗口；整页回调直接完成登录或绑定。
-两条路径均使用现有后端的 `tgAuthResult` 数据格式。部署时需使用 Next.js 运行环境。
+- [开发指南](../../docs/zh/guide/frontend-development.md#用户端维护)：首页 UI、空状态约定、OAuth 回调和测试。
+- [共享环境与项目文档](../../README.zh-CN.md#-文档)。
 
 ## 🚀 在 Vercel 上部署
 
@@ -130,7 +112,7 @@ Telegram 回调支持查询参数、URL 片段（`#tgAuthResult=...`）以及独
 ## 📝 许可证
 
 版权所有 © 2024 [PPanel][profile-link]。<br />
-本项目使用 [GNU](./LICENSE) 许可证。
+本项目使用 [GNU](../../LICENSE) 许可证。
 
 <!-- LINK GROUP -->
 

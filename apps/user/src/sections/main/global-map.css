@@ -1,0 +1,21 @@
+.landing-globe {
+  --globe-ocean: var(--surface);
+  --globe-emissive: var(--accent);
+  --globe-specular: var(--surface-secondary);
+  --globe-land: color-mix(in oklab, var(--surface) 45%, var(--accent));
+  --globe-land-side: color-mix(in oklab, var(--surface) 25%, var(--accent));
+  --globe-border: color-mix(in oklab, var(--accent) 75%, var(--muted));
+  --globe-atmosphere: var(--accent);
+  --globe-node: color-mix(in oklab, var(--accent) 60%, var(--muted));
+  --globe-hub: color-mix(in oklab, var(--accent) 45%, var(--muted));
+  --globe-route-yellow: oklch(82% 0.18 95);
+  --globe-route-green: oklch(74% 0.2 145);
+  --globe-route-blue: oklch(68% 0.2 255);
+  --globe-particle: color-mix(in oklab, var(--accent) 30%, var(--white));
+  --globe-ambient-light: var(--white);
+  --globe-directional-light: color-mix(
+    in oklab,
+    var(--white) 80%,
+    var(--accent)
+  );
+}

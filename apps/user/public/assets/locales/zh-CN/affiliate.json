@@ -13,6 +13,7 @@
   "totalCommission": "累计佣金",
   "userIdentifier": "用户标识",
   "withdraw": "提现",
+  "withdrawAll": "全部提现",
   "withdrawAmount": "提现金额",
   "withdrawAmountExceeds": "金额超过可提现佣金",
   "withdrawCommission": "佣金提现",

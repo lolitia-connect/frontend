@@ -90,7 +90,10 @@ export default function Footer() {
     <footer>
       <Separator />
       <div className="container flex flex-wrap items-center justify-between gap-6 py-8 text-muted text-sm">
-        <nav className="flex flex-wrap items-center gap-1">
+        <nav
+          aria-label={t("accessibility.footerNavigation", "Community links")}
+          className="flex flex-wrap items-center gap-1"
+        >
           {links
             .filter((item) => item.href)
             .map((item) => (

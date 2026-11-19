@@ -39,10 +39,14 @@ export default function Main() {
   return (
     <AuthShell>
       <Link
+        aria-label={
+          site.site_name || t("components:accessibility.home", "Home")
+        }
         className="mb-6 flex flex-col items-center gap-3 text-center"
         to="/"
       >
         {site.site_logo && (
+          // biome-ignore lint/performance/noImgElement: dynamic admin-configured logo URL; next/image needs statically configured remote patterns
           <img
             alt="logo"
             className="object-contain"

@@ -6,6 +6,7 @@ import {
   CardHeader,
   CardTitle,
   TabIndicator,
+  TabPanel,
   Tabs,
   TabList as TabsList,
   TabListContainer as TabsListContainer,
@@ -81,21 +82,21 @@ export default function TrafficRankCard({
   }, [data, timeFrame, type]);
 
   return (
-    <Card>
-      <CardHeader className="!flex-row flex items-center justify-between gap-2">
-        <CardTitle className="min-w-0">
-          {type === "nodes"
-            ? t("nodeTraffic", "Node Traffic")
-            : t("userTraffic", "User Traffic")}
-        </CardTitle>
-        <Tabs
-          className="min-w-0 max-w-full shrink-0"
-          onSelectionChange={(key) => {
-            if (key === "today" || key === "yesterday") onTimeFrameChange(key);
-          }}
-          selectedKey={timeFrame}
-        >
-          <TabsListContainer className="min-w-0 max-w-full">
+    <Tabs
+      className="min-w-0 max-w-full"
+      onSelectionChange={(key) => {
+        if (key === "today" || key === "yesterday") onTimeFrameChange(key);
+      }}
+      selectedKey={timeFrame}
+    >
+      <Card>
+        <CardHeader className="!flex-row flex items-center justify-between gap-2">
+          <CardTitle className="min-w-0" render={(props) => <h2 {...props} />}>
+            {type === "nodes"
+              ? t("nodeTraffic", "Node Traffic")
+              : t("userTraffic", "User Traffic")}
+          </CardTitle>
+          <TabsListContainer className="min-w-0 max-w-full shrink-0">
             <TabsList aria-label={t("sections", "Sections")}>
               <TabsTrigger
                 className="w-auto flex-1 whitespace-nowrap"
@@ -113,89 +114,95 @@ export default function TrafficRankCard({
               </TabsTrigger>
             </TabsList>
           </TabsListContainer>
-        </Tabs>
-      </CardHeader>
-      <CardContent className="h-80">
-        {currentData.length > 0 ? (
-          <ChartContainer
-            className="max-h-80"
-            config={{
-              traffic: {
-                label: t("traffic", "Traffic"),
-                color: "var(--accent)",
-              },
-              type: { label: t("type", "Type"), color: "var(--muted)" },
-              label: { color: "var(--foreground)" },
-            }}
-          >
-            <BarChart data={currentData} height={400} layout="vertical">
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis
-                axisLine={false}
-                tickFormatter={(value) => formatBytes(value || 0)}
-                tickLine={false}
-                type="number"
-              />
-              <YAxis
-                axisLine={false}
-                dataKey="name"
-                interval={0}
-                tickFormatter={(_value, index) => String(index + 1)}
-                tickLine={false}
-                tickMargin={0}
-                type="category"
-                width={15}
-              />
-              <ChartTooltip
-                content={
-                  <ChartTooltipContent
-                    formatter={(value) => formatBytes(Number(value) || 0)}
-                    label={true}
-                    labelFormatter={(label, [payload]) =>
-                      type === "nodes" ? (
-                        `${t("nodes", "Nodes")}: ${label}`
-                      ) : (
-                        <>
-                          {payload?.payload.uid ? (
+        </CardHeader>
+        <TabPanel id={timeFrame}>
+          <CardContent className="h-80">
+            {currentData.length > 0 ? (
+              <ChartContainer
+                className="max-h-80"
+                config={{
+                  traffic: {
+                    label: t("traffic", "Traffic"),
+                    color: "var(--accent)",
+                  },
+                  type: { label: t("type", "Type"), color: "var(--muted)" },
+                  label: { color: "var(--foreground)" },
+                }}
+              >
+                <BarChart data={currentData} height={400} layout="vertical">
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis
+                    axisLine={false}
+                    tickFormatter={(value) => formatBytes(value || 0)}
+                    tickLine={false}
+                    type="number"
+                  />
+                  <YAxis
+                    axisLine={false}
+                    dataKey="name"
+                    interval={0}
+                    tickFormatter={(_value, index) => String(index + 1)}
+                    tickLine={false}
+                    tickMargin={0}
+                    type="category"
+                    width={15}
+                  />
+                  <ChartTooltip
+                    content={
+                      <ChartTooltipContent
+                        formatter={(value) => formatBytes(Number(value) || 0)}
+                        label={true}
+                        labelFormatter={(label, [payload]) =>
+                          type === "nodes" ? (
+                            `${t("nodes", "Nodes")}: ${label}`
+                          ) : (
                             <>
+                              {payload?.payload.uid ? (
+                                <>
+                                  <div className="w-80">
+                                    <UserDetail id={payload.payload.uid} />
+                                  </div>
+                                  <Separator className="my-2" />
+                                </>
+                              ) : null}
                               <div className="w-80">
-                                <UserDetail id={payload.payload.uid} />
+                                <UserSubscribeDetail
+                                  enabled={true}
+                                  id={payload?.payload.name}
+                                />
                               </div>
                               <Separator className="my-2" />
+                              <div>{`${t("users", "Users")}: ${label}`}</div>
                             </>
-                          ) : null}
-                          <div className="w-80">
-                            <UserSubscribeDetail
-                              enabled={true}
-                              id={payload?.payload.name}
-                            />
-                          </div>
-                          <Separator className="my-2" />
-                          <div>{`${t("users", "Users")}: ${label}`}</div>
-                        </>
-                      )
+                          )
+                        }
+                      />
                     }
+                    trigger="hover"
                   />
-                }
-                trigger="hover"
-              />
-              <Bar dataKey="traffic" fill="var(--accent)" radius={[0, 4, 4, 0]}>
-                <LabelList
-                  className="fill-accent-foreground"
-                  dataKey="name"
-                  fontSize={12}
-                  offset={8}
-                  position="insideLeft"
-                />
-              </Bar>
-            </BarChart>
-          </ChartContainer>
-        ) : (
-          <div className="flex h-full items-center justify-center">
-            <Empty />
-          </div>
-        )}
-      </CardContent>
-    </Card>
+                  <Bar
+                    dataKey="traffic"
+                    fill="var(--accent)"
+                    radius={[0, 4, 4, 0]}
+                  >
+                    <LabelList
+                      className="fill-accent-foreground"
+                      dataKey="name"
+                      fontSize={12}
+                      offset={8}
+                      position="insideLeft"
+                    />
+                  </Bar>
+                </BarChart>
+              </ChartContainer>
+            ) : (
+              <div className="flex h-full items-center justify-center">
+                <Empty />
+              </div>
+            )}
+          </CardContent>
+        </TabPanel>
+      </Card>
+    </Tabs>
   );
 }

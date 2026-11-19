@@ -1,4 +1,7 @@
 {
+  "accessibility": {
+    "skipToContent": "跳至主要內容"
+  },
   "language": {
     "label": "語言",
     "followSystem": "系統預設"
@@ -121,6 +124,7 @@
     "last": "最後一頁"
   },
   "table": {
+    "refresh": "重新整理資料",
     "actions": "操作",
     "columns": "選擇欄位",
     "data": "資料表格",

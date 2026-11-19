@@ -1,6 +1,7 @@
 "use client";
 
 import { Toaster } from "@workspace/ui/components/sonner";
+import { SkipLink } from "@workspace/ui/composed/skip-link";
 import { LanguageProvider } from "@workspace/ui/integrations/language";
 import {
   TanStackQueryContext,
@@ -74,6 +75,7 @@ export function Providers({
           supportedLanguages={supportedLngs}
         >
           <ThemeProvider>
+            <SkipLink />
             <AppInitializer />
             <NavigationProgress />
             {children}

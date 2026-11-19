@@ -70,7 +70,7 @@ export function RevenueStatisticsCard() {
     <Tabs className="min-w-0 max-w-full" defaultSelectedKey="today">
       <Card className="h-full pb-0">
         <CardHeader className="!flex-row flex flex-wrap items-center justify-between gap-2">
-          <CardTitle className="min-w-0">
+          <CardTitle className="min-w-0" render={(props) => <h2 {...props} />}>
             {t("revenueTitle", "Revenue Statistics")}
           </CardTitle>
           <TabsListContainer className="min-w-0 max-w-full">
@@ -214,9 +214,8 @@ export function RevenueStatisticsCard() {
 
         <TabsContent className="h-full" id="month">
           <CardContent className="h-80">
-            {RevenueStatistics?.monthly.list?.some(
-              (item) => item.new_order_amount || item.renewal_order_amount
-            ) ? (
+            {RevenueStatistics?.monthly.list &&
+            RevenueStatistics?.monthly.list.length > 0 ? (
               <ChartContainer
                 className="max-h-80 w-full"
                 config={IncomeStatisticsConfig}
@@ -355,9 +354,8 @@ export function RevenueStatisticsCard() {
 
         <TabsContent className="h-full" id="total">
           <CardContent className="h-80">
-            {RevenueStatistics?.all.list?.some(
-              (item) => item.new_order_amount || item.renewal_order_amount
-            ) ? (
+            {RevenueStatistics?.all.list &&
+            RevenueStatistics?.all.list.length > 0 ? (
               <ChartContainer
                 className="max-h-80 w-full"
                 config={IncomeStatisticsConfig}

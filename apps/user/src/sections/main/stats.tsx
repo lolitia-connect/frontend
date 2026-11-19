@@ -37,7 +37,9 @@ export function Stats() {
               <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-accent-soft text-accent-soft-foreground">
                 <Icon aria-hidden="true" className="size-5" />
               </span>
-              <Card.Title>{item.name}</Card.Title>
+              <Card.Title render={(props) => <h2 {...props} />}>
+                {item.name}
+              </Card.Title>
             </Card.Header>
             <Card.Content>
               <Card.Description>{item.description}</Card.Description>

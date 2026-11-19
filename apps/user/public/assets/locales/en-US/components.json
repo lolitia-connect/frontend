@@ -120,6 +120,12 @@
     "social": "Visit our {{name}}",
     "tos": "Terms of Service"
   },
+  "accessibility": {
+    "skipToContent": "Skip to content",
+    "mainNavigation": "Main navigation",
+    "footerNavigation": "Community links",
+    "home": "Home"
+  },
   "language": {
     "followSystem": "System default",
     "label": "Language"
@@ -164,6 +170,7 @@
   },
   "unlimited": "Unlimited",
   "table": {
+    "refresh": "Refresh",
     "actions": "Actions",
     "columns": "Choose columns",
     "data": "Data table",

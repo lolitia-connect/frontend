@@ -88,7 +88,9 @@ export default function Affiliate() {
     <div className="flex flex-col gap-4">
       <Card>
         <Card.Header>
-          <Card.Title>{t("totalCommission", "Total Commission")}</Card.Title>
+          <Card.Title render={(props) => <h2 {...props} />}>
+            {t("totalCommission", "Total Commission")}
+          </Card.Title>
           <Card.Description>
             {t("commissionInfo", "Commission Info")}
           </Card.Description>
@@ -223,7 +225,10 @@ export default function Affiliate() {
       </Card>
       <Card>
         <Card.Header className="flex flex-row items-center justify-between space-y-0">
-          <Card.Title className="font-medium text-lg">
+          <Card.Title
+            className="font-medium text-lg"
+            render={(props) => <h2 {...props} />}
+          >
             {t("inviteCode", "Invite Code")}
           </Card.Title>
         </Card.Header>

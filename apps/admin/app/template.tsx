@@ -11,8 +11,9 @@ import type { ReactNode } from "react";
  * Kept deliberately short (~0.28s) so navigation still feels immediate.
  *
  * `prefers-reduced-motion: reduce` collapses this to no animation (see
- * `.page-transition` in globals.css). The animation is opacity/transform only —
- * it cannot cause layout shift or a hydration mismatch.
+ * `.page-transition` in globals.css). The animation is transform-only so SSR
+ * content is visible from its first frame, even before hydration. It cannot
+ * cause layout shift or a hydration mismatch.
  */
 export default function Template({ children }: { children: ReactNode }) {
   return <div className="page-transition">{children}</div>;

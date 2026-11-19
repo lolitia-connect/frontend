@@ -1,6 +1,6 @@
 "use client";
 
-import { Focusable, Tooltip } from "@heroui/react";
+import { Popover } from "@heroui/react";
 
 import {
   Sidebar,
@@ -37,6 +37,7 @@ export function SidebarLeft({
   const { state, isMobile } = useSidebar();
 
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
+  const [openFlyout, setOpenFlyout] = useState<string | null>(null);
 
   React.useEffect(() => {
     setOpenGroups((prev) => {
@@ -82,65 +83,64 @@ export function SidebarLeft({
   }, [pathname, navs]);
 
   const renderCollapsedFlyout = (nav: NavItem) => {
-    const ParentButton = (
-      <SidebarMenuButton
-        aria-label={nav.title}
-        className="h-8 justify-center"
-        isActive={false}
-        size="sm"
-      >
-        {"url" in nav && nav.url ? (
-          <Link to={nav.url as string}>
-            {"icon" in nav && (nav as any).icon ? (
-              <Icon className="size-4" icon={(nav as any).icon} />
-            ) : null}
+    if (!hasChildren(nav)) {
+      return (
+        <SidebarMenuButton
+          aria-label={nav.title}
+          asChild
+          isActive={isNavActive(nav)}
+          size="sm"
+        >
+          <Link to={nav.url || "/dashboard"}>
+            {nav.icon && <Icon className="size-4" icon={nav.icon} />}
           </Link>
-        ) : "icon" in nav && (nav as any).icon ? (
-          <Icon className="size-4" icon={(nav as any).icon} />
-        ) : null}
-      </SidebarMenuButton>
-    );
-
-    if (!hasChildren(nav)) return ParentButton;
+        </SidebarMenuButton>
+      );
+    }
 
     return (
-      <Tooltip closeDelay={200} delay={40}>
-        <Focusable>{ParentButton}</Focusable>
-        <Tooltip.Content
+      <Popover
+        isOpen={openFlyout === nav.title}
+        onOpenChange={(open) => setOpenFlyout(open ? nav.title : null)}
+      >
+        <Popover.Trigger
+          aria-label={nav.title}
+          className="flex size-8 items-center justify-center rounded-md text-default-600 hover:bg-default focus-visible:outline-2 focus-visible:outline-focus"
+        >
+          {nav.icon && <Icon className="size-4" icon={nav.icon} />}
+        </Popover.Trigger>
+        <Popover.Content
           className="z-[9999] w-64 p-0"
-          containerPadding={8}
           offset={10}
           placement="right"
         >
-          <div className="flex items-center gap-2 border-b px-3 py-2">
-            {"icon" in nav && (nav as any).icon ? (
-              <Icon className="size-4" icon={(nav as any).icon} />
-            ) : null}
-            <span className="truncate font-medium text-muted text-xs">
+          <Popover.Dialog aria-label={nav.title}>
+            <Popover.Heading className="border-b px-3 py-2 font-medium text-muted text-xs">
               {nav.title}
-            </span>
-          </div>
-
-          <ul className="p-1">
-            {nav.items?.map((item: any) => (
-              <li key={item.title}>
-                <Link
-                  className={[
-                    "flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm",
-                    isNavActive(item)
-                      ? "bg-primary-50 font-medium text-primary-600 dark:bg-default dark:text-foreground"
-                      : "text-default-600 hover:bg-primary-50 hover:text-primary-600 dark:hover:bg-default dark:hover:text-foreground",
-                  ].join(" ")}
-                  to={item.url}
-                >
-                  {item.icon && <Icon className="size-4" icon={item.icon} />}
-                  <span className="truncate">{item.title}</span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </Tooltip.Content>
-      </Tooltip>
+            </Popover.Heading>
+            <ul className="p-1">
+              {nav.items?.map((item) => (
+                <li key={item.title}>
+                  <Link
+                    aria-current={isNavActive(item) ? "page" : undefined}
+                    className={cn(
+                      "flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm focus-visible:outline-2 focus-visible:outline-focus",
+                      isNavActive(item)
+                        ? "bg-primary-50 font-medium text-primary-500 dark:bg-default dark:text-foreground"
+                        : "text-default-600 hover:bg-primary-50 hover:text-primary-500 dark:hover:bg-default dark:hover:text-foreground"
+                    )}
+                    onClick={() => setOpenFlyout(null)}
+                    to={item.url}
+                  >
+                    {item.icon && <Icon className="size-4" icon={item.icon} />}
+                    <span className="truncate">{item.title}</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </Popover.Dialog>
+        </Popover.Content>
+      </Popover>
     );
   };
 
@@ -158,6 +158,7 @@ export function SidebarLeft({
                     painted over/next to the logo instead of disappearing — the
                     misaligned element at the sidebar's top-left. */}
                 <div className="flex aspect-square size-6 shrink-0 items-center justify-center rounded-lg">
+                  {/* biome-ignore lint/performance/noImgElement: dynamic admin-configured logo URL; next/image needs statically configured remote patterns */}
                   <img
                     alt="logo"
                     className="size-full"
@@ -170,7 +171,7 @@ export function SidebarLeft({
                   <span className="truncate font-semibold text-xs">
                     {site.site_name}
                   </span>
-                  <span className="truncate text-xs opacity-70">
+                  <span className="truncate text-muted text-xs">
                     {site.site_desc}
                   </span>
                 </div>
@@ -181,12 +182,12 @@ export function SidebarLeft({
       </SidebarHeader>
 
       <SidebarContent className="py-2">
-        <SidebarMenu>
+        <div className="flex w-full flex-col gap-1">
           {!isMobile && state === "collapsed"
             ? navs.map((nav) => (
-                <SidebarMenuItem className="mx-auto" key={nav.title}>
+                <div className="mx-auto" key={nav.title}>
                   {renderCollapsedFlyout(nav)}
-                </SidebarMenuItem>
+                </div>
               ))
             : navs.map((nav) => {
                 if (hasChildren(nav)) {
@@ -194,8 +195,9 @@ export function SidebarLeft({
                   return (
                     <SidebarGroup className={cn("py-1")} key={nav.title}>
                       <SidebarMenuButton
+                        aria-expanded={isOpen}
                         className={cn(
-                          "group/nav-label mb-2 flex h-8 w-full items-center justify-between text-default-600 hover:bg-primary-50 hover:text-primary-600 dark:hover:bg-default dark:hover:text-foreground"
+                          "group/nav-label mb-2 flex h-8 w-full items-center justify-between text-default-600 hover:bg-primary-50 hover:text-primary-500 dark:hover:bg-default dark:hover:text-foreground"
                         )}
                         isActive={false}
                         onClick={() => handleToggleGroup(nav.title)}
@@ -294,7 +296,7 @@ export function SidebarLeft({
                   </SidebarGroup>
                 );
               })}
-        </SidebarMenu>
+        </div>
       </SidebarContent>
     </Sidebar>
   );

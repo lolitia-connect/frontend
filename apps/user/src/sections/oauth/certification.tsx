@@ -20,6 +20,7 @@ import {
   getTelegramAuthCallback,
   relayTelegramCallbackToOpener,
 } from "@/utils/oauth/telegram-popup";
+import SendCode from "../auth/send-code";
 
 interface CertificationProps {
   children: React.ReactNode;
@@ -37,12 +38,20 @@ export default function Certification({
   }) as Record<string, unknown>;
   const getUserInfo = useGlobalStore((state) => state.getUserInfo);
   const submitted = useRef(false);
-  // Set when the provider identity was verified but registration is
-  // invitation-only and no code was supplied yet. Holding the one-time ticket
-  // lets the user enter a code without repeating the provider round trip, and
-  // no account is created until that code is accepted.
+  // Set when the provider identity was verified but registration still needs
+  // input from the user. Holding the one-time ticket lets the user supply that
+  // input without repeating the provider round trip, and no account is created
+  // until it is accepted.
   const [oauthToken, setOauthToken] = useState<string>();
+  // The panel enforces invitation-only registration and no code was supplied.
+  const [inviteRequired, setInviteRequired] = useState(false);
+  // The provider returned no email (e.g. Telegram); a real address is needed.
+  const [emailRequired, setEmailRequired] = useState(false);
+  // The collected email must be proven with a verification code.
+  const [emailVerify, setEmailVerify] = useState(false);
   const [invite, setInvite] = useState("");
+  const [email, setEmail] = useState("");
+  const [code, setCode] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
   const completeLogin = async (token: string) => {
@@ -81,11 +90,17 @@ export default function Certification({
           await completeLogin(data.token);
           return;
         }
-        // Forced-invite registration: the backend verified the provider
-        // identity and is asking for an invitation code before creating the
-        // account. Switch to the invite prompt instead of failing.
-        if (data?.invite_required && data.oauth_token) {
+        // Deferred registration: the backend verified the provider identity
+        // and is asking for the data it could not obtain from the provider (an
+        // invitation code and/or a real email) before creating the account.
+        if (
+          data?.oauth_token &&
+          (data.invite_required || data.email_required)
+        ) {
           setOauthToken(data.oauth_token);
+          setInviteRequired(Boolean(data.invite_required));
+          setEmailRequired(Boolean(data.email_required));
+          setEmailVerify(Boolean(data.email_verify));
           return;
         }
         throw new Error("Invalid token");
@@ -95,17 +110,30 @@ export default function Certification({
       });
   }, [platform, navigate, searchParams, getUserInfo]);
 
-  const handleInviteSubmit = async () => {
-    const code = invite.trim();
-    if (submitting || !(oauthToken && code)) {
+  const canSubmit =
+    !submitting &&
+    !!oauthToken &&
+    (!inviteRequired || invite.trim().length > 0) &&
+    (!emailRequired || email.trim().length > 0) &&
+    (!(emailRequired && emailVerify) || code.trim().length > 0);
+
+  const handleSubmit = async () => {
+    if (!(canSubmit && oauthToken)) {
       return;
     }
     setSubmitting(true);
     try {
-      const res = await oAuthRegister({
-        oauth_token: oauthToken,
-        invite: code,
-      });
+      const payload: API.OAuthRegisterRequest = { oauth_token: oauthToken };
+      if (inviteRequired) {
+        payload.invite = invite.trim();
+      }
+      if (emailRequired) {
+        payload.email = email.trim();
+        if (emailVerify) {
+          payload.code = code.trim();
+        }
+      }
+      const res = await oAuthRegister(payload);
       const token = res?.data?.data?.token;
       if (!token) {
         throw new Error("Invalid token");
@@ -113,7 +141,8 @@ export default function Certification({
       await completeLogin(token);
     } catch {
       // The request interceptor already surfaces the error (e.g. invalid
-      // invitation code); let the user correct the code and retry.
+      // invitation code or verification code); let the user correct the input
+      // and retry.
       setSubmitting(false);
     }
   };
@@ -124,29 +153,73 @@ export default function Certification({
         <div className="flex w-full max-w-sm flex-col gap-4 rounded-xl border border-border p-6 shadow-sm">
           <div className="flex flex-col gap-2 text-center">
             <h1 className="font-bold text-xl">
-              {t("oauth.invitePrompt", "Enter your invitation code")}
+              {emailRequired
+                ? t("oauth.completePrompt", "Complete your registration")
+                : t("oauth.invitePrompt", "Enter your invitation code")}
             </h1>
             <p className="text-muted text-sm">
-              {t(
-                "oauth.inviteDescription",
-                "Registration requires an invitation code. Enter it to finish creating your account."
-              )}
+              {emailRequired
+                ? t(
+                    "oauth.emailDescription",
+                    "Your sign-in provider did not share an email address. Enter a valid email to finish creating your account."
+                  )
+                : t(
+                    "oauth.inviteDescription",
+                    "Registration requires an invitation code. Enter it to finish creating your account."
+                  )}
             </p>
           </div>
-          <Input
-            autoFocus
-            onChange={(e) => setInvite(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                handleInviteSubmit();
-              }
-            }}
-            placeholder={t(
-              "oauth.invitePlaceholder",
-              "Enter invitation code..."
-            )}
-            value={invite}
-          />
+          {emailRequired && (
+            <>
+              <Input
+                autoFocus
+                onChange={(e) => setEmail(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    handleSubmit();
+                  }
+                }}
+                placeholder={t("placeholders.email", "Enter your email...")}
+                type="email"
+                value={email}
+              />
+              {emailVerify && (
+                <div className="flex items-center gap-2">
+                  <Input
+                    onChange={(e) => setCode(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        handleSubmit();
+                      }
+                    }}
+                    placeholder={t("placeholders.code", "Enter code...")}
+                    type="text"
+                    value={code}
+                  />
+                  <SendCode
+                    params={{ email: email.trim(), type: 1 }}
+                    type="email"
+                  />
+                </div>
+              )}
+            </>
+          )}
+          {inviteRequired && (
+            <Input
+              autoFocus={!emailRequired}
+              onChange={(e) => setInvite(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleSubmit();
+                }
+              }}
+              placeholder={t(
+                "oauth.invitePlaceholder",
+                "Enter invitation code..."
+              )}
+              value={invite}
+            />
+          )}
           <div className="flex gap-3">
             <Button
               className="flex-1"
@@ -159,9 +232,9 @@ export default function Certification({
             </Button>
             <Button
               className="flex-1"
-              disabled={!invite.trim() || submitting}
+              disabled={!canSubmit}
               onClick={() => {
-                handleInviteSubmit();
+                handleSubmit();
               }}
               type="button"
             >

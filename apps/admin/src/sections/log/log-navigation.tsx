@@ -78,7 +78,7 @@ export function LogNavigation() {
                 className={buttonVariants({
                   variant: activeRoute ? "secondary" : "outline",
                   size: "md",
-                  class: undefined,
+                  class: "inline-flex items-center",
                 })}
               >
                 <span>

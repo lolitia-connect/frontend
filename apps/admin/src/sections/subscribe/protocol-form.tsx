@@ -177,6 +177,7 @@ export function ProtocolForm() {
         <div className="flex items-center gap-2">
           {row.original.icon && (
             <div className="relative h-6 w-6 flex-shrink-0">
+              {/* biome-ignore lint/performance/noImgElement: dynamic remote client icon URL */}
               <img
                 alt={row.original.name}
                 className="h-full w-full rounded object-contain"

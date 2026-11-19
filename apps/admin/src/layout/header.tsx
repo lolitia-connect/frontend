@@ -90,7 +90,9 @@ export function Header() {
                 )}
                 {index < items.length - 1 && <BreadcrumbSeparator />}
                 {index === items.length - 1 && (
-                  <BreadcrumbPage>{item?.title}</BreadcrumbPage>
+                  <BreadcrumbItem>
+                    <BreadcrumbPage>{item?.title}</BreadcrumbPage>
+                  </BreadcrumbItem>
                 )}
               </Fragment>
             ))}

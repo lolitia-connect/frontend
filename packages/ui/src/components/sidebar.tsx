@@ -165,8 +165,10 @@ function Sidebar({
   if (collapsible === "none") {
     return (
       <Surface
+        aria-label={t("sidebar.title", "Sidebar")}
         className={cn("flex h-full w-(--sidebar-width) flex-col", className)}
         data-slot="sidebar"
+        role={side === "left" ? "navigation" : "complementary"}
         {...props}
       >
         {children}
@@ -227,6 +229,7 @@ function Sidebar({
         data-slot="sidebar-gap"
       />
       <div
+        aria-label={t("sidebar.title", "Sidebar")}
         className={cn(
           "fixed inset-y-0 z-10 hidden h-svh w-(--sidebar-width) transition-[left,right,width] duration-200 ease-linear md:flex",
           side === "left"
@@ -239,6 +242,7 @@ function Sidebar({
           className
         )}
         data-slot="sidebar-container"
+        role="navigation"
         {...props}
       >
         <Surface
@@ -258,11 +262,12 @@ function SidebarTrigger({
   onClick,
   ...props
 }: React.ComponentProps<typeof Button>) {
-  const { toggleSidebar } = useSidebar();
+  const { toggleSidebar, isMobile, open, openMobile } = useSidebar();
   const { t } = useTranslation("components");
 
   return (
     <Button
+      aria-expanded={isMobile ? openMobile : open}
       className={cn("size-7", className)}
       data-sidebar="trigger"
       data-slot="sidebar-trigger"
@@ -315,6 +320,8 @@ function SidebarInset({ className, ...props }: React.ComponentProps<"main">) {
         className
       )}
       data-slot="sidebar-inset"
+      id="main-content"
+      tabIndex={-1}
       {...props}
     />
   );
@@ -538,7 +545,7 @@ const sidebarMenuButtonVariants = tv({
   // light-mode theme. In dark mode that ramp inverts to a muddy wine plate with
   // neon-pink text, so the `dark:` overrides restore the original neutral hover
   // (a quiet `--default` plate + near-white text), leaving light mode untouched.
-  base: "peer/menu-button flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-default-600 text-sm outline-hidden ring-focus transition-[width,height,padding,background-color,color] hover:bg-primary-50 hover:text-primary-600 focus-visible:ring-2 active:bg-primary-100 active:text-primary-700 disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-primary-50 data-[active=true]:font-medium data-[active=true]:text-primary-600 data-[state=open]:hover:bg-primary-50 data-[state=open]:hover:text-primary-600 group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! dark:data-[active=true]:bg-default dark:data-[active=true]:text-foreground dark:active:bg-default dark:active:text-foreground dark:hover:bg-default dark:hover:text-foreground dark:data-[state=open]:hover:bg-default dark:data-[state=open]:hover:text-foreground [&:hover>svg]:text-primary-600 dark:[&:hover>svg]:text-foreground [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0 [&>svg]:text-default-500 [&[data-active=true]>svg]:text-primary-600 dark:[&[data-active=true]>svg]:text-foreground",
+  base: "peer/menu-button flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-default-600 text-sm outline-hidden ring-focus transition-[width,height,padding,background-color,color] hover:bg-primary-50 hover:text-primary-500 focus-visible:ring-2 active:bg-primary-100 active:text-primary-500 disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-primary-50 data-[active=true]:font-medium data-[active=true]:text-primary-500 data-[state=open]:hover:bg-primary-50 data-[state=open]:hover:text-primary-500 group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! dark:data-[active=true]:bg-default dark:data-[active=true]:text-foreground dark:active:bg-default dark:active:text-foreground dark:hover:bg-default dark:hover:text-foreground dark:data-[state=open]:hover:bg-default dark:data-[state=open]:hover:text-foreground [&:hover>svg]:text-primary-500 dark:[&:hover>svg]:text-foreground [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0 [&>svg]:text-default-500 [&[data-active=true]>svg]:text-primary-500 dark:[&[data-active=true]>svg]:text-foreground",
   defaultVariants: {
     size: "default",
     variant: "default",
@@ -552,7 +559,7 @@ const sidebarMenuButtonVariants = tv({
     variant: {
       default: "",
       outline:
-        "bg-surface shadow-[0_0_0_1px_var(--border)] hover:bg-primary-50 hover:text-primary-600 hover:shadow-[0_0_0_1px_var(--primary-200)] dark:hover:bg-default dark:hover:text-foreground dark:hover:shadow-[0_0_0_1px_var(--border)]",
+        "bg-surface shadow-[0_0_0_1px_var(--border)] hover:bg-primary-50 hover:text-primary-500 hover:shadow-[0_0_0_1px_var(--primary-200)] dark:hover:bg-default dark:hover:text-foreground dark:hover:shadow-[0_0_0_1px_var(--border)]",
     },
   },
 });
@@ -743,8 +750,8 @@ function SidebarMenuSubButton({
   isActive?: boolean;
 }) {
   const classes = cn(
-    "flex h-7 min-w-0 -translate-x-px items-center gap-2 overflow-hidden rounded-md px-2 text-default-600 outline-hidden ring-focus hover:bg-primary-50 hover:text-primary-600 focus-visible:ring-2 active:bg-primary-100 active:text-primary-700 disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 dark:active:bg-default dark:active:text-foreground dark:hover:bg-default dark:hover:text-foreground [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0 [&>svg]:text-default-500 hover:[&>svg]:text-primary-600 dark:hover:[&>svg]:text-foreground",
-    "data-[active=true]:bg-primary-50 data-[active=true]:font-medium data-[active=true]:text-primary-600 dark:data-[active=true]:bg-default dark:data-[active=true]:text-foreground data-[active=true]:[&>svg]:text-primary-600 dark:data-[active=true]:[&>svg]:text-foreground",
+    "flex h-7 min-w-0 -translate-x-px items-center gap-2 overflow-hidden rounded-md px-2 text-default-600 outline-hidden ring-focus hover:bg-primary-50 hover:text-primary-500 focus-visible:ring-2 active:bg-primary-100 active:text-primary-500 disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 dark:active:bg-default dark:active:text-foreground dark:hover:bg-default dark:hover:text-foreground [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0 [&>svg]:text-default-500 hover:[&>svg]:text-primary-500 dark:hover:[&>svg]:text-foreground",
+    "data-[active=true]:bg-primary-50 data-[active=true]:font-medium data-[active=true]:text-primary-500 dark:data-[active=true]:bg-default dark:data-[active=true]:text-foreground data-[active=true]:[&>svg]:text-primary-500 dark:data-[active=true]:[&>svg]:text-foreground",
     size === "sm" && "text-xs",
     size === "md" && "text-sm",
     "group-data-[collapsible=icon]:hidden",

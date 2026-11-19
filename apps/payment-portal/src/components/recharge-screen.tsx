@@ -77,7 +77,11 @@ export function RechargeScreen({
     methods.find((method) => method.id === selectedMethodId) || null;
 
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-6xl flex-col gap-6 px-4 py-8 sm:px-6">
+    <main
+      className="mx-auto flex min-h-dvh w-full max-w-6xl flex-col gap-6 px-4 py-8 sm:px-6"
+      id="main-content"
+      tabIndex={-1}
+    >
       <Card>
         <Card.Header>
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -132,7 +136,7 @@ export function RechargeScreen({
       </Card>
       <Card>
         <Card.Header>
-          <Card.Title>
+          <Card.Title render={(props) => <h2 {...props} />}>
             {selectedMethod
               ? t("dashboard.rechargeWith", "使用当前方式充值")
               : t("dashboard.selectMethodTitle", "请选择一种方式进行充值")}
@@ -176,12 +180,22 @@ export function RechargeScreen({
                         {method.name}
                       </Label>
                       {method.fee_mode === 1 && method.fee_percent > 0 && (
-                        <Chip color="warning" size="sm" variant="soft">
+                        <Chip
+                          className="text-foreground"
+                          color="warning"
+                          size="sm"
+                          variant="soft"
+                        >
                           {method.fee_percent}%
                         </Chip>
                       )}
                       {method.fee_mode === 2 && method.fee_amount > 0 && (
-                        <Chip color="warning" size="sm" variant="soft">
+                        <Chip
+                          className="text-foreground"
+                          color="warning"
+                          size="sm"
+                          variant="soft"
+                        >
                           +<Display type="currency" value={method.fee_amount} />
                         </Chip>
                       )}
@@ -378,7 +392,11 @@ export function RechargeScreen({
 
                   <div className="flex flex-wrap gap-2">
                     {Number(activeOrder.status) === 1 && (
-                      <Button className="flex-1" onPress={onContinuePayment}>
+                      <Button
+                        className="flex-1"
+                        id="payment-next-action"
+                        onPress={onContinuePayment}
+                      >
                         {t("dashboard.payNow", "立即支付")}
                       </Button>
                     )}
@@ -407,7 +425,9 @@ export function RechargeScreen({
       </Card>
       <Card>
         <Card.Header>
-          <Card.Title>{t("dashboard.recordsTitle", "最近充值订单")}</Card.Title>
+          <Card.Title render={(props) => <h2 {...props} />}>
+            {t("dashboard.recordsTitle", "最近充值订单")}
+          </Card.Title>
         </Card.Header>
         <Card.Content>
           {records.length > 0 ? (

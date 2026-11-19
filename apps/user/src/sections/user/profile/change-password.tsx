@@ -8,6 +8,7 @@ import {
   FormControl,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from "@workspace/ui/components/form";
 import { Input } from "@workspace/ui/components/input";
@@ -102,7 +103,10 @@ export default function ChangePassword() {
   return (
     <Card className="min-w-0 lg:min-w-80">
       <Card.Header>
-        <Card.Title className="flex flex-wrap items-center justify-between gap-3">
+        <Card.Title
+          className="flex flex-wrap items-center justify-between gap-3"
+          render={(props) => <h2 {...props} />}
+        >
           {t("accountSettings.accountSettings", "Password Settings")}
           <Button
             disabled={loading}
@@ -136,8 +140,15 @@ export default function ChangePassword() {
               name="password"
               render={({ field }) => (
                 <FormItem>
+                  <FormLabel className="sr-only">
+                    {t(
+                      "accountSettings.newPasswordHint",
+                      "New Password (at least 8 characters)"
+                    )}
+                  </FormLabel>
                   <FormControl>
                     <Input
+                      autoComplete="new-password"
                       placeholder={t(
                         "accountSettings.newPasswordHint",
                         "New Password (at least 8 characters)"
@@ -155,8 +166,15 @@ export default function ChangePassword() {
               name="repeat_password"
               render={({ field }) => (
                 <FormItem>
+                  <FormLabel className="sr-only">
+                    {t(
+                      "accountSettings.repeatNewPassword",
+                      "Repeat New Password"
+                    )}
+                  </FormLabel>
                   <FormControl>
                     <Input
+                      autoComplete="new-password"
                       placeholder={t(
                         "accountSettings.repeatNewPassword",
                         "Repeat New Password"

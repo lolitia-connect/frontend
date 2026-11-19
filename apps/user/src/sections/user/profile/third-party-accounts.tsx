@@ -456,7 +456,9 @@ export default function ThirdPartyAccounts() {
   return (
     <Card>
       <Card.Header>
-        <Card.Title>{t("thirdParty.title", "Connected Accounts")}</Card.Title>
+        <Card.Title render={(props) => <h2 {...props} />}>
+          {t("thirdParty.title", "Connected Accounts")}
+        </Card.Title>
       </Card.Header>
       <Card.Content>
         <div className="space-y-4">

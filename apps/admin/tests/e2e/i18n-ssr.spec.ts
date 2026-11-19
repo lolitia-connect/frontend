@@ -1,5 +1,13 @@
 import { expect, test } from "@playwright/test";
+import { expectInitialContentPaintable } from "../../../../tests/e2e/first-paint";
 import { mockLayoutApi } from "../../../../tests/e2e/layout.fixtures";
+
+test("keeps SSR content visible before hydration and the first animation frame", async ({
+  browser,
+  baseURL,
+}) => {
+  await expectInitialContentPaintable(browser, baseURL!);
+});
 
 test.use({ locale: "zh-CN" });
 

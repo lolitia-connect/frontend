@@ -3,6 +3,7 @@ import { Spinner } from "@workspace/ui/components/spinner";
 import { RefreshCcw } from "lucide-react";
 import type { ComponentProps } from "react";
 import { useCallback, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 type RefreshButtonProps = Omit<
   ComponentProps<typeof Button>,
@@ -22,6 +23,7 @@ export function RefreshButton({
   disabled,
   ...props
 }: RefreshButtonProps) {
+  const { t } = useTranslation("components");
   const [loading, setLoading] = useState(false);
 
   const handleClick = useCallback(async () => {
@@ -35,7 +37,14 @@ export function RefreshButton({
   }, [loading, onClick]);
 
   return (
-    <Button disabled={loading || disabled} onClick={handleClick} {...props}>
+    <Button
+      aria-busy={loading}
+      aria-label={t("table.refresh", "Refresh")}
+      disabled={loading || disabled}
+      onClick={handleClick}
+      type="button"
+      {...props}
+    >
       {loading ? <Spinner /> : (children ?? <RefreshCcw />)}
     </Button>
   );

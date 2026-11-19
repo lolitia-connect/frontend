@@ -153,6 +153,13 @@ declare namespace API {
     /** One-time ticket referencing the verified provider identity, echoed back
      * to /v1/auth/oauth/register together with the invitation code. */
     oauth_token?: string;
+    /** Set when an OAuth sign-in resolved a new identity whose provider did not
+     * supply an email (e.g. Telegram). The client must collect a real email
+     * from the user and finish registration via postAuthOauthRegister. */
+    email_required?: boolean;
+    /** Set when the collected email must be proven with a verification code
+     * (the panel enables email verification). */
+    email_verify?: boolean;
   };
 
   type MobileAuthenticateConfig = {
@@ -184,10 +191,17 @@ declare namespace API {
 
   type OAuthRegisterRequest = {
     /** One-time ticket returned by postAuthOauthLoginToken when it answered
-     * with invite_required. */
+     * with invite_required or email_required. */
     oauth_token: string;
-    /** Invitation code supplied by the user. */
-    invite: string;
+    /** Invitation code supplied by the user. Required only when the panel
+     * enforces invitation-only registration. */
+    invite?: string;
+    /** Real email address supplied by the user. Required only when the
+     * provider returned no email address. */
+    email?: string;
+    /** Email verification code. Required when email verification is enabled
+     * and an email is being collected. */
+    code?: string;
   };
 
   type patchNotifyPlatformTokenParams = {

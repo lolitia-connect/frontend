@@ -145,6 +145,7 @@ function FormMessage({ className, ...props }: React.ComponentProps<"p">) {
       className={cn("text-danger text-sm", className)}
       data-slot="form-message"
       id={formMessageId}
+      role="alert"
       {...props}
     >
       {body}

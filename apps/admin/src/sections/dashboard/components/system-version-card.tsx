@@ -36,7 +36,10 @@ export default function SystemVersionCard() {
   return (
     <Card className="flex h-full flex-col justify-center gap-0 p-3">
       <CardHeader className="mb-2 p-0">
-        <CardTitle className="flex items-center justify-between gap-2">
+        <CardTitle
+          className="flex items-center justify-between gap-2"
+          render={(props) => <h2 {...props} />}
+        >
           <span className="min-w-0 break-words">
             {t("systemServices", "System Services")}
           </span>

@@ -282,6 +282,7 @@ const SliderCaptcha = ({
                   </div>
                 ) : bgImage ? (
                   <>
+                    {/* biome-ignore lint/performance/noImgElement: backend-generated captcha image; next/image optimization not applicable */}
                     <img
                       alt="captcha background"
                       className="absolute inset-0 h-full w-full"
@@ -289,6 +290,7 @@ const SliderCaptcha = ({
                       src={bgImage}
                     />
                     {blockImage && (
+                      // biome-ignore lint/performance/noImgElement: backend-generated captcha image; next/image optimization not applicable
                       <img
                         alt="captcha block"
                         className="absolute cursor-grab active:cursor-grabbing"

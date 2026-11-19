@@ -47,7 +47,10 @@ export default function NotifySettings() {
   return (
     <Card className="min-w-0 lg:min-w-80">
       <Card.Header>
-        <Card.Title className="flex flex-wrap items-center justify-between gap-3">
+        <Card.Title
+          className="flex flex-wrap items-center justify-between gap-3"
+          render={(props) => <h2 {...props} />}
+        >
           {t("notify.notificationSettings", "Notification Settings")}
           <Button
             form="notify-form"

@@ -1,5 +1,6 @@
 "use client";
 
+import { SkipLink } from "@workspace/ui/composed/skip-link";
 import { LanguageProvider } from "@workspace/ui/integrations/language";
 import {
   TanStackQueryContext,
@@ -52,6 +53,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <TanStackQueryProvider {...queryContext}>
       <LanguageProvider supportedLanguages={supportedLngs}>
         <ThemeProvider>
+          <SkipLink />
           {children}
           <Notifications />
         </ThemeProvider>

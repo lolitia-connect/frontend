@@ -113,6 +113,9 @@
     "160001": "设置已保存但未能生效，请重新加载或重启服务。",
     "unknown": "系统发生错误，请稍后再试。"
   },
+  "accessibility": {
+    "skipToContent": "跳到主要内容"
+  },
   "language": {
     "followSystem": "系统默认",
     "label": "语言"

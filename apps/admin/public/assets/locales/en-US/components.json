@@ -113,6 +113,9 @@
     "160001": "Settings were saved but could not be applied. Please reload or restart the service.",
     "unknown": "An error occurred in the system, please try again later."
   },
+  "accessibility": {
+    "skipToContent": "Skip to content"
+  },
   "language": {
     "followSystem": "System default",
     "label": "Language"

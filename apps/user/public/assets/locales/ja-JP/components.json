@@ -120,6 +120,12 @@
     "social": "{{name}} のページを見る",
     "tos": "利用規約"
   },
+  "accessibility": {
+    "skipToContent": "メインコンテンツへスキップ",
+    "mainNavigation": "メインナビゲーション",
+    "footerNavigation": "コミュニティリンク",
+    "home": "ホーム"
+  },
   "language": {
     "followSystem": "システムの既定値",
     "label": "言語"
@@ -164,6 +170,7 @@
   },
   "unlimited": "無制限",
   "table": {
+    "refresh": "更新",
     "actions": "操作",
     "columns": "列を選択",
     "data": "データテーブル",

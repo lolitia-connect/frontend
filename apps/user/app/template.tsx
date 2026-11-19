@@ -14,8 +14,9 @@ import type { ReactNode } from "react";
  *
  * `prefers-reduced-motion: reduce` collapses this to no animation (see
  * `.page-transition` in globals.css), so motion-sensitive users get an instant
- * swap. The animation is opacity/transform only — it cannot cause layout shift
- * or a hydration mismatch.
+ * swap. The animation is transform-only so SSR content is visible from its
+ * first frame, even before hydration. It cannot cause layout shift or a
+ * hydration mismatch.
  */
 export default function Template({ children }: { children: ReactNode }) {
   return <div className="page-transition">{children}</div>;

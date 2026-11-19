@@ -35,7 +35,11 @@ export default function Main() {
   if (!showLanding) return null;
 
   return (
-    <main className="relative isolate overflow-hidden bg-background text-foreground">
+    <main
+      className="relative isolate overflow-hidden bg-background text-foreground"
+      id="main-content"
+      tabIndex={-1}
+    >
       <section className="relative min-h-[calc(100svh-4rem)] overflow-hidden">
         <DeferredGlobe enabled={!(isLoadingCommon || isLoadingUser || user)} />
         <div className="container relative z-10 flex min-h-[calc(100svh-4rem)] flex-col">

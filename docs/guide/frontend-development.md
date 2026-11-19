@@ -25,6 +25,25 @@ and bundled locally, not downloaded from a CJK font CDN at runtime. Retain their
 [SIL Open Font License 1.1](https://github.com/lolitia-connect/frontend/blob/main/packages/ui/src/styles/fonts/swei-gothic/OFL.txt)
 when redistributing them.
 
+## Navigation feedback
+
+User/admin navigation uses the shared [router adapter](../../packages/ui/src/lib/router-compat.tsx).
+Its `Link` starts the top progress bar from Next.js `onNavigate`, and
+`navigate` / `push` / `replace` start it before invoking the router. Path/query
+changes only complete progress; they must not start a post-load flash. Same-page
+and hash-only destinations, cancelled clicks, downloads, external links and
+new-tab clicks do not start progress. Initial page rendering stays idle.
+
+The pending intent is retained while the client-only progress component loads.
+Each new navigation replaces the previous bar and its timeout; a 30-second
+fallback clears progress if navigation fails or never commits. This indicates
+route navigation, not background API requests. Raw Next router calls and browser
+history traversal do not emit this adapter's start signal.
+
+The shared router tests cover timing and excluded clicks. The admin layout E2E
+holds a sidebar destination response, verifies progress while the old page is
+still displayed, then releases it and verifies completion.
+
 ## Testing
 
 Unit and component tests run on [Vitest](https://vitest.dev); end-to-end flows
@@ -211,6 +230,27 @@ checks are in [performance.spec.ts](https://github.com/lolitia-connect/frontend/
 These are code-level optimizations, not asset or infrastructure changes. Measure
 LCP with a production build; development compilation timings are not production
 performance results.
+
+Page-enter animations must keep their first frame opaque: a full-page fade from
+zero opacity hides already-rendered text while hydration occupies the main thread.
+The shared theme script resolves the saved/system theme in the document head; do
+not hide the document behind a hydration-dependent overlay. Both apps' SSR E2E
+suites pause the animation with JavaScript disabled and verify the heading is
+uncovered and paintable.
+
+## Accessibility checks
+
+Each app's `accessibility.spec.ts` uses the development-only `@axe-core/playwright`
+runner with mocked APIs. Run `bun run --cwd apps/<app> test:e2e accessibility.spec.ts`
+for `user`, `admin`, or `payment-portal`. Checks cover light/dark themes, stable
+control names, landmarks, heading levels, contrast, skip-to-content focus, and
+keyboard operation of account tabs, collapsed navigation and payment dialogs.
+Automated checks supplement, rather than replace, screen-reader and keyboard review.
+
+Keep a focusable `main-content` target for the shared skip link. Navigation groups
+must contain valid lists; interactive flyouts use a focus-managed popover, not a
+tooltip containing links. Form errors are announced and fields retain labels after
+typing. Preserve sufficient text/focus contrast when changing shared theme tokens.
 
 ## User app maintenance
 

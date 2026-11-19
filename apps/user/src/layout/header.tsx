@@ -55,8 +55,13 @@ export default function Header() {
   const { common, user } = useGlobalStore();
   const { site } = common;
   const Logo = (
-    <Link className="flex items-center gap-2 font-bold text-lg" to="/">
+    <Link
+      aria-label={site.site_name || t("accessibility.home", "Home")}
+      className="flex items-center gap-2 font-bold text-lg"
+      to="/"
+    >
       {site.site_logo && (
+        // biome-ignore lint/performance/noImgElement: dynamic admin-configured logo URL; next/image needs statically configured remote patterns
         <img
           alt={site.site_name || ""}
           height={36}
@@ -70,7 +75,10 @@ export default function Header() {
   return (
     <HeroUIHeader className="sticky top-0 z-50 border-default-200 border-b bg-surface/80 px-0 pt-0 pb-0 text-foreground backdrop-blur-md [font-size:inherit] [font-weight:inherit]">
       <div className="container flex h-16 items-center justify-between">
-        <nav className="flex-col gap-6 font-medium text-lg md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6">
+        <nav
+          aria-label={t("accessibility.mainNavigation", "Main navigation")}
+          className="flex-col gap-6 font-medium text-lg md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6"
+        >
           {Logo}
         </nav>
         <div className="flex flex-1 items-center justify-end gap-2">

@@ -1,39 +1,52 @@
 "use client";
 
 import { usePathname, useSearchParams } from "next/navigation";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useSyncExternalStore } from "react";
 import LoadingBar, { type LoadingBarRef } from "react-top-loading-bar";
+import {
+  completeNavigationProgress,
+  getNavigationProgress,
+  subscribeNavigationProgress,
+} from "../lib/navigation-progress";
 
-/**
- * Route-change progress bar.
- *
- * The previous implementation read TanStack Router's `pending` status. Next.js
- * App Router has no equivalent global flag, so this drives itself from location
- * changes instead: it starts the bar on navigation and completes it once the
- * new route has rendered. This preserves the original UX (a thin top bar while
- * navigating) without depending on the removed router.
- */
+/** Starts at navigation intent; location changes only complete the bar. */
 export function NavigationProgress() {
   const ref = useRef<LoadingBarRef>(null);
+  const started = useRef<number | null>(null);
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const isFirstRender = useRef(true);
-
-  // Key that changes on every navigation (path or query).
+  const navigation = useSyncExternalStore(
+    subscribeNavigationProgress,
+    getNavigationProgress,
+    () => null
+  );
   const routeKey = `${pathname}?${searchParams.toString()}`;
 
   useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
+    if (!navigation) return;
+    if (navigation.pending && navigation.from === routeKey) {
+      if (started.current !== navigation.id) {
+        started.current = navigation.id;
+        ref.current?.continuousStart();
+      }
       return;
     }
 
-    ref.current?.continuousStart();
-    const timer = window.setTimeout(() => ref.current?.complete(), 250);
-    return () => window.clearTimeout(timer);
-  }, [routeKey]);
+    if (started.current !== null) {
+      started.current = null;
+      ref.current?.complete();
+    }
+    completeNavigationProgress(navigation.id);
+  }, [navigation, routeKey]);
 
   return (
-    <LoadingBar color="var(--accent)" height={2} ref={ref} shadow={true} />
+    <LoadingBar
+      className="navigation-progress"
+      color="var(--accent)"
+      height={2}
+      key={navigation?.id ?? 0}
+      ref={ref}
+      shadow={true}
+    />
   );
 }

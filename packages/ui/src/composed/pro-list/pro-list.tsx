@@ -179,8 +179,10 @@ export function ProList<TData, TValue extends Record<string, unknown>>({
                   <RefreshCcw className="h-4 w-4" />
                 </RefreshButton>
                 <Button
+                  aria-label={t("table.reset", "Reset table")}
                   className="h-8 w-8 p-2"
                   onClick={reset}
+                  type="button"
                   variant="outline"
                 >
                   <ListRestart className="h-4 w-4" />

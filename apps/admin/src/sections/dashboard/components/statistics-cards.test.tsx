@@ -76,14 +76,17 @@ describe.each(cards)("$name empty state", ({
   empty,
   series,
 }) => {
+  type Metric = Partial<typeof empty> & { date?: string };
+
   function renderCard(
-    list?: (typeof empty & { date: string })[],
-    today = empty
+    section: Partial<typeof empty> & { list?: Metric[] } = {},
+    today: Partial<typeof empty> = {}
   ) {
+    const period = { ...empty, ...section };
     client.setQueryData([queryKey], {
-      today,
-      monthly: { ...empty, list },
-      all: { ...empty, list },
+      today: { ...empty, ...today },
+      monthly: period,
+      all: period,
     });
     render(
       <QueryClientProvider client={client}>
@@ -102,17 +105,12 @@ describe.each(cards)("$name empty state", ({
   it.each([
     { name: "a missing list", list: undefined },
     { name: "an empty list", list: [] },
-    {
-      name: "a list containing only zero values",
-      list: [
-        { ...empty, date: "2026-11-18" },
-        { ...empty, date: "2026-11-19" },
-      ],
-    },
-  ])("shows the shared empty state for $name", async ({ list }) => {
-    renderCard(list);
+  ])("shows the shared empty state on month and total for $name", async ({
+    list,
+  }) => {
+    renderCard({ list });
 
-    for (const tab of ["Today", "Month", "Total"]) {
+    for (const tab of ["Month", "Total"]) {
       await selectTab(tab);
       const panel = within(screen.getByRole("tabpanel", { name: tab }));
       expect(panel.getByTitle("Empty")).toBeTruthy();
@@ -120,21 +118,37 @@ describe.each(cards)("$name empty state", ({
     }
   });
 
-  it.each(series)("keeps charts when only %s has data", async (key) => {
-    const nonzero = { ...empty, [key]: 1 };
-    renderCard(
-      [
-        { ...empty, date: "2026-11-18" },
-        { ...nonzero, date: "2026-11-19" },
-      ],
-      nonzero
-    );
+  it("shows the empty state on today when every metric is zero", async () => {
+    renderCard({ list: [] });
 
-    for (const tab of ["Today", "Month", "Total"]) {
+    await selectTab("Today");
+    const panel = within(screen.getByRole("tabpanel", { name: "Today" }));
+    expect(panel.getByTitle("Empty")).toBeTruthy();
+    expect(panel.queryByTestId("statistics-chart")).toBeNull();
+  });
+
+  it("renders month and total charts whenever the period has list entries", async () => {
+    renderCard({
+      list: [
+        { ...empty, date: "2026-11-18" },
+        { ...empty, date: "2026-11-19" },
+      ],
+    });
+
+    for (const tab of ["Month", "Total"]) {
       await selectTab(tab);
       const panel = within(screen.getByRole("tabpanel", { name: tab }));
       expect(panel.getByTestId("statistics-chart")).toBeTruthy();
       expect(panel.queryByTitle("Empty")).toBeNull();
     }
+  });
+
+  it.each(series)("renders the today chart when %s has data", async (key) => {
+    renderCard({}, { ...empty, [key]: 1 });
+
+    await selectTab("Today");
+    const panel = within(screen.getByRole("tabpanel", { name: "Today" }));
+    expect(panel.getByTestId("statistics-chart")).toBeTruthy();
+    expect(panel.queryByTitle("Empty")).toBeNull();
   });
 });

@@ -3,6 +3,8 @@ import {
   SidebarInset,
   SidebarProvider,
 } from "@workspace/ui/components/sidebar";
+import { usePathname } from "next/navigation";
+import { useFindNavByUrl } from "@/layout/navs";
 import Announcement from "@/sections/user/announcement";
 import { SidebarLeft } from "./sidebar-left";
 import { SidebarRight } from "./sidebar-right";
@@ -12,13 +14,18 @@ export default function UserLayout({
 }: {
   children?: React.ReactNode;
 }) {
+  const pageTitle = useFindNavByUrl(usePathname()).at(-1)?.title;
   return (
     <SidebarProvider className="container">
       <SidebarLeft className="sticky top-[84px] hidden w-52 border-r-0 bg-transparent lg:flex" />
       <SidebarInset className="relative px-3 py-4 md:p-4">
+        <h1 className="sr-only">{pageTitle}</h1>
         {children}
       </SidebarInset>
-      <SidebarRight className="sticky top-[84px] hidden w-52 border-r-0 bg-transparent 2xl:flex" />
+      <SidebarRight
+        className="sticky top-[84px] hidden w-52 border-r-0 bg-transparent 2xl:flex"
+        role="complementary"
+      />
       <Announcement type="popup" />
     </SidebarProvider>
   );

@@ -1,3 +1,4 @@
+import { ThemeScript } from "@workspace/ui/lib/theme-script";
 import type { Metadata, Viewport } from "next";
 import { Providers } from "./providers";
 import "./globals.css";
@@ -19,6 +20,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="zh-CN" suppressHydrationWarning>
+      <head>
+        <ThemeScript />
+      </head>
       <body className="bg-background text-foreground">
         <Providers>{children}</Providers>
       </body>

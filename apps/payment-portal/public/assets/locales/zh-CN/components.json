@@ -1,4 +1,7 @@
 {
+  "accessibility": {
+    "skipToContent": "跳到主要内容"
+  },
   "language": {
     "label": "语言",
     "followSystem": "系统默认"
@@ -121,6 +124,7 @@
     "last": "末页"
   },
   "table": {
+    "refresh": "刷新数据",
     "actions": "操作",
     "columns": "选择列",
     "data": "数据表格",

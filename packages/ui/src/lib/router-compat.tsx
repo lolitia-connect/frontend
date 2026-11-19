@@ -25,6 +25,10 @@ import {
   useCallback,
   useMemo,
 } from "react";
+import {
+  completeNavigationProgress,
+  startNavigationProgress,
+} from "./navigation-progress";
 
 type SearchRecord = Record<
   string,
@@ -81,11 +85,32 @@ export function buildHref(
  * `<Link>` with TanStack-compatible `to` / `params` / `search` props.
  * Falls back to a plain `href` when provided, so both idioms work.
  */
-export function Link({ to, href, params, search, ...rest }: LinkProps) {
+export function Link({
+  to,
+  href,
+  params,
+  search,
+  onNavigate,
+  ...rest
+}: LinkProps) {
   const resolved = href ?? interpolate(to ?? "/", params);
   const query = toQueryString(search);
+  const destination = query ? `${resolved}?${query}` : resolved;
   return (
-    <NextLink href={query ? `${resolved}?${query}` : resolved} {...rest} />
+    <NextLink
+      {...rest}
+      href={destination}
+      onNavigate={(event) => {
+        let cancelled = false;
+        onNavigate?.({
+          preventDefault() {
+            cancelled = true;
+            event.preventDefault();
+          },
+        });
+        if (!cancelled) startNavigationProgress(destination);
+      }}
+    />
   );
 }
 
@@ -107,6 +132,19 @@ export interface NavigateOptions {
  */
 export function useRouter() {
   const router = useNextRouter();
+  const navigateTo = useCallback(
+    (url: string, replace = false) => {
+      const id = startNavigationProgress(url);
+      try {
+        if (replace) router.replace(url);
+        else router.push(url);
+      } catch (error) {
+        if (id !== undefined) completeNavigationProgress(id);
+        throw error;
+      }
+    },
+    [router]
+  );
 
   const navigate = useCallback(
     (options: string | NavigateOptions) => {
@@ -115,11 +153,10 @@ export function useRouter() {
       const resolved = interpolate(opts.to ?? "/", opts.params);
       const query = toQueryString(opts.search);
       const url = query ? `${resolved}?${query}` : resolved;
-      if (opts.replace) router.replace(url);
-      else router.push(url);
+      navigateTo(url, opts.replace);
       return Promise.resolve();
     },
-    [router]
+    [navigateTo]
   );
 
   return useMemo(
@@ -128,11 +165,11 @@ export function useRouter() {
       forward: () => router.forward(),
       navigate,
       prefetch: (to: string) => router.prefetch(to),
-      push: (url: string) => router.push(url),
+      push: (url: string) => navigateTo(url),
       refresh: () => router.refresh(),
-      replace: (url: string) => router.replace(url),
+      replace: (url: string) => navigateTo(url, true),
     }),
-    [navigate, router]
+    [navigate, navigateTo, router]
   );
 }
 
@@ -189,8 +226,8 @@ export function useParams<T = Record<string, string>>(_options?: unknown): T {
 /**
  * TanStack `useRouterState()` — the parts the apps relied on (pending status and
  * current location). Next exposes no global navigation-pending flag, so `status`
- * is always `"idle"`; consumers that need progress should react to `location`
- * changes instead (see `NavigationProgress`).
+ * is always "idle". `NavigationProgress` instead observes navigation intent from
+ * this module's Link/navigate/push/replace and completion via location changes.
  */
 export function useRouterState(): {
   location: ReturnType<typeof useLocation>;

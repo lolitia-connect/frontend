@@ -120,6 +120,12 @@
     "social": "瀏覽我們的 {{name}}",
     "tos": "服務條款"
   },
+  "accessibility": {
+    "skipToContent": "跳至主要內容",
+    "mainNavigation": "主導覽",
+    "footerNavigation": "社群連結",
+    "home": "首頁"
+  },
   "language": {
     "followSystem": "系統預設",
     "label": "語言"
@@ -164,6 +170,7 @@
   },
   "unlimited": "無限制",
   "table": {
+    "refresh": "重新整理資料",
     "actions": "操作",
     "columns": "選擇欄位",
     "data": "資料表格",

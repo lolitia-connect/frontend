@@ -1,4 +1,7 @@
 {
+  "accessibility": {
+    "skipToContent": "メインコンテンツへスキップ"
+  },
   "language": {
     "label": "言語",
     "followSystem": "システムの既定値"
@@ -121,6 +124,7 @@
     "last": "最後のページへ"
   },
   "table": {
+    "refresh": "更新",
     "actions": "操作",
     "columns": "列を選択",
     "data": "データテーブル",

@@ -276,7 +276,7 @@ export default function Page() {
                         >
                           {item.type === 1 && item.content}
                           {item.type === 2 && (
-                            // eslint-disable-next-line @next/next/no-img-element
+                            // biome-ignore lint/performance/noImgElement: user-uploaded ticket attachment URL
                             <img
                               alt="attachment"
                               className="!size-auto max-w-full object-cover"

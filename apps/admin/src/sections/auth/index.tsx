@@ -25,6 +25,7 @@ export default function Auth() {
         className="mb-6 flex flex-col items-center gap-3 text-center"
         to="/"
       >
+        {/* biome-ignore lint/performance/noImgElement: dynamic admin-configured logo URL; next/image needs statically configured remote patterns */}
         <img
           alt="logo"
           className="object-contain"

@@ -1,11 +1,32 @@
 /** @vitest-environment jsdom */
-import { cleanup, render, screen } from "@testing-library/react";
-import type { ReactNode } from "react";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import {
+  act,
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+} from "@testing-library/react";
+import { RouterContext } from "next/dist/shared/lib/router-context.shared-runtime";
+import type { NextRouter } from "next/router";
+import { type ReactNode, type Ref, useImperativeHandle } from "react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import {
+  completeNavigationProgress,
+  getNavigationProgress,
+} from "./navigation-progress";
 
 // This repo's vitest setups do not register testing-library's automatic cleanup,
 // so each test file unmounts explicitly (same as the app suites).
-afterEach(cleanup);
+function preventBrowserNavigation(event: Event) {
+  event.preventDefault();
+}
+
+afterEach(() => {
+  cleanup();
+  completeNavigationProgress();
+  document.removeEventListener("click", preventBrowserNavigation);
+  vi.useRealTimers();
+});
 
 /**
  * Logic-parity guard for the router shim.
@@ -32,16 +53,43 @@ const nav = vi.hoisted(() => ({
   prefetch: vi.fn(),
 }));
 
+const route = vi.hoisted(() => ({ pathname: "/dashboard", search: "" }));
+const bar = vi.hoisted(() => ({ continuousStart: vi.fn(), complete: vi.fn() }));
+
 vi.mock("next/navigation", () => ({
   useRouter: () => nav,
-  usePathname: () => "/dashboard",
+  usePathname: () => route.pathname,
   useParams: () => ({ id: "42" }),
-  useSearchParams: () =>
-    new URLSearchParams("order_no=PP123&redirect=%2Fwallet"),
+  useSearchParams: () => new URLSearchParams(route.search),
 }));
 
-const { Link, useNavigate, useLocation, useRouterState, useSearch, useParams } =
-  await import("./router-compat");
+vi.mock("react-top-loading-bar", () => {
+  function LoadingBar({ ref }: { ref: Ref<typeof bar> }) {
+    useImperativeHandle(ref, () => bar);
+    return null;
+  }
+  return { default: LoadingBar };
+});
+
+const { NavigationProgress } = await import("../composed/navigation-progress");
+const {
+  Link,
+  useNavigate,
+  useRouter,
+  useLocation,
+  useRouterState,
+  useSearch,
+  useParams,
+} = await import("./router-compat");
+
+beforeEach(() => {
+  vi.clearAllMocks();
+  route.pathname = "/dashboard";
+  route.search = "order_no=PP123&redirect=%2Fwallet";
+  window.history.replaceState(null, "", `${route.pathname}?${route.search}`);
+  // Stop jsdom's native navigation after Next's React click handler has run.
+  document.addEventListener("click", preventBrowserNavigation);
+});
 
 function Harness({ children }: { children: ReactNode }) {
   return <>{children}</>;
@@ -147,6 +195,190 @@ describe("router-compat: Link", () => {
   it("interpolates nothing when params are missing, keeping $placeholder", () => {
     render(<Link to="/users/$id">Open</Link>);
     expect(screen.getByRole("link").getAttribute("href")).toBe("/users/$id");
+  });
+});
+
+describe("router-compat: navigation progress", () => {
+  function Navigation({ children }: { children: ReactNode }) {
+    return (
+      <RouterContext.Provider value={nav as unknown as NextRouter}>
+        <NavigationProgress />
+        {children}
+      </RouterContext.Provider>
+    );
+  }
+
+  it("starts on a sidebar link click and stays pending until the route commits", () => {
+    vi.useFakeTimers();
+    const view = render(
+      <Navigation>
+        <Link prefetch={false} to="/dashboard/servers">
+          Servers
+        </Link>
+      </Navigation>
+    );
+    expect(bar.continuousStart).not.toHaveBeenCalled();
+    expect(bar.complete).not.toHaveBeenCalled();
+
+    fireEvent.click(screen.getByRole("link"));
+    expect(nav.push).toHaveBeenCalled();
+    expect(bar.continuousStart).toHaveBeenCalledOnce();
+    act(() => vi.advanceTimersByTime(2000));
+    expect(bar.complete).not.toHaveBeenCalled();
+
+    route.pathname = "/dashboard/servers";
+    route.search = "";
+    view.rerender(
+      <Navigation>
+        <span>Servers loaded</span>
+      </Navigation>
+    );
+    expect(bar.complete).toHaveBeenCalledOnce();
+    expect(bar.continuousStart).toHaveBeenCalledOnce();
+  });
+
+  it.each([
+    "navigate",
+    "push",
+    "replace",
+  ] as const)("starts before %s and completes query-only navigation on commit", (method) => {
+    const routerMethod = method === "replace" ? nav.replace : nav.push;
+    routerMethod.mockImplementationOnce(() => {
+      expect(getNavigationProgress()?.pending).toBe(true);
+    });
+    function Probe() {
+      const router = useRouter();
+      return (
+        <button
+          onClick={() => router[method]("/dashboard?tab=billing")}
+          type="button"
+        >
+          go
+        </button>
+      );
+    }
+    const view = render(
+      <Navigation>
+        <Probe />
+      </Navigation>
+    );
+    fireEvent.click(screen.getByRole("button"));
+    expect(bar.continuousStart).toHaveBeenCalledOnce();
+    expect(bar.complete).not.toHaveBeenCalled();
+    route.search = "tab=billing";
+    view.rerender(
+      <Navigation>
+        <Probe />
+      </Navigation>
+    );
+    expect(bar.complete).toHaveBeenCalledOnce();
+  });
+
+  it("retains navigation intent until the lazy progress component mounts", () => {
+    const view = render(
+      <RouterContext.Provider value={nav as unknown as NextRouter}>
+        <Link prefetch={false} to="/dashboard/servers">
+          Servers
+        </Link>
+      </RouterContext.Provider>
+    );
+    fireEvent.click(screen.getByRole("link"));
+    view.rerender(<NavigationProgress />);
+    expect(bar.continuousStart).toHaveBeenCalledOnce();
+    expect(bar.complete).not.toHaveBeenCalled();
+  });
+
+  it("replaces the completion timeout when a newer navigation starts", () => {
+    vi.useFakeTimers();
+    const view = render(
+      <Navigation>
+        <Link prefetch={false} to="/dashboard/servers">
+          Servers
+        </Link>
+        <Link prefetch={false} to="/dashboard/nodes">
+          Nodes
+        </Link>
+      </Navigation>
+    );
+    fireEvent.click(screen.getByRole("link", { name: "Servers" }));
+    act(() => vi.advanceTimersByTime(20_000));
+    fireEvent.click(screen.getByRole("link", { name: "Nodes" }));
+    act(() => vi.advanceTimersByTime(20_000));
+    expect(bar.complete).not.toHaveBeenCalled();
+    route.pathname = "/dashboard/nodes";
+    view.rerender(
+      <Navigation>
+        <span>Nodes loaded</span>
+      </Navigation>
+    );
+    expect(bar.complete).toHaveBeenCalledOnce();
+    act(() => vi.advanceTimersByTime(30_000));
+    expect(bar.complete).toHaveBeenCalledOnce();
+  });
+
+  it("clears a navigation that never commits instead of leaving the bar stuck", () => {
+    vi.useFakeTimers();
+    render(
+      <Navigation>
+        <Link prefetch={false} to="/dashboard/servers">
+          Servers
+        </Link>
+      </Navigation>
+    );
+    fireEvent.click(screen.getByRole("link"));
+    act(() => vi.advanceTimersByTime(30_000));
+    expect(bar.complete).toHaveBeenCalledOnce();
+  });
+
+  it("does not start a late progress flash for an untracked route update", () => {
+    const view = render(<NavigationProgress />);
+    route.pathname = "/dashboard/servers";
+    view.rerender(<NavigationProgress />);
+    expect(bar.continuousStart).not.toHaveBeenCalled();
+    expect(bar.complete).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    { to: "/dashboard?order_no=PP123&redirect=%2Fwallet" },
+    { to: "#details" },
+    { to: "https://example.test/elsewhere" },
+    { to: "/dashboard/servers", target: "_blank" },
+    { to: "/dashboard/servers", download: true },
+    {
+      to: "/dashboard/servers",
+      onClick: (event: { preventDefault(): void }) => event.preventDefault(),
+    },
+    {
+      to: "/dashboard/servers",
+      onNavigate: (event: { preventDefault(): void }) => event.preventDefault(),
+    },
+  ])("does not start for a non-navigation click: %j", (props) => {
+    render(
+      <Navigation>
+        <Link prefetch={false} {...props}>
+          Open
+        </Link>
+      </Navigation>
+    );
+    fireEvent.click(screen.getByRole("link"));
+    expect(bar.continuousStart).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    "ctrlKey",
+    "metaKey",
+    "shiftKey",
+    "altKey",
+  ])("does not start for a modified click (%s)", (modifier) => {
+    render(
+      <Navigation>
+        <Link prefetch={false} to="/dashboard/servers">
+          Servers
+        </Link>
+      </Navigation>
+    );
+    fireEvent.click(screen.getByRole("link"), { [modifier]: true });
+    expect(bar.continuousStart).not.toHaveBeenCalled();
   });
 });
 

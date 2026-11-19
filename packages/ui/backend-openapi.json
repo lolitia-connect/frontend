@@ -12974,7 +12974,9 @@
         "properties": {
           "token": { "type": "string" },
           "invite_required": { "type": "boolean" },
-          "oauth_token": { "type": "string" }
+          "oauth_token": { "type": "string" },
+          "email_required": { "type": "boolean" },
+          "email_verify": { "type": "boolean" }
         },
         "required": ["token"]
       },
@@ -13215,9 +13217,11 @@
         "type": "object",
         "properties": {
           "oauth_token": { "type": "string" },
-          "invite": { "type": "string" }
+          "invite": { "type": "string" },
+          "email": { "type": "string" },
+          "code": { "type": "string" }
         },
-        "required": ["oauth_token", "invite"]
+        "required": ["oauth_token"]
       },
       "OnlineUser": {
         "type": "object",

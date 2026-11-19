@@ -7,6 +7,7 @@ import {
   FormControl,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from "@workspace/ui/components/form";
 import { Input } from "@workspace/ui/components/input";
@@ -98,8 +99,12 @@ export default function LoginForm({
             name="email"
             render={({ field }) => (
               <FormItem>
+                <FormLabel className="sr-only">
+                  {t("placeholders.email", "Enter your email...")}
+                </FormLabel>
                 <FormControl>
                   <Input
+                    autoComplete="username"
                     placeholder={t("placeholders.email", "Enter your email...")}
                     type="email"
                     {...field}
@@ -114,8 +119,12 @@ export default function LoginForm({
             name="password"
             render={({ field }) => (
               <FormItem>
+                <FormLabel className="sr-only">
+                  {t("placeholders.password", "Enter your password...")}
+                </FormLabel>
                 <FormControl>
                   <Input
+                    autoComplete="current-password"
                     placeholder={t(
                       "placeholders.password",
                       "Enter your password..."

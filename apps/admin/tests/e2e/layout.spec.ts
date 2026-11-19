@@ -8,6 +8,58 @@ import {
   signInFixture,
 } from "../../../../tests/e2e/layout.fixtures";
 
+test("sidebar navigation starts progress before the route response arrives", async ({
+  page,
+  baseURL,
+}) => {
+  await mockLayoutApi(page);
+  await signInFixture(page, baseURL!);
+  await page.goto("/dashboard/group", { waitUntil: "domcontentloaded" });
+  const bar = page.locator(".navigation-progress");
+  await expect(bar).toHaveCount(1);
+  await expect(bar).toHaveCSS("width", "0px");
+
+  let release!: () => void;
+  let requested = false;
+  const gate = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  await page.route(
+    (url) => url.pathname === "/dashboard/servers",
+    async (route) => {
+      requested = true;
+      await gate;
+      await route.continue();
+    }
+  );
+
+  const serverLink = page.locator(
+    '[data-sidebar="sidebar"] a[href="/dashboard/servers"]'
+  );
+  const progress = () =>
+    bar.evaluate((node) =>
+      Number.parseFloat((node as HTMLElement).style.width)
+    );
+  try {
+    await serverLink.click();
+    await expect.poll(() => requested).toBe(true);
+    await expect(bar).toHaveCSS("opacity", "1");
+    await expect.poll(progress).toBeGreaterThan(0);
+    // Keep the response blocked beyond the old 250 ms completion timer.
+    await page.waitForTimeout(1000);
+    await expect(bar).toHaveCSS("opacity", "1");
+    await expect.poll(progress).toBeLessThan(100);
+    await expect(page).toHaveURL(/\/dashboard\/group$/);
+  } finally {
+    release();
+  }
+
+  await expect(page).toHaveURL(/\/dashboard\/servers$/);
+  await expect(bar).toHaveCSS("width", "0px");
+  await serverLink.click();
+  await expect(bar).toHaveCSS("width", "0px");
+});
+
 test("server table and editor stay within mobile viewport", async ({
   page,
   baseURL,

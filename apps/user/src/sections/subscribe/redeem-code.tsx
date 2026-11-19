@@ -47,7 +47,9 @@ export default function RedeemCode({ onSuccess }: RedeemCodeProps) {
   return (
     <Card className="w-full">
       <Card.Header>
-        <Card.Title>{t("redeemCodeTitle", "CDK 兑换")}</Card.Title>
+        <Card.Title render={(props) => <h2 {...props} />}>
+          {t("redeemCodeTitle", "CDK 兑换")}
+        </Card.Title>
         <Card.Description>
           {t("redeemCodeDescription", "输入兑换码即可兑换对应的订阅套餐")}
         </Card.Description>

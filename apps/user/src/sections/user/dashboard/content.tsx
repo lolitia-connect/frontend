@@ -141,12 +141,14 @@ export default function Content() {
     <>
       {userSubscribe.length ? (
         <>
-          <div className="flex items-center justify-between">
-            <h2 className="flex items-center gap-1.5 font-semibold">
-              <Icon className="size-5" icon="uil:servers" />
-              {t("mySubscriptions", "My Subscriptions")}
+          <div className="flex items-center justify-between gap-2">
+            <h2 className="flex min-w-0 items-center gap-1.5 font-semibold">
+              <Icon className="size-5 shrink-0" icon="uil:servers" />
+              <span className="truncate">
+                {t("mySubscriptions", "My Subscriptions")}
+              </span>
             </h2>
-            <div className="flex gap-2">
+            <div className="flex shrink-0 gap-2">
               <RefreshButton
                 onClick={() => refetch()}
                 size="sm"
@@ -154,9 +156,16 @@ export default function Content() {
               >
                 <Icon icon="uil:sync" />
               </RefreshButton>
-              <Button asChild size="sm">
+              <Button
+                aria-label={t("purchaseSubscription", "Purchase Subscription")}
+                asChild
+                size="sm"
+              >
                 <Link to="/subscribe">
-                  {t("purchaseSubscription", "Purchase Subscription")}
+                  <Icon icon="uil:shop" />
+                  <span className="hidden whitespace-nowrap sm:inline">
+                    {t("purchaseSubscription", "Purchase Subscription")}
+                  </span>
                 </Link>
               </Button>
             </div>
@@ -549,6 +558,7 @@ export default function Content() {
                                     <span>{application.name}</span>
 
                                     {application.icon && (
+                                      // biome-ignore lint/performance/noImgElement: dynamic remote application icon URL
                                       <img
                                         alt={application.name}
                                         className="p-1"

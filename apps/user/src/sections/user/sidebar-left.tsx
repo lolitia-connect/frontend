@@ -23,7 +23,7 @@ export function SidebarLeft({
   return (
     <Sidebar collapsible="none" side="left" {...props}>
       <SidebarContent>
-        <SidebarMenu>
+        <div className="flex w-full flex-col gap-1">
           {navs.map((nav) => (
             <SidebarGroup key={nav.title}>
               {nav.items && (
@@ -49,7 +49,7 @@ export function SidebarLeft({
               </SidebarGroupContent>
             </SidebarGroup>
           ))}
-        </SidebarMenu>
+        </div>
       </SidebarContent>
     </Sidebar>
   );

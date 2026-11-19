@@ -1,5 +1,6 @@
 "use client";
 
+import { SkipLink } from "@workspace/ui/composed/skip-link";
 import { LanguageProvider } from "@workspace/ui/integrations/language";
 import {
   TanStackQueryContext,
@@ -50,6 +51,7 @@ export function Providers({
           supportedLanguages={supportedLngs}
         >
           <ThemeProvider>
+            <SkipLink />
             {children}
             <Toaster closeButton position="top-right" richColors />
           </ThemeProvider>

@@ -13,5 +13,6 @@
 @source "./**/*.{ts,tsx}";
 @source "../src/**/*.{ts,tsx}";
 @source "../../../packages/ui/src/composed/auth-shell.tsx";
+@source "../../../packages/ui/src/composed/skip-link.tsx";
 
 @custom-variant dark (&:where(.dark, .dark *));

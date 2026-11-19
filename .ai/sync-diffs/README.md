@@ -2,10 +2,11 @@
 
 ## 当前入口
 
-- **先读**：[v1.23.0 同步后的本地自定义改动（2026-11-19）](./v1.23.0-local-2026-11-19.md)：App Router/HeroUI 三端迁移、SSR、部署/API、主题/字体/i18n、OAuth/支付及工具链。
-- [完整 772 项逐文件与提交索引](./v1.23.0-local-2026-11-19.files.md)：固定 `cd1ab07` → `12881af`，用 Markdown 表格记录删除、重命名、生成文件与资产，并关联具体功能变化说明。
-- [开发 agent 当前约束](../prompts/current-customizations.md)与[再次同步上游 prompt](../prompts/sync-upstream.md)。
-- [后端对应台账](../../../backend/.ai/sync-diffs/v1.21.7-local-2026-11-19.md)：配套协议 id/name、OAuth 邀请注册及未提交 UTC 工作。
+- **先读**：[当前定制台账](./v1.23.0-local-2026-11-19.md)，尤其[截止后增量 F13–F19](./v1.23.0-local-2026-11-19.md#8-截止后增量至-baf7177)：请求语言 SSR、首屏延迟加载、提现/启停/空态、地球路线、翻译提取与 README 归档。
+- [完整 Markdown 逐文件索引](./v1.23.0-local-2026-11-19.files.md)：保留 `cd1ab07` → `12881af` 的 772 项原始表，追加 [`12881af` → `baf7177` 的 94 项](./v1.23.0-local-2026-11-19.files.md#7-截止后增量至-baf7177)。当前累计 **12 个非 merge 提交、817 路径**，按 Git 重算，不把两期路径数相加。
+- 原 W01 提现/统计/地球业务已在 `73a3172` 提交；W02 保留 22:51 生成目录采样，[W03](./v1.23.0-local-2026-11-19.md#w03-截止后的并行工作树观察)补充 23:17 截止的统计语义调整、首帧动画/E2E 与开发依赖，均不作本轮验收。已提交不等于测试通过、已部署或发布。
+- [开发 agent 当前约束](../prompts/current-customizations.md)与[再次同步上游 prompt](../prompts/sync-upstream.md)。长期工程说明在[开发指南](../../docs/zh/guide/frontend-development.md)，不追加到项目 README。
+- [后端对应台账](../../../backend/.ai/sync-diffs/v1.21.7-local-2026-11-19.md)：最新固定 `57973bf2`，包含已提交 UTC/02170、头像保护与接口语义修复；不代表真实数据库迁移已验证。
 
 ## 历史同步
 

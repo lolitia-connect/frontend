@@ -120,6 +120,12 @@
     "social": "访问我们的 {{name}}",
     "tos": "服务条款"
   },
+  "accessibility": {
+    "skipToContent": "跳到主要内容",
+    "mainNavigation": "主导航",
+    "footerNavigation": "社区链接",
+    "home": "首页"
+  },
   "language": {
     "followSystem": "系统默认",
     "label": "语言"
@@ -164,6 +170,7 @@
   },
   "unlimited": "无限制",
   "table": {
+    "refresh": "刷新数据",
     "actions": "操作",
     "columns": "选择列",
     "data": "数据表格",

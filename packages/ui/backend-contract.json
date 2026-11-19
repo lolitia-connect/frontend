@@ -4565,6 +4565,16 @@
         "name": "OAuthToken",
         "type": "string",
         "tag": "json:\"oauth_token,omitempty\""
+      },
+      {
+        "name": "EmailRequired",
+        "type": "bool",
+        "tag": "json:\"email_required,omitempty\""
+      },
+      {
+        "name": "EmailVerify",
+        "type": "bool",
+        "tag": "json:\"email_verify,omitempty\""
       }
     ],
     "MessageLog": [
@@ -5104,7 +5114,17 @@
       {
         "name": "Invite",
         "type": "string",
-        "tag": "json:\"invite\" validate:\"required\""
+        "tag": "json:\"invite,optional\""
+      },
+      {
+        "name": "Email",
+        "type": "string",
+        "tag": "json:\"email,optional\""
+      },
+      {
+        "name": "Code",
+        "type": "string",
+        "tag": "json:\"code,optional\""
       }
     ],
     "OnlineUser": [

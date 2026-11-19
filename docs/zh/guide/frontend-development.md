@@ -22,6 +22,20 @@ Bold（700）、Black（900），中间字重按 CSS 规则选择最接近的字
 随应用构建分发，运行时不依赖 CJK 字体 CDN。再分发时须保留
 [SIL Open Font License 1.1](https://github.com/lolitia-connect/frontend/blob/main/packages/ui/src/styles/fonts/swei-gothic/OFL.txt)。
 
+## 路由进度反馈
+
+用户端与管理端共用[路由适配层](../../../packages/ui/src/lib/router-compat.tsx)。
+`Link` 在 Next.js `onNavigate` 触发时启动顶部进度条，`navigate` / `push` / `replace`
+在调用路由前启动；路径或查询参数更新只负责结束，不能在页面加载后才闪现进度条。
+同页、仅锚点变化、被取消的点击、下载、外链和新标签页点击不启动进度条，首次渲染保持空闲。
+
+客户端进度条组件尚未加载时保留导航意图；新导航替换上一条进度及其超时任务。
+导航失败或一直没有提交时，30 秒兜底结束以避免卡住。这是路由加载提示，不跟踪后台 API
+请求；直接调用 Next 原生 router 或浏览器历史导航不发送适配层的开始信号。
+
+共享路由测试覆盖触发时机和排除场景；管理端 layout E2E 阻塞 sidebar 目标路由响应，
+确认旧页面仍显示时进度条已启动，再释放响应并确认进度条结束。
+
 ## 测试与文件归属
 
 - 应用单元/组件测试：`apps/{user,admin,payment-portal}/src/**/*.test.{ts,tsx}`，与被测源码相邻，由各 app 的 `vitest.config.ts` 执行。
@@ -118,6 +132,22 @@ HTML 一致。页面依赖 Next.js 的路由拆包，不对整个可见页面额
 
 这些约定只调整代码加载和执行时机，不修改图片、字体、基础设施或部署配置。LCP 应使用
 生产构建测量，开发环境编译耗时不能作为线上性能结果。
+
+页面入场动画的首帧必须保持不透明：整页从透明开始会让已经 SSR 输出的文字等待主线程
+空闲后才显示。共享主题脚本在文档头部应用保存或系统主题，不要使用依赖水合才能消失的
+全屏遮罩。两端 SSR 浏览器回归会禁用 JavaScript、暂停入场动画，并检查正文未被遮挡。
+
+## 无障碍检查
+
+三端的 `accessibility.spec.ts` 使用仅开发依赖 `@axe-core/playwright` 和模拟 API。
+运行 `bun run --cwd apps/<app> test:e2e accessibility.spec.ts`，其中 `<app>` 为
+`user`、`admin` 或 `payment-portal`。覆盖浅色/深色主题、控件名称、页面地标、标题层级、
+对比度、跳到正文的焦点，以及账户标签页、折叠导航和支付弹窗的键盘操作。
+自动检查不能替代真实读屏器与人工键盘检查。
+
+共享跳转链接需要可聚焦的 `main-content` 目标。导航分组保持合法列表结构，可交互导航
+浮层使用管理焦点的 Popover，而不是在 Tooltip 中放链接。表单输入后仍保留可访问名称，
+错误消息应可被播报；修改主题时同时检查文字与焦点标记的对比度。
 
 ## 用户端维护
 

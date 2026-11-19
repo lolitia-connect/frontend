@@ -9,11 +9,8 @@ import {
   ListBoxItem as SelectItem,
   SelectTrigger,
   SelectValue,
-  TabIndicator,
-  Tabs,
-  TabList as TabsList,
-  TabListContainer as TabsListContainer,
-  Tab as TabsTrigger,
+  ToggleButton,
+  ToggleButtonGroup,
 } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
 import { BlockLoading } from "@workspace/ui/composed/block-loading";
@@ -100,29 +97,20 @@ export default function TrafficStatistics() {
             </Select>
           )}
           {/* 时间范围切换 */}
-          <Tabs
+          <ToggleButtonGroup
+            aria-label={t("sections", "Sections")}
             className="min-w-0 max-w-full"
-            onSelectionChange={(key) =>
-              ((value) => setDays(Number(value) as 7 | 30))(String(key))
-            }
-            selectedKey={String(days)}
+            disallowEmptySelection
+            onSelectionChange={(keys) => {
+              const key = [...keys][0];
+              if (key === "7" || key === "30") setDays(Number(key) as 7 | 30);
+            }}
+            selectedKeys={[String(days)]}
+            selectionMode="single"
           >
-            <TabsListContainer className="min-w-0 max-w-full">
-              <TabsList aria-label={t("sections", "Sections")}>
-                <TabsTrigger className="w-auto flex-1 whitespace-nowrap" id="7">
-                  {t("days7", "7 Days")}
-                  <TabIndicator />
-                </TabsTrigger>
-                <TabsTrigger
-                  className="w-auto flex-1 whitespace-nowrap"
-                  id="30"
-                >
-                  {t("days30", "30 Days")}
-                  <TabIndicator />
-                </TabsTrigger>
-              </TabsList>
-            </TabsListContainer>
-          </Tabs>
+            <ToggleButton id="7">{t("days7", "7 Days")}</ToggleButton>
+            <ToggleButton id="30">{t("days30", "30 Days")}</ToggleButton>
+          </ToggleButtonGroup>
         </div>
       </div>
 

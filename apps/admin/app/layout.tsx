@@ -1,4 +1,5 @@
 import { getRequestLanguage } from "@workspace/ui/lib/request-language";
+import { ThemeScript } from "@workspace/ui/lib/theme-script";
 import type { Metadata, Viewport } from "next";
 import { headers } from "next/headers";
 import { Suspense } from "react";
@@ -44,6 +45,9 @@ export default async function RootLayout({
 
   return (
     <html lang={initialLanguage} suppressHydrationWarning>
+      <head>
+        <ThemeScript />
+      </head>
       <body className="admin-shell bg-background text-foreground">
         <Suspense fallback={null}>
           <Providers

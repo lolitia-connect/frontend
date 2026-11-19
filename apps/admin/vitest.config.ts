@@ -64,5 +64,11 @@ export default defineConfig({
     // Without the stub the call throws inside act() and the interaction never
     // completes. See vitest.setup.ts.
     setupFiles: ["./vitest.setup.ts"],
+    // React Aria collection/selection interactions (ProTable, node config) take
+    // several seconds per test; on slower CI runners they cross the 5s default
+    // and time out non-deterministically. Raise the budget without changing any
+    // test logic.
+    testTimeout: 15_000,
+    hookTimeout: 15_000,
   },
 });

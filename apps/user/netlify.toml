@@ -7,9 +7,9 @@
 # Turborepo is scoped to THIS app only via `--filter` (the root `build:user`
 # script), so sibling apps (admin / payment-portal / docs) are never built here.
 #
-# No `/api/*` proxy: the app forwards API traffic via its own next.config.ts
-# rewrites driven by NEXT_PUBLIC_API_BASE_URL / NEXT_PUBLIC_API_PREFIX, set in
-# the Netlify UI.
+# No API proxy: the browser calls the backend directly using the build-time
+# NEXT_PUBLIC_API_BASE_URL (set in the Netlify UI). The backend must allow CORS
+# from this site's origin.
 [build]
   command = "bun run build:user"
   publish = "apps/user/.next"

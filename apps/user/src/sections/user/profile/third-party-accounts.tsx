@@ -411,14 +411,11 @@ export default function ThirdPartyAccounts() {
       } else {
         const res = await bindOAuth({
           method: account.id,
-          // Mirror the login flow: point at the real App Router route
-          // `/bind/[platform]`. Telegram keeps the trailing slash for its
-          // static popup bridge; the others must omit it to avoid the
-          // `/bind/<provider>` ⇄ `/bind/<provider>/` redirect loop on deploy.
-          redirect:
-            account.id === "telegram"
-              ? `${window.location.origin}/bind/${account.id}/`
-              : `${window.location.origin}/bind/${account.id}`,
+          // Trailing slash REQUIRED to match the provider-registered redirect
+          // URI (e.g. Google Console: `<origin>/bind/<provider>/`). The
+          // redirect loop was caused by the removed static bridge pages under
+          // `public/bind/<provider>/`, not the slash.
+          redirect: `${window.location.origin}/bind/${account.id}/`,
         });
 
         const redirectUrl = res.data?.data?.redirect;

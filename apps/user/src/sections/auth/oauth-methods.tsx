@@ -114,16 +114,15 @@ export function OAuthMethods() {
                   const { data } = await oAuthLogin({
                     method,
                     // OAuth providers disallow URL fragments (#) in redirect
-                    // URIs, so we point at the real App Router route
-                    // `/oauth/[platform]`. Telegram keeps the trailing slash
-                    // because its popup still relies on the static bridge page;
-                    // the other providers must NOT use a trailing slash or the
-                    // deployed host bounces `/oauth/<provider>` ⇄
-                    // `/oauth/<provider>/` into an infinite redirect loop.
-                    redirect:
-                      method === "telegram"
-                        ? `${window.location.origin}/oauth/${method}/`
-                        : `${window.location.origin}/oauth/${method}`,
+                    // URIs, so we use a real path. The trailing slash is
+                    // REQUIRED: it must match the redirect URI registered with
+                    // each provider (e.g. Google Console: `<origin>/oauth/
+                    // google/`). The old infinite-redirect loop came from the
+                    // static bridge pages under `public/oauth/<provider>/`
+                    // shadowing the App Router route and bouncing to
+                    // themselves; those have been removed, so `/oauth/<provider>/`
+                    // now resolves straight to the `/oauth/[platform]` route.
+                    redirect: `${window.location.origin}/oauth/${method}/`,
                   });
 
                   if (!data.data?.redirect) {

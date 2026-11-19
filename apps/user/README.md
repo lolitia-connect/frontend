@@ -90,6 +90,19 @@ sidebars, dialogs, or charts. Cards wrapping a main empty state must not add
 vertical padding.
 
 
+### OAuth callbacks
+
+Login and account binding callbacks are handled by the Next.js App Router at
+`/oauth/[platform]` and `/bind/[platform]`. Keep the registered redirect URLs as
+`<origin>/oauth/<provider>/` and `<origin>/bind/<provider>/`, including the trailing
+slash. Next.js normalizes the slash while preserving query parameters; no static
+HTML bridge pages or static-host fallback rules are required.
+
+Telegram callbacks support query parameters and URL fragments (`#tgAuthResult=...`),
+as well as individual signed fields. Popup callbacks relay results to the opener;
+full-page callbacks perform the exchange directly. Both paths use the existing
+backend `tgAuthResult` format. Deploy this app with a Next.js runtime.
+
 ## 🚀 Deploy on Vercel
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?demo-description=PPanel%20is%20a%20pure%2C%20professional%2C%20and%20perfect%20open-source%20proxy%20panel%20tool%2C%20designed%20to%20be%20your%20ideal%20choice%20for%20learning%20and%20practical%20use&demo-image=https%3A%2F%2Furlscan.io%2Fliveshot%2F%3Fwidth%3D1920%26height%3D1080%26url%3Dhttps%3A%2F%user.ppanel.dev&demo-title=PPanel%20User%20Web&demo-url=https%3A%2F%2Fuser.ppanel.dev%2F&from=.&project-name=ppanel-user-web&repository-name=ppanel-web&repository-url=https%3A%2F%2Fgithub.com%2Fperfect-panel%2Fppanel-web&root-directory=apps%user&skippable-integrations=1)

@@ -142,14 +142,54 @@ export function extractTelegramAuthCallbackPayload(
   return null;
 }
 
-function resolveAllowedCallbackOrigins(): Set<string> {
-  const origins = new Set<string>();
+// Parse the `bot_id` and the Telegram widgets origin (e.g.
+// `https://oauth.telegram.org`) out of the backend-built authorization URL so
+// the callback can trust Telegram's `postMessage` and run its `/auth/get`
+// fallback exactly like the official widget does.
+function parseTelegramAuthEndpoint(redirectUrl: string): {
+  origin: string | null;
+  botId: string | null;
+} {
+  try {
+    const url = new URL(redirectUrl);
+    return { origin: url.origin, botId: url.searchParams.get("bot_id") };
+  } catch {
+    return { origin: null, botId: null };
+  }
+}
 
-  if (isBrowser()) {
-    origins.add(window.location.origin);
+// Mirror of the Telegram widget's `getAuthData`: when the popup closes without
+// having relayed a message (some flows only expose the signed user through this
+// endpoint), ask `oauth.telegram.org/auth/get` for the authenticated user. The
+// request is credentialed and cross-origin, so Telegram only answers for an
+// origin the bot owner registered with @BotFather.
+function fetchTelegramAuthData(
+  telegramOrigin: string | null,
+  botId: string | null
+): Promise<Record<string, string> | null> {
+  if (!(telegramOrigin && botId)) {
+    return Promise.resolve(null);
   }
 
-  return origins;
+  return fetch(`${telegramOrigin}/auth/get`, {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+      "X-Requested-With": "XMLHttpRequest",
+    },
+    body: `bot_id=${encodeURIComponent(botId)}`,
+  })
+    .then((response) => (response.ok ? response.json() : null))
+    .then((result) => {
+      if (result && typeof result === "object" && "user" in result) {
+        return extractTelegramAuthCallbackPayload(
+          (result as { user: unknown }).user
+        );
+      }
+      return null;
+    })
+    .catch(() => null);
 }
 
 // Open the Telegram authorization window. This MUST be called synchronously
@@ -165,8 +205,15 @@ export function openTelegramAuthPopup(mode: TelegramAuthMode): Window | null {
 }
 
 // Drive the already-open popup through the Telegram OAuth URL and resolve once
-// the static bridge page (`public/{oauth,bind}/telegram/index.html`) relays the
-// signed payload back via `postMessage`.
+// Telegram relays the signed payload. Telegram opens its authorization page as
+// a popup whose opener is this window, and on success it `postMessage`s
+// `{event:"auth_result", result:{…}}` back from the `oauth.telegram.org` origin
+// and closes itself (it does NOT navigate to `return_to`). Trust is therefore
+// established by matching the message `source` to the popup we opened — exactly
+// like the official `telegram-widget.js` — instead of an origin allowlist,
+// which would drop Telegram's own message. The redirect-to-`return_to` bridge
+// (handled by the callback page's `relayTelegramCallbackToOpener`) and the
+// `/auth/get` close fallback cover the remaining flows.
 export function requestTelegramAuthCallback(
   redirectUrl: string,
   popup: Window | null
@@ -187,13 +234,57 @@ export function requestTelegramAuthCallback(
     });
   }
 
+  const { origin: telegramOrigin, botId } =
+    parseTelegramAuthEndpoint(redirectUrl);
+
   return new Promise<Record<string, string>>((resolve, reject) => {
-    const allowedOrigins = resolveAllowedCallbackOrigins();
     let settled = false;
     let closeTimer = 0;
 
+    const cleanup = () => {
+      window.removeEventListener("message", handleMessage);
+      if (closeTimer) {
+        window.clearInterval(closeTimer);
+        closeTimer = 0;
+      }
+    };
+
+    const finish = (payload: Record<string, string>) => {
+      if (settled) {
+        return;
+      }
+      settled = true;
+      cleanup();
+      closePopup(popup);
+      resolve(payload);
+    };
+
+    const fail = (error: Error) => {
+      if (settled) {
+        return;
+      }
+      settled = true;
+      cleanup();
+      reject(error);
+    };
+
+    const isTrustedSender = (event: MessageEvent) => {
+      // The window we opened is the authoritative sender, whether it is still on
+      // `oauth.telegram.org` (native `auth_result` message) or has been
+      // redirected to our own callback page (relayed `tgAuthResult`).
+      if (event.source === popup) {
+        return true;
+      }
+      // `event.source` can be null for synthetic events and some embedded
+      // flows; fall back to the origins we actually expect to hear from.
+      return (
+        event.origin === window.location.origin ||
+        (telegramOrigin !== null && event.origin === telegramOrigin)
+      );
+    };
+
     const handleMessage = (event: MessageEvent) => {
-      if (allowedOrigins.size > 0 && !allowedOrigins.has(event.origin)) {
+      if (!isTrustedSender(event)) {
         return;
       }
 
@@ -202,21 +293,16 @@ export function requestTelegramAuthCallback(
         return;
       }
 
-      settled = true;
-      window.removeEventListener("message", handleMessage);
-      if (closeTimer) {
-        window.clearInterval(closeTimer);
-        closeTimer = 0;
-      }
-      closePopup(popup);
-      resolve(payload);
+      finish(payload);
     };
 
     window.addEventListener("message", handleMessage);
 
-    // Detect the user dismissing the popup so the triggering button does not
-    // stay stuck in its loading state forever. A short grace period lets an
-    // in-flight `postMessage` win the race against the bridge closing itself.
+    // When the popup closes, Telegram may have authenticated the user without a
+    // deliverable message (it closed before/instead of posting). Mirror the
+    // official widget: pull the signed user from `/auth/get`, and only reject if
+    // that also yields nothing so the triggering button leaves its loading
+    // state. A short grace period lets an in-flight `postMessage` win the race.
     closeTimer = window.setInterval(() => {
       if (settled || !popup.closed) {
         return;
@@ -224,12 +310,25 @@ export function requestTelegramAuthCallback(
 
       window.clearInterval(closeTimer);
       closeTimer = 0;
+
       window.setTimeout(() => {
         if (settled) {
           return;
         }
-        window.removeEventListener("message", handleMessage);
-        reject(new Error("Telegram auth popup was closed before completing"));
+
+        fetchTelegramAuthData(telegramOrigin, botId)
+          .then((payload) => {
+            if (payload) {
+              finish(payload);
+            } else {
+              fail(
+                new Error("Telegram auth popup was closed before completing")
+              );
+            }
+          })
+          .catch(() => {
+            fail(new Error("Telegram auth popup was closed before completing"));
+          });
       }, 500);
     }, 500);
 
@@ -291,14 +390,21 @@ function readTelegramCallbackParams(): Record<string, string> | null {
   return extractTelegramAuthCallbackPayload(record) ? record : null;
 }
 
-// When the Telegram OAuth popup lands back on the callback route, relay the
-// signed payload to the window that opened it and close, mirroring the static
-// bridge page. Under SSR the `/oauth/telegram/` (and `/bind/telegram/`) bridge
-// no longer serves `public/.../index.html` — the trailing slash is redirected
-// to the App Router route — so the popup would otherwise run the token exchange
-// against itself and the opener's `requestTelegramAuthCallback` promise would
-// never settle. Returns true when the payload was relayed, in which case the
-// caller must NOT run the callback exchange in this (popup) window.
+export function getTelegramAuthCallback(): { tgAuthResult: string } | null {
+  const params = readTelegramCallbackParams();
+  if (!params) return null;
+
+  if (params.tgAuthResult) {
+    return { tgAuthResult: params.tgAuthResult };
+  }
+
+  const payload = extractTelegramAuthCallbackPayload(params);
+  return payload ? { tgAuthResult: encodeTelegramAuthResult(payload) } : null;
+}
+
+// Next.js callback pages relay popup results before attempting an exchange.
+// The opener completes login/binding in the main window; returning true tells
+// the callback page to skip its own exchange.
 export function relayTelegramCallbackToOpener(): boolean {
   if (!isBrowser()) {
     return false;

@@ -314,6 +314,24 @@ export async function postAuthOauthLoginToken(
   );
 }
 
+/** OAuth register with invitation code Completes an invitation-gated OAuth registration deferred by /v1/auth/oauth/login/token. Send the one-time oauth_token from that response together with the invitation code. POST /v1/auth/oauth/register */
+export async function postAuthOauthRegister(
+  body: API.OAuthRegisterRequest,
+  options?: { [key: string]: any }
+) {
+  return request<API.ResponseSuccessBean & { data?: API.LoginResponse }>(
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/auth/oauth/register`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: body,
+      ...(options || {}),
+    }
+  );
+}
+
 /** registers a user. POST /v1/auth/register */
 export async function postAuthRegister(
   body: API.UserRegisterRequest,

@@ -422,10 +422,8 @@ export default function ThirdPartyAccounts() {
       } else {
         const res = await bindOAuth({
           method: account.id,
-          // Trailing slash REQUIRED to match the provider-registered redirect
-          // URI (e.g. Google Console: `<origin>/bind/<provider>/`). The
-          // redirect loop was caused by the removed static bridge pages under
-          // `public/bind/<provider>/`, not the slash.
+          // Keep the trailing slash to match provider-registered URIs.
+          // Next.js handles the callback through /bind/[platform].
           redirect: `${window.location.origin}/bind/${account.id}/`,
         });
 

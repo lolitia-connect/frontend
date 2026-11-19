@@ -4,7 +4,10 @@ import { useNavigate, useSearch } from "@workspace/ui/lib/router-compat";
 import { postV1PublicUserBindOauthCallback as bindOAuthCallback } from "@workspace/ui/services/user/user";
 import { useEffect, useRef } from "react";
 import { useGlobalStore } from "@/stores/global";
-import { relayTelegramCallbackToOpener } from "@/utils/oauth/telegram-popup";
+import {
+  getTelegramAuthCallback,
+  relayTelegramCallbackToOpener,
+} from "@/utils/oauth/telegram-popup";
 
 interface CertificationProps {
   children: React.ReactNode;
@@ -33,8 +36,9 @@ export default function Certification({
     }
 
     const callback =
-      platform === "telegram" && typeof searchParams.tgAuthResult === "string"
-        ? { tgAuthResult: searchParams.tgAuthResult }
+      platform === "telegram"
+        ? (getTelegramAuthCallback() ??
+          (searchParams as Record<string, string>))
         : (searchParams as Record<string, string>);
 
     bindOAuthCallback({

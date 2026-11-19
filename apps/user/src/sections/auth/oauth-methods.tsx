@@ -121,15 +121,8 @@ export function OAuthMethods() {
                 try {
                   const { data } = await oAuthLogin({
                     method,
-                    // OAuth providers disallow URL fragments (#) in redirect
-                    // URIs, so we use a real path. The trailing slash is
-                    // REQUIRED: it must match the redirect URI registered with
-                    // each provider (e.g. Google Console: `<origin>/oauth/
-                    // google/`). The old infinite-redirect loop came from the
-                    // static bridge pages under `public/oauth/<provider>/`
-                    // shadowing the App Router route and bouncing to
-                    // themselves; those have been removed, so `/oauth/<provider>/`
-                    // now resolves straight to the `/oauth/[platform]` route.
+                    // Keep the trailing slash to match provider-registered URIs.
+                    // Next.js handles the callback through /oauth/[platform].
                     redirect: `${window.location.origin}/oauth/${method}/`,
                   });
 

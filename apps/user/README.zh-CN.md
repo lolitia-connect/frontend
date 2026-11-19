@@ -86,6 +86,17 @@ bun dev
 侧栏、弹窗或图表内部的局部占位。包裹主区域空状态的卡片不应额外增加上下内边距。
 
 
+### OAuth 回调
+
+登录和账号绑定回调分别由 Next.js App Router 的 `/oauth/[platform]` 和
+`/bind/[platform]` 路由处理。服务商已注册的回调地址继续使用
+`<origin>/oauth/<provider>/` 和 `<origin>/bind/<provider>/`，保留尾部斜杠。
+Next.js 会规范化尾部斜杠并保留查询参数，无需静态 HTML 桥接页或静态托管回退规则。
+
+Telegram 回调支持查询参数、URL 片段（`#tgAuthResult=...`）以及独立的签名字段。
+弹窗回调将结果转发给打开它的窗口；整页回调直接完成登录或绑定。
+两条路径均使用现有后端的 `tgAuthResult` 数据格式。部署时需使用 Next.js 运行环境。
+
 ## 🚀 在 Vercel 上部署
 
 [![使用 Vercel 部署](https://vercel.com/button)](https://vercel.com/new/clone?demo-description=PPanel%20is%20a%20pure%2C%20professional%2C%20and%20perfect%20open-source%20proxy%20panel%20tool%2C%20designed%20to%20be%20your%20ideal%20choice%20for%20learning%20and%20practical%20use&demo-image=https%3A%2F%2Furlscan.io%2Fliveshot%2F%3Fwidth%3D1920%26height%3D1080%26url%3Dhttps%3A%2F%2Fuser.ppanel.dev&demo-title=PPanel%20User%20Web&demo-url=https%3A%2F%2Fuser.ppanel.dev%2F&from=.&project-name=ppanel-user-web&repository-name=ppanel-web&repository-url=https%3A%2F%2Fgithub.com%2Fperfect-panel%2Fppanel-web&root-directory=apps%2Fuser&skippable-integrations=1)

@@ -66,6 +66,8 @@ describe("extractTelegramAuthCallbackPayload", () => {
 describe("requestTelegramAuthCallback", () => {
   afterEach(() => {
     vi.restoreAllMocks();
+    vi.unstubAllGlobals();
+    vi.useRealTimers();
   });
 
   it("drives the popup to the OAuth url and resolves on a trusted bridge message", async () => {
@@ -89,6 +91,87 @@ describe("requestTelegramAuthCallback", () => {
 
     await expect(promise).resolves.toMatchObject({ id: "5", hash: "s" });
     expect(popup.close).toHaveBeenCalled();
+  });
+
+  it("resolves on Telegram's native auth_result message trusted by source", async () => {
+    const popup = createPopup();
+    const promise = requestTelegramAuthCallback(
+      "https://oauth.telegram.org/auth?bot_id=1",
+      popup
+    );
+
+    // Telegram posts a JSON string from its own origin (not ours) and
+    // identifies itself only by being the window we opened.
+    const event = new MessageEvent("message", {
+      data: JSON.stringify({
+        event: "auth_result",
+        result: {
+          id: 5,
+          first_name: "Grace",
+          auth_date: 1_700_000_000,
+          hash: "s",
+        },
+      }),
+      origin: "https://oauth.telegram.org",
+    });
+    Object.defineProperty(event, "source", { value: popup });
+    window.dispatchEvent(event);
+
+    await expect(promise).resolves.toMatchObject({ id: "5", hash: "s" });
+    expect(popup.close).toHaveBeenCalled();
+  });
+
+  it("falls back to /auth/get when the popup closes without a message", async () => {
+    vi.useFakeTimers();
+    const popup = createPopup();
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        origin: "https://oauth.telegram.org",
+        user: { id: 8, first_name: "Max", auth_date: 1, hash: "z" },
+      }),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    const promise = requestTelegramAuthCallback(
+      "https://oauth.telegram.org/auth?bot_id=42",
+      popup
+    );
+    popup.closed = true;
+
+    await vi.advanceTimersByTimeAsync(1100);
+
+    await expect(promise).resolves.toMatchObject({ id: "8", hash: "z" });
+    expect(fetchMock).toHaveBeenCalledWith(
+      "https://oauth.telegram.org/auth/get",
+      expect.objectContaining({
+        method: "POST",
+        credentials: "include",
+        body: "bot_id=42",
+      })
+    );
+  });
+
+  it("rejects when the popup closes and /auth/get yields nothing", async () => {
+    vi.useFakeTimers();
+    const popup = createPopup();
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue({ ok: true, json: async () => ({ user: false }) });
+    vi.stubGlobal("fetch", fetchMock);
+
+    const promise = requestTelegramAuthCallback(
+      "https://oauth.telegram.org/auth?bot_id=7",
+      popup
+    );
+    const tracked = promise.catch((error: Error) => error.message);
+    popup.closed = true;
+
+    await vi.advanceTimersByTimeAsync(1100);
+
+    await expect(tracked).resolves.toBe(
+      "Telegram auth popup was closed before completing"
+    );
   });
 
   it("ignores messages that arrive from an untrusted origin", async () => {

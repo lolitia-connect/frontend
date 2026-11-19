@@ -146,6 +146,13 @@ declare namespace API {
   type LoginResponse = {
     token: string;
     third_party_bindings?: string[];
+    /** Set when an OAuth sign-in resolved a new identity but registration is
+     * invitation-only. The client must collect an invitation code and finish
+     * registration via postAuthOauthRegister using oauth_token. */
+    invite_required?: boolean;
+    /** One-time ticket referencing the verified provider identity, echoed back
+     * to /v1/auth/oauth/register together with the invitation code. */
+    oauth_token?: string;
   };
 
   type MobileAuthenticateConfig = {
@@ -173,6 +180,14 @@ declare namespace API {
 
   type OAuthLoginResponse = {
     redirect: string;
+  };
+
+  type OAuthRegisterRequest = {
+    /** One-time ticket returned by postAuthOauthLoginToken when it answered
+     * with invite_required. */
+    oauth_token: string;
+    /** Invitation code supplied by the user. */
+    invite: string;
   };
 
   type patchNotifyPlatformTokenParams = {

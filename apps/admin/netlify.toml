@@ -1,0 +1,18 @@
+# Netlify config for the PPanel admin web app (管理端).
+#
+# Deploy as its own Netlify site with the base directory set to `apps/admin`
+# (Site configuration → Build & deploy → Base directory). Netlify then reads
+# this file and every path below is resolved relative to `apps/admin`.
+#
+# No `/api/*` proxy is defined here on purpose: the app forwards API traffic
+# through its own `next.config.ts` rewrites driven by NEXT_PUBLIC_API_BASE_URL
+# and NEXT_PUBLIC_API_PREFIX, so configure those env vars in the Netlify UI.
+[build]
+  command = "bun run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"

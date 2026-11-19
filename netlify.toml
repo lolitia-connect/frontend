@@ -1,17 +1,17 @@
-# 默认配置 - 文档站点
+# 默认配置 - 文档站点（docs）
+#
+# 各前端应用（user / admin / payment-portal）各自作为独立 Netlify 站点部署，
+# 使用对应 apps/<app>/netlify.toml 并把 Base directory 设为该目录，
+# 构建并发布各自的输出。
+#
+# 这里不再配置 /api 代理：前端应用通过自身 next.config.ts 的 rewrites 和
+# NEXT_PUBLIC_API_BASE_URL / NEXT_PUBLIC_API_PREFIX 环境变量转发 API。
 [build]
   command = "bun install && bun run docs:build"
   publish = "docs/.vitepress/dist"
 
 [build.environment]
   NODE_VERSION = "20"
-
-# 重定向规则
-[[redirects]]
-  from = "/api/*"
-  to = "https://api.ppanel.dev/:splat"
-  status = 200
-  force = false
 
 # SPA 路由支持
 [[redirects]]

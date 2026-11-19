@@ -1,7 +1,5 @@
 "use client";
 
-import type * as LabelPrimitive from "@radix-ui/react-label";
-import { Slot } from "@radix-ui/react-slot";
 import { Label } from "@workspace/ui/components/label";
 import { cn } from "@workspace/ui/lib/utils";
 import * as React from "react";
@@ -87,12 +85,12 @@ function FormItem({ className, ...props }: React.ComponentProps<"div">) {
 function FormLabel({
   className,
   ...props
-}: React.ComponentProps<typeof LabelPrimitive.Root>) {
+}: React.ComponentProps<typeof Label>) {
   const { error, formItemId } = useFormField();
 
   return (
     <Label
-      className={cn("data-[error=true]:text-destructive", className)}
+      className={cn("data-[error=true]:text-danger", className)}
       data-error={!!error}
       data-slot="form-label"
       htmlFor={formItemId}
@@ -101,21 +99,24 @@ function FormLabel({
   );
 }
 
-function FormControl({ ...props }: React.ComponentProps<typeof Slot>) {
+function FormControl({
+  children,
+  ...props
+}: React.HTMLAttributes<HTMLElement> & { children?: React.ReactNode }) {
   const { error, formItemId, formDescriptionId, formMessageId } =
     useFormField();
-
-  return (
-    <Slot
-      aria-describedby={
-        error ? `${formDescriptionId} ${formMessageId}` : `${formDescriptionId}`
-      }
-      aria-invalid={!!error}
-      data-slot="form-control"
-      id={formItemId}
-      {...props}
-    />
-  );
+  const controlProps = {
+    ...props,
+    "aria-describedby": error
+      ? `${formDescriptionId} ${formMessageId}`
+      : formDescriptionId,
+    "aria-invalid": !!error,
+    "data-slot": "form-control",
+    id: formItemId,
+  };
+  if (!React.isValidElement(children)) return <>{children}</>;
+  const child = children as React.ReactElement<Record<string, unknown>>;
+  return React.cloneElement(child, { ...controlProps, ...child.props });
 }
 
 function FormDescription({ className, ...props }: React.ComponentProps<"p">) {
@@ -123,7 +124,7 @@ function FormDescription({ className, ...props }: React.ComponentProps<"p">) {
 
   return (
     <p
-      className={cn("text-muted-foreground text-sm", className)}
+      className={cn("text-muted text-sm", className)}
       data-slot="form-description"
       id={formDescriptionId}
       {...props}
@@ -141,7 +142,7 @@ function FormMessage({ className, ...props }: React.ComponentProps<"p">) {
 
   return (
     <p
-      className={cn("text-destructive text-sm", className)}
+      className={cn("text-danger text-sm", className)}
       data-slot="form-message"
       id={formMessageId}
       {...props}

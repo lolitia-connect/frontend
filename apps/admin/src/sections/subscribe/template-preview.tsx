@@ -1,14 +1,9 @@
 ﻿"use client";
 
+import { Sheet } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@workspace/ui/components/button";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@workspace/ui/components/sheet";
+
 import { Spinner } from "@workspace/ui/components/spinner";
 import { MonacoEditor } from "@workspace/ui/composed/editor/monaco-editor";
 import { Icon } from "@workspace/ui/composed/icon";
@@ -86,34 +81,43 @@ export function TemplatePreview({
   };
 
   return (
-    <Sheet onOpenChange={setIsOpen} open={isOpen}>
-      <SheetTrigger asChild>
+    <Sheet isOpen={isOpen} onOpenChange={setIsOpen} placement="right">
+      <Sheet.Trigger>
         <Button variant="ghost">
           <Icon className="h-4 w-4" icon="mdi:eye" />
           {t("templatePreview.preview", "Preview")}
         </Button>
-      </SheetTrigger>
-      <SheetHeader>
-        <SheetTitle />
-      </SheetHeader>
-      <SheetContent className="w-[800px] max-w-[90vw] pt-10 md:max-w-screen-md">
-        {isLoading ? (
-          <div className="flex items-center justify-center">
-            <Spinner className="size-6" />
-            <span className="ml-2">
-              {t("templatePreview.loading", "Loading...")}
-            </span>
-          </div>
-        ) : (
-          <MonacoEditor
-            language={mapLanguage(output_format)}
-            readOnly
-            showLineNumbers
-            title={t("templatePreview.title", "Template Preview")}
-            value={getDisplayContent()}
-          />
-        )}
-      </SheetContent>
+      </Sheet.Trigger>
+      <Sheet.Backdrop>
+        <Sheet.Content>
+          <Sheet.Dialog>
+            <Sheet.Header>
+              <Sheet.Heading>
+                {t("templatePreview.title", "Template Preview")}
+              </Sheet.Heading>
+            </Sheet.Header>
+            <div className="admin-drawer-body px-6">
+              {isLoading ? (
+                <div className="flex items-center justify-center">
+                  <Spinner className="size-6" />
+                  <span className="ml-2">
+                    {t("templatePreview.loading", "Loading...")}
+                  </span>
+                </div>
+              ) : (
+                <MonacoEditor
+                  language={mapLanguage(output_format)}
+                  readOnly
+                  showLineNumbers
+                  title={t("templatePreview.title", "Template Preview")}
+                  value={getDisplayContent()}
+                />
+              )}
+            </div>
+            <Sheet.CloseTrigger aria-label="Close" />
+          </Sheet.Dialog>
+        </Sheet.Content>
+      </Sheet.Backdrop>
     </Sheet>
   );
 }

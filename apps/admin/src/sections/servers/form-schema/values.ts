@@ -1,3 +1,5 @@
+"use client";
+
 import { protocols } from "./constants";
 import { getProtocolDefaultConfig } from "./defaults";
 import type { ProtocolType } from "./types";

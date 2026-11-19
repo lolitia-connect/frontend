@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@workspace/ui/components/button";
 import { Switch } from "@workspace/ui/components/switch";
 import { ConfirmButton } from "@workspace/ui/composed/confirm-button";

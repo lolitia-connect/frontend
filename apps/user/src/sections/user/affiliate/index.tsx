@@ -1,23 +1,9 @@
 "use client";
 
+import { Card, Description, Modal } from "@heroui/react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Button } from "@workspace/ui/components/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@workspace/ui/components/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@workspace/ui/components/dialog";
+
 import { Input } from "@workspace/ui/components/input";
 import { Textarea } from "@workspace/ui/components/textarea";
 import { ProList } from "@workspace/ui/composed/pro-list/pro-list";
@@ -94,104 +80,123 @@ export default function Affiliate() {
   return (
     <div className="flex flex-col gap-4">
       <Card>
-        <CardHeader>
-          <CardTitle>{t("totalCommission", "Total Commission")}</CardTitle>
-          <CardDescription>
+        <Card.Header>
+          <Card.Title>{t("totalCommission", "Total Commission")}</Card.Title>
+          <Card.Description>
             {t("commissionInfo", "Commission Info")}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
+          </Card.Description>
+        </Card.Header>
+        <Card.Content>
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div className="flex items-baseline gap-2">
               <span className="font-bold text-3xl">
                 <Display type="currency" value={data?.total_commission} />
               </span>
-              <span className="text-muted-foreground text-sm">
+              <span className="text-muted text-sm">
                 ({t("commissionRate", "Commission Rate")}:{" "}
                 {user?.referral_percentage ||
                   common?.invite?.referral_percentage}
                 %)
               </span>
             </div>
-            <Dialog onOpenChange={setWithdrawOpen} open={withdrawOpen}>
-              <DialogTrigger asChild>
-                <Button disabled={availableCommission <= 0}>
-                  {t("withdraw", "Withdraw")}
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <form onSubmit={handleWithdraw}>
-                  <DialogHeader>
-                    <DialogTitle>
-                      {t("withdrawCommission", "Withdraw Commission")}
-                    </DialogTitle>
-                    <DialogDescription>
-                      {t(
-                        "withdrawDescription",
-                        "Submit a commission withdrawal request for admin review."
-                      )}
-                    </DialogDescription>
-                  </DialogHeader>
-                  <div className="grid gap-4 py-4">
-                    <div className="grid gap-2">
-                      <label className="font-medium text-sm" htmlFor="amount">
-                        {t("withdrawAmount", "Withdrawal Amount")}
-                      </label>
-                      <Input
-                        id="amount"
-                        min="0"
-                        onChange={(event) =>
-                          setWithdrawAmount(event.target.value)
-                        }
-                        placeholder={t("withdrawAmount", "Withdrawal Amount")}
-                        step="0.01"
-                        type="number"
-                        value={withdrawAmount}
-                      />
-                      <p className="text-muted-foreground text-sm">
-                        {t("availableCommission", "Available Commission")}:{" "}
-                        <Display type="currency" value={availableCommission} />
-                      </p>
-                    </div>
-                    <div className="grid gap-2">
-                      <label className="font-medium text-sm" htmlFor="content">
-                        {t("withdrawInfo", "Withdrawal Info")}
-                      </label>
-                      <Textarea
-                        id="content"
-                        onChange={(event) =>
-                          setWithdrawContent(event.target.value)
-                        }
-                        placeholder={t(
-                          "withdrawInfoPlaceholder",
-                          "Enter payment account or withdrawal instructions"
-                        )}
-                        value={withdrawContent}
-                      />
-                    </div>
-                  </div>
-                  <DialogFooter>
-                    <Button disabled={withdrawMutation.isPending} type="submit">
-                      {withdrawMutation.isPending
-                        ? t("submitting", "Submitting...")
-                        : t("submitWithdraw", "Submit Withdrawal")}
-                    </Button>
-                  </DialogFooter>
-                </form>
-              </DialogContent>
-            </Dialog>
+            <Modal isOpen={withdrawOpen} onOpenChange={setWithdrawOpen}>
+              <Button disabled={availableCommission <= 0}>
+                {t("withdraw", "Withdraw")}
+              </Button>
+
+              <Modal.Backdrop>
+                <Modal.Container>
+                  <Modal.Dialog>
+                    <form onSubmit={handleWithdraw}>
+                      <Modal.Header>
+                        <Modal.Heading>
+                          {t("withdrawCommission", "Withdraw Commission")}
+                        </Modal.Heading>
+                        <Description slot="description">
+                          {t(
+                            "withdrawDescription",
+                            "Submit a commission withdrawal request for admin review."
+                          )}
+                        </Description>
+                      </Modal.Header>
+                      <div className="grid gap-4 py-4">
+                        <div className="grid gap-2">
+                          <label
+                            className="font-medium text-sm"
+                            htmlFor="amount"
+                          >
+                            {t("withdrawAmount", "Withdrawal Amount")}
+                          </label>
+                          <Input
+                            id="amount"
+                            min="0"
+                            onChange={(event) =>
+                              setWithdrawAmount(event.target.value)
+                            }
+                            placeholder={t(
+                              "withdrawAmount",
+                              "Withdrawal Amount"
+                            )}
+                            step="0.01"
+                            type="number"
+                            value={withdrawAmount}
+                          />
+                          <p className="text-muted text-sm">
+                            {t("availableCommission", "Available Commission")}:{" "}
+                            <Display
+                              type="currency"
+                              value={availableCommission}
+                            />
+                          </p>
+                        </div>
+                        <div className="grid gap-2">
+                          <label
+                            className="font-medium text-sm"
+                            htmlFor="content"
+                          >
+                            {t("withdrawInfo", "Withdrawal Info")}
+                          </label>
+                          <Textarea
+                            id="content"
+                            onChange={(event) =>
+                              setWithdrawContent(event.target.value)
+                            }
+                            placeholder={t(
+                              "withdrawInfoPlaceholder",
+                              "Enter payment account or withdrawal instructions"
+                            )}
+                            value={withdrawContent}
+                          />
+                        </div>
+                      </div>
+                      <Modal.Footer>
+                        <Button
+                          disabled={withdrawMutation.isPending}
+                          type="submit"
+                        >
+                          {withdrawMutation.isPending
+                            ? t("submitting", "Submitting...")
+                            : t("submitWithdraw", "Submit Withdrawal")}
+                        </Button>
+                      </Modal.Footer>
+                    </form>
+                    <Modal.CloseTrigger aria-label="Close" />
+                  </Modal.Dialog>
+                </Modal.Container>
+              </Modal.Backdrop>
+            </Modal>
           </div>
-        </CardContent>
+        </Card.Content>
       </Card>
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0">
-          <CardTitle className="font-medium text-lg">
+        <Card.Header className="flex flex-row items-center justify-between space-y-0">
+          <Card.Title className="font-medium text-lg">
             {t("inviteCode", "Invite Code")}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
+          </Card.Title>
+        </Card.Header>
+        <Card.Content>
           <div className="flex flex-wrap items-center gap-2">
-            <code className="min-w-0 truncate rounded bg-muted px-2 py-1 font-bold text-lg sm:text-2xl">
+            <code className="min-w-0 truncate rounded bg-default px-2 py-1 font-bold text-lg sm:text-2xl">
               {user?.refer_code}
             </code>
             <CopyToClipboard
@@ -200,7 +205,7 @@ export default function Affiliate() {
                   toast.success(t("copySuccess", "Copy Success"));
                 }
               }}
-              text={`${location?.origin}/#/auth?invite=${user?.refer_code}`}
+              text={`${location?.origin}/auth?invite=${user?.refer_code}`}
             >
               <Button className="shrink-0 gap-2" size="sm" variant="secondary">
                 <Copy className="h-4 w-4" />
@@ -208,7 +213,7 @@ export default function Affiliate() {
               </Button>
             </CopyToClipboard>
           </div>
-        </CardContent>
+        </Card.Content>
       </Card>
       <ProList<API.UserAffiliate, Record<string, unknown>>
         header={{
@@ -216,22 +221,22 @@ export default function Affiliate() {
         }}
         renderItem={(item) => (
           <Card className="overflow-hidden">
-            <CardContent className="p-3 text-sm">
+            <Card.Content className="p-3 text-sm">
               <ul className="grid grid-cols-2 gap-3 *:flex *:flex-col">
                 <li className="font-semibold">
-                  <span className="text-muted-foreground">
+                  <span className="text-muted">
                     {t("userIdentifier", "User Identifier")}
                   </span>
                   <span>{item.identifier}</span>
                 </li>
                 <li className="font-semibold">
-                  <span className="text-muted-foreground">
+                  <span className="text-muted">
                     {t("registrationTime", "Registration Time")}
                   </span>
                   <time>{formatDate(item.registered_at)}</time>
                 </li>
               </ul>
-            </CardContent>
+            </Card.Content>
           </Card>
         )}
         request={async (pagination, filter) => {

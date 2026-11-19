@@ -11,7 +11,8 @@
       "7": "This place was supposed to have a big surprise, but the surprise slipped away!",
       "8": "There's nothing here for now, like an empty snack cabinet.",
       "9": "This empty space is waiting for its protagonist to take the stage!"
-    }
+    },
+    "title": "Empty"
   },
   "error": {
     "400": "The request parameters are incorrect, please check and resubmit.",
@@ -112,23 +113,37 @@
     "160001": "Settings were saved but could not be applied. Please reload or restart the service.",
     "unknown": "An error occurred in the system, please try again later."
   },
-  "language": "Language",
+  "language": {
+    "followSystem": "System default",
+    "label": "Language"
+  },
+  "noResults": "No results found",
   "pagination": {
     "pageInfo": "Page {{page}} of {{total}}",
-    "rowsPerPage": "Rows per page"
+    "rowsPerPage": "Rows per page",
+    "first": "Go to first page",
+    "next": "Go to next page",
+    "selectPage": "Select page number",
+    "previous": "Go to previous page",
+    "last": "Go to last page"
   },
+  "search": "Search",
   "theme": {
     "dark": "Dark",
     "light": "Light",
     "system": "System",
-    "toggle": "Toggle theme"
+    "toggle": "Toggle theme",
+    "followSystem": "System default"
   },
+  "adminTitleSuffix": "@ Admin",
   "unlimited": "Unlimited",
   "table": {
+    "actions": "Actions",
     "applyFilters": "Apply filters",
     "choose": "Choose...",
     "clearFilters": "Clear",
     "columns": "Choose columns",
+    "data": "Data table",
     "fields": {
       "date": "Date",
       "search": "Search"
@@ -137,8 +152,26 @@
     "loadError": "Unable to load data",
     "loading": "Loading",
     "refresh": "Refresh",
+    "reorder": "Reorder",
     "reset": "Reset table",
     "retry": "Retry",
-    "unappliedChanges": "Unapplied changes"
+    "unappliedChanges": "Unapplied changes",
+    "selectAll": "Select all",
+    "selectRow": "Select row"
+  },
+  "breadcrumb": {
+    "more": "More"
+  },
+  "close": "Close",
+  "sidebar": {
+    "title": "Sidebar",
+    "toggle": "Toggle Sidebar",
+    "description": "Displays the mobile sidebar."
+  },
+  "spinner": {
+    "label": "Loading"
+  },
+  "progress": {
+    "label": "Progress"
   }
 }

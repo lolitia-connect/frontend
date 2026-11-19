@@ -1,16 +1,9 @@
 "use client";
 
+import { Description, Modal } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@workspace/ui/components/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@workspace/ui/components/dialog";
+
 import {
   postV1PublicUserUnsubscribePre as preUnsubscribe,
   postV1PublicUserUnsubscribe as unsubscribe,
@@ -72,47 +65,51 @@ export default function Unsubscribe({
   if (!(single_model || allowDeduction)) return null;
 
   return (
-    <Dialog onOpenChange={setOpen} open={open}>
-      <DialogTrigger asChild>
-        <Button size="sm" variant="destructive">
-          {t("unsubscribe.unsubscribe", "Unsubscribe")}
-        </Button>
-      </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>
-            {t("unsubscribe.confirmUnsubscribe", "Confirm Unsubscribe")}
-          </DialogTitle>
-          <DialogDescription>
-            {t(
-              "unsubscribe.confirmUnsubscribeDescription",
-              "Are you sure you want to unsubscribe?"
-            )}
-          </DialogDescription>
-        </DialogHeader>
-        <p>{t("unsubscribe.residualValue", "Residual Value")}</p>
-        <p className="font-semibold text-2xl text-primary">
-          <Display type="currency" value={data} />
-        </p>
-        <p className="text-muted-foreground text-sm">
-          {t(
-            "unsubscribe.unsubscribeDescription",
-            "The residual value will be refunded to your account"
-          )}
-        </p>
-        <DialogFooter>
-          <Button
-            loading={submitting}
-            onClick={() => setOpen(false)}
-            variant="outline"
-          >
-            {t("unsubscribe.cancel", "Cancel")}
-          </Button>
-          <Button loading={submitting} onClick={handleSubmit}>
-            {t("unsubscribe.confirm", "Confirm")}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+    <Modal isOpen={open} onOpenChange={setOpen}>
+      <Button size="sm" variant="destructive">
+        {t("unsubscribe.unsubscribe", "Unsubscribe")}
+      </Button>
+
+      <Modal.Backdrop>
+        <Modal.Container>
+          <Modal.Dialog>
+            <Modal.Header>
+              <Modal.Heading>
+                {t("unsubscribe.confirmUnsubscribe", "Confirm Unsubscribe")}
+              </Modal.Heading>
+              <Description slot="description">
+                {t(
+                  "unsubscribe.confirmUnsubscribeDescription",
+                  "Are you sure you want to unsubscribe?"
+                )}
+              </Description>
+            </Modal.Header>
+            <p>{t("unsubscribe.residualValue", "Residual Value")}</p>
+            <p className="font-semibold text-2xl text-accent">
+              <Display type="currency" value={data} />
+            </p>
+            <p className="text-muted text-sm">
+              {t(
+                "unsubscribe.unsubscribeDescription",
+                "The residual value will be refunded to your account"
+              )}
+            </p>
+            <Modal.Footer>
+              <Button
+                loading={submitting}
+                onClick={() => setOpen(false)}
+                variant="outline"
+              >
+                {t("unsubscribe.cancel", "Cancel")}
+              </Button>
+              <Button loading={submitting} onClick={handleSubmit}>
+                {t("unsubscribe.confirm", "Confirm")}
+              </Button>
+            </Modal.Footer>
+            <Modal.CloseTrigger aria-label="Close" />
+          </Modal.Dialog>
+        </Modal.Container>
+      </Modal.Backdrop>
+    </Modal>
   );
 }

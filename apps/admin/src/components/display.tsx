@@ -1,3 +1,5 @@
+"use client";
+
 import { formatBytes } from "@workspace/ui/utils/formatting";
 import { unitConversion } from "@workspace/ui/utils/unit-conversions";
 import { useTranslation } from "react-i18next";

@@ -1,3 +1,6 @@
+"use client";
+
+import { Sheet, Button as SheetButton } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@workspace/ui/components/button";
@@ -11,14 +14,7 @@ import {
   FormMessage,
 } from "@workspace/ui/components/form";
 import { ScrollArea } from "@workspace/ui/components/scroll-area";
-import {
-  Sheet,
-  SheetContent,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@workspace/ui/components/sheet";
+
 import { Switch } from "@workspace/ui/components/switch";
 import { EnhancedInput } from "@workspace/ui/composed/enhanced-input";
 import { Icon } from "@workspace/ui/composed/icon";
@@ -114,181 +110,193 @@ export default function TelegramForm() {
   }
 
   return (
-    <Sheet onOpenChange={setOpen} open={open}>
-      <SheetTrigger asChild>
-        <div className="flex cursor-pointer items-center justify-between transition-colors">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-              <Icon className="h-5 w-5 text-primary" icon="mdi:telegram" />
-            </div>
-            <div className="flex-1">
-              <p className="font-medium">
+    <Sheet isOpen={open} onOpenChange={setOpen} placement="right">
+      <Sheet.Trigger>
+        <SheetButton
+          className="settings-option justify-between"
+          variant="ghost"
+        >
+          <span className="flex items-center gap-3">
+            <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-50">
+              <Icon className="h-5 w-5 text-primary-500" icon="mdi:telegram" />
+            </span>
+            <span className="flex-1">
+              <span className="block font-medium">
                 {t("telegram.title", "Telegram Sign-In")}
-              </p>
-              <p className="text-muted-foreground text-sm">
+              </span>
+              <span className="block text-muted text-sm">
                 {t(
                   "telegram.description",
                   "Authenticate users with Telegram accounts"
                 )}
-              </p>
-            </div>
-          </div>
+              </span>
+            </span>
+          </span>
           <Icon className="size-6" icon="mdi:chevron-right" />
-        </div>
-      </SheetTrigger>
-      <SheetContent className="w-[500px] max-w-full md:max-w-screen-md">
-        <SheetHeader>
-          <SheetTitle>{t("telegram.title", "Telegram Sign-In")}</SheetTitle>
-        </SheetHeader>
-        <ScrollArea className="h-[calc(100dvh-48px-36px-36px-24px-env(safe-area-inset-top))] px-6">
-          <Form {...form}>
-            <form
-              className="space-y-2 pt-4"
-              id="telegram-form"
-              onSubmit={form.handleSubmit(onSubmit)}
-            >
-              <FormField
-                control={form.control}
-                name="enabled"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t("telegram.enable", "Enable")}</FormLabel>
-                    <FormControl>
-                      <Switch
-                        checked={field.value}
-                        className="!mt-0 float-end"
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      {t(
-                        "telegram.enableDescription",
-                        "When enabled, users can sign in with their Telegram account"
-                      )}
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+        </SheetButton>
+      </Sheet.Trigger>
+      <Sheet.Backdrop>
+        <Sheet.Content>
+          <Sheet.Dialog className="w-[500px] max-w-full md:max-w-screen-md">
+            <Sheet.Header>
+              <Sheet.Heading>
+                {t("telegram.title", "Telegram Sign-In")}
+              </Sheet.Heading>
+            </Sheet.Header>
+            <ScrollArea className="h-[calc(100dvh-48px-36px-36px-24px-env(safe-area-inset-top))] px-6">
+              <Form {...form}>
+                <form
+                  className="space-y-2 pt-4"
+                  id="telegram-form"
+                  onSubmit={form.handleSubmit(onSubmit)}
+                >
+                  <FormField
+                    control={form.control}
+                    name="enabled"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{t("telegram.enable", "Enable")}</FormLabel>
+                        <FormControl>
+                          <Switch
+                            checked={field.value}
+                            className="!mt-0 float-end"
+                            onCheckedChange={field.onChange}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          {t(
+                            "telegram.enableDescription",
+                            "When enabled, users can sign in with their Telegram account"
+                          )}
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-              <FormField
-                control={form.control}
-                name="bot_token"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t("telegram.botToken", "Bot Token")}</FormLabel>
-                    <FormControl>
-                      <EnhancedInput
-                        onValueChange={field.onChange}
-                        placeholder="123456789:AAHn_xxxxxxxxxxxxxxxxxxxxxxxx"
-                        type="password"
-                        value={field.value}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      {t(
-                        "telegram.botTokenDescription",
-                        "Telegram Bot Token from @BotFather"
-                      )}
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                  <FormField
+                    control={form.control}
+                    name="bot_token"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          {t("telegram.botToken", "Bot Token")}
+                        </FormLabel>
+                        <FormControl>
+                          <EnhancedInput
+                            onValueChange={field.onChange}
+                            placeholder="123456789:AAHn_xxxxxxxxxxxxxxxxxxxxxxxx"
+                            type="password"
+                            value={field.value}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          {t(
+                            "telegram.botTokenDescription",
+                            "Telegram Bot Token from @BotFather"
+                          )}
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-              <FormField
-                control={form.control}
-                name="webhook_domain"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      {t("telegram.webhookDomain", "Webhook Domain")}
-                    </FormLabel>
-                    <FormControl>
-                      <EnhancedInput
-                        onValueChange={field.onChange}
-                        placeholder="https://your-domain.com"
-                        value={field.value}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      {t(
-                        "telegram.webhookDomainDescription",
-                        "Public HTTPS URL of this server. Leave empty to use long-polling."
-                      )}
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                  <FormField
+                    control={form.control}
+                    name="webhook_domain"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          {t("telegram.webhookDomain", "Webhook Domain")}
+                        </FormLabel>
+                        <FormControl>
+                          <EnhancedInput
+                            onValueChange={field.onChange}
+                            placeholder="https://your-domain.com"
+                            value={field.value}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          {t(
+                            "telegram.webhookDomainDescription",
+                            "Public HTTPS URL of this server. Leave empty to use long-polling."
+                          )}
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-              <FormField
-                control={form.control}
-                name="group_chat_id"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      {t("telegram.groupChatId", "Admin Group Chat ID")}
-                    </FormLabel>
-                    <FormControl>
-                      <EnhancedInput
-                        onValueChange={field.onChange}
-                        placeholder="-1001234567890"
-                        value={field.value}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      {t(
-                        "telegram.groupChatIdDescription",
-                        "Forum-enabled supergroup that carries notifications, tickets and live chat. The bot must be an administrator with the manage-topics permission. Leave empty to disable every group feature."
-                      )}
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                  <FormField
+                    control={form.control}
+                    name="group_chat_id"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          {t("telegram.groupChatId", "Admin Group Chat ID")}
+                        </FormLabel>
+                        <FormControl>
+                          <EnhancedInput
+                            onValueChange={field.onChange}
+                            placeholder="-1001234567890"
+                            value={field.value}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          {t(
+                            "telegram.groupChatIdDescription",
+                            "Forum-enabled supergroup that carries notifications, tickets and live chat. The bot must be an administrator with the manage-topics permission. Leave empty to disable every group feature."
+                          )}
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-              <FormField
-                control={form.control}
-                name="enable_notify"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      {t("telegram.enableNotify", "Enable Notifications")}
-                    </FormLabel>
-                    <FormControl>
-                      <Switch
-                        checked={field.value}
-                        className="!mt-0 float-end"
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      {t(
-                        "telegram.enableNotifyDescription",
-                        "Send order and expiry notifications to users via Telegram"
-                      )}
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </form>
-          </Form>
-        </ScrollArea>
-        <SheetFooter className="flex-row justify-end gap-2 pt-3">
-          <Button
-            loading={loading}
-            onClick={() => setOpen(false)}
-            variant="outline"
-          >
-            {t("common.cancel", "Cancel")}
-          </Button>
-          <Button form="telegram-form" loading={loading} type="submit">
-            {t("common.save", "Save")}
-          </Button>
-        </SheetFooter>
-      </SheetContent>
+                  <FormField
+                    control={form.control}
+                    name="enable_notify"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          {t("telegram.enableNotify", "Enable Notifications")}
+                        </FormLabel>
+                        <FormControl>
+                          <Switch
+                            checked={field.value}
+                            className="!mt-0 float-end"
+                            onCheckedChange={field.onChange}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          {t(
+                            "telegram.enableNotifyDescription",
+                            "Send order and expiry notifications to users via Telegram"
+                          )}
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </form>
+              </Form>
+            </ScrollArea>
+            <Sheet.Footer className="flex-row justify-end gap-2 pt-3">
+              <Button
+                loading={loading}
+                onClick={() => setOpen(false)}
+                variant="outline"
+              >
+                {t("common.cancel", "Cancel")}
+              </Button>
+              <Button form="telegram-form" loading={loading} type="submit">
+                {t("common.save", "Save")}
+              </Button>
+            </Sheet.Footer>
+            <Sheet.CloseTrigger aria-label="Close" />
+          </Sheet.Dialog>
+        </Sheet.Content>
+      </Sheet.Backdrop>
     </Sheet>
   );
 }

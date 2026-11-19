@@ -1,20 +1,26 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Accordion,
-  AccordionContent,
+  AccordionPanel as AccordionContent,
+  AccordionHeading,
+  AccordionIndicator,
   AccordionItem,
   AccordionTrigger,
-} from "@workspace/ui/components/accordion";
+  buttonVariants,
+  Dropdown,
+  ListBox,
+  Select,
+  SelectPopover as SelectContent,
+  SelectIndicator,
+  ListBoxItem as SelectItem,
+  SelectTrigger,
+  SelectValue,
+  Sheet,
+} from "@heroui/react";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Badge } from "@workspace/ui/components/badge";
 import { Button } from "@workspace/ui/components/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@workspace/ui/components/dropdown-menu";
 import {
   Form,
   FormControl,
@@ -24,21 +30,7 @@ import {
   FormMessage,
 } from "@workspace/ui/components/form";
 import { ScrollArea } from "@workspace/ui/components/scroll-area";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@workspace/ui/components/select";
-import {
-  Sheet,
-  SheetContent,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@workspace/ui/components/sheet";
+
 import { Switch } from "@workspace/ui/components/switch";
 import { Textarea } from "@workspace/ui/components/textarea";
 import { EnhancedInput } from "@workspace/ui/composed/enhanced-input";
@@ -69,7 +61,7 @@ function getFieldLabel(field: FieldConfig) {
     <>
       {field.label}
       {field.required ? (
-        <span aria-hidden="true" className="ml-1 text-destructive">
+        <span aria-hidden="true" className="ml-1 text-danger">
           *
         </span>
       ) : null}
@@ -138,41 +130,48 @@ function DynamicField({
                     field.generate ? (
                       field.generate.functions &&
                       field.generate.functions.length > 0 ? (
-                        <DropdownMenu modal={false}>
-                          <DropdownMenuTrigger asChild>
-                            <Button size="sm" type="button" variant="ghost">
-                              <Icon className="h-4 w-4" icon="mdi:key" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            {field.generate.functions.map((genFunc, idx) => (
-                              <DropdownMenuItem
-                                key={idx}
-                                onClick={async () => {
-                                  const result =
-                                    await genFunc.function(protocolData);
-                                  if (typeof result === "string") {
-                                    fieldProps.onChange(result);
-                                  } else if (field.generate!.updateFields) {
-                                    Object.entries(
-                                      field.generate!.updateFields
-                                    ).forEach(([fieldName, resultKey]) => {
-                                      const fullFieldName = `protocols.${protocolIndex}.${fieldName}`;
-                                      form.setValue(
-                                        fullFieldName,
-                                        (result as any)[resultKey]
-                                      );
-                                    });
-                                  } else if (result.privateKey) {
-                                    fieldProps.onChange(result.privateKey);
-                                  }
-                                }}
-                              >
-                                {genFunc.label}
-                              </DropdownMenuItem>
-                            ))}
-                          </DropdownMenuContent>
-                        </DropdownMenu>
+                        <Dropdown>
+                          <Dropdown.Trigger
+                            className={buttonVariants({
+                              variant: "ghost",
+                              size: "sm",
+                              class: undefined,
+                            })}
+                            type="button"
+                          >
+                            <Icon className="h-4 w-4" icon="mdi:key" />
+                          </Dropdown.Trigger>
+                          <Dropdown.Popover placement="bottom end">
+                            <Dropdown.Menu aria-label="Actions">
+                              {field.generate.functions.map((genFunc, idx) => (
+                                <Dropdown.Item
+                                  key={idx}
+                                  onAction={async () => {
+                                    const result =
+                                      await genFunc.function(protocolData);
+                                    if (typeof result === "string") {
+                                      fieldProps.onChange(result);
+                                    } else if (field.generate!.updateFields) {
+                                      Object.entries(
+                                        field.generate!.updateFields
+                                      ).forEach(([fieldName, resultKey]) => {
+                                        const fullFieldName = `protocols.${protocolIndex}.${fieldName}`;
+                                        form.setValue(
+                                          fullFieldName,
+                                          (result as any)[resultKey]
+                                        );
+                                      });
+                                    } else if (result.privateKey) {
+                                      fieldProps.onChange(result.privateKey);
+                                    }
+                                  }}
+                                >
+                                  {genFunc.label}
+                                </Dropdown.Item>
+                              ))}
+                            </Dropdown.Menu>
+                          </Dropdown.Popover>
+                        </Dropdown>
                       ) : field.generate.function ? (
                         <Button
                           onClick={async () => {
@@ -252,31 +251,46 @@ function DynamicField({
               <FormLabel>{getFieldLabel(field)}</FormLabel>
               <FormControl>
                 <Select
-                  onValueChange={(v) =>
-                    field.name === "ech_enable"
-                      ? fieldProps.onChange(v === "true")
-                      : fieldProps.onChange(v)
-                  }
-                  value={
-                    field.name === "ech_enable"
+                  onSelectionChange={(key) => {
+                    if (key != null)
+                      ((v) =>
+                        field.name === "ech_enable"
+                          ? fieldProps.onChange(v === "true")
+                          : fieldProps.onChange(v))(String(key));
+                  }}
+                  selectedKey={
+                    (field.name === "ech_enable"
                       ? String(
                           (fieldProps.value ?? field.defaultValue ?? false) ===
                             true
                         )
-                      : (fieldProps.value ?? field.defaultValue)
+                      : (fieldProps.value ?? field.defaultValue)) == null
+                      ? undefined
+                      : String(
+                          field.name === "ech_enable"
+                            ? String(
+                                (fieldProps.value ??
+                                  field.defaultValue ??
+                                  false) === true
+                              )
+                            : (fieldProps.value ?? field.defaultValue)
+                        )
                   }
                 >
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue />
+                      <SelectIndicator />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {field.options?.map((option) => (
-                      <SelectItem key={option} value={option}>
-                        {getLabel(option)}
-                      </SelectItem>
-                    ))}
+                    <ListBox>
+                      {field.options?.map((option) => (
+                        <SelectItem id={option} key={option}>
+                          {getLabel(option)}
+                        </SelectItem>
+                      ))}
+                    </ListBox>
                   </SelectContent>
                 </Select>
               </FormControl>
@@ -614,8 +628,8 @@ export default function ServerForm(props: {
   }
 
   return (
-    <Sheet onOpenChange={setOpen} open={open}>
-      <SheetTrigger asChild>
+    <Sheet isOpen={open} onOpenChange={setOpen} placement="right">
+      <Sheet.Trigger>
         <Button
           onClick={() => {
             if (!initialValues) {
@@ -632,366 +646,405 @@ export default function ServerForm(props: {
         >
           {trigger}
         </Button>
-      </SheetTrigger>
-      <SheetContent className="w-[700px] max-w-full gap-0 md:max-w-3xl">
-        <SheetHeader>
-          <SheetTitle>{title}</SheetTitle>
-        </SheetHeader>
-        <ScrollArea className="h-[calc(100dvh-48px-36px-36px-env(safe-area-inset-top))]">
-          <Form {...form}>
-            <form className="grid grid-cols-1 gap-2 px-6 pt-4">
-              <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
-                <FormField
-                  control={control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t("name", "Name")}</FormLabel>
-                      <FormControl>
-                        <EnhancedInput
-                          {...field}
-                          onValueChange={(v) => field.onChange(v)}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={control}
-                  name="address"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t("address", "Address")}</FormLabel>
-                      <FormControl>
-                        <EnhancedInput
-                          {...field}
-                          onValueChange={(v) => field.onChange(v)}
-                          placeholder={t(
-                            "address_placeholder",
-                            "Server address"
-                          )}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={control}
-                  name="country"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t("country", "Country")}</FormLabel>
-                      <FormControl>
-                        <EnhancedInput
-                          {...field}
-                          onValueChange={(v) => field.onChange(v)}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={control}
-                  name="city"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t("city", "City")}</FormLabel>
-                      <FormControl>
-                        <EnhancedInput
-                          {...field}
-                          onValueChange={(v) => field.onChange(v)}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-              <div className="my-3 flex items-start justify-between gap-3">
-                <div>
-                  <h3 className="font-semibold text-foreground text-sm">
-                    {t("protocol_configurations", "Protocol Configurations")}
-                  </h3>
-                  <p className="mt-1 text-muted-foreground text-xs">
-                    {t(
-                      "protocol_configurations_desc",
-                      "Enable and configure the required protocol types"
-                    )}
-                  </p>
-                </div>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button size="sm" type="button" variant="outline">
-                      <Icon icon="mdi:plus" />
-                      {t("add_protocol", "Add")}
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    {PROTOCOLS.map((type) => (
-                      <DropdownMenuItem
-                        key={type}
-                        onClick={() => addProtocolInstance(type)}
+      </Sheet.Trigger>
+      <Sheet.Backdrop>
+        <Sheet.Content>
+          <Sheet.Dialog className="w-[700px] max-w-full gap-0 md:max-w-3xl">
+            <Sheet.Header>
+              <Sheet.Heading>{title}</Sheet.Heading>
+            </Sheet.Header>
+            <ScrollArea className="h-[calc(100dvh-48px-36px-36px-env(safe-area-inset-top))]">
+              <Form {...form}>
+                <form className="grid grid-cols-1 gap-2 px-6 pt-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <FormField
+                      control={control}
+                      name="name"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{t("name", "Name")}</FormLabel>
+                          <FormControl>
+                            <EnhancedInput
+                              {...field}
+                              onValueChange={(v) => field.onChange(v)}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={control}
+                      name="address"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{t("address", "Address")}</FormLabel>
+                          <FormControl>
+                            <EnhancedInput
+                              {...field}
+                              onValueChange={(v) => field.onChange(v)}
+                              placeholder={t(
+                                "address_placeholder",
+                                "Server address"
+                              )}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={control}
+                      name="country"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{t("country", "Country")}</FormLabel>
+                          <FormControl>
+                            <EnhancedInput
+                              {...field}
+                              onValueChange={(v) => field.onChange(v)}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={control}
+                      name="city"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{t("city", "City")}</FormLabel>
+                          <FormControl>
+                            <EnhancedInput
+                              {...field}
+                              onValueChange={(v) => field.onChange(v)}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  <div className="my-3 flex flex-wrap items-start justify-between gap-3">
+                    <div className="min-w-0 flex-1">
+                      <h3 className="font-semibold text-foreground text-sm">
+                        {t(
+                          "protocol_configurations",
+                          "Protocol Configurations"
+                        )}
+                      </h3>
+                      <p className="mt-1 text-muted text-xs">
+                        {t(
+                          "protocol_configurations_desc",
+                          "Enable and configure the required protocol types"
+                        )}
+                      </p>
+                    </div>
+                    <Dropdown>
+                      <Dropdown.Trigger
+                        className={buttonVariants({
+                          variant: "outline",
+                          size: "sm",
+                          class:
+                            "inline-flex shrink-0 items-center gap-2 whitespace-nowrap",
+                        })}
+                        type="button"
                       >
-                        {type}
-                      </DropdownMenuItem>
-                    ))}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
+                        <Icon icon="mdi:plus" />
+                        {t("add_protocol", "Add")}
+                      </Dropdown.Trigger>
+                      <Dropdown.Popover placement="bottom end">
+                        <Dropdown.Menu aria-label="Actions">
+                          {PROTOCOLS.map((type) => (
+                            <Dropdown.Item
+                              key={type}
+                              onAction={() => addProtocolInstance(type)}
+                            >
+                              {type}
+                            </Dropdown.Item>
+                          ))}
+                        </Dropdown.Menu>
+                      </Dropdown.Popover>
+                    </Dropdown>
+                  </div>
 
-              <Accordion
-                className="w-full space-y-3"
-                collapsible
-                onValueChange={setAccordionValue}
-                type="single"
-                value={accordionValue}
-              >
-                {(protocolsValues || []).map((protocol, i) => {
-                  const type = protocol?.type as ProtocolType;
-                  const current = (protocolsValues[i] || {}) as Record<
-                    string,
-                    any
-                  >;
-                  if (!type) return null;
-                  const protoId = current.id || i + 1;
-                  const itemValue = `${type}:${protoId}:${i}`;
-                  const isEnabled = current?.enable;
-                  const fields = PROTOCOL_FIELDS[type] || [];
-                  return (
-                    <AccordionItem
-                      className="mb-2 rounded-lg border"
-                      key={itemValue}
-                      value={itemValue}
-                    >
-                      <AccordionTrigger className="px-4 py-3 hover:no-underline">
-                        <div className="flex w-full items-center justify-between">
-                          <div className="flex flex-col items-start gap-1">
-                            <div className="flex items-center gap-1">
-                              <Badge className="text-xs" variant="secondary">
-                                {type}
-                              </Badge>
-                              <span className="font-medium">
-                                {current.name
-                                  ? `${current.name}#${protoId}`
-                                  : `#${protoId}`}
-                              </span>
-                              {current.transport && (
-                                <Badge className="text-xs" variant="secondary">
-                                  {current.transport.toUpperCase()}
-                                </Badge>
-                              )}
-                              {current.security &&
-                                current.security !== "none" && (
-                                  <Badge className="text-xs" variant="outline">
-                                    {current.security.toUpperCase()}
-                                  </Badge>
-                                )}
-                              {current.port && (
-                                <Badge className="text-xs">
-                                  {current.port}
-                                </Badge>
-                              )}
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <span
-                                className={cn(
-                                  "text-xs",
-                                  isEnabled
-                                    ? "text-green-500"
-                                    : "text-muted-foreground"
-                                )}
-                              >
-                                {isEnabled
-                                  ? t("enabled", "Enabled")
-                                  : t("disabled", "Disabled")}
-                              </span>
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-1">
-                            {!(
-                              initialValues?.id &&
-                              isProtocolUsedInNodes(
-                                initialValues.id,
-                                type,
-                                current.id
-                              ) &&
-                              isEnabled
-                            ) && (
-                              <Button
-                                className="h-7 w-7"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  removeProtocolInstance(i);
-                                }}
-                                size="icon"
-                                type="button"
-                                variant="ghost"
-                              >
-                                <Icon className="h-4 w-4" icon="mdi:close" />
-                              </Button>
-                            )}
-                            <Switch
-                              checked={!!isEnabled}
-                              className="mr-2"
-                              disabled={Boolean(
-                                initialValues?.id &&
-                                  isProtocolUsedInNodes(
-                                    initialValues?.id || 0,
-                                    type,
-                                    current.id
-                                  ) &&
-                                  isEnabled
-                              )}
-                              onCheckedChange={(checked) => {
-                                form.setValue(`protocols.${i}.enable`, checked);
-                                if (checked) {
-                                  setAccordionValue(itemValue);
-                                  return;
-                                }
-
-                                if (accordionValue === itemValue) {
-                                  setAccordionValue(undefined);
-                                }
-                                form.clearErrors(`protocols.${i}` as any);
-                              }}
-                              onClick={(e) => e.stopPropagation()}
-                            />
-                          </div>
-                        </div>
-                      </AccordionTrigger>
-                      <AccordionContent className="px-4 pt-0 pb-4">
-                        <div className="-mx-4 space-y-4 rounded-b-lg border-t px-4 pt-4">
-                          {current.cert_pin_sha256 && (
-                            <div className="space-y-1 text-sm">
-                              <p>
-                                {t("certificatePin", "Certificate SHA-256 Pin")}
-                              </p>
-                              <code className="block break-all text-muted-foreground">
-                                {current.cert_pin_sha256}
-                              </code>
-                            </div>
-                          )}
-                          <div className="grid grid-cols-2 gap-4">
-                            <FormField
-                              control={control}
-                              name={`protocols.${i}.id`}
-                              render={({ field: fp }) => (
-                                <FormItem>
-                                  <FormLabel>ID</FormLabel>
-                                  <FormControl>
-                                    <EnhancedInput {...fp} disabled />
-                                  </FormControl>
-                                </FormItem>
-                              )}
-                            />
-                            <FormField
-                              control={control}
-                              name={`protocols.${i}.name`}
-                              render={({ field: fp }) => (
-                                <FormItem>
-                                  <FormLabel>
-                                    {t("protocol_name", "Name")}
-                                  </FormLabel>
-                                  <FormControl>
-                                    <EnhancedInput
-                                      {...fp}
-                                      onValueChange={(v) => fp.onChange(v)}
-                                      placeholder={t(
-                                        "protocol_name_placeholder",
-                                        "Display name"
+                  <Accordion
+                    className="w-full space-y-3"
+                    expandedKeys={accordionValue ? [accordionValue] : []}
+                    onExpandedChange={(keys) =>
+                      ((value) =>
+                        setAccordionValue(
+                          Array.isArray(value) ? value[0] : value
+                        ))([...keys].map(String)[0] ?? "")
+                    }
+                  >
+                    {(protocolsValues || []).map((protocol, i) => {
+                      const type = protocol?.type as ProtocolType;
+                      const current = (protocolsValues[i] || {}) as Record<
+                        string,
+                        any
+                      >;
+                      if (!type) return null;
+                      const protoId = current.id || i + 1;
+                      const itemValue = `${type}:${protoId}:${i}`;
+                      const isEnabled = current?.enable;
+                      const fields = PROTOCOL_FIELDS[type] || [];
+                      return (
+                        <AccordionItem
+                          className="mb-2 rounded-lg border"
+                          id={itemValue}
+                          key={itemValue}
+                        >
+                          <div className="flex min-w-0 items-center gap-2 px-4">
+                            <AccordionHeading className="min-w-0 flex-1">
+                              <AccordionTrigger className="py-3 hover:no-underline">
+                                <div className="flex min-w-0 flex-1 flex-col items-start gap-1">
+                                  <div className="flex min-w-0 flex-wrap items-center gap-1">
+                                    <Badge
+                                      className="text-xs"
+                                      variant="secondary"
+                                    >
+                                      {type}
+                                    </Badge>
+                                    <span className="min-w-0 font-medium [overflow-wrap:anywhere]">
+                                      {current.name
+                                        ? `${current.name}#${protoId}`
+                                        : `#${protoId}`}
+                                    </span>
+                                    {current.transport && (
+                                      <Badge
+                                        className="text-xs"
+                                        variant="secondary"
+                                      >
+                                        {current.transport.toUpperCase()}
+                                      </Badge>
+                                    )}
+                                    {current.security &&
+                                      current.security !== "none" && (
+                                        <Badge
+                                          className="text-xs"
+                                          variant="outline"
+                                        >
+                                          {current.security.toUpperCase()}
+                                        </Badge>
                                       )}
-                                    />
-                                  </FormControl>
-                                </FormItem>
+                                    {current.port && (
+                                      <Badge className="text-xs">
+                                        {current.port}
+                                      </Badge>
+                                    )}
+                                  </div>
+                                  <div className="flex items-center gap-1">
+                                    <span
+                                      className={cn(
+                                        "text-xs",
+                                        isEnabled
+                                          ? "text-success"
+                                          : "text-muted"
+                                      )}
+                                    >
+                                      {isEnabled
+                                        ? t("enabled", "Enabled")
+                                        : t("disabled", "Disabled")}
+                                    </span>
+                                  </div>
+                                </div>
+                                <AccordionIndicator />
+                              </AccordionTrigger>
+                            </AccordionHeading>
+                            <div className="flex shrink-0 items-center gap-1">
+                              {!(
+                                initialValues?.id &&
+                                isProtocolUsedInNodes(
+                                  initialValues.id,
+                                  type,
+                                  current.id
+                                ) &&
+                                isEnabled
+                              ) && (
+                                <Button
+                                  aria-label={t("delete", "Delete")}
+                                  className="h-7 w-7"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    removeProtocolInstance(i);
+                                  }}
+                                  size="icon"
+                                  type="button"
+                                  variant="ghost"
+                                >
+                                  <Icon className="h-4 w-4" icon="mdi:close" />
+                                </Button>
                               )}
-                            />
+                              <Switch
+                                aria-label={t("enabled", "Enabled")}
+                                checked={!!isEnabled}
+                                className="mr-2"
+                                disabled={Boolean(
+                                  initialValues?.id &&
+                                    isProtocolUsedInNodes(
+                                      initialValues?.id || 0,
+                                      type,
+                                      current.id
+                                    ) &&
+                                    isEnabled
+                                )}
+                                onCheckedChange={(checked) => {
+                                  form.setValue(
+                                    `protocols.${i}.enable`,
+                                    checked
+                                  );
+                                  if (checked) {
+                                    setAccordionValue(itemValue);
+                                    return;
+                                  }
+
+                                  if (accordionValue === itemValue) {
+                                    setAccordionValue(undefined);
+                                  }
+                                  form.clearErrors(`protocols.${i}` as any);
+                                }}
+                                onClick={(e) => e.stopPropagation()}
+                              />
+                            </div>
                           </div>
-                          {renderGroupCard(
-                            t("basic", "Basic Configuration"),
-                            fields,
-                            "basic",
-                            control,
-                            form,
-                            i,
-                            current
-                          )}
-                          {renderGroupCard(
-                            t("obfs", "Obfuscation"),
-                            fields,
-                            "obfs",
-                            control,
-                            form,
-                            i,
-                            current
-                          )}
-                          {renderGroupCard(
-                            t("transport", "Transport"),
-                            fields,
-                            "transport",
-                            control,
-                            form,
-                            i,
-                            current
-                          )}
-                          {renderGroupCard(
-                            t("security", "Security"),
-                            fields,
-                            "security",
-                            control,
-                            form,
-                            i,
-                            current
-                          )}
-                          {renderGroupCard(
-                            t("reality", "Reality"),
-                            fields,
-                            "reality",
-                            control,
-                            form,
-                            i,
-                            current
-                          )}
-                          {renderGroupCard(
-                            t("encryption", "Encryption"),
-                            fields,
-                            "encryption",
-                            control,
-                            form,
-                            i,
-                            current
-                          )}
-                        </div>
-                      </AccordionContent>
-                    </AccordionItem>
-                  );
+                          <AccordionContent className="px-4 pt-0 pb-4">
+                            <div className="-mx-4 space-y-4 rounded-b-lg border-t px-4 pt-4">
+                              {current.cert_pin_sha256 && (
+                                <div className="space-y-1 text-sm">
+                                  <p>
+                                    {t(
+                                      "certificatePin",
+                                      "Certificate SHA-256 Pin"
+                                    )}
+                                  </p>
+                                  <code className="block break-all text-muted">
+                                    {current.cert_pin_sha256}
+                                  </code>
+                                </div>
+                              )}
+                              <div className="grid grid-cols-2 gap-4">
+                                <FormField
+                                  control={control}
+                                  name={`protocols.${i}.id`}
+                                  render={({ field: fp }) => (
+                                    <FormItem>
+                                      <FormLabel>ID</FormLabel>
+                                      <FormControl>
+                                        <EnhancedInput {...fp} disabled />
+                                      </FormControl>
+                                    </FormItem>
+                                  )}
+                                />
+                                <FormField
+                                  control={control}
+                                  name={`protocols.${i}.name`}
+                                  render={({ field: fp }) => (
+                                    <FormItem>
+                                      <FormLabel>
+                                        {t("protocol_name", "Name")}
+                                      </FormLabel>
+                                      <FormControl>
+                                        <EnhancedInput
+                                          {...fp}
+                                          onValueChange={(v) => fp.onChange(v)}
+                                          placeholder={t(
+                                            "protocol_name_placeholder",
+                                            "Display name"
+                                          )}
+                                        />
+                                      </FormControl>
+                                    </FormItem>
+                                  )}
+                                />
+                              </div>
+                              {renderGroupCard(
+                                t("basic", "Basic Configuration"),
+                                fields,
+                                "basic",
+                                control,
+                                form,
+                                i,
+                                current
+                              )}
+                              {renderGroupCard(
+                                t("obfs", "Obfuscation"),
+                                fields,
+                                "obfs",
+                                control,
+                                form,
+                                i,
+                                current
+                              )}
+                              {renderGroupCard(
+                                t("transport", "Transport"),
+                                fields,
+                                "transport",
+                                control,
+                                form,
+                                i,
+                                current
+                              )}
+                              {renderGroupCard(
+                                t("security", "Security"),
+                                fields,
+                                "security",
+                                control,
+                                form,
+                                i,
+                                current
+                              )}
+                              {renderGroupCard(
+                                t("reality", "Reality"),
+                                fields,
+                                "reality",
+                                control,
+                                form,
+                                i,
+                                current
+                              )}
+                              {renderGroupCard(
+                                t("encryption", "Encryption"),
+                                fields,
+                                "encryption",
+                                control,
+                                form,
+                                i,
+                                current
+                              )}
+                            </div>
+                          </AccordionContent>
+                        </AccordionItem>
+                      );
+                    })}
+                  </Accordion>
+                </form>
+              </Form>
+            </ScrollArea>
+            <Sheet.Footer className="flex-row justify-end gap-2 pt-3">
+              <Button
+                loading={loading}
+                onClick={() => setOpen(false)}
+                variant="outline"
+              >
+                {t("cancel", "Cancel")}
+              </Button>
+              <Button
+                loading={loading}
+                onClick={form.handleSubmit(handleSubmit, (errors) => {
+                  const key = Object.keys(errors)[0] as keyof typeof errors;
+                  if (key) toast.error(String(errors[key]?.message));
+                  return false;
                 })}
-              </Accordion>
-            </form>
-          </Form>
-        </ScrollArea>
-        <SheetFooter className="flex-row justify-end gap-2 pt-3">
-          <Button
-            loading={loading}
-            onClick={() => setOpen(false)}
-            variant="outline"
-          >
-            {t("cancel", "Cancel")}
-          </Button>
-          <Button
-            loading={loading}
-            onClick={form.handleSubmit(handleSubmit, (errors) => {
-              const key = Object.keys(errors)[0] as keyof typeof errors;
-              if (key) toast.error(String(errors[key]?.message));
-              return false;
-            })}
-          >
-            {t("confirm", "Confirm")}
-          </Button>
-        </SheetFooter>
-      </SheetContent>
+              >
+                {t("confirm", "Confirm")}
+              </Button>
+            </Sheet.Footer>
+            <Sheet.CloseTrigger aria-label="Close" />
+          </Sheet.Dialog>
+        </Sheet.Content>
+      </Sheet.Backdrop>
     </Sheet>
   );
 }

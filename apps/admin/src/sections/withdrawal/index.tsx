@@ -1,21 +1,15 @@
-import { useSearch } from "@tanstack/react-router";
+"use client";
+
+import { Description, Modal } from "@heroui/react";
 import { Badge } from "@workspace/ui/components/badge";
 import { Button } from "@workspace/ui/components/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@workspace/ui/components/dialog";
 import { Textarea } from "@workspace/ui/components/textarea";
 import { ConfirmButton } from "@workspace/ui/composed/confirm-button";
 import {
   ProTable,
   type ProTableActions,
 } from "@workspace/ui/composed/pro-table/pro-table";
+import { useSearch } from "@workspace/ui/lib/router-compat";
 import {
   getWithdrawalList,
   putWithdrawalStatus,
@@ -87,68 +81,72 @@ export function ReviewActions({
           </Button>
         }
       />
-      <Dialog
+      <Modal
+        isOpen={open}
         onOpenChange={(value) => {
           if (!loading) setOpen(value);
         }}
-        open={open}
       >
-        <DialogTrigger asChild>
-          <Button disabled={loading} size="sm" variant="destructive">
-            {t("reject", "Reject")}
-          </Button>
-        </DialogTrigger>
-        <DialogContent>
-          <form
-            onSubmit={async (event: FormEvent) => {
-              event.preventDefault();
-              await review(2);
-            }}
-          >
-            <DialogHeader>
-              <DialogTitle>
-                {t("rejectTitle", "Reject this withdrawal?")}
-              </DialogTitle>
-              <DialogDescription>
-                {t(
-                  "rejectDescription",
-                  "The rejection reason will be recorded for this request."
-                )}
-              </DialogDescription>
-            </DialogHeader>
-            <div className="grid gap-2 py-4">
-              <label htmlFor={`reject-${withdrawal.id}`}>
-                {t("rejectionReason", "Rejection Reason")}
-              </label>
-              <Textarea
-                id={`reject-${withdrawal.id}`}
-                maxLength={500}
-                onChange={(event) => setReason(event.target.value)}
-                rows={4}
-                value={reason}
-              />
-            </div>
-            <DialogFooter>
-              <Button
-                disabled={loading}
-                onClick={() => setOpen(false)}
-                type="button"
-                variant="outline"
+        <Button disabled={loading} size="sm" variant="destructive">
+          {t("reject", "Reject")}
+        </Button>
+
+        <Modal.Backdrop>
+          <Modal.Container>
+            <Modal.Dialog>
+              <form
+                onSubmit={async (event: FormEvent) => {
+                  event.preventDefault();
+                  await review(2);
+                }}
               >
-                {t("cancel", "Cancel")}
-              </Button>
-              <Button
-                disabled={!reason.trim()}
-                loading={loading}
-                type="submit"
-                variant="destructive"
-              >
-                {t("confirmReject", "Confirm Reject")}
-              </Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
+                <Modal.Header>
+                  <Modal.Heading>
+                    {t("rejectTitle", "Reject this withdrawal?")}
+                  </Modal.Heading>
+                  <Description slot="description">
+                    {t(
+                      "rejectDescription",
+                      "The rejection reason will be recorded for this request."
+                    )}
+                  </Description>
+                </Modal.Header>
+                <div className="grid gap-2 py-4">
+                  <label htmlFor={`reject-${withdrawal.id}`}>
+                    {t("rejectionReason", "Rejection Reason")}
+                  </label>
+                  <Textarea
+                    id={`reject-${withdrawal.id}`}
+                    maxLength={500}
+                    onChange={(event) => setReason(event.target.value)}
+                    rows={4}
+                    value={reason}
+                  />
+                </div>
+                <Modal.Footer>
+                  <Button
+                    disabled={loading}
+                    onClick={() => setOpen(false)}
+                    type="button"
+                    variant="outline"
+                  >
+                    {t("cancel", "Cancel")}
+                  </Button>
+                  <Button
+                    disabled={!reason.trim()}
+                    loading={loading}
+                    type="submit"
+                    variant="destructive"
+                  >
+                    {t("confirmReject", "Confirm Reject")}
+                  </Button>
+                </Modal.Footer>
+              </form>
+              <Modal.CloseTrigger aria-label="Close" />
+            </Modal.Dialog>
+          </Modal.Container>
+        </Modal.Backdrop>
+      </Modal>
     </div>
   );
 }

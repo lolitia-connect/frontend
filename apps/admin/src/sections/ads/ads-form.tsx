@@ -1,3 +1,6 @@
+"use client";
+
+import { Sheet } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@workspace/ui/components/button";
 import {
@@ -13,14 +16,7 @@ import {
   RadioGroupItem,
 } from "@workspace/ui/components/radio-group";
 import { ScrollArea } from "@workspace/ui/components/scroll-area";
-import {
-  Sheet,
-  SheetContent,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@workspace/ui/components/sheet";
+
 import { EnhancedInput } from "@workspace/ui/composed/enhanced-input";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -101,8 +97,8 @@ export default function AdsForm<T extends Record<string, any>>({
   }
 
   return (
-    <Sheet onOpenChange={setOpen} open={open}>
-      <SheetTrigger asChild>
+    <Sheet isOpen={open} onOpenChange={setOpen} placement="right">
+      <Sheet.Trigger>
         <Button
           onClick={() => {
             form.reset();
@@ -111,214 +107,233 @@ export default function AdsForm<T extends Record<string, any>>({
         >
           {trigger}
         </Button>
-      </SheetTrigger>
-      <SheetContent className="w-[500px] max-w-full md:max-w-screen-md">
-        <SheetHeader>
-          <SheetTitle>{title}</SheetTitle>
-        </SheetHeader>
-        <ScrollArea className="h-[calc(100vh-48px-36px-36px-env(safe-area-inset-top))]">
-          <Form {...form}>
-            <form
-              className="space-y-4 px-6 pt-4"
-              onSubmit={form.handleSubmit(handleSubmit)}
-            >
-              <FormField
-                control={form.control}
-                name="title"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t("form.title", "Title")}</FormLabel>
-                    <FormControl>
-                      <EnhancedInput
-                        onValueChange={(value) => {
-                          form.setValue(field.name, value);
-                        }}
-                        placeholder={t("form.enterTitle", "Enter title")}
-                        value={field.value}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+      </Sheet.Trigger>
+      <Sheet.Backdrop>
+        <Sheet.Content>
+          <Sheet.Dialog className="w-[500px] max-w-full md:max-w-screen-md">
+            <Sheet.Header>
+              <Sheet.Heading>{title}</Sheet.Heading>
+            </Sheet.Header>
+            <ScrollArea className="h-[calc(100vh-48px-36px-36px-env(safe-area-inset-top))]">
+              <Form {...form}>
+                <form
+                  className="space-y-4 px-6 pt-4"
+                  onSubmit={form.handleSubmit(handleSubmit)}
+                >
+                  <FormField
+                    control={form.control}
+                    name="title"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{t("form.title", "Title")}</FormLabel>
+                        <FormControl>
+                          <EnhancedInput
+                            onValueChange={(value) => {
+                              form.setValue(field.name, value);
+                            }}
+                            placeholder={t("form.enterTitle", "Enter title")}
+                            value={field.value}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-              <FormField
-                control={form.control}
-                name="type"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t("form.type", "Type")}</FormLabel>
-                    <FormControl>
-                      <RadioGroup
-                        className="flex gap-4"
-                        defaultValue={field.value}
-                        onValueChange={(value) => {
-                          form.setValue(field.name, value);
-                        }}
-                      >
-                        <FormItem className="flex items-center space-x-3 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="image" />
-                          </FormControl>
-                          <FormLabel className="font-normal">
-                            {t("form.typeImage", "Image")}
-                          </FormLabel>
-                        </FormItem>
-                        <FormItem className="flex items-center space-x-3 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="video" />
-                          </FormControl>
-                          <FormLabel className="font-normal">
-                            {t("form.typeVideo", "Video")}
-                          </FormLabel>
-                        </FormItem>
-                      </RadioGroup>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                  <FormField
+                    control={form.control}
+                    name="type"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{t("form.type", "Type")}</FormLabel>
+                        <FormControl>
+                          <RadioGroup
+                            className="flex gap-4"
+                            defaultValue={field.value}
+                            onValueChange={(value) => {
+                              form.setValue(field.name, value);
+                            }}
+                          >
+                            <FormItem className="flex items-center space-x-3 space-y-0">
+                              <FormControl>
+                                <RadioGroupItem value="image" />
+                              </FormControl>
+                              <FormLabel className="font-normal">
+                                {t("form.typeImage", "Image")}
+                              </FormLabel>
+                            </FormItem>
+                            <FormItem className="flex items-center space-x-3 space-y-0">
+                              <FormControl>
+                                <RadioGroupItem value="video" />
+                              </FormControl>
+                              <FormLabel className="font-normal">
+                                {t("form.typeVideo", "Video")}
+                              </FormLabel>
+                            </FormItem>
+                          </RadioGroup>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-              {renderContentField()}
+                  {renderContentField()}
 
-              <FormField
-                control={form.control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      {t("form.description", "Description")}
-                    </FormLabel>
-                    <FormControl>
-                      <EnhancedInput
-                        onValueChange={(value) => {
-                          form.setValue(field.name, value);
-                        }}
-                        placeholder={t(
-                          "form.enterDescription",
-                          "Enter description"
-                        )}
-                        value={field.value}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                  <FormField
+                    control={form.control}
+                    name="description"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          {t("form.description", "Description")}
+                        </FormLabel>
+                        <FormControl>
+                          <EnhancedInput
+                            onValueChange={(value) => {
+                              form.setValue(field.name, value);
+                            }}
+                            placeholder={t(
+                              "form.enterDescription",
+                              "Enter description"
+                            )}
+                            value={field.value}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-              <FormField
-                control={form.control}
-                name="target_url"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t("form.targetUrl", "Target URL")}</FormLabel>
-                    <FormControl>
-                      <EnhancedInput
-                        onValueChange={(value) => {
-                          form.setValue(field.name, value);
-                        }}
-                        placeholder={t(
-                          "form.enterTargetUrl",
-                          "Enter target URL"
-                        )}
-                        value={field.value}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                  <FormField
+                    control={form.control}
+                    name="target_url"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          {t("form.targetUrl", "Target URL")}
+                        </FormLabel>
+                        <FormControl>
+                          <EnhancedInput
+                            onValueChange={(value) => {
+                              form.setValue(field.name, value);
+                            }}
+                            placeholder={t(
+                              "form.enterTargetUrl",
+                              "Enter target URL"
+                            )}
+                            value={field.value}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-              <FormField
-                control={form.control}
-                name="start_time"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t("form.startTime", "Start Time")}</FormLabel>
-                    <FormControl>
-                      <EnhancedInput
-                        min={Number(new Date().toISOString().slice(0, 16))}
-                        onValueChange={(value) => {
-                          const timestamp = value
-                            ? new Date(value).getTime()
-                            : 0;
-                          form.setValue(field.name, timestamp);
-                          const endTime = form.getValues("end_time");
-                          if (endTime && timestamp > endTime) {
-                            form.setValue("end_time", "");
-                          }
-                        }}
-                        placeholder={t(
-                          "form.enterStartTime",
-                          "Select start time"
-                        )}
-                        step="1"
-                        type="datetime-local"
-                        value={
-                          field.value
-                            ? new Date(field.value).toISOString().slice(0, 16)
-                            : ""
-                        }
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                  <FormField
+                    control={form.control}
+                    name="start_time"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          {t("form.startTime", "Start Time")}
+                        </FormLabel>
+                        <FormControl>
+                          <EnhancedInput
+                            min={Number(new Date().toISOString().slice(0, 16))}
+                            onValueChange={(value) => {
+                              const timestamp = value
+                                ? new Date(value).getTime()
+                                : 0;
+                              form.setValue(field.name, timestamp);
+                              const endTime = form.getValues("end_time");
+                              if (endTime && timestamp > endTime) {
+                                form.setValue("end_time", "");
+                              }
+                            }}
+                            placeholder={t(
+                              "form.enterStartTime",
+                              "Select start time"
+                            )}
+                            step="1"
+                            type="datetime-local"
+                            value={
+                              field.value
+                                ? new Date(field.value)
+                                    .toISOString()
+                                    .slice(0, 16)
+                                : ""
+                            }
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-              <FormField
-                control={form.control}
-                name="end_time"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t("form.endTime", "End Time")}</FormLabel>
-                    <FormControl>
-                      <EnhancedInput
-                        disabled={!startTime}
-                        min={Number(
-                          startTime
-                            ? new Date(startTime).toISOString().slice(0, 16)
-                            : new Date().toISOString().slice(0, 16)
-                        )}
-                        onValueChange={(value) => {
-                          const timestamp = value
-                            ? new Date(value).getTime()
-                            : 0;
-                          if (!startTime || timestamp < startTime) return;
-                          form.setValue(field.name, timestamp);
-                        }}
-                        placeholder={t("form.enterEndTime", "Select end time")}
-                        step="1"
-                        type="datetime-local"
-                        value={
-                          field.value
-                            ? new Date(field.value).toISOString().slice(0, 16)
-                            : ""
-                        }
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </form>
-          </Form>
-        </ScrollArea>
-        <SheetFooter className="flex-row justify-end gap-2 pt-3">
-          <Button
-            loading={loading}
-            onClick={() => {
-              setOpen(false);
-            }}
-            variant="outline"
-          >
-            {t("form.cancel", "Cancel")}
-          </Button>
-          <Button loading={loading} onClick={form.handleSubmit(handleSubmit)}>
-            {t("form.confirm", "Confirm")}
-          </Button>
-        </SheetFooter>
-      </SheetContent>
+                  <FormField
+                    control={form.control}
+                    name="end_time"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{t("form.endTime", "End Time")}</FormLabel>
+                        <FormControl>
+                          <EnhancedInput
+                            disabled={!startTime}
+                            min={Number(
+                              startTime
+                                ? new Date(startTime).toISOString().slice(0, 16)
+                                : new Date().toISOString().slice(0, 16)
+                            )}
+                            onValueChange={(value) => {
+                              const timestamp = value
+                                ? new Date(value).getTime()
+                                : 0;
+                              if (!startTime || timestamp < startTime) return;
+                              form.setValue(field.name, timestamp);
+                            }}
+                            placeholder={t(
+                              "form.enterEndTime",
+                              "Select end time"
+                            )}
+                            step="1"
+                            type="datetime-local"
+                            value={
+                              field.value
+                                ? new Date(field.value)
+                                    .toISOString()
+                                    .slice(0, 16)
+                                : ""
+                            }
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </form>
+              </Form>
+            </ScrollArea>
+            <Sheet.Footer className="flex-row justify-end gap-2 pt-3">
+              <Button
+                loading={loading}
+                onClick={() => {
+                  setOpen(false);
+                }}
+                variant="outline"
+              >
+                {t("form.cancel", "Cancel")}
+              </Button>
+              <Button
+                loading={loading}
+                onClick={form.handleSubmit(handleSubmit)}
+              >
+                {t("form.confirm", "Confirm")}
+              </Button>
+            </Sheet.Footer>
+            <Sheet.CloseTrigger aria-label="Close" />
+          </Sheet.Dialog>
+        </Sheet.Content>
+      </Sheet.Backdrop>
     </Sheet>
   );
 }

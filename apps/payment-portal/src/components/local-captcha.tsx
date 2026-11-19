@@ -1,8 +1,7 @@
-import { Button } from "@workspace/ui/components/button";
-import { Input } from "@workspace/ui/components/input";
-import { Label } from "@workspace/ui/components/label";
+import { Button, Input, Label, Spinner, TextField } from "@heroui/react";
 import { generateCaptcha } from "@workspace/ui/services/common/auth";
 import { RefreshCw } from "lucide-react";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -25,6 +24,8 @@ export function LocalCaptcha({
 
   const fetchCaptcha = async () => {
     setLoading(true);
+    onChange("");
+    onCaptchaIdChange("");
     try {
       const response = await generateCaptcha();
       const data = response.data?.data;
@@ -45,36 +46,38 @@ export function LocalCaptcha({
   }, [resetKey]);
 
   return (
-    <div className="space-y-1.5">
+    <TextField className="space-y-1.5" onChange={onChange} value={value}>
       <Label>{t("captcha.local.label", "图形验证码")}</Label>
       <div className="flex gap-3">
         <Input
-          className="flex-1"
-          onChange={(event) => onChange(event.target.value)}
+          className="min-w-0 flex-1"
+          name="captcha_code"
           placeholder={t("captcha.local.placeholder", "请输入图形验证码")}
           type="text"
-          value={value}
         />
         <Button
-          disabled={loading}
-          onClick={fetchCaptcha}
-          size="icon"
+          aria-label={t("captcha.local.refresh", "刷新验证码")}
+          isDisabled={loading}
+          onPress={fetchCaptcha}
           type="button"
           variant="outline"
         >
           {loading ? (
-            <RefreshCw className="h-4 w-4 animate-spin" />
+            <Spinner color="current" size="sm" />
           ) : captchaImage ? (
-            <img
+            <Image
               alt="captcha"
               className="h-8 w-20 object-contain"
+              height={32}
               src={captchaImage}
+              unoptimized
+              width={80}
             />
           ) : (
             <RefreshCw className="h-4 w-4" />
           )}
         </Button>
       </div>
-    </div>
+    </TextField>
   );
 }

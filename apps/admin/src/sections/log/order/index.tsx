@@ -1,15 +1,11 @@
 "use client";
 
-import { useSearch } from "@tanstack/react-router";
+import { Tooltip } from "@heroui/react";
 import { Badge } from "@workspace/ui/components/badge";
 import { Button } from "@workspace/ui/components/button";
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "@workspace/ui/components/hover-card";
 import { Separator } from "@workspace/ui/components/separator";
 import { ProTable } from "@workspace/ui/composed/pro-table/pro-table";
+import { useSearch } from "@workspace/ui/lib/router-compat";
 import { getLogOrderList as filterOrderLog } from "@workspace/ui/services/admin/admin";
 import { useTranslation } from "react-i18next";
 import { Display } from "@/components/display";
@@ -22,7 +18,7 @@ import { useTableSearchParams } from "@/utils/use-table-search-params";
 function PriceRow({ label, value }: { label: string; value: number }) {
   return (
     <div className="flex items-center justify-between gap-8">
-      <dt className="text-muted-foreground">{label}</dt>
+      <dt className="text-muted">{label}</dt>
       <dd>
         <Display type="currency" value={value} />
       </dd>
@@ -91,7 +87,7 @@ export default function OrderLogPage() {
             ) : (
               <div className="grid gap-1 text-sm">
                 <span className="font-mono">#{row.original.subscribe_id}</span>
-                <span className="text-muted-foreground text-xs">
+                <span className="text-muted text-xs">
                   {t("column.quantity", "Quantity")} × {row.original.quantity}
                 </span>
               </div>
@@ -103,7 +99,7 @@ export default function OrderLogPage() {
           cell: ({ row }) => (
             <div className="grid justify-items-start gap-1">
               <Badge variant="secondary">{row.original.method || "--"}</Badge>
-              <span className="text-muted-foreground text-xs">
+              <span className="text-muted text-xs">
                 {row.original.source || "--"}
                 {row.original.payment_id
                   ? ` · #${row.original.payment_id}`
@@ -118,13 +114,12 @@ export default function OrderLogPage() {
           cell: ({ row }) => {
             const order = row.original;
             return (
-              <HoverCard>
-                <HoverCardTrigger asChild>
-                  <Button className="h-auto p-0" variant="link">
-                    <Display type="currency" value={order.amount} />
-                  </Button>
-                </HoverCardTrigger>
-                <HoverCardContent className="w-80">
+              <Tooltip>
+                <Button className="h-auto p-0" variant="link">
+                  <Display type="currency" value={order.amount} />
+                </Button>
+
+                <Tooltip.Content className="w-80">
                   <div className="mb-3 font-medium text-sm">
                     {t("priceBreakdown", "Price breakdown")}
                   </div>
@@ -155,8 +150,8 @@ export default function OrderLogPage() {
                       value={order.amount}
                     />
                   </dl>
-                </HoverCardContent>
-              </HoverCard>
+                </Tooltip.Content>
+              </Tooltip>
             );
           },
         },

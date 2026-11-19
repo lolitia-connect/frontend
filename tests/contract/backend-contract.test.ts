@@ -1,4 +1,3 @@
-import { afterAll, describe, expect, it } from "bun:test";
 import { execFileSync } from "node:child_process";
 import {
   existsSync,
@@ -8,7 +7,9 @@ import {
   writeFileSync,
 } from "node:fs";
 import { tmpdir } from "node:os";
-import { dirname, join, resolve } from "node:path";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+import { afterAll, describe, expect, it } from "vitest";
 
 const fixture = mkdtempSync(join(tmpdir(), "frontend-contract-"));
 const write = (name: string, source: string) => {
@@ -72,7 +73,9 @@ describe("fresh backend contract extraction", () => {
         go,
         [
           "run",
-          resolve(import.meta.dir, "../../scripts/backend-contract.go"),
+          fileURLToPath(
+            new URL("../../scripts/backend-contract.go", import.meta.url)
+          ),
           fixture,
         ],
         { encoding: "utf8" }

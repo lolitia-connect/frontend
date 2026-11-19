@@ -1,15 +1,17 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
 import {
+  TabIndicator,
   Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@workspace/ui/components/tabs";
-import Empty from "@workspace/ui/composed/empty";
+  TabPanel as TabsContent,
+  TabList as TabsList,
+  TabListContainer as TabsListContainer,
+  Tab as TabsTrigger,
+} from "@heroui/react";
+import { useQuery } from "@tanstack/react-query";
 import { getV1PublicDocumentList as queryDocumentList } from "@workspace/ui/services/user/user";
 import { useTranslation } from "react-i18next";
+import { MainEmpty } from "@/components/main-empty";
 import { DocumentButton } from "@/sections/user/document/document-button";
 import { getTutorialList } from "@/sections/user/document/tutorial";
 import { TutorialButton } from "@/sections/user/document/tutorial-button";
@@ -51,7 +53,7 @@ export default function Document() {
     (!DocumentList || DocumentList.length === 0) &&
     (!TutorialList || TutorialList.length === 0)
   ) {
-    return <Empty border />;
+    return <MainEmpty border />;
   }
 
   return (
@@ -61,20 +63,33 @@ export default function Document() {
           <h2 className="flex items-center gap-1.5 font-semibold">
             {t("document", "Document")}
           </h2>
-          <Tabs defaultValue="all">
-            <TabsList className="h-full flex-wrap">
-              <TabsTrigger value="all">{t("all", "All")}</TabsTrigger>
-              {tags?.map((item) => (
-                <TabsTrigger key={item} value={item}>
-                  {item}
+          <Tabs className="min-w-0 max-w-full" defaultSelectedKey="all">
+            <TabsListContainer className="min-w-0 max-w-full">
+              <TabsList aria-label={t("sections", "Sections")}>
+                <TabsTrigger
+                  className="w-auto flex-1 whitespace-nowrap"
+                  id="all"
+                >
+                  {t("all", "All")}
+                  <TabIndicator />
                 </TabsTrigger>
-              ))}
-            </TabsList>
-            <TabsContent value="all">
+                {tags?.map((item) => (
+                  <TabsTrigger
+                    className="w-auto flex-1 whitespace-nowrap"
+                    id={item}
+                    key={item}
+                  >
+                    {item}
+                    <TabIndicator />
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            </TabsListContainer>
+            <TabsContent id="all">
               <DocumentButton items={DocumentList} />
             </TabsContent>
             {tags?.map((item) => (
-              <TabsContent key={item} value={item}>
+              <TabsContent id={item} key={item}>
                 <DocumentButton
                   items={DocumentList.filter((docs) =>
                     item ? docs.tags.includes(item) : true
@@ -91,16 +106,26 @@ export default function Document() {
           <h2 className="flex items-center gap-1.5 font-semibold">
             {t("tutorial", "Tutorial")}
           </h2>
-          <Tabs defaultValue={TutorialList?.[0]?.title}>
-            <TabsList className="h-full flex-wrap">
-              {TutorialList?.map((tutorial) => (
-                <TabsTrigger key={tutorial.title} value={tutorial.title}>
-                  {tutorial.title}
-                </TabsTrigger>
-              ))}
-            </TabsList>
+          <Tabs
+            className="min-w-0 max-w-full"
+            defaultSelectedKey={TutorialList?.[0]?.title}
+          >
+            <TabsListContainer className="min-w-0 max-w-full">
+              <TabsList aria-label={t("sections", "Sections")}>
+                {TutorialList?.map((tutorial) => (
+                  <TabsTrigger
+                    className="w-auto flex-1 whitespace-nowrap"
+                    id={tutorial.title}
+                    key={tutorial.title}
+                  >
+                    {tutorial.title}
+                    <TabIndicator />
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            </TabsListContainer>
             {TutorialList?.map((tutorial) => (
-              <TabsContent key={tutorial.title} value={tutorial.title}>
+              <TabsContent id={tutorial.title} key={tutorial.title}>
                 <TutorialButton
                   items={
                     tutorial.subItems && tutorial.subItems?.length > 0

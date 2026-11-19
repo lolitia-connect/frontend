@@ -1,18 +1,12 @@
 "use client";
 
-import { Link } from "@tanstack/react-router";
+import { Card } from "@heroui/react";
 import { Button, buttonVariants } from "@workspace/ui/components/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@workspace/ui/components/card";
 import {
   ProList,
   type ProListActions,
 } from "@workspace/ui/composed/pro-list/pro-list";
+import { Link } from "@workspace/ui/lib/router-compat";
 import {
   postV1PublicOrderClose as closeOrder,
   getV1PublicOrderList as queryOrderList,
@@ -47,12 +41,12 @@ export default function Order() {
       action={ref}
       renderItem={(item) => (
         <Card className="overflow-hidden">
-          <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0">
-            <CardTitle>
+          <Card.Header className="flex flex-row items-center justify-between gap-2 space-y-0">
+            <Card.Title>
               {t("orderNo", "Order No")}
               <p className="text-sm">{item.order_no}</p>
-            </CardTitle>
-            <CardDescription className="flex gap-2">
+            </Card.Title>
+            <Card.Description className="flex gap-2">
               {item.status === 1 ? (
                 <>
                   <Link
@@ -92,14 +86,12 @@ export default function Order() {
                   {t("detail", "Detail")}
                 </Link>
               )}
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="text-sm">
+            </Card.Description>
+          </Card.Header>
+          <Card.Content className="text-sm">
             <ul className="grid grid-cols-2 gap-3 *:flex *:flex-col lg:grid-cols-4">
               <li>
-                <span className="text-muted-foreground">
-                  {t("name", "Product Name")}
-                </span>
+                <span className="text-muted">{t("name", "Product Name")}</span>
                 <span>
                   {item.subscribe.name ||
                     typeMap[item.type] ||
@@ -107,7 +99,7 @@ export default function Order() {
                 </span>
               </li>
               <li className="font-semibold">
-                <span className="text-muted-foreground">
+                <span className="text-muted">
                   {t("paymentAmount", "Amount")}
                 </span>
                 <span>
@@ -115,22 +107,20 @@ export default function Order() {
                 </span>
               </li>
               <li className="font-semibold">
-                <span className="text-muted-foreground">
-                  {t("status.0", "Status")}
-                </span>
+                <span className="text-muted">{t("status.0", "Status")}</span>
                 <span>
                   {statusMap[item.status] ||
                     t(`status.${item.status}`, "Unknown Status")}
                 </span>
               </li>
               <li className="font-semibold">
-                <span className="text-muted-foreground">
+                <span className="text-muted">
                   {t("createdAt", "Created At")}
                 </span>
                 <time>{formatDate(item.created_at)}</time>
               </li>
             </ul>
-          </CardContent>
+          </Card.Content>
         </Card>
       )}
       request={async (pagination, filter) => {

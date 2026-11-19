@@ -1,18 +1,12 @@
 "use client";
 
+import { Card } from "@heroui/react";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { Link, useSearch } from "@tanstack/react-router";
 import { Badge } from "@workspace/ui/components/badge";
 import { Button } from "@workspace/ui/components/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@workspace/ui/components/card";
 import { Separator } from "@workspace/ui/components/separator";
 import { Icon } from "@workspace/ui/composed/icon";
+import { Link, useSearch } from "@workspace/ui/lib/router-compat";
 import {
   checkoutV2Order,
   exchangeOrderSession,
@@ -223,7 +217,7 @@ export default function Order() {
           <h1 className="font-semibold text-xl">
             {t("orderUnavailable", "Order unavailable")}
           </h1>
-          <p className="text-muted-foreground">
+          <p className="text-muted">
             {t(
               "orderAccessRequired",
               "The order access token is missing or no longer valid. Sign in to the account used for this order."
@@ -257,24 +251,24 @@ export default function Order() {
     <main className="container lg:mt-16">
       <div className="grid gap-4 xl:grid-cols-2">
         <Card className="order-2 xl:order-1">
-          <CardHeader className="flex flex-row items-start bg-muted/50">
+          <Card.Header className="flex flex-row items-start bg-default/50">
             <div className="grid gap-0.5">
-              <CardTitle className="flex flex-col text-lg">
+              <Card.Title className="flex flex-col text-lg">
                 {t("orderNumber", "Order Number")}
                 <span>{data?.order_no}</span>
-              </CardTitle>
-              <CardDescription>
+              </Card.Title>
+              <Card.Description>
                 {t("createdAt", "Created At")}: {formatDate(data?.created_at)}
-              </CardDescription>
+              </Card.Description>
             </div>
-          </CardHeader>
-          <CardContent className="grid gap-3 p-6 text-sm">
+          </Card.Header>
+          <Card.Content className="grid gap-3 p-6 text-sm">
             <div className="font-semibold">
               {t("paymentMethod", "Payment Method")}
             </div>
             <dl className="grid gap-3">
               <div className="flex items-center justify-between">
-                <dt className="text-muted-foreground">
+                <dt className="text-muted">
                   <Badge>{data?.payment.name || data?.payment.platform}</Badge>
                 </dt>
               </div>
@@ -297,10 +291,10 @@ export default function Order() {
                 show_original_price: data?.subscribe?.show_original_price,
               }}
             />
-          </CardContent>
+          </Card.Content>
         </Card>
         <Card className="order-1 flex flex-auto items-center justify-center xl:order-2">
-          <CardContent className="py-16">
+          <Card.Content className="py-16">
             {currentStatus && [2, 5].includes(currentStatus) && (
               <div className="flex flex-col items-center gap-8 text-center">
                 <h3 className="font-bold text-2xl tracking-tight">
@@ -309,14 +303,11 @@ export default function Order() {
                     : t("paymentReceived", "Payment received")}
                 </h3>
                 <Icon
-                  className="text-7xl text-green-500"
+                  className="text-7xl text-success"
                   icon="mdi:success-circle-outline"
                 />
                 {currentStatus === 2 && (
-                  <p
-                    className="max-w-sm text-muted-foreground text-sm"
-                    role="status"
-                  >
+                  <p className="max-w-sm text-muted text-sm" role="status">
                     {t(
                       "fulfillmentPending",
                       "Your subscription is being activated."
@@ -325,7 +316,7 @@ export default function Order() {
                 )}
                 {currentStatus === 5 && sessionState !== "ready" && (
                   <div
-                    className="max-w-sm space-y-3 text-muted-foreground text-sm"
+                    className="max-w-sm space-y-3 text-muted text-sm"
                     role="status"
                   >
                     <p>
@@ -373,10 +364,7 @@ export default function Order() {
                 <p className="flex items-center font-bold text-3xl">
                   {countdownDisplay}
                 </p>
-                <Icon
-                  className="text-7xl text-muted-foreground"
-                  icon="mdi:access-time"
-                />
+                <Icon className="text-7xl text-muted" icon="mdi:access-time" />
                 <div className="flex gap-4">
                   <Button
                     disabled={checkoutMutation.isPending}
@@ -430,7 +418,7 @@ export default function Order() {
                 <h3 className="font-bold text-2xl tracking-tight">
                   {t("orderClosed", "Order Closed")}
                 </h3>
-                <Icon className="text-7xl text-red-500" icon="mdi:cancel" />
+                <Icon className="text-7xl text-danger" icon="mdi:cancel" />
                 <div className="flex gap-4">
                   <Button asChild>
                     <Link to="/subscribe">
@@ -443,7 +431,7 @@ export default function Order() {
                 </div>
               </div>
             )}
-          </CardContent>
+          </Card.Content>
         </Card>
       </div>
     </main>

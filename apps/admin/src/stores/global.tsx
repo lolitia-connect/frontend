@@ -1,3 +1,5 @@
+"use client";
+
 import { getUserCurrent as currentUser } from "@workspace/ui/services/admin/admin";
 import { isBrowser } from "@workspace/ui/utils/index";
 import { create } from "zustand";

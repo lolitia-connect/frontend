@@ -1,13 +1,8 @@
 "use client";
 
+import { Card } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@workspace/ui/components/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@workspace/ui/components/card";
 import {
   Form,
   FormControl,
@@ -50,9 +45,9 @@ export default function NotifySettings() {
   }
 
   return (
-    <Card className="min-w-80">
-      <CardHeader>
-        <CardTitle className="flex items-center justify-between">
+    <Card className="min-w-0 lg:min-w-80">
+      <Card.Header>
+        <Card.Title className="flex flex-wrap items-center justify-between gap-3">
           {t("notify.notificationSettings", "Notification Settings")}
           <Button
             form="notify-form"
@@ -62,9 +57,9 @@ export default function NotifySettings() {
           >
             {t("notify.save", "Save Changes")}
           </Button>
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="grid gap-6">
+        </Card.Title>
+      </Card.Header>
+      <Card.Content className="grid gap-6">
         <Form {...form}>
           <form
             className="space-y-4"
@@ -96,9 +91,7 @@ export default function NotifySettings() {
                   name={name as any}
                   render={({ field }) => (
                     <FormItem className="flex items-center justify-between space-x-4">
-                      <FormLabel className="text-muted-foreground">
-                        {label}
-                      </FormLabel>
+                      <FormLabel className="text-muted">{label}</FormLabel>
                       <FormControl>
                         <Switch
                           checked={field.value}
@@ -112,7 +105,7 @@ export default function NotifySettings() {
             </div>
           </form>
         </Form>
-      </CardContent>
+      </Card.Content>
     </Card>
   );
 }

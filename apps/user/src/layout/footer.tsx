@@ -1,9 +1,10 @@
 "use client";
 
-import { Link } from "@tanstack/react-router";
-import { Separator } from "@workspace/ui/components/separator";
+import { Separator } from "@heroui/react";
+import { Button } from "@workspace/ui/components/button";
 import { Icon } from "@workspace/ui/composed/icon";
-import { Fragment, useMemo } from "react";
+import { Link } from "@workspace/ui/lib/router-compat";
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useGlobalStore } from "@/stores/global";
 
@@ -87,38 +88,43 @@ export default function Footer() {
   );
   return (
     <footer>
-      <Separator className="my-14" />
-      <div className="container mb-14 flex flex-wrap justify-between gap-4 text-muted-foreground text-sm">
-        <nav className="flex flex-wrap items-center gap-2">
+      <Separator />
+      <div className="container flex flex-wrap items-center justify-between gap-6 py-8 text-muted text-sm">
+        <nav className="flex flex-wrap items-center gap-1">
           {links
             .filter((item) => item.href)
-            .map((item, index) => (
-              <Fragment key={index}>
-                {index !== 0 && <Separator orientation="vertical" />}
+            .map((item) => (
+              <Button asChild key={item.name} size="icon" variant="ghost">
                 <a
-                  aria-label={t(
-                    `footer.social.${item.name}`,
-                    `Visit our ${item.name}`
-                  )}
+                  aria-label={
+                    item.name === "email"
+                      ? t("footer.email", "Send us an email")
+                      : t("footer.social", {
+                          defaultValue: "Visit our {{name}}",
+                          name: item.name,
+                        })
+                  }
                   href={item.href}
                   rel="noopener noreferrer"
                   target="_blank"
                 >
                   <Icon className="size-5 text-foreground" icon={item.icon} />
                 </a>
-              </Fragment>
+              </Button>
             ))}
         </nav>
         <div>
           <strong className="text-foreground">{site.site_name}</strong> ©{" "}
           {t("footer.copyright", "All rights reserved")}.
-          <div>
-            <Link className="underline" to="/tos">
-              {t("footer.tos", "Terms of Service")}
-            </Link>
-            <Link className="ml-2 underline" to="/privacy-policy">
-              {t("footer.privacyPolicy", "Privacy Policy")}
-            </Link>
+          <div className="mt-2 flex flex-wrap gap-x-4 gap-y-2">
+            <Button asChild className="h-auto p-0 text-muted" variant="link">
+              <Link to="/tos">{t("footer.tos", "Terms of Service")}</Link>
+            </Button>
+            <Button asChild className="h-auto p-0 text-muted" variant="link">
+              <Link to="/privacy-policy">
+                {t("footer.privacyPolicy", "Privacy Policy")}
+              </Link>
+            </Button>
           </div>
         </div>
       </div>

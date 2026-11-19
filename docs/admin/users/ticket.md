@@ -48,6 +48,9 @@ After opening ticket, shows conversation interface:
 - All follow-up records
 - Shows timestamps
 - Distinguishes user/admin messages
+- Long messages, URLs, and attachments fit the available width without widening the drawer
+- Conversation history scrolls independently; the reply bar remains visible, including on narrow screens
+- Opening a conversation or receiving a new reply scrolls to the latest message
 
 **Reply Ticket**:
 1. Input reply in bottom text box

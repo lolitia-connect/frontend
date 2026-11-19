@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <title>OAuth Redirect</title>
-    <meta content="0; url=/#/auth" http-equiv="refresh">
+    <meta content="0; url=/auth" http-equiv="refresh">
     <script>
     "use strict";
 
-    // Providers redirect to a path without URL fragments (#). Our app uses hash
-    // routing, so bridge /oauth/<provider>[/] -> /#/oauth/<provider>?<params>.
+    // Providers redirect here without a URL fragment. Forward to the App Router
+    // pathname route (`/oauth/<provider>`), preserving every query parameter.
     //
     // Telegram returns its signed result in the fragment (#tgAuthResult=...)
     // rather than the query string, and the fragment is exactly what the hash
@@ -32,9 +32,9 @@
         });
 
         const query = params.toString();
-        window.location.replace(`/#${path}${query ? `?${query}` : ""}`);
+        window.location.replace(`${path}${query ? `?${query}` : ""}`);
       } catch {
-        window.location.replace("/#/auth");
+        window.location.replace("/auth");
       }
     })();
     </script>

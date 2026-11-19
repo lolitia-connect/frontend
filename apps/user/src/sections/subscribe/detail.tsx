@@ -1,3 +1,5 @@
+"use client";
+
 import { useTranslation } from "react-i18next";
 import { Display } from "@/components/display";
 
@@ -21,7 +23,7 @@ export function SubscribeDetail({ subscribe }: Readonly<SubscribeDetailProps>) {
       <ul className="grid grid-cols-1 gap-3 *:flex *:items-center *:justify-between lg:grid-cols-1">
         {subscribe?.name && (
           <li className="flex items-center justify-between">
-            <span className="line-clamp-2 flex-1 text-muted-foreground">
+            <span className="line-clamp-2 flex-1 text-muted">
               {subscribe?.name}
             </span>
             <span>
@@ -30,7 +32,7 @@ export function SubscribeDetail({ subscribe }: Readonly<SubscribeDetailProps>) {
           </li>
         )}
         <li>
-          <span className="text-muted-foreground">
+          <span className="text-muted">
             {t("detail.availableTraffic", "Available Traffic")}
           </span>
           <span>
@@ -42,7 +44,7 @@ export function SubscribeDetail({ subscribe }: Readonly<SubscribeDetailProps>) {
           </span>
         </li>
         <li>
-          <span className="text-muted-foreground">
+          <span className="text-muted">
             {t("detail.connectionSpeed", "Connection Speed")}
           </span>
           <span>
@@ -54,7 +56,7 @@ export function SubscribeDetail({ subscribe }: Readonly<SubscribeDetailProps>) {
           </span>
         </li>
         <li>
-          <span className="text-muted-foreground">
+          <span className="text-muted">
             {t("detail.connectedDevices", "Connected Devices")}
           </span>
           <span>

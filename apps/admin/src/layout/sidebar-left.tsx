@@ -1,9 +1,7 @@
-import { Link, useLocation } from "@tanstack/react-router";
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "@workspace/ui/components/hover-card";
+"use client";
+
+import { Focusable, Tooltip } from "@heroui/react";
+
 import {
   Sidebar,
   SidebarContent,
@@ -16,7 +14,9 @@ import {
   useSidebar,
 } from "@workspace/ui/components/sidebar";
 import { Icon } from "@workspace/ui/composed/icon";
+import { Link } from "@workspace/ui/lib/router-compat";
 import { cn } from "@workspace/ui/lib/utils";
+import { usePathname } from "next/navigation";
 import React, { useState } from "react";
 import { useGlobalStore } from "@/stores/global";
 import { type NavItem, useNavs } from "./navs";
@@ -33,7 +33,7 @@ export function SidebarLeft({
   const { common } = useGlobalStore();
   const { site } = common;
   const navs = useNavs();
-  const pathname = useLocation({ select: (location) => location.pathname });
+  const pathname = usePathname();
   const { state, isMobile } = useSidebar();
 
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
@@ -104,21 +104,19 @@ export function SidebarLeft({
     if (!hasChildren(nav)) return ParentButton;
 
     return (
-      <HoverCard closeDelay={200} openDelay={40}>
-        <HoverCardTrigger asChild>{ParentButton}</HoverCardTrigger>
-        <HoverCardContent
-          align="start"
-          avoidCollisions
+      <Tooltip closeDelay={200} delay={40}>
+        <Focusable>{ParentButton}</Focusable>
+        <Tooltip.Content
           className="z-[9999] w-64 p-0"
-          collisionPadding={8}
-          side="right"
-          sideOffset={10}
+          containerPadding={8}
+          offset={10}
+          placement="right"
         >
           <div className="flex items-center gap-2 border-b px-3 py-2">
             {"icon" in nav && (nav as any).icon ? (
               <Icon className="size-4" icon={(nav as any).icon} />
             ) : null}
-            <span className="truncate font-medium text-muted-foreground text-xs">
+            <span className="truncate font-medium text-muted text-xs">
               {nav.title}
             </span>
           </div>
@@ -130,8 +128,8 @@ export function SidebarLeft({
                   className={[
                     "flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm",
                     isNavActive(item)
-                      ? "bg-accent text-accent-foreground"
-                      : "hover:bg-accent/60",
+                      ? "bg-primary-50 font-medium text-primary-600 dark:bg-default dark:text-foreground"
+                      : "text-default-600 hover:bg-primary-50 hover:text-primary-600 dark:hover:bg-default dark:hover:text-foreground",
                   ].join(" ")}
                   to={item.url}
                 >
@@ -141,8 +139,8 @@ export function SidebarLeft({
               </li>
             ))}
           </ul>
-        </HoverCardContent>
-      </HoverCard>
+        </Tooltip.Content>
+      </Tooltip>
     );
   };
 
@@ -153,7 +151,13 @@ export function SidebarLeft({
           <SidebarMenuItem>
             <SidebarMenuButton asChild className="h-10" size="sm">
               <Link to="/">
-                <div className="flex aspect-square size-6 items-center justify-center rounded-lg">
+                {/* In collapsed (icon-rail) mode this row is clamped to a 32px
+                    square by the button variants, so the text block has to be
+                    hidden explicitly. Without this the two label spans stayed in
+                    the flex row and, because the button only clips overflow, they
+                    painted over/next to the logo instead of disappearing — the
+                    misaligned element at the sidebar's top-left. */}
+                <div className="flex aspect-square size-6 shrink-0 items-center justify-center rounded-lg">
                   <img
                     alt="logo"
                     className="size-full"
@@ -162,7 +166,7 @@ export function SidebarLeft({
                     width={24}
                   />
                 </div>
-                <div className="grid flex-1 text-left text-sm leading-tight">
+                <div className="grid flex-1 text-left text-sm leading-tight group-data-[collapsible=icon]:hidden">
                   <span className="truncate font-semibold text-xs">
                     {site.site_name}
                   </span>
@@ -191,7 +195,7 @@ export function SidebarLeft({
                     <SidebarGroup className={cn("py-1")} key={nav.title}>
                       <SidebarMenuButton
                         className={cn(
-                          "mb-2 flex h-8 w-full items-center justify-between hover:bg-accent/60 hover:text-accent-foreground"
+                          "group/nav-label mb-2 flex h-8 w-full items-center justify-between text-default-600 hover:bg-primary-50 hover:text-primary-600 dark:hover:bg-default dark:hover:text-foreground"
                         )}
                         isActive={false}
                         onClick={() => handleToggleGroup(nav.title)}

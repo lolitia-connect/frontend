@@ -1,30 +1,44 @@
 "use client";
 
-import * as CheckboxPrimitive from "@radix-ui/react-checkbox";
+import { Checkbox as HeroCheckbox } from "@heroui/react";
 import { cn } from "@workspace/ui/lib/utils";
-import { CheckIcon } from "lucide-react";
 import type * as React from "react";
+
+type CheckboxProps = Omit<
+  React.ComponentProps<typeof HeroCheckbox>,
+  "children" | "isIndeterminate" | "isSelected" | "defaultSelected" | "onChange"
+> & {
+  checked?: boolean | "indeterminate";
+  defaultChecked?: boolean | "indeterminate";
+  onCheckedChange?: (checked: boolean | "indeterminate") => void;
+};
 
 function Checkbox({
   className,
+  checked,
+  defaultChecked,
+  onCheckedChange,
   ...props
-}: React.ComponentProps<typeof CheckboxPrimitive.Root>) {
+}: CheckboxProps) {
   return (
-    <CheckboxPrimitive.Root
-      className={cn(
-        "peer size-4 shrink-0 rounded-[4px] border border-input shadow-xs outline-none transition-shadow focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 data-[state=checked]:border-primary data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground dark:bg-input/30 dark:data-[state=checked]:bg-primary dark:aria-invalid:ring-destructive/40",
-        className
-      )}
-      data-slot="checkbox"
+    <HeroCheckbox
+      className={cn("peer", className)}
+      defaultSelected={defaultChecked === true}
+      isIndeterminate={
+        checked === "indeterminate" || defaultChecked === "indeterminate"
+      }
+      isSelected={checked === true}
+      onChange={(selected) => {
+        onCheckedChange?.(selected);
+      }}
       {...props}
     >
-      <CheckboxPrimitive.Indicator
-        className="grid place-content-center text-current transition-none"
-        data-slot="checkbox-indicator"
-      >
-        <CheckIcon className="size-3.5" />
-      </CheckboxPrimitive.Indicator>
-    </CheckboxPrimitive.Root>
+      <HeroCheckbox.Content>
+        <HeroCheckbox.Control>
+          <HeroCheckbox.Indicator />
+        </HeroCheckbox.Control>
+      </HeroCheckbox.Content>
+    </HeroCheckbox>
   );
 }
 

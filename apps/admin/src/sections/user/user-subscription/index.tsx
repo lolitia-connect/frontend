@@ -1,17 +1,14 @@
-import { Link } from "@tanstack/react-router";
+"use client";
+
+import { buttonVariants, Dropdown } from "@heroui/react";
 import { Badge } from "@workspace/ui/components/badge";
 import { Button } from "@workspace/ui/components/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@workspace/ui/components/dropdown-menu";
 import { ConfirmButton } from "@workspace/ui/composed/confirm-button";
 import {
   ProTable,
   type ProTableActions,
 } from "@workspace/ui/composed/pro-table/pro-table";
+import { buildHref } from "@workspace/ui/lib/router-compat";
 import {
   createUserSubscribe,
   deleteUserSubscribe,
@@ -266,102 +263,98 @@ function RowMoreActions({
 
   return (
     <div className="inline-flex">
-      <DropdownMenu modal={false}>
-        <DropdownMenuTrigger asChild>
-          <Button variant="outline">{t("more", "More")}</Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuItem
-            onSelect={async (e) => {
-              e.preventDefault();
-              try {
-                await copyText(getUserSubscribeUrls(row.short, token)[0] || "");
-                toast.success(t("copySuccess", "Copied successfully"));
-              } catch {
-                toast.error(t("copyFailed", "Copy failed"));
-              }
-            }}
-          >
-            {t("copySubscription", "Copy Subscription")}
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            onSelect={(e) => {
-              e.preventDefault();
-              resetTokenRef.current?.click();
-            }}
-          >
-            {t("resetToken", "Reset Subscription Address")}
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            onSelect={(e) => {
-              e.preventDefault();
-              toggleStatusRef.current?.click();
-            }}
-          >
-            {row.status === 5
-              ? t("resumeSubscribe", "Resume Subscription")
-              : t("stopSubscribe", "Stop Subscription")}
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            className="text-destructive"
-            onSelect={(e) => {
-              e.preventDefault();
-              deleteRef.current?.click();
-            }}
-          >
-            {t("delete", "Delete")}
-          </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <Link
-              search={{
+      <Dropdown>
+        <Dropdown.Trigger
+          className={buttonVariants({
+            variant: "outline",
+            size: "md",
+            class: undefined,
+          })}
+        >
+          {t("more", "More")}
+        </Dropdown.Trigger>
+        <Dropdown.Popover placement="bottom end">
+          <Dropdown.Menu aria-label="Actions">
+            <Dropdown.Item
+              onAction={async () => {
+                try {
+                  await copyText(
+                    getUserSubscribeUrls(row.short, token)[0] || ""
+                  );
+                  toast.success(t("copySuccess", "Copied successfully"));
+                } catch {
+                  toast.error(t("copyFailed", "Copy failed"));
+                }
+              }}
+            >
+              {t("copySubscription", "Copy Subscription")}
+            </Dropdown.Item>
+            <Dropdown.Item
+              onAction={() => {
+                resetTokenRef.current?.click();
+              }}
+            >
+              {t("resetToken", "Reset Subscription Address")}
+            </Dropdown.Item>
+            <Dropdown.Item
+              onAction={() => {
+                toggleStatusRef.current?.click();
+              }}
+            >
+              {row.status === 5
+                ? t("resumeSubscribe", "Resume Subscription")
+                : t("stopSubscribe", "Stop Subscription")}
+            </Dropdown.Item>
+            <Dropdown.Item
+              className="text-danger"
+              onAction={() => {
+                deleteRef.current?.click();
+              }}
+            >
+              {t("delete", "Delete")}
+            </Dropdown.Item>
+            <Dropdown.Item
+              href={buildHref("/dashboard/log/subscribe", {
                 user_id: String(userId),
                 user_subscribe_id: row.id,
-              }}
-              to="/dashboard/log/subscribe"
+              })}
             >
               {t("subscriptionLogs", "Subscription Logs")}
-            </Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <Link
-              search={{
+            </Dropdown.Item>
+            <Dropdown.Item
+              href={buildHref("/dashboard/log/reset-subscribe", {
                 user_id: String(userId),
                 user_subscribe_id: row.id,
-              }}
-              to="/dashboard/log/reset-subscribe"
+              })}
             >
               {t("resetLogs", "Reset Logs")}
-            </Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <Link
-              search={{
+            </Dropdown.Item>
+            <Dropdown.Item
+              href={buildHref("/dashboard/log/subscribe-traffic", {
                 user_id: String(userId),
                 user_subscribe_id: row.id,
-              }}
-              to="/dashboard/log/subscribe-traffic"
+              })}
             >
               {t("trafficStats", "Traffic Stats")}
-            </Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <Link
-              search={{ user_id: String(userId), subscribe_id: row.id }}
-              to="/dashboard/log/traffic-details"
+            </Dropdown.Item>
+            <Dropdown.Item
+              href={buildHref("/dashboard/log/traffic-details", {
+                user_id: String(userId),
+                subscribe_id: row.id,
+              })}
             >
               {t("trafficDetails", "Traffic Details")}
-            </Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            onSelect={(e) => {
-              e.preventDefault();
-              triggerRef.current?.click();
-            }}
-          >
-            {t("onlineDevices", "Online Devices")}
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+            </Dropdown.Item>
+            <Dropdown.Item
+              onAction={() => {
+                triggerRef.current?.click();
+              }}
+            >
+              {t("onlineDevices", "Online Devices")}
+            </Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown.Popover>
+      </Dropdown>
 
       {/* Hidden triggers for confirm dialogs */}
       <ConfirmButton

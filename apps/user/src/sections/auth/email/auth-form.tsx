@@ -1,6 +1,6 @@
 "use client";
 
-import { useNavigate, useSearch } from "@tanstack/react-router";
+import { useNavigate, useSearch } from "@workspace/ui/lib/router-compat";
 import {
   resetPassword,
   userLogin,
@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import { USER_EMAIL, USER_PASSWORD } from "@/config";
 import { useGlobalStore } from "@/stores/global";
 import { getRedirectUrl, setAuthorization } from "@/utils/common";
+import { resolveInviteCode } from "../invite";
 import LoginForm from "./login-form";
 import RegisterForm from "./register-form";
 import ResetForm from "./reset-form";
@@ -34,9 +35,13 @@ export default function EmailAuthForm() {
   });
 
   useEffect(() => {
-    if (searchParams.invite) {
-      localStorage.setItem("invite", searchParams.invite);
-      setInitialValues((prev) => ({ ...prev, invite: searchParams.invite }));
+    // `resolveInviteCode` reads the query string, the pre-migration hash form
+    // (`/#/auth?invite=<code>`, which `useSearch()` cannot see) and the stored
+    // value, so an invite is captured and prefilled however it arrived.
+    const invite = resolveInviteCode(searchParams.invite);
+    if (invite) {
+      localStorage.setItem("invite", invite);
+      setInitialValues((prev) => ({ ...prev, invite }));
     }
   }, [searchParams.invite]);
 

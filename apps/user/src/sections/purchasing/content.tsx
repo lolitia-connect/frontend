@@ -1,12 +1,12 @@
 "use client";
 
+import { Card } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
-import { useNavigate } from "@tanstack/react-router";
 import { Button } from "@workspace/ui/components/button";
-import { Card, CardContent, CardHeader } from "@workspace/ui/components/card";
 import { Separator } from "@workspace/ui/components/separator";
 import { EnhancedInput } from "@workspace/ui/composed/enhanced-input";
 import { Icon } from "@workspace/ui/composed/icon";
+import { useNavigate } from "@workspace/ui/lib/router-compat";
 import { cn } from "@workspace/ui/lib/utils";
 import { prePurchaseOrder } from "@workspace/ui/services/user/portal";
 import { useCallback, useEffect, useState, useTransition } from "react";
@@ -102,10 +102,14 @@ export default function Content({
             : {
                 auth_type: params.auth_type,
                 identifier: params.identifier,
-                password: params.password || "",
+                password: params.password || crypto.randomUUID(),
                 invite_code: localStorage.getItem("invite") || undefined,
               },
-          return_url: `${window.location.origin}${window.location.pathname}#/${user ? "payment" : "purchasing/order"}`,
+          // Real App Router paths. The pre-migration app routed on the hash
+          // (`#/payment`, `#/purchasing/order`); a fragment is not a route under
+          // the App Router, so the gateway would send the guest back to
+          // `/purchasing` instead of the order page they were waiting on.
+          return_url: `${window.location.origin}/${user ? "payment" : "purchasing/order"}`,
         });
         const order_no = data.data?.order.order_no;
         if (order_no) {
@@ -137,7 +141,7 @@ export default function Content({
       <div className="flex flex-col gap-6">
         {!user && (
           <Card>
-            <CardHeader>
+            <Card.Header>
               {t(
                 "emailInputTitle",
                 "Enter the email address for your {{siteName}} account",
@@ -145,12 +149,12 @@ export default function Content({
                   siteName: common.site.site_name,
                 }
               )}
-            </CardHeader>
-            <CardContent className="flex flex-col gap-2">
+            </Card.Header>
+            <Card.Content className="flex flex-col gap-2">
               <div className="flex flex-col gap-2">
                 <EnhancedInput
                   className={cn({
-                    "border-destructive":
+                    "border-danger":
                       !isEmailValid.valid && params.identifier !== "",
                   })}
                   onValueChange={(value: string) => {
@@ -197,8 +201,8 @@ export default function Content({
                   value={params.identifier || ""}
                 />
                 <p
-                  className={cn("text-muted-foreground text-xs", {
-                    "text-destructive":
+                  className={cn("text-muted text-xs", {
+                    "text-danger":
                       !isEmailValid.valid && params.identifier !== "",
                   })}
                 >
@@ -220,11 +224,11 @@ export default function Content({
                     value={params.password || ""}
                   />
                   {isPasswordInvalid && (
-                    <p className="text-destructive text-xs">
+                    <p className="text-danger text-xs">
                       {t("passwordLength", "Password must be 8-128 characters")}
                     </p>
                   )}
-                  <p className="text-muted-foreground text-xs">
+                  <p className="text-muted text-xs">
                     {t(
                       "passwordHint",
                       "If you do not enter a password, we will automatically generate one and send it to your email."
@@ -235,11 +239,11 @@ export default function Content({
               {/* <div>
               <OAuthMethods />
             </div> */}
-            </CardContent>
+            </Card.Content>
           </Card>
         )}
         <Card>
-          <CardContent className="grid gap-3 text-sm">
+          <Card.Content className="grid gap-3 text-sm">
             <h2 className="font-semibold text-xl">{subscription.name}</h2>
             <ul className="flex flex-grow flex-col gap-3">
               {(() => {
@@ -261,7 +265,7 @@ export default function Content({
                 return (
                   <>
                     {description && (
-                      <li className="text-muted-foreground">{description}</li>
+                      <li className="text-muted">{description}</li>
                     )}
                     {features?.map(
                       (
@@ -274,17 +278,16 @@ export default function Content({
                       ) => (
                         <li
                           className={cn("flex items-center gap-1", {
-                            "text-muted-foreground line-through":
+                            "text-muted line-through":
                               feature.type === "destructive",
                           })}
                           key={index}
                         >
                           {feature.icon && (
                             <Icon
-                              className={cn("size-5 text-primary", {
-                                "text-green-500": feature.type === "success",
-                                "text-destructive":
-                                  feature.type === "destructive",
+                              className={cn("size-5 text-accent", {
+                                "text-success": feature.type === "success",
+                                "text-danger": feature.type === "destructive",
                               })}
                               icon={feature.icon}
                             />
@@ -312,13 +315,13 @@ export default function Content({
                 show_original_price: subscription?.show_original_price,
               }}
             />
-          </CardContent>
+          </Card.Content>
         </Card>
       </div>
 
       <div className="flex flex-col gap-6">
         <Card>
-          <CardContent className="p-6">
+          <Card.Content className="p-6">
             <div className="grid gap-6">
               <DurationSelector
                 discounts={subscription?.discount}
@@ -338,7 +341,7 @@ export default function Content({
                 value={params.payment!}
               />
             </div>
-          </CardContent>
+          </Card.Content>
         </Card>
 
         <Button

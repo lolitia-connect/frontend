@@ -1,3 +1,5 @@
+"use client";
+
 export const subscribeSchema = {
   SiteName: { type: "string", description: "Site name" },
   SubscribeName: { type: "string", description: "Subscribe name" },

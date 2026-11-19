@@ -1,3 +1,6 @@
+"use client";
+
+import { Sheet } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@workspace/ui/components/button";
 import {
@@ -9,14 +12,7 @@ import {
   FormMessage,
 } from "@workspace/ui/components/form";
 import { ScrollArea } from "@workspace/ui/components/scroll-area";
-import {
-  Sheet,
-  SheetContent,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@workspace/ui/components/sheet";
+
 import { Switch } from "@workspace/ui/components/switch";
 import { Combobox } from "@workspace/ui/composed/combobox";
 import { DatePicker } from "@workspace/ui/composed/date-picker";
@@ -95,8 +91,8 @@ export function SubscriptionForm({
   const { subscribes } = useSubscribe();
 
   return (
-    <Sheet onOpenChange={setOpen} open={open}>
-      <SheetTrigger asChild>
+    <Sheet isOpen={open} onOpenChange={setOpen} placement="right">
+      <Sheet.Trigger>
         <Button
           onClick={() => {
             form.reset();
@@ -105,182 +101,192 @@ export function SubscriptionForm({
         >
           {trigger}
         </Button>
-      </SheetTrigger>
-      <SheetContent side="right">
-        <SheetHeader>
-          <SheetTitle>{title}</SheetTitle>
-        </SheetHeader>
-        <ScrollArea className="h-[calc(100dvh-48px-36px-36px-env(safe-area-inset-top))] px-4">
-          <div className="pr-4">
-            <Form {...form}>
-              <form
-                className="mt-4 space-y-4"
-                onSubmit={form.handleSubmit(handleSubmit)}
+      </Sheet.Trigger>
+      <Sheet.Backdrop>
+        <Sheet.Content>
+          <Sheet.Dialog>
+            <Sheet.Header>
+              <Sheet.Heading>{title}</Sheet.Heading>
+            </Sheet.Header>
+            <ScrollArea className="h-[calc(100dvh-48px-36px-36px-env(safe-area-inset-top))] px-4">
+              <div className="pr-4">
+                <Form {...form}>
+                  <form
+                    className="mt-4 space-y-4"
+                    onSubmit={form.handleSubmit(handleSubmit)}
+                  >
+                    <FormField
+                      control={form.control}
+                      name="subscribe_id"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>
+                            {t("subscription", "Subscription")}
+                          </FormLabel>
+                          <FormControl>
+                            <Combobox<string, false>
+                              onChange={(value) => {
+                                form.setValue(field.name, value);
+                              }}
+                              options={subscribes?.map((item) => ({
+                                value: item.id!,
+                                label: item.name!,
+                              }))}
+                              placeholder="Select Subscription"
+                              value={field.value}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="traffic"
+                      render={({ field }) => (
+                        <FormItem>
+                          <div className="flex items-center justify-between">
+                            <FormLabel>
+                              {t("trafficLimit", "Traffic Limit")}
+                            </FormLabel>
+                            <div className="flex items-center gap-2">
+                              <span className="text-muted text-sm">
+                                {t("unlimited", "Unlimited")}
+                              </span>
+                              <Switch
+                                checked={unlimitedTraffic}
+                                onCheckedChange={setUnlimitedTraffic}
+                              />
+                            </div>
+                          </div>
+                          <FormControl>
+                            <EnhancedInput
+                              disabled={unlimitedTraffic}
+                              placeholder={t("unlimited", "Unlimited")}
+                              type="number"
+                              {...field}
+                              formatInput={(value) =>
+                                unitConversion("bytesToGb", value)
+                              }
+                              formatOutput={(value) =>
+                                unitConversion("gbToBytes", value)
+                              }
+                              onValueChange={(value) => {
+                                form.setValue(field.name, value as number);
+                              }}
+                              suffix="GB"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="upload"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>
+                            {t("uploadTraffic", "Upload Traffic")}
+                          </FormLabel>
+                          <FormControl>
+                            <EnhancedInput
+                              placeholder="0"
+                              type="number"
+                              {...field}
+                              formatInput={(value) =>
+                                unitConversion("bytesToGb", value)
+                              }
+                              formatOutput={(value) =>
+                                unitConversion("gbToBytes", value)
+                              }
+                              onValueChange={(value) => {
+                                form.setValue(field.name, value as number);
+                              }}
+                              suffix="GB"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="download"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>
+                            {t("downloadTraffic", "Download Traffic")}
+                          </FormLabel>
+                          <FormControl>
+                            <EnhancedInput
+                              placeholder="0"
+                              type="number"
+                              {...field}
+                              formatInput={(value) =>
+                                unitConversion("bytesToGb", value)
+                              }
+                              formatOutput={(value) =>
+                                unitConversion("gbToBytes", value)
+                              }
+                              onValueChange={(value) => {
+                                form.setValue(field.name, value as number);
+                              }}
+                              suffix="GB"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="expired_at"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{t("expiredAt", "Expired At")}</FormLabel>
+                          <FormControl>
+                            <DatePicker
+                              onChange={(value: number | null | undefined) => {
+                                form.setValue(field.name, value || 0);
+                              }}
+                              placeholder={t("permanent", "Permanent")}
+                              value={
+                                field.value && field.value > 0
+                                  ? field.value
+                                  : undefined
+                              }
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </form>
+                </Form>
+              </div>
+            </ScrollArea>
+            <Sheet.Footer className="flex-row justify-end gap-2 pt-3">
+              <Button
+                loading={loading}
+                onClick={() => {
+                  setOpen(false);
+                }}
+                variant="outline"
               >
-                <FormField
-                  control={form.control}
-                  name="subscribe_id"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t("subscription", "Subscription")}</FormLabel>
-                      <FormControl>
-                        <Combobox<string, false>
-                          onChange={(value) => {
-                            form.setValue(field.name, value);
-                          }}
-                          options={subscribes?.map((item) => ({
-                            value: item.id!,
-                            label: item.name!,
-                          }))}
-                          placeholder="Select Subscription"
-                          value={field.value}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="traffic"
-                  render={({ field }) => (
-                    <FormItem>
-                      <div className="flex items-center justify-between">
-                        <FormLabel>
-                          {t("trafficLimit", "Traffic Limit")}
-                        </FormLabel>
-                        <div className="flex items-center gap-2">
-                          <span className="text-muted-foreground text-sm">
-                            {t("unlimited", "Unlimited")}
-                          </span>
-                          <Switch
-                            checked={unlimitedTraffic}
-                            onCheckedChange={setUnlimitedTraffic}
-                          />
-                        </div>
-                      </div>
-                      <FormControl>
-                        <EnhancedInput
-                          disabled={unlimitedTraffic}
-                          placeholder={t("unlimited", "Unlimited")}
-                          type="number"
-                          {...field}
-                          formatInput={(value) =>
-                            unitConversion("bytesToGb", value)
-                          }
-                          formatOutput={(value) =>
-                            unitConversion("gbToBytes", value)
-                          }
-                          onValueChange={(value) => {
-                            form.setValue(field.name, value as number);
-                          }}
-                          suffix="GB"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="upload"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        {t("uploadTraffic", "Upload Traffic")}
-                      </FormLabel>
-                      <FormControl>
-                        <EnhancedInput
-                          placeholder="0"
-                          type="number"
-                          {...field}
-                          formatInput={(value) =>
-                            unitConversion("bytesToGb", value)
-                          }
-                          formatOutput={(value) =>
-                            unitConversion("gbToBytes", value)
-                          }
-                          onValueChange={(value) => {
-                            form.setValue(field.name, value as number);
-                          }}
-                          suffix="GB"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="download"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        {t("downloadTraffic", "Download Traffic")}
-                      </FormLabel>
-                      <FormControl>
-                        <EnhancedInput
-                          placeholder="0"
-                          type="number"
-                          {...field}
-                          formatInput={(value) =>
-                            unitConversion("bytesToGb", value)
-                          }
-                          formatOutput={(value) =>
-                            unitConversion("gbToBytes", value)
-                          }
-                          onValueChange={(value) => {
-                            form.setValue(field.name, value as number);
-                          }}
-                          suffix="GB"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="expired_at"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t("expiredAt", "Expired At")}</FormLabel>
-                      <FormControl>
-                        <DatePicker
-                          onChange={(value: number | null | undefined) => {
-                            form.setValue(field.name, value || 0);
-                          }}
-                          placeholder={t("permanent", "Permanent")}
-                          value={
-                            field.value && field.value > 0
-                              ? field.value
-                              : undefined
-                          }
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </form>
-            </Form>
-          </div>
-        </ScrollArea>
-        <SheetFooter className="flex-row justify-end gap-2 pt-3">
-          <Button
-            loading={loading}
-            onClick={() => {
-              setOpen(false);
-            }}
-            variant="outline"
-          >
-            {t("cancel", "Cancel")}
-          </Button>
-          <Button loading={loading} onClick={form.handleSubmit(handleSubmit)}>
-            {t("confirm", "Confirm")}
-          </Button>
-        </SheetFooter>
-      </SheetContent>
+                {t("cancel", "Cancel")}
+              </Button>
+              <Button
+                loading={loading}
+                onClick={form.handleSubmit(handleSubmit)}
+              >
+                {t("confirm", "Confirm")}
+              </Button>
+            </Sheet.Footer>
+            <Sheet.CloseTrigger aria-label="Close" />
+          </Sheet.Dialog>
+        </Sheet.Content>
+      </Sheet.Backdrop>
     </Sheet>
   );
 }

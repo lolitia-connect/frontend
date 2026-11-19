@@ -1,18 +1,15 @@
+"use client";
+
+import { Card } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
 import { Badge } from "@workspace/ui/components/badge";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@workspace/ui/components/card";
 import { Progress } from "@workspace/ui/components/progress";
 import { Spinner } from "@workspace/ui/components/spinner";
-import Empty from "@workspace/ui/composed/empty";
 import { Icon } from "@workspace/ui/composed/icon";
 import { queryPublicServerList } from "@workspace/ui/services/user/server";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { MainEmpty } from "@/components/main-empty";
 
 export default function ServiceMonitoring() {
   const { t } = useTranslation("servers");
@@ -51,11 +48,11 @@ export default function ServiceMonitoring() {
       </div>
 
       {isLoading ? (
-        <div className="relative rounded-xl border">
+        <Card className="relative">
           <div className="flex min-h-[200px] items-center justify-center">
-            <Spinner className="size-6 text-muted-foreground" />
+            <Spinner className="size-6 text-muted" />
           </div>
-        </div>
+        </Card>
       ) : servers.length > 0 ? (
         <div className="grid grid-cols-1 gap-4">
           {servers.map((server: any) => {
@@ -64,13 +61,13 @@ export default function ServiceMonitoring() {
 
             return (
               <Card className="overflow-hidden" key={server.id}>
-                <CardHeader
+                <Card.Header
                   className={`flex flex-row items-center justify-between gap-2 space-y-0 ${
                     hasProtocols ? "cursor-pointer" : ""
                   }`}
                   onClick={() => hasProtocols && toggleRow(server.id)}
                 >
-                  <CardTitle className="flex items-center gap-2 text-base">
+                  <Card.Title className="flex items-center gap-2 text-base">
                     {server.name}
                     <Badge
                       className="gap-1"
@@ -78,102 +75,115 @@ export default function ServiceMonitoring() {
                         server.status === "online" ? "default" : "destructive"
                       }
                     >
+                      {/* The badge itself already carries the status colour
+                          (soft rose when online, solid danger when offline), so
+                          the dot only has to contrast with it. `*-soft-foreground`
+                          is HeroUI's darker tone of each status colour, which is
+                          what keeps this dot visible on the pale rose plate
+                          (3.22:1) instead of the 1.83:1 a raw `--success` gives. */}
                       <span
                         className={`size-1.5 rounded-full ${
                           server.status === "online"
-                            ? "bg-green-500"
-                            : "bg-red-500"
+                            ? "bg-success-soft-foreground"
+                            : "bg-danger-foreground"
                         }`}
                       />
                       {server.status === "online"
                         ? t("online", "Online")
                         : t("offline", "Offline")}
                     </Badge>
-                  </CardTitle>
+                  </Card.Title>
                   {hasProtocols && (
                     <Icon
-                      className={`size-4 text-muted-foreground transition-transform ${
+                      className={`size-4 text-muted transition-transform ${
                         isExpanded ? "rotate-90" : ""
                       }`}
                       icon="uil:angle-right"
                     />
                   )}
-                </CardHeader>
-                <CardContent className="text-sm">
+                </Card.Header>
+                <Card.Content className="text-sm">
                   <ul className="grid grid-cols-1 gap-3 *:flex *:flex-col sm:grid-cols-2 lg:grid-cols-4">
                     <li>
-                      <span className="flex items-center gap-1 text-muted-foreground">
-                        <Icon className="size-3.5" icon="uil:map-marker" />
-                        {t("location", "Location")}
-                      </span>
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="flex items-center gap-1 text-default-600">
+                          <Icon className="size-3.5" icon="uil:map-marker" />
+                          {t("location", "Location")}
+                        </span>
+                      </div>
                       <span>
                         {server.country} · {server.city}
                       </span>
                     </li>
                     <li>
-                      <span className="flex items-center gap-1 text-muted-foreground">
+                      <span className="flex items-center gap-1 text-muted">
                         <Icon className="size-3.5" icon="uil:users-alt" />
                         {t("onlineUsers", "Online Clients")}
                       </span>
                       <span>{server.online_users}</span>
                     </li>
+                    {/*
+                      Stacked metric rows: name left / value right on the first
+                      line, hairline rose progress bar underneath. Keeps the
+                      numeric read-out off the brand fill entirely (`tabular-nums`
+                      stops the digits from shifting as values change).
+                    */}
                     <li>
-                      <span className="flex items-center gap-1 text-muted-foreground">
-                        <Icon className="size-3.5" icon="uil:processor" />
-                        CPU
-                      </span>
-                      <div className="flex items-center gap-2">
-                        <Progress
-                          className="h-2 flex-1"
-                          value={server.cpu || 0}
-                        />
-                        <span className="w-12 text-right tabular-nums">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="flex items-center gap-1 text-default-600">
+                          <Icon className="size-3.5" icon="uil:processor" />
+                          CPU
+                        </span>
+                        <span className="font-medium text-foreground tabular-nums">
                           {server.cpu?.toFixed(1)}%
                         </span>
                       </div>
+                      <Progress value={server.cpu || 0} />
                     </li>
                     <li>
-                      <span className="flex items-center gap-1 text-muted-foreground">
-                        <Icon className="size-3.5" icon="uil:dashboard" />
-                        {t("memory", "Memory")}
-                      </span>
-                      <div className="flex items-center gap-2">
-                        <Progress
-                          className="h-2 flex-1"
-                          value={server.mem || 0}
-                        />
-                        <span className="w-12 text-right tabular-nums">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="flex items-center gap-1 text-default-600">
+                          <Icon className="size-3.5" icon="uil:dashboard" />
+                          {t("memory", "Memory")}
+                        </span>
+                        <span className="font-medium text-foreground tabular-nums">
                           {server.mem?.toFixed(1)}%
                         </span>
                       </div>
+                      <Progress value={server.mem || 0} />
                     </li>
                   </ul>
                   {isExpanded && hasProtocols && (
                     <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
                       {server.protocols.map((protocol: any, idx: number) => (
                         <div
-                          className="flex items-center justify-between rounded-md border bg-muted/30 px-4 py-2"
+                          className="flex items-center justify-between gap-2 rounded-md border bg-default/30 px-4 py-2"
                           key={idx}
                         >
-                          <span className="font-medium">{protocol.type}</span>
-                          <span className="text-muted-foreground">
+                          <span className="flex min-w-0 items-center gap-2">
+                            <Badge variant="secondary">{protocol.type}</Badge>
+                            <span className="min-w-0 truncate font-medium">
+                              {protocol.name
+                                ? `${protocol.name}#${protocol.id}`
+                                : `#${protocol.id}`}
+                            </span>
+                          </span>
+                          <span className="shrink-0 text-muted">
                             {t("ratio", "Ratio")}: {protocol.ratio}x
                           </span>
                         </div>
                       ))}
                     </div>
                   )}
-                </CardContent>
+                </Card.Content>
               </Card>
             );
           })}
         </div>
       ) : (
-        <div className="rounded-xl border">
-          <div className="flex items-center justify-center py-24">
-            <Empty />
-          </div>
-        </div>
+        <Card className="border-0 p-0">
+          <MainEmpty />
+        </Card>
       )}
     </div>
   );

@@ -1,14 +1,14 @@
 "use client";
 
-import { Badge } from "@workspace/ui/components/badge";
-import { Button } from "@workspace/ui/components/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@workspace/ui/components/card";
+} from "@heroui/react";
+import { Badge } from "@workspace/ui/components/badge";
+import { Button } from "@workspace/ui/components/button";
 import { ConfirmButton } from "@workspace/ui/composed/confirm-button";
 import {
   ProTable,
@@ -151,9 +151,7 @@ export default function NodeGroups() {
                 accessorKey: "id",
                 header: t("id", "ID"),
                 cell: ({ row }: { row: any }) => (
-                  <span className="text-muted-foreground">
-                    #{row.getValue("id")}
-                  </span>
+                  <span className="text-muted">#{row.getValue("id")}</span>
                 ),
               },
               {

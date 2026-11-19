@@ -1,6 +1,8 @@
 "use client";
 
+import { Table } from "@heroui/react";
 import {
+  type Cell,
   type ColumnDef,
   type ColumnFiltersState,
   flexRender,
@@ -20,28 +22,25 @@ import {
 import { Button } from "@workspace/ui/components/button";
 import { Checkbox } from "@workspace/ui/components/checkbox";
 import { Spinner } from "@workspace/ui/components/spinner";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@workspace/ui/components/table";
 import Empty from "@workspace/ui/composed/empty";
 import {
   ColumnFilter,
   type IParams,
 } from "@workspace/ui/composed/pro-table/column-filter";
 import { ColumnHeader } from "@workspace/ui/composed/pro-table/column-header";
+import { resolveColumnMaxWidth } from "@workspace/ui/composed/pro-table/column-meta";
 import { ColumnToggle } from "@workspace/ui/composed/pro-table/column-toggle";
 import { Pagination } from "@workspace/ui/composed/pro-table/pagination";
-import { SortableRow } from "@workspace/ui/composed/pro-table/sortable-row";
+import {
+  SortableRow,
+  SortHandle,
+} from "@workspace/ui/composed/pro-table/sortable-row";
+import { TruncatedCell } from "@workspace/ui/composed/pro-table/truncated-cell";
 import { ProTableWrapper } from "@workspace/ui/composed/pro-table/wrapper";
 import { RefreshButton } from "@workspace/ui/composed/refresh-button";
 import { cn } from "@workspace/ui/lib/utils";
-import { useSize } from "ahooks";
-import { GripVertical, ListRestart } from "lucide-react";
+import type { TFunction } from "i18next";
+import { ListRestart } from "lucide-react";
 import type React from "react";
 import {
   Fragment,
@@ -50,6 +49,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { useTranslation } from "react-i18next";
 
 export interface ProTableProps<TData, TValue> {
   action?: React.Ref<ProTableActions | undefined>;
@@ -57,6 +57,7 @@ export interface ProTableProps<TData, TValue> {
     render?: (row: TData) => React.ReactNode[];
     batchRender?: (rows: TData[]) => React.ReactNode[];
   };
+  "aria-label"?: string;
   columns: ColumnDef<TData, TValue>[];
   empty?: React.ReactNode;
   header?: {
@@ -110,7 +111,9 @@ export function ProTable<
   onSort,
   initialFilters,
   onFiltersChange,
+  "aria-label": ariaLabel,
 }: ProTableProps<TData, TValue>) {
+  const { t } = useTranslation("components");
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(() => {
     if (initialFilters) {
@@ -134,20 +137,20 @@ export function ProTable<
 
   const table = useReactTable({
     data,
+    getRowId: (row, index) => String(row.id ?? index),
     columns: [
       ...(onSort
         ? [
             {
               id: "sortable",
-              header: (
-                <GripVertical className="h-4 w-4 cursor-move text-gray-500 hover:text-gray-700" />
-              ),
+              header: t("table.reorder", "Reorder"),
+              cell: () => <SortHandle label={t("table.reorder", "Reorder")} />,
               enableSorting: false,
               enableHiding: false,
             },
           ]
         : []),
-      ...(actions?.batchRender ? [createSelectColumn<TData, TValue>()] : []),
+      ...(actions?.batchRender ? [createSelectColumn<TData, TValue>(t)] : []),
       ...columns.map(
         (column) =>
           ({
@@ -159,9 +162,9 @@ export function ProTable<
         ? ([
             {
               id: "actions",
-              header: texts?.actions,
+              header: texts?.actions || t("table.actions", "Actions"),
               cell: ({ row }) => (
-                <div className="flex items-center justify-end gap-2 whitespace-nowrap">
+                <div className="[&_.button]:wrap-normal flex w-max min-w-max items-center justify-end gap-2 whitespace-nowrap [&>*]:shrink-0 [&_.button]:whitespace-nowrap">
                   {actions?.render?.(row.original).map((item, index) => (
                     <Fragment key={index}>{item}</Fragment>
                   ))}
@@ -234,7 +237,6 @@ export function ProTable<
     table.resetPagination();
   };
   const ref = useRef<HTMLDivElement>(null);
-  const size = useSize(ref);
 
   useImperativeHandle(action, () => ({
     refresh: fetchData,
@@ -262,16 +264,17 @@ export function ProTable<
     .getSelectedRowModel()
     .flatRows.map((row) => row.original);
   const selectedCount = selectedRows.length;
-  const tableMinWidth = Math.max(
-    800,
-    table.getVisibleLeafColumns().length * 140
-  );
+  const visibleColumns = table.getVisibleLeafColumns();
+  const rowHeaderId =
+    visibleColumns.find(
+      (column) => !["sortable", "selected", "actions"].includes(column.id)
+    )?.id ?? visibleColumns[0]?.id;
 
   return (
-    <div className="flex flex-col gap-4" ref={ref}>
+    <div className="flex w-full min-w-0 max-w-full flex-col gap-4" ref={ref}>
       {!header?.hidden && (
         <div className="flex flex-wrap-reverse items-center justify-between gap-4">
-          <div>
+          <div className="min-w-0 max-w-full">
             {params ? (
               <ColumnFilter
                 filters={Object.fromEntries(
@@ -284,10 +287,15 @@ export function ProTable<
               header?.title
             )}
           </div>
-          <div className="flex flex-1 items-center justify-end gap-2">
+          <div className="flex min-w-0 flex-1 flex-wrap items-center justify-end gap-2">
             <RefreshButton onClick={fetchData} size="icon" variant="outline" />
             <ColumnToggle table={table} />
-            <Button onClick={reset} size="icon" variant="outline">
+            <Button
+              aria-label={t("table.reset", "Reset table")}
+              onClick={reset}
+              size="icon"
+              variant="outline"
+            >
               <ListRestart />
             </Button>
             {header?.toolbar}
@@ -307,107 +315,78 @@ export function ProTable<
         </Alert>
       )}
 
-      <div
-        className="relative w-auto rounded-md border"
-        style={{
-          width: size?.width,
-        }}
-      >
+      <div className="relative w-full min-w-0">
         <ProTableWrapper data={data} onSort={onSort} setData={setData}>
-          <Table className="w-full" style={{ minWidth: tableMinWidth }}>
-            <TableHeader>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
-                    <TableHead
-                      className={cn(
-                        "!z-auto",
-                        getTableHeaderClass(header.column.id)
-                      )}
-                      key={header.id}
-                    >
-                      <ColumnHeader
-                        header={header}
-                        text={{
-                          asc: texts?.asc,
-                          desc: texts?.desc,
-                          hide: texts?.hide,
-                        }}
-                      />
-                    </TableHead>
-                  ))}
-                </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {table.getRowModel()?.rows?.length ? (
-                onSort ? (
-                  table.getRowModel().rows.map((row) => (
-                    <SortableRow
-                      data-state={row.getIsSelected() && "selected"}
-                      id={
-                        row.original.id
-                          ? String(row.original.id)
-                          : String(row.index)
-                      }
-                      isSortable
-                      key={
-                        row.original.id
-                          ? String(row.original.id)
-                          : String(row.index)
-                      }
-                    >
-                      {row
-                        .getVisibleCells()
-                        .filter((cell) => cell.column.id !== "sortable")
-                        .map((cell) => (
-                          <TableCell
-                            className={getTableCellClass(cell.column.id)}
-                            key={cell.id}
-                          >
-                            {flexRender(
-                              cell.column.columnDef.cell,
-                              cell.getContext()
-                            )}
-                          </TableCell>
-                        ))}
-                    </SortableRow>
-                  ))
-                ) : (
-                  table.getRowModel().rows.map((row) => (
-                    <TableRow
-                      data-state={row.getIsSelected() && "selected"}
+          <Table>
+            <Table.ScrollContainer>
+              <Table.Content
+                aria-busy={isLoading}
+                aria-label={
+                  ariaLabel ??
+                  (typeof header?.title === "string"
+                    ? header.title
+                    : t("table.data", "Data table"))
+                }
+              >
+                <Table.Header>
+                  {table
+                    .getHeaderGroups()
+                    .at(-1)
+                    ?.headers.map((columnHeader) => (
+                      <Table.Column
+                        className={getTableHeaderClass(columnHeader.column.id)}
+                        id={columnHeader.column.id}
+                        isRowHeader={columnHeader.column.id === rowHeaderId}
+                        key={columnHeader.id}
+                      >
+                        <ColumnHeader
+                          header={columnHeader}
+                          text={{
+                            asc: texts?.asc,
+                            desc: texts?.desc,
+                            hide: texts?.hide,
+                          }}
+                        />
+                      </Table.Column>
+                    ))}
+                </Table.Header>
+                <Table.Body renderEmptyState={() => empty || <Empty />}>
+                  {table.getRowModel().rows.map((row) => (
+                    <Table.Row
+                      data-selected={row.getIsSelected() || undefined}
+                      id={row.id}
                       key={row.id}
+                      render={
+                        onSort
+                          ? (props) => (
+                              <SortableRow
+                                {...(props as React.ComponentProps<"tr">)}
+                                sortableId={row.id}
+                              />
+                            )
+                          : undefined
+                      }
                     >
                       {row.getVisibleCells().map((cell) => (
-                        <TableCell
+                        <Table.Cell
                           className={getTableCellClass(cell.column.id)}
                           key={cell.id}
                         >
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
-                          )}
-                        </TableCell>
+                          {() => renderProTableCell(cell)}
+                        </Table.Cell>
                       ))}
-                    </TableRow>
-                  ))
-                )
-              ) : (
-                <TableRow>
-                  <TableCell className="py-24" colSpan={columns.length + 2}>
-                    {empty || <Empty />}
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
+                    </Table.Row>
+                  ))}
+                </Table.Body>
+              </Table.Content>
+            </Table.ScrollContainer>
           </Table>
         </ProTableWrapper>
 
         {isLoading && (
           <div className="absolute inset-0 z-20 flex items-center justify-center rounded-md bg-background/70 backdrop-blur-[1px]">
             <div className="rounded-full border bg-background p-3 shadow-sm">
-              <Spinner className="size-6 text-muted-foreground" />
+              <Spinner className="size-6 text-muted" />
             </div>
           </div>
         )}
@@ -417,24 +396,28 @@ export function ProTable<
   );
 }
 
-function createSelectColumn<TData, TValue>(): ColumnDef<TData, TValue> {
+function createSelectColumn<TData, TValue>(
+  t: TFunction
+): ColumnDef<TData, TValue> {
   return {
     id: "selected",
     header: ({ table }) => (
       <Checkbox
-        aria-label="Select all"
+        aria-label={t("table.selectAll", "Select all")}
         checked={
           table.getIsAllPageRowsSelected() ||
           (table.getIsSomePageRowsSelected() && "indeterminate")
         }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        slot={null}
       />
     ),
     cell: ({ row }) => (
       <Checkbox
-        aria-label="Select row"
+        aria-label={t("table.selectRow", "Select row")}
         checked={row.getIsSelected()}
         onCheckedChange={(value) => row.toggleSelected(!!value)}
+        slot={null}
       />
     ),
     enableSorting: false,
@@ -443,21 +426,27 @@ function createSelectColumn<TData, TValue>(): ColumnDef<TData, TValue> {
 }
 
 function getTableHeaderClass(columnId: string) {
-  if (["sortable", "selected"].includes(columnId)) {
-    return "bg-background [&:has([role=checkbox])]:pr-2 md:sticky md:left-0 md:z-10 md:shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]";
-  }
-  if (columnId === "actions") {
-    return "bg-background text-right md:sticky md:right-0 md:z-10 md:shadow-[-2px_0_5px_-2px_rgba(0,0,0,0.1)]";
-  }
-  return "min-w-0 truncate";
+  return cn("whitespace-nowrap", {
+    "w-12": ["sortable", "selected"].includes(columnId),
+    "text-end": columnId === "actions",
+  });
 }
 
 function getTableCellClass(columnId: string) {
-  if (["sortable", "selected"].includes(columnId)) {
-    return "bg-background md:sticky md:left-0 md:shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]";
-  }
-  if (columnId === "actions") {
-    return "bg-background md:sticky md:right-0 md:shadow-[-2px_0_5px_-2px_rgba(0,0,0,0.1)]";
-  }
-  return "max-w-[320px] truncate";
+  return cn("whitespace-nowrap align-middle", {
+    "w-12": ["sortable", "selected"].includes(columnId),
+    "w-px": columnId === "actions",
+  });
+}
+
+/**
+ * Renders one body cell. Columns whose width is capped (network addresses by
+ * default, or any column with an explicit `meta.proTable.maxWidth`) get the
+ * cap plus a hover tooltip; every other column renders exactly as before.
+ */
+function renderProTableCell<TData, TValue>(cell: Cell<TData, TValue>) {
+  const content = flexRender(cell.column.columnDef.cell, cell.getContext());
+  const maxWidth = resolveColumnMaxWidth(cell.column);
+  if (maxWidth === undefined) return content;
+  return <TruncatedCell maxWidth={maxWidth}>{content}</TruncatedCell>;
 }

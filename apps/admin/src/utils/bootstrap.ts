@@ -1,3 +1,5 @@
+"use client";
+
 import { getCommonSiteConfig as getGlobalConfig } from "@workspace/ui/services/common/common";
 
 let initialConfigPromise: ReturnType<typeof getGlobalConfig> | undefined;

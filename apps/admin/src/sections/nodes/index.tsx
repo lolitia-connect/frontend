@@ -136,6 +136,11 @@ export default function Nodes() {
       {
         id: "server_id",
         header: t("server", "Server"),
+        // Renders "name:address", so it is capped like the other address
+        // columns. Auto-detection skips it on purpose (the id ends in `id`,
+        // which elsewhere means a plain numeric foreign key), hence the
+        // explicit per-column cap.
+        meta: { proTable: { maxWidth: 240 } },
         cell: ({ row }: { row: any }) =>
           `${getServerName(row.original.server_id)}:${getServerAddress(row.original.server_id)}`,
       },

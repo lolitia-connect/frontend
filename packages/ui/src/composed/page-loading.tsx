@@ -14,7 +14,7 @@ export function PageLoading({ className }: PageLoadingProps) {
     <div
       className={cn("flex min-h-[60vh] items-center justify-center", className)}
     >
-      <Spinner className="size-8 text-muted-foreground" />
+      <Spinner className="size-8 text-muted" />
     </div>
   );
 }

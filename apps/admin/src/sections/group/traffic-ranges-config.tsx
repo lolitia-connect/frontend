@@ -210,7 +210,7 @@ export default function TrafficRangeConfig({
   return (
     <>
       <div className="space-y-2">
-        <div className="grid grid-cols-12 gap-2 font-medium text-muted-foreground text-sm">
+        <div className="grid grid-cols-12 gap-2 font-medium text-muted text-sm">
           <div className="col-span-6">{t("nodeGroup", "Node Group")}</div>
           <div className="col-span-3">{t("minTrafficGB", "Min (GB)")}</div>
           <div className="col-span-3">{t("maxTrafficGB", "Max (GB)")}</div>
@@ -223,7 +223,7 @@ export default function TrafficRangeConfig({
           >
             <div className="col-span-6">
               <div className="font-medium">{nodeGroup.name}</div>
-              <div className="text-muted-foreground text-xs">
+              <div className="text-muted text-xs">
                 {t("id", "ID")}: {nodeGroup.id}
               </div>
             </div>
@@ -251,7 +251,7 @@ export default function TrafficRangeConfig({
               />
               {isUpdating(nodeGroup.id) && (
                 <div className="absolute top-1/2 right-2 -translate-y-1/2">
-                  <Spinner className="h-4 w-4 animate-spin text-muted-foreground" />
+                  <Spinner className="h-4 w-4 animate-spin text-muted" />
                 </div>
               )}
             </div>
@@ -279,7 +279,7 @@ export default function TrafficRangeConfig({
               />
               {isUpdating(nodeGroup.id) && (
                 <div className="absolute top-1/2 right-2 -translate-y-1/2">
-                  <Spinner className="h-4 w-4 animate-spin text-muted-foreground" />
+                  <Spinner className="h-4 w-4 animate-spin text-muted" />
                 </div>
               )}
             </div>
@@ -287,7 +287,7 @@ export default function TrafficRangeConfig({
         ))}
       </div>
 
-      <div className="rounded-md bg-muted p-4 text-muted-foreground text-sm">
+      <div className="rounded-md bg-default p-4 text-muted text-sm">
         <strong>{t("note", "Note")}:</strong>{" "}
         {t(
           "trafficRangesNote",

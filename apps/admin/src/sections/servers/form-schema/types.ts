@@ -1,3 +1,5 @@
+"use client";
+
 import type { protocols } from "./constants";
 
 export type FieldConfig = {

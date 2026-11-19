@@ -1,3 +1,5 @@
+"use client";
+
 // 64 characters, so mapping a random byte with `% 64` stays uniform.
 const keyCharset =
   "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";

@@ -9,7 +9,7 @@ export async function filterBalanceLog(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: API.FilterBalanceLogResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/log/balance/list`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/log/balance/list`,
     {
       method: "GET",
       params: {
@@ -27,7 +27,7 @@ export async function filterCommissionLog(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: API.FilterCommissionLogResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/log/commission/list`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/log/commission/list`,
     {
       method: "GET",
       params: {
@@ -45,7 +45,7 @@ export async function filterEmailLog(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: API.FilterEmailLogResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/log/email/list`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/log/email/list`,
     {
       method: "GET",
       params: {
@@ -63,7 +63,7 @@ export async function filterGiftLog(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: API.FilterGiftLogResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/log/gift/list`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/log/gift/list`,
     {
       method: "GET",
       params: {
@@ -81,7 +81,7 @@ export async function filterLoginLog(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: API.FilterLoginLogResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/log/login/list`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/log/login/list`,
     {
       method: "GET",
       params: {
@@ -99,7 +99,7 @@ export async function getMessageLogList(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: API.GetMessageLogListResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/log/message/list`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/log/message/list`,
     {
       method: "GET",
       params: {
@@ -117,7 +117,7 @@ export async function filterMobileLog(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: API.FilterMobileLogResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/log/mobile/list`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/log/mobile/list`,
     {
       method: "GET",
       params: {
@@ -135,7 +135,7 @@ export async function filterRegisterLog(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: API.FilterRegisterLogResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/log/register/list`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/log/register/list`,
     {
       method: "GET",
       params: {
@@ -153,7 +153,7 @@ export async function filterServerTrafficLog(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: API.FilterServerTrafficLogResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/log/server/traffic/list`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/log/server/traffic/list`,
     {
       method: "GET",
       params: {
@@ -167,7 +167,7 @@ export async function filterServerTrafficLog(
 /** Get log setting GET /v1/admin/log/setting */
 export async function getLogSetting(options?: { [key: string]: any }) {
   return request<API.Response & { data?: API.LogSetting }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/log/setting`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/log/setting`,
     {
       method: "GET",
       ...(options || {}),
@@ -181,7 +181,7 @@ export async function updateLogSetting(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/log/setting`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/log/setting`,
     {
       method: "POST",
       headers: {
@@ -200,7 +200,7 @@ export async function filterSubscribeLog(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: API.FilterSubscribeLogResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/log/subscribe/list`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/log/subscribe/list`,
     {
       method: "GET",
       params: {
@@ -219,7 +219,7 @@ export async function filterResetSubscribeLog(
 ) {
   return request<API.Response & { data?: API.FilterResetSubscribeLogResponse }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/log/subscribe/reset/list`,
     {
       method: "GET",
@@ -239,7 +239,7 @@ export async function filterUserSubscribeTrafficLog(
 ) {
   return request<API.Response & { data?: API.FilterSubscribeTrafficResponse }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/log/subscribe/traffic/list`,
     {
       method: "GET",
@@ -258,7 +258,7 @@ export async function filterTrafficLogDetails(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: API.FilterTrafficLogDetailsResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/log/traffic/details`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/log/traffic/details`,
     {
       method: "GET",
       params: {

@@ -1,9 +1,5 @@
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableRow,
-} from "@workspace/ui/components/table";
+"use client";
+
 import { useTranslation } from "react-i18next";
 import CurrencyForm from "./basic-settings/currency-form";
 import PrivacyPolicyForm from "./basic-settings/privacy-policy-form";
@@ -48,20 +44,12 @@ export default function System() {
       {formSections.map((section, sectionIndex) => (
         <div key={sectionIndex}>
           <h2 className="mb-4 font-semibold text-lg">{section.title}</h2>
-          <Table>
-            <TableBody>
-              {section.forms.map((form, formIndex) => {
-                const FormComponent = form.component;
-                return (
-                  <TableRow key={formIndex}>
-                    <TableCell>
-                      <FormComponent />
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
+          <div className="space-y-3">
+            {section.forms.map((form, formIndex) => {
+              const FormComponent = form.component;
+              return <FormComponent key={formIndex} />;
+            })}
+          </div>
         </div>
       ))}
     </div>

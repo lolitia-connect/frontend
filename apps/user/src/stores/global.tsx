@@ -1,3 +1,5 @@
+"use client";
+
 import { queryUserInfo } from "@workspace/ui/services/user/user";
 import { isBrowser } from "@workspace/ui/utils/index";
 import { create } from "zustand";

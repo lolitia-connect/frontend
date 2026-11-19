@@ -1,16 +1,9 @@
 "use client";
 
-import { useNavigate } from "@tanstack/react-router";
+import { Description, Modal } from "@heroui/react";
 import { Button } from "@workspace/ui/components/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@workspace/ui/components/dialog";
 import { EnhancedInput } from "@workspace/ui/composed/enhanced-input";
+import { useNavigate } from "@workspace/ui/lib/router-compat";
 import { unitConversion } from "@workspace/ui/utils/unit-conversions";
 import type React from "react";
 import { useState, useTransition } from "react";
@@ -41,90 +34,98 @@ export default function Recharge(
   const isButtonDisabled = loading || !params.amount || hasNoPaymentMethods;
 
   return (
-    <Dialog onOpenChange={setOpen} open={open}>
-      <DialogTrigger asChild>
-        <Button {...props}>{t("recharge", "Recharge")}</Button>
-      </DialogTrigger>
-      <DialogContent className="flex max-h-[calc(100dvh-2rem)] flex-col overflow-hidden p-0 md:max-h-none">
-        <DialogHeader className="flex-none p-6 pb-0">
-          <DialogTitle>{t("balanceRecharge", "Balance Recharge")}</DialogTitle>
-          <DialogDescription>
-            {t("rechargeDescription", "Recharge your account balance")}
-          </DialogDescription>
-        </DialogHeader>
-        <div className="flex-1 overflow-y-auto p-6 pt-0 text-sm">
-          <div className="grid gap-3">
-            <div className="font-semibold">
-              {t("rechargeAmount", "Recharge Amount")}
-            </div>
-            <div className="flex">
-              <EnhancedInput
-                formatInput={(value) => unitConversion("centsToDollars", value)}
-                formatOutput={(value) =>
-                  unitConversion("dollarsToCents", value)
-                }
-                min={0}
-                onValueChange={(value) => {
-                  setParams((prev) => ({
-                    ...prev,
-                    amount: value as number,
-                  }));
-                }}
-                placeholder={t("enterAmount", "Enter Amount")}
-                prefix={currency.currency_symbol}
-                suffix={currency.currency_unit}
-                type="number"
-                value={params.amount}
-              />
-            </div>
-            <PaymentMethods
-              balance={false}
-              onAvailableMethodsChange={setAvailableMethodsCount}
-              onChange={(value) =>
-                setParams((prev) => ({ ...prev, payment: value }))
-              }
-              value={params.payment}
-            />
-            {hasNoPaymentMethods && (
-              <div className="text-muted-foreground text-sm">
-                {t(
-                  "noPaymentMethodsAvailable",
-                  "No payment methods available for recharge"
+    <Modal isOpen={open} onOpenChange={setOpen}>
+      <Button {...props}>{t("recharge", "Recharge")}</Button>
+
+      <Modal.Backdrop>
+        <Modal.Container>
+          <Modal.Dialog className="flex max-h-[calc(100dvh-2rem)] flex-col overflow-hidden p-0 md:max-h-none">
+            <Modal.Header className="flex-none p-6 pb-0">
+              <Modal.Heading>
+                {t("balanceRecharge", "Balance Recharge")}
+              </Modal.Heading>
+              <Description slot="description">
+                {t("rechargeDescription", "Recharge your account balance")}
+              </Description>
+            </Modal.Header>
+            <div className="flex-1 overflow-y-auto p-6 pt-0 text-sm">
+              <div className="grid gap-3">
+                <div className="font-semibold">
+                  {t("rechargeAmount", "Recharge Amount")}
+                </div>
+                <div className="flex">
+                  <EnhancedInput
+                    formatInput={(value) =>
+                      unitConversion("centsToDollars", value)
+                    }
+                    formatOutput={(value) =>
+                      unitConversion("dollarsToCents", value)
+                    }
+                    min={0}
+                    onValueChange={(value) => {
+                      setParams((prev) => ({
+                        ...prev,
+                        amount: value as number,
+                      }));
+                    }}
+                    placeholder={t("enterAmount", "Enter Amount")}
+                    prefix={currency.currency_symbol}
+                    suffix={currency.currency_unit}
+                    type="number"
+                    value={params.amount}
+                  />
+                </div>
+                <PaymentMethods
+                  balance={false}
+                  onAvailableMethodsChange={setAvailableMethodsCount}
+                  onChange={(value) =>
+                    setParams((prev) => ({ ...prev, payment: value }))
+                  }
+                  value={params.payment}
+                />
+                {hasNoPaymentMethods && (
+                  <div className="text-muted text-sm">
+                    {t(
+                      "noPaymentMethodsAvailable",
+                      "No payment methods available for recharge"
+                    )}
+                  </div>
                 )}
               </div>
-            )}
-          </div>
-        </div>
-        <div className="flex-none bg-background px-4 pb-[calc(1rem+env(safe-area-inset-bottom,0px))] md:px-4 md:pb-4">
-          <Button
-            className="w-full"
-            disabled={isButtonDisabled}
-            onClick={() => {
-              startTransition(async () => {
-                try {
-                  const response = await createOrder({
-                    type: "recharge",
-                    payment_id: params.payment,
-                    amount: params.amount,
+            </div>
+            <div className="flex flex-none justify-end border-t bg-background px-6 pt-4 pb-[calc(1rem+env(safe-area-inset-bottom,0px))] md:pb-4">
+              <Button
+                className="w-full md:w-auto md:min-w-40"
+                disabled={isButtonDisabled}
+                onClick={() => {
+                  startTransition(async () => {
+                    try {
+                      const response = await createOrder({
+                        type: "recharge",
+                        payment_id: params.payment,
+                        amount: params.amount,
+                      });
+                      const orderNo = response.data.data?.order.order_no;
+                      if (orderNo) {
+                        navigate({
+                          to: "/payment",
+                          search: { order_no: String(orderNo) },
+                        });
+                        setOpen(false);
+                      }
+                    } catch {
+                      /* empty */
+                    }
                   });
-                  const orderNo = response.data.data?.order.order_no;
-                  if (orderNo) {
-                    navigate({
-                      to: "/payment",
-                      search: { order_no: String(orderNo) },
-                    });
-                    setOpen(false);
-                  }
-                } catch {
-                  /* empty */
-                }
-              });
-            }}
-          >
-            {t("rechargeNow", "Recharge Now")}
-          </Button>
-        </div>
-      </DialogContent>
-    </Dialog>
+                }}
+              >
+                {t("rechargeNow", "Recharge Now")}
+              </Button>
+            </div>
+            <Modal.CloseTrigger aria-label="Close" />
+          </Modal.Dialog>
+        </Modal.Container>
+      </Modal.Backdrop>
+    </Modal>
   );
 }

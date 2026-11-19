@@ -1,3 +1,5 @@
+"use client";
+
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -10,6 +12,13 @@ export interface NavItem {
   url?: string;
 }
 
+/**
+ * Every entry uses a single-tone `uil` line icon. The sidebar styles the icon
+ * itself (neutral gray, rose when its row is hovered or active), so any
+ * multicolour icon set would be immune to that styling and break the uniform
+ * look — which is exactly what the previous `flat-color-icons` set did.
+ */
+
 export function useNavs() {
   const { t } = useTranslation("menu");
 
@@ -18,96 +27,96 @@ export function useNavs() {
       {
         title: t("Dashboard", "Dashboard"),
         url: "/dashboard",
-        icon: "flat-color-icons:globe",
+        icon: "uil:dashboard",
       },
 
       {
         title: t("Maintenance", "Maintenance"),
-        icon: "flat-color-icons:data-protection",
+        icon: "uil:server",
         items: [
           {
             title: t("Server Management", "Server Management"),
             url: "/dashboard/servers",
-            icon: "flat-color-icons:data-protection",
+            icon: "uil:server",
           },
           {
             title: t("Node Management", "Node Management"),
             url: "/dashboard/nodes",
-            icon: "flat-color-icons:mind-map",
+            icon: "uil:server-network",
           },
           {
             title: t("Group Management", "Group Management"),
             url: "/dashboard/group",
-            icon: "flat-color-icons:department",
+            icon: "uil:object-group",
           },
           {
             title: t("Subscribe Config", "Subscribe Config"),
             url: "/dashboard/subscribe",
-            icon: "flat-color-icons:ruler",
+            icon: "uil:clipboard-notes",
           },
           {
             title: t("Product Management", "Product Management"),
             url: "/dashboard/product",
-            icon: "flat-color-icons:shop",
+            icon: "uil:shop",
           },
         ],
       },
 
       {
         title: t("Commerce", "Commerce"),
-        icon: "flat-color-icons:sales-performance",
+        icon: "uil:wallet",
         items: [
           {
             title: t("Order Management", "Order Management"),
             url: "/dashboard/order",
-            icon: "flat-color-icons:todo-list",
+            icon: "uil:notes",
           },
           {
             title: t("Coupon Management", "Coupon Management"),
             url: "/dashboard/coupon",
-            icon: "flat-color-icons:bookmark",
+            icon: "uil:tag-alt",
           },
           {
             title: t("Commission Management", "Commission Management"),
             url: "/dashboard/withdrawal",
-            icon: "flat-color-icons:debt",
+            icon: "uil:money-bill",
           },
           {
             title: t("Redemption Management", "Redemption Management"),
             url: "/dashboard/redemption",
-            icon: "flat-color-icons:key",
+            icon: "uil:key-skeleton",
           },
           {
             title: t("Marketing Management", "Marketing Management"),
             url: "/dashboard/marketing",
-            icon: "flat-color-icons:bullish",
+            icon: "uil:chart-growth",
           },
           {
             title: t("Announcement Management", "Announcement Management"),
             url: "/dashboard/announcement",
-            icon: "flat-color-icons:advertising",
+            icon: "uil:megaphone",
           },
         ],
       },
 
       {
         title: t("Users & Support", "Users & Support"),
-        icon: "flat-color-icons:collaboration",
+        icon: "uil:comment-alt-notes",
         items: [
           {
             title: t("User Management", "User Management"),
             url: "/dashboard/user",
-            icon: "flat-color-icons:conference-call",
+            icon: "uil:users-alt",
           },
           {
             title: t("Ticket Management", "Ticket Management"),
             url: "/dashboard/ticket",
-            icon: "flat-color-icons:collaboration",
+            icon: "uil:comment-alt-notes",
           },
           {
             title: t("Document Management", "Document Management"),
             url: "/dashboard/document",
-            icon: "flat-color-icons:document",
+            icon: "uil:document",
           },
         ],
       },
@@ -115,32 +124,32 @@ export function useNavs() {
       {
         defaultOpen: false,
         title: t("System", "System"),
-        icon: "flat-color-icons:services",
+        icon: "uil:cog",
         items: [
           {
             title: t("System Config", "System Config"),
             url: "/dashboard/system",
-            icon: "flat-color-icons:services",
+            icon: "uil:cog",
           },
           {
             title: t("Auth Control", "Auth Control"),
             url: "/dashboard/auth-control",
-            icon: "flat-color-icons:lock-portrait",
+            icon: "uil:lock",
           },
           {
             title: t("Payment Config", "Payment Config"),
             url: "/dashboard/payment",
-            icon: "flat-color-icons:currency-exchange",
+            icon: "uil:credit-card",
           },
           {
             title: t("Plugin Management", "Plugin Management"),
             url: "/dashboard/plugin",
-            icon: "flat-color-icons:services",
+            icon: "uil:cog",
           },
           {
             title: t("ADS Config", "ADS Config"),
             url: "/dashboard/ads",
-            icon: "flat-color-icons:electrical-sensor",
+            icon: "uil:image",
           },
         ],
       },
@@ -148,77 +157,77 @@ export function useNavs() {
       {
         defaultOpen: false,
         title: t("Logs & Analytics", "Logs & Analytics"),
-        icon: "flat-color-icons:statistics",
+        icon: "uil:chart-bar",
         items: [
           {
             title: t("Login", "Login"),
             url: "/dashboard/log/login",
-            icon: "flat-color-icons:unlock",
+            icon: "uil:sign-in-alt",
           },
           {
             title: t("Order Creation", "Order Creation"),
             url: "/dashboard/log/order",
-            icon: "flat-color-icons:todo-list",
+            icon: "uil:notes",
           },
           {
             title: t("Unmatched Payments", "Unmatched Payments"),
             url: "/dashboard/log/payment-unmatched",
-            icon: "flat-color-icons:currency-exchange",
+            icon: "uil:credit-card",
           },
           {
             title: t("Register", "Register"),
             url: "/dashboard/log/register",
-            icon: "flat-color-icons:contacts",
+            icon: "uil:user-plus",
           },
           {
             title: t("Email", "Email"),
             url: "/dashboard/log/email",
-            icon: "flat-color-icons:feedback",
+            icon: "uil:envelope",
           },
           {
             title: t("Mobile", "Mobile"),
             url: "/dashboard/log/mobile",
-            icon: "flat-color-icons:sms",
+            icon: "uil:mobile-android",
           },
           {
             title: t("Subscribe", "Subscribe"),
             url: "/dashboard/log/subscribe",
-            icon: "flat-color-icons:workflow",
+            icon: "uil:sync",
           },
           {
             title: t("Reset Subscribe", "Reset Subscribe"),
             url: "/dashboard/log/reset-subscribe",
-            icon: "flat-color-icons:refresh",
+            icon: "uil:refresh",
           },
           {
             title: t("Subscribe Traffic", "Subscribe Traffic"),
             url: "/dashboard/log/subscribe-traffic",
-            icon: "flat-color-icons:statistics",
+            icon: "uil:chart-bar",
           },
           {
             title: t("Server Traffic", "Server Traffic"),
             url: "/dashboard/log/server-traffic",
-            icon: "flat-color-icons:statistics",
+            icon: "uil:chart-bar",
           },
           {
             title: t("Traffic Details", "Traffic Details"),
             url: "/dashboard/log/traffic-details",
-            icon: "flat-color-icons:combo-chart",
+            icon: "uil:chart-line",
           },
           {
             title: t("Balance", "Balance"),
             url: "/dashboard/log/balance",
-            icon: "flat-color-icons:sales-performance",
+            icon: "uil:wallet",
           },
           {
             title: t("Commission", "Commission"),
             url: "/dashboard/log/commission",
-            icon: "flat-color-icons:debt",
+            icon: "uil:money-bill",
           },
           {
             title: t("Gift", "Gift"),
             url: "/dashboard/log/gift",
-            icon: "flat-color-icons:donate",
+            icon: "uil:gift",
           },
         ],
       },

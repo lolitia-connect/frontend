@@ -1,3 +1,5 @@
+"use client";
+
 import { ml_kem768 } from "@noble/post-quantum/ml-kem.js";
 import { toB64Url } from "./util";
 

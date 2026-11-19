@@ -1,13 +1,10 @@
 "use client";
 
+import { Tooltip } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
-import { Link } from "@tanstack/react-router";
 import { Button } from "@workspace/ui/components/button";
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "@workspace/ui/components/hover-card";
+import { Link } from "@workspace/ui/lib/router-compat";
+
 import {
   getUserDetail,
   getUserSubscribeById,
@@ -77,28 +74,24 @@ export function UserSubscribeDetail({
     <div className="space-y-4">
       <div>
         <h3 className="mb-2 font-medium text-sm">{t("subscriptionInfo")}</h3>
-        <div className="rounded-lg bg-muted/30 p-3">
+        <div className="rounded-lg bg-default/30 p-3">
           <ul className="grid gap-3">
             <li className="flex items-center justify-between font-semibold">
-              <span className="text-muted-foreground">
-                {t("subscriptionId")}
-              </span>
+              <span className="text-muted">{t("subscriptionId")}</span>
               <span>{data?.id || "--"}</span>
             </li>
             <li className="flex items-center justify-between">
-              <span className="text-muted-foreground">
-                {t("subscriptionName")}
-              </span>
+              <span className="text-muted">{t("subscriptionName")}</span>
               <span>{data?.subscribe?.name || "--"}</span>
             </li>
             <li className="flex items-center justify-between">
-              <span className="text-muted-foreground">{t("token")}</span>
+              <span className="text-muted">{t("token")}</span>
               <div className="font-mono text-xs" title={data?.token || ""}>
                 {data?.token || "--"}
               </div>
             </li>
             <li className="flex items-center justify-between">
-              <span className="text-muted-foreground">{t("trafficUsage")}</span>
+              <span className="text-muted">{t("trafficUsage")}</span>
               <span>
                 {data
                   ? isTrafficUnlimited
@@ -108,9 +101,7 @@ export function UserSubscribeDetail({
               </span>
             </li>
             <li className="flex items-center justify-between">
-              <span className="text-muted-foreground">
-                {t("remainingTraffic")}
-              </span>
+              <span className="text-muted">{t("remainingTraffic")}</span>
               <span>
                 {data
                   ? isTrafficUnlimited
@@ -120,19 +111,19 @@ export function UserSubscribeDetail({
               </span>
             </li>
             <li className="flex items-center justify-between">
-              <span className="text-muted-foreground">{t("startTime")}</span>
+              <span className="text-muted">{t("startTime")}</span>
               <span>
                 {data?.start_time ? formatDate(data.start_time) : "--"}
               </span>
             </li>
             <li className="flex items-center justify-between">
-              <span className="text-muted-foreground">{t("expireTime")}</span>
+              <span className="text-muted">{t("expireTime")}</span>
               <span>
                 {data?.expire_time ? formatDate(data.expire_time) : "--"}
               </span>
             </li>
             {/* <li className="flex items-center justify-between">
-              <span className="text-muted-foreground">{t("userGroup")}</span>
+              <span className="text-muted">{t("userGroup")}</span>
               <div className="flex items-center gap-2">
                 <span>{groupNames || "--"}</span>
                 {data?.id && (
@@ -155,7 +146,7 @@ export function UserSubscribeDetail({
               </div>
             </li>
             <li className="flex items-center justify-between">
-              <span className="text-muted-foreground">{t("groupLocked")}</span>
+              <span className="text-muted">{t("groupLocked")}</span>
               <span>
                 {groupLocked ? t("yes", "Yes") : t("no", "No")}
               </span>
@@ -172,29 +163,29 @@ export function UserSubscribeDetail({
           </h3>
           <ul className="grid gap-3">
             <li className="flex items-center justify-between font-semibold">
-              <span className="text-muted-foreground">{t("userId")}</span>
+              <span className="text-muted">{t("userId")}</span>
               <span>{data?.user_id}</span>
             </li>
             <li className="flex items-center justify-between font-semibold">
-              <span className="text-muted-foreground">{t("balance")}</span>
+              <span className="text-muted">{t("balance")}</span>
               <span>
                 <Display type="currency" value={data?.user.balance} />
               </span>
             </li>
             <li className="flex items-center justify-between">
-              <span className="text-muted-foreground">{t("giftAmount")}</span>
+              <span className="text-muted">{t("giftAmount")}</span>
               <span>
                 <Display type="currency" value={data?.user?.gift_amount} />
               </span>
             </li>
             <li className="flex items-center justify-between">
-              <span className="text-muted-foreground">{t("commission")}</span>
+              <span className="text-muted">{t("commission")}</span>
               <span>
                 <Display type="currency" value={data?.user?.commission} />
               </span>
             </li>
             <li className="flex items-center justify-between">
-              <span className="text-muted-foreground">{t("createdAt")}</span>
+              <span className="text-muted">{t("createdAt")}</span>
               <span>
                 {data?.user?.created_at && formatDate(data?.user?.created_at)}
               </span>
@@ -207,14 +198,13 @@ export function UserSubscribeDetail({
 
   if (hoverCard) {
     return (
-      <HoverCard>
-        <HoverCardTrigger asChild>
-          <Button className="p-0" variant="link">
-            {data?.subscribe?.name || t("loading")}
-          </Button>
-        </HoverCardTrigger>
-        <HoverCardContent className="w-96">{subscribeContent}</HoverCardContent>
-      </HoverCard>
+      <Tooltip>
+        <Button className="p-0" variant="link">
+          {data?.subscribe?.name || t("loading")}
+        </Button>
+
+        <Tooltip.Content className="w-96">{subscribeContent}</Tooltip.Content>
+      </Tooltip>
     );
   }
 
@@ -241,31 +231,28 @@ export function UserDetail({ id }: { id: string | number }) {
     data?.auth_methods[0]?.auth_identifier;
 
   return (
-    <HoverCard>
-      <HoverCardTrigger asChild>
-        <Button asChild className="p-0" variant="link">
-          <Link search={{ user_id: resolvedId }} to="/dashboard/user">
-            {identifier || t("loading", "Loading...")}
-          </Link>
-        </Button>
-      </HoverCardTrigger>
-      <HoverCardContent>
+    <Tooltip>
+      <Button asChild className="p-0" variant="link">
+        <Link search={{ user_id: resolvedId }} to="/dashboard/user">
+          {identifier || t("loading", "Loading...")}
+        </Link>
+      </Button>
+
+      <Tooltip.Content>
         <div className="grid gap-3">
           <ul className="grid gap-3">
             <li className="flex items-center justify-between font-semibold">
-              <span className="text-muted-foreground">ID</span>
+              <span className="text-muted">ID</span>
               <span>{data?.id}</span>
             </li>
             <li className="flex items-center justify-between font-semibold">
-              <span className="text-muted-foreground">
-                {t("balance", "Balance")}
-              </span>
+              <span className="text-muted">{t("balance", "Balance")}</span>
               <span>
                 <Display type="currency" value={data?.balance} />
               </span>
             </li>
             <li className="flex items-center justify-between">
-              <span className="text-muted-foreground">
+              <span className="text-muted">
                 {t("giftAmount", "Gift Amount")}
               </span>
               <span>
@@ -273,7 +260,7 @@ export function UserDetail({ id }: { id: string | number }) {
               </span>
             </li>
             <li className="flex items-center justify-between">
-              <span className="text-muted-foreground">
+              <span className="text-muted">
                 {t("commission", "Commission")}
               </span>
               <span>
@@ -281,14 +268,12 @@ export function UserDetail({ id }: { id: string | number }) {
               </span>
             </li>
             <li className="flex items-center justify-between">
-              <span className="text-muted-foreground">
-                {t("createdAt", "Created At")}
-              </span>
+              <span className="text-muted">{t("createdAt", "Created At")}</span>
               <span>{data?.created_at && formatDate(data?.created_at)}</span>
             </li>
           </ul>
         </div>
-      </HoverCardContent>
-    </HoverCard>
+      </Tooltip.Content>
+    </Tooltip>
   );
 }

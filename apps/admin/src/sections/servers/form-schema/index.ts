@@ -1,3 +1,5 @@
+"use client";
+
 // Re-export all constants
 export {
   ALPN_VALUES,

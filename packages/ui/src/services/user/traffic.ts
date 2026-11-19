@@ -25,7 +25,7 @@ export async function getUserTrafficStats(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: GetUserTrafficStatsResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/public/user/traffic_stats`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/public/user/traffic_stats`,
     {
       method: "GET",
       params: {

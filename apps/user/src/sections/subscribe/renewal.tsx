@@ -1,17 +1,10 @@
 "use client";
 
+import { Card, Modal } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
-import { useNavigate } from "@tanstack/react-router";
 import { Button } from "@workspace/ui/components/button";
-import { Card, CardContent } from "@workspace/ui/components/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@workspace/ui/components/dialog";
 import { Separator } from "@workspace/ui/components/separator";
+import { useNavigate } from "@workspace/ui/lib/router-compat";
 import { preCreateOrder } from "@workspace/ui/services/user/order";
 import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import { useTranslation } from "react-i18next";
@@ -125,68 +118,76 @@ export default function Renewal({
   }, [params, id, getUserInfo, navigate, createOrder]);
 
   return (
-    <Dialog onOpenChange={setOpen} open={open}>
-      <DialogTrigger asChild>
-        <Button className={className} size="sm">
-          {t("renew", "Renew")}
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="flex max-h-[calc(100dvh-2rem)] flex-col overflow-hidden p-0 md:max-h-none md:max-w-screen-lg">
-        <DialogHeader className="flex-none p-6 pb-0">
-          <DialogTitle>
-            {t("renewSubscription", "Renew Subscription")}
-          </DialogTitle>
-        </DialogHeader>
-        <div className="grid w-full flex-1 gap-3 overflow-y-auto p-6 pt-0 lg:grid-cols-2">
-          <Card className="border-transparent shadow-none md:border-inherit md:shadow">
-            <CardContent className="grid gap-3 p-0 text-sm md:p-6">
-              <SubscribeDetail
-                subscribe={{
-                  ...subscribe,
-                  quantity: params.quantity,
-                }}
-              />
-              <Separator />
-              <SubscribeBilling
-                order={{
-                  ...order,
-                  quantity: params.quantity,
-                  unit_price: subscribe?.unit_price,
-                  show_original_price: subscribe?.show_original_price,
-                }}
-              />
-            </CardContent>
-          </Card>
-          <div className="flex flex-col justify-between text-sm">
-            <div className="grid gap-3">
-              <DurationSelector
-                discounts={subscribe?.discount}
-                onChange={(value) => {
-                  handleChange("quantity", value);
-                }}
-                quantity={params.quantity!}
-                showOriginalPrice={subscribe?.show_original_price}
-                unitTime={subscribe?.unit_time}
-              />
-              <CouponInput
-                coupon={params.coupon}
-                onChange={(value) => handleChange("coupon", value)}
-              />
-              <PaymentMethods
-                onChange={(value) => {
-                  handleChange("payment", value);
-                }}
-                value={params.payment ?? "0"}
-              />
+    <Modal isOpen={open} onOpenChange={setOpen}>
+      <Button className={className} size="sm">
+        {t("renew", "Renew")}
+      </Button>
+
+      <Modal.Backdrop>
+        <Modal.Container>
+          <Modal.Dialog className="flex max-h-[calc(100dvh-2rem)] flex-col overflow-hidden p-0 md:max-h-none md:max-w-screen-lg">
+            <Modal.Header className="flex-none p-6 pb-0">
+              <Modal.Heading>
+                {t("renewSubscription", "Renew Subscription")}
+              </Modal.Heading>
+            </Modal.Header>
+            <div className="grid w-full flex-1 gap-3 overflow-y-auto p-6 pt-0 lg:grid-cols-2">
+              <Card className="border-transparent shadow-none md:border-inherit md:shadow">
+                <Card.Content className="grid gap-3 p-0 text-sm md:p-6">
+                  <SubscribeDetail
+                    subscribe={{
+                      ...subscribe,
+                      quantity: params.quantity,
+                    }}
+                  />
+                  <Separator />
+                  <SubscribeBilling
+                    order={{
+                      ...order,
+                      quantity: params.quantity,
+                      unit_price: subscribe?.unit_price,
+                      show_original_price: subscribe?.show_original_price,
+                    }}
+                  />
+                </Card.Content>
+              </Card>
+              <div className="flex flex-col justify-between text-sm">
+                <div className="grid gap-3">
+                  <DurationSelector
+                    discounts={subscribe?.discount}
+                    onChange={(value) => {
+                      handleChange("quantity", value);
+                    }}
+                    quantity={params.quantity!}
+                    showOriginalPrice={subscribe?.show_original_price}
+                    unitTime={subscribe?.unit_time}
+                  />
+                  <CouponInput
+                    coupon={params.coupon}
+                    onChange={(value) => handleChange("coupon", value)}
+                  />
+                  <PaymentMethods
+                    onChange={(value) => {
+                      handleChange("payment", value);
+                    }}
+                    value={params.payment ?? "0"}
+                  />
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-        <div className="flex-none bg-background px-4 pb-[calc(1rem+env(safe-area-inset-bottom,0px))] md:px-4 md:pb-4">
-          <Button className="w-full" loading={loading} onClick={handleSubmit}>
-            {t("buyNow", "Buy Now")}
-          </Button>
-        </div>
-      </DialogContent>
-    </Dialog>
+            <div className="flex flex-none justify-end border-t bg-background px-6 pt-4 pb-[calc(1rem+env(safe-area-inset-bottom,0px))] md:pb-4">
+              <Button
+                className="w-full md:w-auto md:min-w-40"
+                loading={loading}
+                onClick={handleSubmit}
+              >
+                {t("buyNow", "Buy Now")}
+              </Button>
+            </div>
+            <Modal.CloseTrigger aria-label="Close" />
+          </Modal.Dialog>
+        </Modal.Container>
+      </Modal.Backdrop>
+    </Modal>
   );
 }

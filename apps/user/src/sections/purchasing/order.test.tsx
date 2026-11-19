@@ -24,7 +24,7 @@ const mocks = vi.hoisted(() => ({
   session: vi.fn(),
 }));
 
-vi.mock("@tanstack/react-router", () => ({
+vi.mock("@workspace/ui/lib/router-compat", () => ({
   Link: ({
     to,
     children,

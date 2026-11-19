@@ -172,6 +172,7 @@
     "whitelistValidation": "Whitelist Validation",
     "whitelistValidationTip": "Only allow phone numbers with whitelisted area codes"
   },
+  "sections": "Sections",
   "socialAuthMethods": "Social Authentication Methods",
   "telegram": {
     "botToken": "Bot Token",

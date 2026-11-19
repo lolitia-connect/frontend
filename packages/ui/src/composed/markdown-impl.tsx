@@ -9,7 +9,7 @@ import { appUrlTransform, markdownComponents } from "./markdown-elements";
 
 export default function MarkdownImpl({ children, components }: MarkdownProps) {
   return (
-    <div className="prose dark:prose-invert wrap-break-word w-full max-w-[unset]">
+    <div className="prose dark:prose-invert wrap-anywhere w-full min-w-0 max-w-full">
       <ReactMarkdown
         components={{ ...markdownComponents, ...components }}
         rehypePlugins={[rehypeRaw]}

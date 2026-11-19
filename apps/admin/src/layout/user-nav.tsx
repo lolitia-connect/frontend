@@ -1,18 +1,18 @@
+"use client";
+
+import {
+  buttonVariants,
+  Dropdown,
+  Header,
+  Kbd,
+  Separator,
+} from "@heroui/react";
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
 } from "@workspace/ui/components/avatar";
-import { Button } from "@workspace/ui/components/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuTrigger,
-} from "@workspace/ui/components/dropdown-menu";
+
 import { useTranslation } from "react-i18next";
 import { useGlobalStore } from "@/stores/global";
 import { Logout } from "@/utils/common";
@@ -23,29 +23,28 @@ export function UserNav() {
 
   if (user) {
     return (
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button size="icon" variant="default">
-            <Avatar className="size-8">
-              <AvatarImage alt={user?.avatar ?? ""} src={user?.avatar ?? ""} />
-              <AvatarFallback className="rounded-none bg-transparent">
-                {user?.auth_methods?.[0]?.auth_identifier
-                  .toUpperCase()
-                  .charAt(0)}
-              </AvatarFallback>
-            </Avatar>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-56" forceMount>
-          <DropdownMenuLabel className="font-normal">
+      <Dropdown>
+        <Dropdown.Trigger
+          className={`${buttonVariants({ variant: "primary", isIconOnly: true, class: undefined })} inline-flex items-center justify-center`}
+        >
+          <Avatar className="size-8">
+            <AvatarImage alt={user?.avatar ?? ""} src={user?.avatar ?? ""} />
+            <AvatarFallback className="rounded-none bg-transparent">
+              {user?.auth_methods?.[0]?.auth_identifier.toUpperCase().charAt(0)}
+            </AvatarFallback>
+          </Avatar>
+        </Dropdown.Trigger>
+        <Dropdown.Popover className="w-56" placement="bottom end">
+          <Header className="font-normal">
             <div className="flex flex-col space-y-1">
               <p className="font-medium text-sm leading-none">
                 {user?.auth_methods?.[0]?.auth_identifier}
               </p>
-              {/* <p className='text-xs leading-none text-muted-foreground'>ID: {user?.id}</p> */}
+              {/* <p className='text-xs leading-none text-muted'>ID: {user?.id}</p> */}
             </div>
-          </DropdownMenuLabel>
-          {/* <DropdownMenuSeparator />
+          </Header>
+          <Dropdown.Menu aria-label="Actions">
+            {/* <DropdownMenuSeparator />
           <DropdownMenuGroup>
             <DropdownMenuItem>
               Profile
@@ -61,13 +60,14 @@ export function UserNav() {
             </DropdownMenuItem>
             <DropdownMenuItem>New Team</DropdownMenuItem>
           </DropdownMenuGroup> */}
-          <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={Logout}>
-            {t("logout", "Logout")}
-            <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+            <Separator />
+            <Dropdown.Item onAction={Logout}>
+              {t("logout", "Logout")}
+              <Kbd>⇧⌘Q</Kbd>
+            </Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown.Popover>
+      </Dropdown>
     );
   }
 }

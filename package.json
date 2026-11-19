@@ -18,17 +18,25 @@
     "docs:build": "turbo docs:build",
     "lint": "turbo lint",
     "check": "turbo check",
-    "test": "turbo test",
+    "test": "turbo test && bun run test:shared",
+    "test:shared": "vitest run",
+    "test:e2e": "bun run test:e2e:user && bun run test:e2e:admin && bun run test:e2e:payment-portal",
+    "test:e2e:user": "bun run --cwd apps/user test:e2e",
+    "test:e2e:admin": "bun run --cwd apps/admin test:e2e",
+    "test:e2e:layout": "bun run test:e2e:admin layout.spec.ts drawers.spec.ts && bun run test:e2e:user layout.spec.ts",
+    "test:e2e:all": "bun run test:e2e",
+    "test:e2e:payment-portal": "bun run --cwd apps/payment-portal test:e2e",
+    "test:e2e:report": "playwright show-report apps/user/playwright-report",
     "openapi": "turbo openapi",
     "api:refresh": "bun scripts/backend-contract.mjs --refresh",
     "api:check": "bun scripts/backend-contract.mjs --check",
     "api:verify": "bun scripts/backend-contract.mjs --verify-generated",
-    "test:contract": "bun test tests/contract",
-    "test:proxy": "bun test tests/functions",
+    "test:contract": "vitest run tests/contract",
+    "test:proxy": "vitest run tests/functions",
     "i18n:extract": "turbo i18n:extract",
     "i18n:sync": "turbo i18n:sync",
     "i18n:status": "turbo i18n:status",
-    "prepare": "husky && npx gitmoji -i",
+    "prepare": "husky",
     "release": "semantic-release"
   },
   "overrides": {
@@ -39,6 +47,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.0",
+    "@playwright/test": "1.65.1",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/exec": "^7.1.0",
     "@semantic-release/git": "^10.0.1",
@@ -46,9 +55,7 @@
     "@types/react-copy-to-clipboard": "^5.0.7",
     "@workspace/typescript-config": "workspace:*",
     "commitlint": "^21.0.2",
-    "commitlint-config-gitmoji": "^2.3.1",
     "conventional-changelog-conventionalcommits": "^9.3.1",
-    "gitmoji-cli": "^9.7.0",
     "husky": "^9.1.7",
     "i18next-cli": "^1.64.1",
     "lefthook": "^2.1.9",
@@ -56,7 +63,8 @@
     "semantic-release": "^25.0.5",
     "turbo": "^2.9.18",
     "typescript": "^6.0.3",
-    "ultracite": "^7.8.3"
+    "ultracite": "^7.8.3",
+    "vitest": "^3.2.4"
   },
   "packageManager": "bun@1.3.1",
   "engines": {
@@ -71,29 +79,5 @@
     "*.{js,jsx,ts,tsx,json,jsonc,css,scss,md,mdx}": [
       "bun x ultracite fix"
     ]
-  },
-  "gitmoji": {
-    "autoAdd": false,
-    "emojiFormat": "emoji",
-    "scopePrompt": false,
-    "messagePrompt": false,
-    "capitalizeTitle": false,
-    "gitmojisUrl": "https://gitmoji.dev/api/gitmojis"
-  },
-  "commitlint": {
-    "extends": [
-      "gitmoji"
-    ],
-    "parserPreset": {
-      "parserOpts": {
-        "headerPattern": "^(?:(\\u00a9|\\u00ae|[\\u2000-\\u3300]|\\ud83c[\\ud000-\\udfff]|\\ud83d[\\ud000-\\udfff]|\\ud83e[\\ud000-\\udfff])\\s*)?(\\w*)(?:\\((.*)\\))?!?:\\s*(.*)$",
-        "headerCorrespondence": [
-          "emoji",
-          "type",
-          "scope",
-          "subject"
-        ]
-      }
-    }
   }
 }

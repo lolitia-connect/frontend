@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Avatar,
   AvatarFallback,
@@ -231,7 +233,7 @@ export default function PaymentTable() {
               <div className="flex flex-col gap-0.5">
                 <Badge>{currencyUnit}</Badge>
                 {(row.original.exchange_rate ?? 0) > 0 && (
-                  <span className="text-muted-foreground text-xs">
+                  <span className="text-muted text-xs">
                     {t("rate", "Rate")}: {row.original.exchange_rate}
                   </span>
                 )}

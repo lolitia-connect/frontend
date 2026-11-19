@@ -1,23 +1,10 @@
 "use client";
 
+import { Card, Description, Modal } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@workspace/ui/components/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from "@workspace/ui/components/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@workspace/ui/components/dialog";
+
 import { Separator } from "@workspace/ui/components/separator";
-import Empty from "@workspace/ui/composed/empty";
 import { Icon } from "@workspace/ui/composed/icon";
 import { cn } from "@workspace/ui/lib/utils";
 import { querySubscribeList } from "@workspace/ui/services/user/subscribe";
@@ -26,6 +13,7 @@ import { differenceInDays, formatDate } from "@workspace/ui/utils/formatting";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Display } from "@/components/display";
+import { MainEmpty } from "@/components/main-empty";
 import { SubscribeDetail } from "./detail";
 import Purchase from "./purchase";
 import RedeemCode from "./redeem-code";
@@ -94,7 +82,7 @@ export default function Subscribe() {
           >
             <div className="space-y-1">
               <p className="font-medium">{entry.subscribe.name}</p>
-              <p className="text-muted-foreground text-sm">
+              <p className="text-muted text-sm">
                 {t("expireAt", "Expires At")}: {formatDate(entry.expire_time)}
               </p>
               <p className="text-sm">
@@ -115,7 +103,7 @@ export default function Subscribe() {
           </div>
         ))}
         {renewableSubscriptions.length > 2 && (
-          <p className="text-muted-foreground text-sm">
+          <p className="text-muted text-sm">
             {t(
               "moreRenewable",
               "{{total}} more subscriptions can be renewed from the dashboard",
@@ -126,10 +114,10 @@ export default function Subscribe() {
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
           {filteredData?.map((item) => (
             <Card className="relative flex flex-col" key={item.id}>
-              <CardHeader className="font-medium text-xl">
+              <Card.Header className="font-medium text-xl">
                 {item.name}
-              </CardHeader>
-              <CardContent className="*:!text-sm flex flex-grow flex-col gap-3">
+              </Card.Header>
+              <Card.Content className="*:!text-sm flex flex-grow flex-col gap-3">
                 {/* <div className='font-semibold'>{t('productDescription')}</div> */}
                 <ul className="flex flex-grow flex-col gap-3">
                   {(() => {
@@ -151,9 +139,7 @@ export default function Subscribe() {
                     return (
                       <>
                         {description && (
-                          <li className="text-muted-foreground">
-                            {description}
-                          </li>
+                          <li className="text-muted">{description}</li>
                         )}
                         {features?.map(
                           (
@@ -166,17 +152,16 @@ export default function Subscribe() {
                           ) => (
                             <li
                               className={cn("flex items-center gap-1", {
-                                "text-muted-foreground line-through":
+                                "text-muted line-through":
                                   feature.type === "destructive",
                               })}
                               key={index}
                             >
                               {feature.icon && (
                                 <Icon
-                                  className={cn("size-5 text-primary", {
-                                    "text-green-500":
-                                      feature.type === "success",
-                                    "text-destructive":
+                                  className={cn("size-5 text-accent", {
+                                    "text-success": feature.type === "success",
+                                    "text-danger":
                                       feature.type === "destructive",
                                   })}
                                   icon={feature.icon}
@@ -196,9 +181,9 @@ export default function Subscribe() {
                     name: undefined,
                   }}
                 />
-              </CardContent>
+              </Card.Content>
               <Separator />
-              <CardFooter className="flex flex-col gap-2">
+              <Card.Footer className="flex flex-col gap-4">
                 {(() => {
                   const hasDiscount = item.discount && item.discount.length > 0;
                   const shouldShowOriginal = item.show_original_price !== false;
@@ -222,7 +207,7 @@ export default function Subscribe() {
                     t(item.unit_time || "Month", item.unit_time || "Month");
 
                   return (
-                    <h2 className="pb-8 font-semibold text-2xl sm:text-3xl">
+                    <h2 className="font-semibold text-2xl sm:text-3xl">
                       <Display type="currency" value={displayPrice} />
                       <span className="font-medium text-base">
                         {displayQuantity === 1
@@ -233,7 +218,7 @@ export default function Subscribe() {
                   );
                 })()}
                 <Button
-                  className="absolute bottom-0 w-full rounded-t-none rounded-b-xl"
+                  className="w-full justify-center gap-2"
                   onClick={() => {
                     if (
                       renewableSubscriptions.some(
@@ -248,69 +233,78 @@ export default function Subscribe() {
                 >
                   {t("buy", "Buy")}
                 </Button>
-              </CardFooter>
+              </Card.Footer>
             </Card>
           ))}
         </div>
-        {filteredData?.length === 0 && <Empty />}
+        {filteredData?.length === 0 && <MainEmpty />}
       </div>
-      <Dialog
+
+      <Modal.Backdrop
+        isOpen={Boolean(pendingPlan)}
         onOpenChange={(open) => {
           if (!open) setPendingPlan(undefined);
         }}
-        open={Boolean(pendingPlan)}
       >
-        <DialogContent className="flex max-h-[calc(100dvh-2rem)] flex-col sm:max-w-lg">
-          <DialogHeader>
-            <DialogTitle>
-              {t("renewReminder.title", "You already have a subscription")}
-            </DialogTitle>
-            <DialogDescription>
-              {t(
-                "renewReminder.description",
-                "Renewing extends your current subscription and keeps its nodes and subscription link. Buying a new plan creates a separate subscription with its own time and traffic."
-              )}
-            </DialogDescription>
-          </DialogHeader>
-          <div className="-mx-1 min-h-0 flex-1 space-y-3 overflow-y-auto px-1">
-            {matchingRenewable.map((entry) => (
-              <div
-                className="flex flex-col gap-3 rounded-lg border p-4 sm:flex-row sm:items-center sm:justify-between"
-                key={entry.id}
-              >
-                <div className="min-w-0 space-y-1">
-                  <p className="break-words font-medium">
-                    {entry.subscribe.name}
-                  </p>
-                  <p className="text-muted-foreground text-sm">
-                    {t("expireAt", "Expires At")}:{" "}
-                    {formatDate(entry.expire_time)}
-                  </p>
+        <Modal.Container>
+          <Modal.Dialog className="flex max-h-[calc(100dvh-2rem)] flex-col sm:max-w-lg">
+            <Modal.Header>
+              <Modal.Heading>
+                {t("renewReminder.title", "You already have a subscription")}
+              </Modal.Heading>
+              <Description slot="description">
+                {t(
+                  "renewReminder.description",
+                  "Renewing extends your current subscription and keeps its nodes and subscription link. Buying a new plan creates a separate subscription with its own time and traffic."
+                )}
+              </Description>
+            </Modal.Header>
+            <div className="-mx-1 min-h-0 flex-1 space-y-3 overflow-y-auto px-1">
+              {matchingRenewable.map((entry) => (
+                <div
+                  className="flex flex-col gap-3 rounded-lg border p-4 sm:flex-row sm:items-center sm:justify-between"
+                  key={entry.id}
+                >
+                  <div className="min-w-0 space-y-1">
+                    <p className="break-words font-medium">
+                      {entry.subscribe.name}
+                    </p>
+                    <p className="text-muted text-sm">
+                      {t("expireAt", "Expires At")}:{" "}
+                      {formatDate(entry.expire_time)}
+                    </p>
+                  </div>
+                  <Renewal
+                    className="w-full sm:w-auto"
+                    id={entry.id}
+                    subscribe={entry.subscribe}
+                  />
                 </div>
-                <Renewal
-                  className="w-full sm:w-auto"
-                  id={entry.id}
-                  subscribe={entry.subscribe}
-                />
-              </div>
-            ))}
-          </div>
-          <DialogFooter>
-            <Button
-              className="h-auto max-w-full whitespace-normal break-words"
-              onClick={() => {
-                setSubscribe(pendingPlan);
-                setPendingPlan(undefined);
-              }}
-              variant="outline"
-            >
-              {t("renewReminder.buyNew", "Buy {{name}} as a new subscription", {
-                name: pendingPlan?.name,
-              })}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+              ))}
+            </div>
+            <Modal.Footer>
+              <Button
+                className="h-auto max-w-full whitespace-normal break-words"
+                onClick={() => {
+                  setSubscribe(pendingPlan);
+                  setPendingPlan(undefined);
+                }}
+                variant="outline"
+              >
+                {t(
+                  "renewReminder.buyNew",
+                  "Buy {{name}} as a new subscription",
+                  {
+                    name: pendingPlan?.name,
+                  }
+                )}
+              </Button>
+            </Modal.Footer>
+            <Modal.CloseTrigger aria-label="Close" />
+          </Modal.Dialog>
+        </Modal.Container>
+      </Modal.Backdrop>
+
       <Purchase setSubscribe={setSubscribe} subscribe={subscribe} />
     </div>
   );

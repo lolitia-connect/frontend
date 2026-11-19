@@ -1,24 +1,19 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
-import { Button } from "@workspace/ui/components/button";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@workspace/ui/components/dialog";
-import { Label } from "@workspace/ui/components/label";
-import {
+  Description,
+  ListBox,
+  Modal,
   Select,
-  SelectContent,
-  SelectItem,
+  SelectPopover as SelectContent,
+  SelectIndicator,
+  ListBoxItem as SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@workspace/ui/components/select";
+} from "@heroui/react";
+import { useQuery } from "@tanstack/react-query";
+import { Button } from "@workspace/ui/components/button";
+import { Label } from "@workspace/ui/components/label";
 import { Spinner } from "@workspace/ui/components/spinner";
 import {
   bindNodeGroups,
@@ -106,87 +101,112 @@ export default function BindNodeGroupsDialog({
       : userGroupNames.join(", ");
 
   return (
-    <Dialog
+    <Modal
+      isOpen={open}
       onOpenChange={(newOpen) => {
         setOpen(newOpen);
         onOpenChange?.(newOpen);
       }}
-      open={open}
     >
-      <DialogTrigger asChild>
-        <Button size="sm" variant="outline">
-          {t("bindNodeGroup", "Bind Node Group")}
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="max-w-md">
-        <DialogHeader>
-          <DialogTitle>{t("bindNodeGroup", "Bind Node Group")}</DialogTitle>
-          <DialogDescription>
-            {t(
-              "bindNodeGroupDescription",
-              "Select a node group to bind to user groups: {{userGroups}}",
-              { userGroups: displayNames }
-            ).replace(/{{userGroups}}/g, displayNames)}
-          </DialogDescription>
-        </DialogHeader>
+      <Button size="sm" variant="outline">
+        {t("bindNodeGroup", "Bind Node Group")}
+      </Button>
 
-        <div className="space-y-4 py-4">
-          {isLoading ? (
-            <div className="flex justify-center py-8">
-              <Spinner className="size-6" />
-            </div>
-          ) : (
-            <div className="space-y-2">
-              <Label htmlFor="node-group">
-                {t("selectNodeGroup", "Select Node Group")}
-              </Label>
-              <Select
-                onValueChange={(val) =>
-                  setSelectedNodeGroupId(Number.parseInt(val, 10) || undefined)
-                }
-                value={selectedNodeGroupId?.toString() || ""}
-              >
-                <SelectTrigger className="w-full" id="node-group">
-                  <SelectValue
+      <Modal.Backdrop>
+        <Modal.Container>
+          <Modal.Dialog className="max-w-md">
+            <Modal.Header>
+              <Modal.Heading>
+                {t("bindNodeGroup", "Bind Node Group")}
+              </Modal.Heading>
+              <Description slot="description">
+                {t(
+                  "bindNodeGroupDescription",
+                  "Select a node group to bind to user groups: {{userGroups}}",
+                  { userGroups: displayNames }
+                ).replace(/{{userGroups}}/g, displayNames)}
+              </Description>
+            </Modal.Header>
+
+            <div className="space-y-4 py-4">
+              {isLoading ? (
+                <div className="flex justify-center py-8">
+                  <Spinner className="size-6" />
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  <Label htmlFor="node-group">
+                    {t("selectNodeGroup", "Select Node Group")}
+                  </Label>
+                  <Select
+                    aria-label={t(
+                      "selectNodeGroupPlaceholder",
+                      "Select a node group..."
+                    )}
+                    onSelectionChange={(key) => {
+                      if (key != null)
+                        ((val) =>
+                          setSelectedNodeGroupId(
+                            Number.parseInt(val, 10) || undefined
+                          ))(String(key));
+                    }}
                     placeholder={t(
                       "selectNodeGroupPlaceholder",
                       "Select a node group..."
                     )}
-                  />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="0">{t("unbound", "Unbound")}</SelectItem>
-                  {nodeGroupsData?.map((nodeGroup) => (
-                    <SelectItem key={nodeGroup.id} value={String(nodeGroup.id)}>
-                      {nodeGroup.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                    selectedKey={
+                      (selectedNodeGroupId?.toString() || "") == null
+                        ? undefined
+                        : String(selectedNodeGroupId?.toString() || "")
+                    }
+                  >
+                    <SelectTrigger className="w-full" id="node-group">
+                      <SelectValue />
+                      <SelectIndicator />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <ListBox>
+                        <SelectItem id="0">
+                          {t("unbound", "Unbound")}
+                        </SelectItem>
+                        {nodeGroupsData?.map((nodeGroup) => (
+                          <SelectItem
+                            id={String(nodeGroup.id)}
+                            key={nodeGroup.id}
+                          >
+                            {nodeGroup.name}
+                          </SelectItem>
+                        ))}
+                      </ListBox>
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
             </div>
-          )}
-        </div>
 
-        <DialogFooter>
-          <Button
-            loading={saving}
-            onClick={() => {
-              setOpen(false);
-              onOpenChange?.(false);
-            }}
-            variant="outline"
-          >
-            {t("cancel", "Cancel")}
-          </Button>
-          <Button
-            disabled={selectedNodeGroupId === undefined}
-            loading={saving}
-            onClick={handleBind}
-          >
-            {t("confirm", "Confirm")}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+            <Modal.Footer>
+              <Button
+                loading={saving}
+                onClick={() => {
+                  setOpen(false);
+                  onOpenChange?.(false);
+                }}
+                variant="outline"
+              >
+                {t("cancel", "Cancel")}
+              </Button>
+              <Button
+                disabled={selectedNodeGroupId === undefined}
+                loading={saving}
+                onClick={handleBind}
+              >
+                {t("confirm", "Confirm")}
+              </Button>
+            </Modal.Footer>
+            <Modal.CloseTrigger aria-label="Close" />
+          </Modal.Dialog>
+        </Modal.Container>
+      </Modal.Backdrop>
+    </Modal>
   );
 }

@@ -1,3 +1,5 @@
+"use client";
+
 import SubscribeTable from "./subscribe-table";
 
 export default function Product() {

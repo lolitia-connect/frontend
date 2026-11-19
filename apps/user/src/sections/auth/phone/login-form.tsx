@@ -1,3 +1,5 @@
+"use client";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@workspace/ui/components/button";
 import {
@@ -178,7 +180,7 @@ export default function LoginForm({
                 </FormControl>
                 <div className="!mt-0 text-right">
                   <Button
-                    className="px-0 text-primary text-sm"
+                    className="px-0 text-accent text-sm"
                     onClick={(e) => {
                       e.preventDefault();
                       setMode(mode === "password" ? "code" : "password");

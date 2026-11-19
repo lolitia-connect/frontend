@@ -1,15 +1,12 @@
+"use client";
+
+import { Card, CardDescription, CardHeader, CardTitle } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
 } from "@workspace/ui/components/avatar";
-import {
-  Card,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@workspace/ui/components/card";
 import { useTranslation } from "react-i18next";
 
 interface BillingProps {
@@ -72,7 +69,7 @@ export default function Billing({ type }: BillingProps) {
     <>
       <h1 className="text mt-2 font-bold">
         <span>{t("billing.title", "Sponsor")}</span>
-        <span className="ml-2 text-muted-foreground text-xs">
+        <span className="ml-2 text-muted text-xs">
           {t(
             "billing.description",
             "Sponsoring helps PPanel to continue releasing updates!"
@@ -93,9 +90,13 @@ export default function Billing({ type }: BillingProps) {
                   <AvatarImage src={item.logo} />
                   <AvatarFallback>{item.title}</AvatarFallback>
                 </Avatar>
-                <div>
-                  <CardTitle>{item.title}</CardTitle>
-                  <CardDescription className="mt-2">
+                {/* `min-w-0` on the text column is what allows the title and the
+                    description to wrap: without it this flex child keeps
+                    `min-width: auto` and a long sponsor title overflows the
+                    card instead of wrapping. */}
+                <div className="min-w-0">
+                  <CardTitle className="break-words">{item.title}</CardTitle>
+                  <CardDescription className="mt-2 break-words">
                     {item.description}
                   </CardDescription>
                 </div>

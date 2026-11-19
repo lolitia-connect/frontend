@@ -1,8 +1,8 @@
 "use client";
 
-import { useSearch } from "@tanstack/react-router";
 import { Badge } from "@workspace/ui/components/badge";
 import { ProTable } from "@workspace/ui/composed/pro-table/pro-table";
+import { useSearch } from "@workspace/ui/lib/router-compat";
 import { getLogMobileList as filterMobileLog } from "@workspace/ui/services/admin/admin";
 import { useTranslation } from "react-i18next";
 import { RequestSource } from "@/sections/log/request-source";

@@ -24,10 +24,10 @@ export default function OAuthPage({
             <Spinner className="size-8" />
           </div>
           <div className="flex flex-col items-center gap-2">
-            <h1 className="bg-gradient-to-r from-blue-500 via-indigo-500 to-violet-500 bg-clip-text font-black text-transparent text-xl uppercase md:text-2xl dark:from-blue-400 dark:via-indigo-300 dark:to-violet-400">
+            <h1 className="bg-gradient-to-r from-primary-500 via-primary-400 to-primary-300 bg-clip-text font-black text-transparent text-xl uppercase md:text-2xl">
               {platform}
             </h1>
-            <p className="text-lg text-muted-foreground md:text-xl">
+            <p className="text-lg text-muted md:text-xl">
               {t("authenticating", "Authenticating...")}
             </p>
           </div>

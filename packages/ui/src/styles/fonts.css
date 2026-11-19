@@ -1,0 +1,154 @@
+/* Swei Gothic, SIL OFL 1.1; unmodified upstream fonts and license in fonts/swei-gothic. */
+@font-face {
+  font-family: "Swei Gothic SC";
+  src: url("./fonts/swei-gothic/SweiGothicCJKsc-Regular.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  unicode-range:
+    U+2E80-30FF, U+3100-312F, U+31A0-31FF, U+3200-9FFF, U+F900-FAFF,
+    U+FE10-FE1F, U+FE30-FE4F, U+FF00-FFEF, U+1AFF0-1B16F, U+20000-3FFFF;
+}
+
+@font-face {
+  font-family: "Swei Gothic SC";
+  src: url("./fonts/swei-gothic/SweiGothicCJKsc-Medium.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  unicode-range:
+    U+2E80-30FF, U+3100-312F, U+31A0-31FF, U+3200-9FFF, U+F900-FAFF,
+    U+FE10-FE1F, U+FE30-FE4F, U+FF00-FFEF, U+1AFF0-1B16F, U+20000-3FFFF;
+}
+
+@font-face {
+  font-family: "Swei Gothic SC";
+  src: url("./fonts/swei-gothic/SweiGothicCJKsc-Bold.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  unicode-range:
+    U+2E80-30FF, U+3100-312F, U+31A0-31FF, U+3200-9FFF, U+F900-FAFF,
+    U+FE10-FE1F, U+FE30-FE4F, U+FF00-FFEF, U+1AFF0-1B16F, U+20000-3FFFF;
+}
+
+@font-face {
+  font-family: "Swei Gothic SC";
+  src: url("./fonts/swei-gothic/SweiGothicCJKsc-Black.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  unicode-range:
+    U+2E80-30FF, U+3100-312F, U+31A0-31FF, U+3200-9FFF, U+F900-FAFF,
+    U+FE10-FE1F, U+FE30-FE4F, U+FF00-FFEF, U+1AFF0-1B16F, U+20000-3FFFF;
+}
+
+@font-face {
+  font-family: "Swei Gothic TC";
+  src: url("./fonts/swei-gothic/SweiGothicCJKtc-Regular.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  unicode-range:
+    U+2E80-30FF, U+3100-312F, U+31A0-31FF, U+3200-9FFF, U+F900-FAFF,
+    U+FE10-FE1F, U+FE30-FE4F, U+FF00-FFEF, U+1AFF0-1B16F, U+20000-3FFFF;
+}
+
+@font-face {
+  font-family: "Swei Gothic TC";
+  src: url("./fonts/swei-gothic/SweiGothicCJKtc-Medium.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  unicode-range:
+    U+2E80-30FF, U+3100-312F, U+31A0-31FF, U+3200-9FFF, U+F900-FAFF,
+    U+FE10-FE1F, U+FE30-FE4F, U+FF00-FFEF, U+1AFF0-1B16F, U+20000-3FFFF;
+}
+
+@font-face {
+  font-family: "Swei Gothic TC";
+  src: url("./fonts/swei-gothic/SweiGothicCJKtc-Bold.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  unicode-range:
+    U+2E80-30FF, U+3100-312F, U+31A0-31FF, U+3200-9FFF, U+F900-FAFF,
+    U+FE10-FE1F, U+FE30-FE4F, U+FF00-FFEF, U+1AFF0-1B16F, U+20000-3FFFF;
+}
+
+@font-face {
+  font-family: "Swei Gothic TC";
+  src: url("./fonts/swei-gothic/SweiGothicCJKtc-Black.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  unicode-range:
+    U+2E80-30FF, U+3100-312F, U+31A0-31FF, U+3200-9FFF, U+F900-FAFF,
+    U+FE10-FE1F, U+FE30-FE4F, U+FF00-FFEF, U+1AFF0-1B16F, U+20000-3FFFF;
+}
+
+@font-face {
+  font-family: "Swei Gothic JP";
+  src: url("./fonts/swei-gothic/SweiGothicCJKjp-Regular.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  unicode-range:
+    U+2E80-30FF, U+3100-312F, U+31A0-31FF, U+3200-9FFF, U+F900-FAFF,
+    U+FE10-FE1F, U+FE30-FE4F, U+FF00-FFEF, U+1AFF0-1B16F, U+20000-3FFFF;
+}
+
+@font-face {
+  font-family: "Swei Gothic JP";
+  src: url("./fonts/swei-gothic/SweiGothicCJKjp-Medium.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  unicode-range:
+    U+2E80-30FF, U+3100-312F, U+31A0-31FF, U+3200-9FFF, U+F900-FAFF,
+    U+FE10-FE1F, U+FE30-FE4F, U+FF00-FFEF, U+1AFF0-1B16F, U+20000-3FFFF;
+}
+
+@font-face {
+  font-family: "Swei Gothic JP";
+  src: url("./fonts/swei-gothic/SweiGothicCJKjp-Bold.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  unicode-range:
+    U+2E80-30FF, U+3100-312F, U+31A0-31FF, U+3200-9FFF, U+F900-FAFF,
+    U+FE10-FE1F, U+FE30-FE4F, U+FF00-FFEF, U+1AFF0-1B16F, U+20000-3FFFF;
+}
+
+@font-face {
+  font-family: "Swei Gothic JP";
+  src: url("./fonts/swei-gothic/SweiGothicCJKjp-Black.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  unicode-range:
+    U+2E80-30FF, U+3100-312F, U+31A0-31FF, U+3200-9FFF, U+F900-FAFF,
+    U+FE10-FE1F, U+FE30-FE4F, U+FF00-FFEF, U+1AFF0-1B16F, U+20000-3FFFF;
+}
+
+@layer base {
+  :root,
+  :lang(zh) {
+    --font-cjk: "Swei Gothic SC";
+  }
+
+  :lang(zh-TW),
+  :lang(zh-HK),
+  :lang(zh-MO),
+  :lang(zh-Hant) {
+    --font-cjk: "Swei Gothic TC";
+  }
+
+  :lang(ja) {
+    --font-cjk: "Swei Gothic JP";
+  }
+
+  [lang] {
+    @apply font-sans;
+  }
+}

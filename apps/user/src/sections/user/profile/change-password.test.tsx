@@ -80,7 +80,12 @@ describe("password credentials", () => {
       target: { value: "discard-secret" },
     });
     const tab = screen.getByRole("tab", { name: "No password set" });
-    fireEvent.mouseDown(tab, { button: 0, ctrlKey: false });
+    // Tabs is React Aria-backed now: `usePress` activates on the pointer
+    // sequence a real click produces. The previous Radix implementation also
+    // activated on a bare `mouseDown`, so simulating the full sequence is the
+    // faithful interaction for the current primitive.
+    fireEvent.pointerDown(tab, { button: 0, pointerType: "mouse" });
+    fireEvent.pointerUp(tab, { button: 0, pointerType: "mouse" });
     fillNewPassword("new-secret");
     fireEvent.change(
       await screen.findByPlaceholderText("Code sent to owner@example.com"),

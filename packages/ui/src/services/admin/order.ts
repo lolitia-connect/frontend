@@ -8,7 +8,7 @@ export async function createOrder(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/order/`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/order/`,
     {
       method: "POST",
       headers: {
@@ -27,7 +27,7 @@ export async function getOrderList(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: API.GetOrderListResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/order/list`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/order/list`,
     {
       method: "GET",
       params: {
@@ -44,7 +44,7 @@ export async function updateOrderStatus(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/order/status`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/order/status`,
     {
       method: "PUT",
       headers: {

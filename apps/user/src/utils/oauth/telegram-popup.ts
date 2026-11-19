@@ -241,11 +241,22 @@ export function navigateToTelegramCallbackRoute(
     throw new Error("Invalid Telegram auth mode");
   }
 
+  // Navigate to the real pathname route, not a hash fragment. The pre-migration
+  // app used TanStack *hash* history (`createHashHistory()` in `src/main.tsx`),
+  // so assigning `location.hash` performed a route change. Under the App Router
+  // a fragment is not a route, so assigning `location.hash` changes the URL
+  // without ever mounting `/oauth/telegram` (or `/bind/telegram`) — the
+  // certification effect would never run and the sign-in silently stalled.
+  // `location.assign` performs a full navigation, which also discards the
+  // now-foreign hash and guarantees the route mounts on both fresh and
+  // already-loaded documents.
   const path = mode === "bind" ? "/bind/telegram" : "/oauth/telegram";
   const search = new URLSearchParams({
     tgAuthResult: encodeTelegramAuthResult(payload),
   }).toString();
-  window.location.hash = search ? `${path}?${search}` : path;
+  const target = search ? `${path}?${search}` : path;
+
+  window.location.assign(target);
 }
 
 export function openCenteredPopup(

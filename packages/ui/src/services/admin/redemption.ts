@@ -7,7 +7,7 @@ export async function toggleRedemptionCodeStatus(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/redemption/code/status`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/redemption/code/status`,
     {
       method: "PUT",
       headers: {
@@ -25,7 +25,7 @@ export async function updateRedemptionCode(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/redemption/code`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/redemption/code`,
     {
       method: "PUT",
       headers: {
@@ -43,7 +43,7 @@ export async function createRedemptionCode(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/redemption/code`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/redemption/code`,
     {
       method: "POST",
       headers: {
@@ -61,7 +61,7 @@ export async function deleteRedemptionCode(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/redemption/code`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/redemption/code`,
     {
       method: "DELETE",
       headers: {
@@ -79,7 +79,7 @@ export async function batchDeleteRedemptionCode(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/redemption/code/batch`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/redemption/code/batch`,
     {
       method: "DELETE",
       headers: {
@@ -97,7 +97,7 @@ export async function getRedemptionCodeList(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: API.GetRedemptionCodeListResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/redemption/code/list`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/redemption/code/list`,
     {
       method: "GET",
       params: {
@@ -114,7 +114,7 @@ export async function getRedemptionRecordList(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: API.GetRedemptionRecordListResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/redemption/record/list`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/redemption/record/list`,
     {
       method: "GET",
       params: {

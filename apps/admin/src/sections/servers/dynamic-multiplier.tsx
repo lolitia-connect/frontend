@@ -1,18 +1,10 @@
 "use client";
 
+import { Description, Sheet, Button as SheetButton } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@workspace/ui/components/button";
-import { Card, CardContent } from "@workspace/ui/components/card";
 import { ScrollArea } from "@workspace/ui/components/scroll-area";
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@workspace/ui/components/sheet";
+
 import { ArrayInput } from "@workspace/ui/composed/dynamic-inputs";
 import { Icon } from "@workspace/ui/composed/icon";
 import {
@@ -60,97 +52,104 @@ export default function DynamicMultiplier() {
   }
 
   return (
-    <Sheet onOpenChange={setOpen} open={open}>
-      <SheetTrigger asChild>
-        <Card>
-          <CardContent>
-            <div className="flex cursor-pointer items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-                  <Icon
-                    className="h-5 w-5 text-primary"
-                    icon="mdi:clock-time-eight"
-                  />
-                </div>
-                <div className="flex-1">
-                  <p className="font-medium">
-                    {t(
-                      "server_config.dynamic_multiplier",
-                      "Dynamic multiplier"
-                    )}
-                  </p>
-                  <p className="truncate text-muted-foreground text-sm">
-                    {t(
-                      "server_config.dynamic_multiplier_desc",
-                      "Define time slots and multipliers to adjust traffic accounting."
-                    )}
-                  </p>
-                </div>
+    <Sheet isOpen={open} onOpenChange={setOpen} placement="right">
+      <Sheet.Trigger>
+        <SheetButton
+          className="settings-option justify-between"
+          variant="tertiary"
+        >
+          <span className="flex items-center gap-3">
+            <span className="flex size-10 items-center justify-center rounded-lg bg-surface">
+              <Icon
+                className="size-5 text-foreground"
+                icon="mdi:clock-time-eight"
+              />
+            </span>
+            <span className="flex-1">
+              <span className="block font-medium">
+                {t("server_config.dynamic_multiplier", "Dynamic multiplier")}
+              </span>
+              <span className="block text-muted text-sm">
+                {t(
+                  "server_config.dynamic_multiplier_desc",
+                  "Define time slots and multipliers to adjust traffic accounting."
+                )}
+              </span>
+            </span>
+          </span>
+          <Icon className="size-6 text-muted" icon="mdi:chevron-right" />
+        </SheetButton>
+      </Sheet.Trigger>
+
+      <Sheet.Backdrop>
+        <Sheet.Content>
+          <Sheet.Dialog className="w-[600px] max-w-full md:max-w-3xl">
+            <Sheet.Header>
+              <Sheet.Heading>
+                {t("server_config.dynamic_multiplier", "Dynamic multiplier")}
+              </Sheet.Heading>
+              <Description slot="description">
+                {t(
+                  "server_config.dynamic_multiplier_desc",
+                  "Define time slots and multipliers to adjust traffic accounting."
+                )}
+              </Description>
+            </Sheet.Header>
+            <ScrollArea className="h-[calc(100dvh-48px-36px-60px-env(safe-area-inset-top))] px-6">
+              <div className="space-y-4 pt-4">
+                <ArrayInput<API.TimePeriod>
+                  fields={[
+                    {
+                      name: "start_time",
+                      prefix: t(
+                        "server_config.fields.start_time",
+                        "Start time"
+                      ),
+                      type: "time",
+                      step: "1",
+                    },
+                    {
+                      name: "end_time",
+                      prefix: t("server_config.fields.end_time", "End time"),
+                      type: "time",
+                      step: "1",
+                    },
+                    {
+                      name: "multiplier",
+                      prefix: t(
+                        "server_config.fields.multiplier",
+                        "Multiplier"
+                      ),
+                      type: "number",
+                      placeholder: "0",
+                    },
+                  ]}
+                  onChange={setTimeSlots}
+                  value={timeSlots}
+                />
               </div>
-              <Icon className="size-6" icon="mdi:chevron-right" />
-            </div>
-          </CardContent>
-        </Card>
-      </SheetTrigger>
+            </ScrollArea>
 
-      <SheetContent className="w-[600px] max-w-full md:max-w-3xl">
-        <SheetHeader>
-          <SheetTitle>
-            {t("server_config.dynamic_multiplier", "Dynamic multiplier")}
-          </SheetTitle>
-          <SheetDescription>
-            {t(
-              "server_config.dynamic_multiplier_desc",
-              "Define time slots and multipliers to adjust traffic accounting."
-            )}
-          </SheetDescription>
-        </SheetHeader>
-        <ScrollArea className="h-[calc(100dvh-48px-36px-60px-env(safe-area-inset-top))] px-6">
-          <div className="space-y-4 pt-4">
-            <ArrayInput<API.TimePeriod>
-              fields={[
-                {
-                  name: "start_time",
-                  prefix: t("server_config.fields.start_time", "Start time"),
-                  type: "time",
-                  step: "1",
-                },
-                {
-                  name: "end_time",
-                  prefix: t("server_config.fields.end_time", "End time"),
-                  type: "time",
-                  step: "1",
-                },
-                {
-                  name: "multiplier",
-                  prefix: t("server_config.fields.multiplier", "Multiplier"),
-                  type: "number",
-                  placeholder: "0",
-                },
-              ]}
-              onChange={setTimeSlots}
-              value={timeSlots}
-            />
-          </div>
-        </ScrollArea>
-
-        <SheetFooter className="flex-row justify-between pt-3">
-          <Button
-            onClick={() => setTimeSlots(periodsResp || [])}
-            variant="outline"
-          >
-            {t("server_config.fields.reset", "Reset")}
-          </Button>
-          <div className="flex gap-2">
-            <Button onClick={() => setOpen(false)} variant="outline">
-              {t("actions.cancel", "Cancel")}
-            </Button>
-            <Button loading={saving} onClick={savePeriods}>
-              {t("actions.save", "Save")}
-            </Button>
-          </div>
-        </SheetFooter>
-      </SheetContent>
+            <Sheet.Footer className="flex-row justify-between pt-3">
+              <Button
+                onClick={() => setTimeSlots(periodsResp || [])}
+                variant="outline"
+              >
+                {t("server_config.fields.reset", "Reset")}
+              </Button>
+              <div className="flex gap-2">
+                <Button onClick={() => setOpen(false)} variant="outline">
+                  {t("actions.cancel", "Cancel")}
+                </Button>
+                <Button loading={saving} onClick={savePeriods}>
+                  {t("actions.save", "Save")}
+                </Button>
+              </div>
+            </Sheet.Footer>
+            <Sheet.CloseTrigger aria-label="Close" />
+          </Sheet.Dialog>
+        </Sheet.Content>
+      </Sheet.Backdrop>
     </Sheet>
   );
 }

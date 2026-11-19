@@ -20,7 +20,7 @@ export function IpLink({
 
   return (
     <a
-      className={`inline-flex items-center gap-1 font-mono text-primary transition-colors hover:text-primary/80 hover:underline ${className}`}
+      className={`inline-flex items-center gap-1 font-mono text-accent transition-colors hover:text-accent/80 hover:underline ${className}`}
       href={url}
       rel={target === "_blank" ? "noopener noreferrer" : undefined}
       target={target}

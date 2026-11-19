@@ -75,6 +75,7 @@
   "scheduledSendTimeMustBeLater": "定时发送时间必须晚于当前时间",
   "scheduleSend": "定时发送",
   "scope": "发送范围",
+  "sections": "标签页",
   "selectSendScope": "选择发送范围",
   "selectSendTime": "选择发送时间，留空立即发送",
   "selectValidSubscriptionsOnly": "仅选择当前有效订阅",

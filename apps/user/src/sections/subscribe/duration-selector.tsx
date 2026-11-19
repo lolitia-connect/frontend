@@ -1,11 +1,7 @@
 "use client";
 
+import { Label, Radio, RadioGroup } from "@heroui/react";
 import { Badge } from "@workspace/ui/components/badge";
-import { Label } from "@workspace/ui/components/label";
-import {
-  RadioGroup,
-  RadioGroupItem,
-} from "@workspace/ui/components/radio-group";
 import type React from "react";
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
@@ -33,21 +29,6 @@ const DurationSelector: React.FC<DurationSelectorProps> = ({
     [onChange]
   );
 
-  const DurationOption: React.FC<{ value: string; label: string }> = ({
-    value,
-    label,
-  }) => (
-    <div className="relative">
-      <RadioGroupItem className="peer sr-only" id={value} value={value} />
-      <Label
-        className="relative flex h-full flex-col items-center justify-center gap-2 rounded-md border-2 border-muted bg-popover p-2 text-popover-foreground hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/10 peer-data-[state=checked]:text-foreground"
-        htmlFor={value}
-      >
-        {label}
-      </Label>
-    </div>
-  );
-
   const currentDiscount = discounts?.find(
     (item) => item.quantity === quantity
   )?.discount;
@@ -55,29 +36,42 @@ const DurationSelector: React.FC<DurationSelectorProps> = ({
 
   const hasQuantityOne = discounts?.some((item) => item.quantity === 1);
 
+  const options: Array<{ label: string; value: string }> = [];
+  if (showOriginalPrice && unitTime !== "Minute" && !hasQuantityOne) {
+    options.push({ label: `1 / ${t(unitTime)}`, value: "1" });
+  }
+  for (const item of discounts ?? []) {
+    options.push({
+      label: `${item.quantity} / ${t(unitTime)}`,
+      value: String(item.quantity),
+    });
+  }
+
   return (
     <>
       <div className="font-semibold">
         {t("purchaseDuration", "Purchase Duration")}
       </div>
       <RadioGroup
-        className="flex flex-wrap gap-3"
-        onValueChange={handleChange}
+        aria-label={t("purchaseDuration", "Purchase Duration")}
+        onChange={handleChange}
         value={String(quantity)}
       >
-        {showOriginalPrice && unitTime !== "Minute" && !hasQuantityOne && (
-          <DurationOption label={`1 / ${t(unitTime)}`} value="1" />
-        )}
-        {discounts?.map((item) => (
-          <DurationOption
-            key={item.quantity}
-            label={`${item.quantity} / ${t(unitTime)}`}
-            value={String(item.quantity)}
-          />
-        ))}
+        <div className="flex flex-wrap gap-x-3 gap-y-2">
+          {options.map((option) => (
+            <Radio key={option.value} value={option.value}>
+              <Radio.Content className="rounded-field bg-default px-3 py-2 data-[selected=true]:bg-accent-soft data-[selected=true]:text-accent-soft-foreground">
+                <Radio.Control>
+                  <Radio.Indicator />
+                </Radio.Control>
+                <Label>{option.label}</Label>
+              </Radio.Content>
+            </Radio>
+          ))}
+        </div>
       </RadioGroup>
       <div className="flex items-center justify-between">
-        <span className="text-muted-foreground text-sm">
+        <span className="text-muted text-sm">
           {t("discountInfo", "Discount Info")}:
         </span>
         {discountPercentage > 0 ? (
@@ -85,7 +79,7 @@ const DurationSelector: React.FC<DurationSelectorProps> = ({
             -{discountPercentage.toFixed(2)}% {t("discount", "Discount")}
           </Badge>
         ) : (
-          <span className="h-6 text-muted-foreground text-sm">--</span>
+          <span className="h-6 text-muted text-sm">--</span>
         )}
       </div>
     </>

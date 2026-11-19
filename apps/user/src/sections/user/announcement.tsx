@@ -1,12 +1,7 @@
 "use client";
+import { Card, Modal } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
-import { Card } from "@workspace/ui/components/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@workspace/ui/components/dialog";
+
 import Empty from "@workspace/ui/composed/empty";
 import { Icon } from "@workspace/ui/composed/icon";
 import { Markdown } from "@workspace/ui/composed/markdown";
@@ -47,16 +42,19 @@ export default function Announcement({ type }: { type: "popup" | "pinned" }) {
 
   if (type === "popup") {
     return (
-      <Dialog onOpenChange={setOpen} open={open}>
-        <DialogContent className="max-h-[85vh] overflow-auto sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>{data.title}</DialogTitle>
-          </DialogHeader>
-          <div className="prose prose-sm dark:prose-invert max-w-none">
-            <Markdown>{data.content}</Markdown>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <Modal.Backdrop isOpen={open} onOpenChange={setOpen}>
+        <Modal.Container>
+          <Modal.Dialog className="max-h-[85vh] overflow-auto sm:max-w-[425px]">
+            <Modal.Header>
+              <Modal.Heading>{data.title}</Modal.Heading>
+            </Modal.Header>
+            <div className="prose prose-sm dark:prose-invert max-w-none">
+              <Markdown>{data.content}</Markdown>
+            </div>
+            <Modal.CloseTrigger aria-label="Close" />
+          </Modal.Dialog>
+        </Modal.Container>
+      </Modal.Backdrop>
     );
   }
 

@@ -1,3 +1,12 @@
+"use client";
+
+import {
+  TabIndicator,
+  Tabs,
+  TabList as TabsList,
+  TabListContainer as TabsListContainer,
+  Tab as TabsTrigger,
+} from "@heroui/react";
 import {
   FormControl,
   FormDescription,
@@ -6,7 +15,6 @@ import {
   FormMessage,
 } from "@workspace/ui/components/form";
 import { Input } from "@workspace/ui/components/input";
-import { Tabs, TabsList, TabsTrigger } from "@workspace/ui/components/tabs";
 import { useFormContext } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import SendCode from "@/sections/auth/send-code";
@@ -34,24 +42,40 @@ export default function CurrentCredentialFields({
     <div className="space-y-3">
       {email && (
         <Tabs
-          onValueChange={(value) => {
-            setValue(passwordName, "");
-            setValue("current_code", "");
-            clearErrors([passwordName, "current_code"]);
-            onVerifyByChange(value as VerifyBy);
-          }}
-          value={verifyBy}
+          className="min-w-0 max-w-full"
+          onSelectionChange={(key) =>
+            ((value) => {
+              setValue(passwordName, "");
+              setValue("current_code", "");
+              clearErrors([passwordName, "current_code"]);
+              onVerifyByChange(value as VerifyBy);
+            })(String(key))
+          }
+          selectedKey={verifyBy}
         >
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="password">
-              {t("currentCredential.password", "Current password")}
-            </TabsTrigger>
-            <TabsTrigger value="code">
-              {passwordName === "old_password"
-                ? t("currentCredential.noPassword", "No password set")
-                : t("currentCredential.verificationCode", "Verification code")}
-            </TabsTrigger>
-          </TabsList>
+          <TabsListContainer className="min-w-0 max-w-full">
+            <TabsList aria-label={t("sections", "Sections")}>
+              <TabsTrigger
+                className="w-auto flex-1 whitespace-nowrap"
+                id="password"
+              >
+                {t("currentCredential.password", "Current password")}
+                <TabIndicator />
+              </TabsTrigger>
+              <TabsTrigger
+                className="w-auto flex-1 whitespace-nowrap"
+                id="code"
+              >
+                {passwordName === "old_password"
+                  ? t("currentCredential.noPassword", "No password set")
+                  : t(
+                      "currentCredential.verificationCode",
+                      "Verification code"
+                    )}
+                <TabIndicator />
+              </TabsTrigger>
+            </TabsList>
+          </TabsListContainer>
         </Tabs>
       )}
       {verifyBy === "code" && email ? (

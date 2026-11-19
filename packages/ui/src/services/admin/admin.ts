@@ -8,7 +8,7 @@ export async function putAds(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/ads/`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/ads/`,
     {
       method: "PUT",
       headers: {
@@ -26,7 +26,7 @@ export async function postAds(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/ads/`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/ads/`,
     {
       method: "POST",
       headers: {
@@ -44,7 +44,7 @@ export async function deleteAds(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/ads/`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/ads/`,
     {
       method: "DELETE",
       headers: {
@@ -63,7 +63,7 @@ export async function getAdsDetail(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean & { data?: API.Ads }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/ads/detail`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/ads/detail`,
     {
       method: "GET",
       params: {
@@ -81,7 +81,7 @@ export async function getAdsList(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean & { data?: API.GetAdsListResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/ads/list`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/ads/list`,
     {
       method: "GET",
       params: {
@@ -98,7 +98,7 @@ export async function putAnnouncement(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/announcement/`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/announcement/`,
     {
       method: "PUT",
       headers: {
@@ -116,7 +116,7 @@ export async function postAnnouncement(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/announcement/`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/announcement/`,
     {
       method: "POST",
       headers: {
@@ -134,7 +134,7 @@ export async function deleteAnnouncement(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/announcement/`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/announcement/`,
     {
       method: "DELETE",
       headers: {
@@ -153,7 +153,7 @@ export async function getAnnouncementDetail(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean & { data?: API.Announcement }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/announcement/detail`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/announcement/detail`,
     {
       method: "GET",
       params: {
@@ -172,7 +172,7 @@ export async function getAnnouncementList(
 ) {
   return request<
     API.ResponseSuccessBean & { data?: API.GetAnnouncementListResponse }
-  >(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/announcement/list`, {
+  >(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/announcement/list`, {
     method: "GET",
     params: {
       ...params,
@@ -187,7 +187,7 @@ export async function postApplication(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean & { data?: API.SubscribeApplication }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/application/`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/application/`,
     {
       method: "POST",
       headers: {
@@ -207,13 +207,16 @@ export async function getApplicationPreview(
 ) {
   return request<
     API.ResponseSuccessBean & { data?: API.PreviewSubscribeTemplateResponse }
-  >(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/application/preview`, {
-    method: "GET",
-    params: {
-      ...params,
-    },
-    ...(options || {}),
-  });
+  >(
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/application/preview`,
+    {
+      method: "GET",
+      params: {
+        ...params,
+      },
+      ...(options || {}),
+    }
+  );
 }
 
 /** Update subscribe application PUT /v1/admin/application/subscribe_application */
@@ -223,7 +226,7 @@ export async function putApplicationSubscribeApplication(
 ) {
   return request<API.ResponseSuccessBean & { data?: API.SubscribeApplication }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/application/subscribe_application`,
     {
       method: "PUT",
@@ -243,7 +246,7 @@ export async function deleteApplicationSubscribeApplication(
 ) {
   return request<API.ResponseSuccessBean>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/application/subscribe_application`,
     {
       method: "DELETE",
@@ -266,7 +269,7 @@ export async function getApplicationSubscribeApplicationList(
     API.ResponseSuccessBean & { data?: API.GetSubscribeApplicationListResponse }
   >(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/application/subscribe_application_list`,
     {
       method: "GET",
@@ -285,7 +288,7 @@ export async function getAuthMethodConfig(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean & { data?: API.AuthMethodConfig }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/auth-method/config`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/auth-method/config`,
     {
       method: "GET",
       params: {
@@ -302,7 +305,7 @@ export async function putAuthMethodConfig(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean & { data?: API.AuthMethodConfig }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/auth-method/config`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/auth-method/config`,
     {
       method: "PUT",
       headers: {
@@ -320,7 +323,7 @@ export async function getAuthMethodEmailPlatform(options?: {
 }) {
   return request<API.ResponseSuccessBean & { data?: API.PlatformResponse }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/auth-method/email_platform`,
     {
       method: "GET",
@@ -333,7 +336,7 @@ export async function getAuthMethodEmailPlatform(options?: {
 export async function getAuthMethodList(options?: { [key: string]: any }) {
   return request<
     API.ResponseSuccessBean & { data?: API.GetAuthMethodListResponse }
-  >(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/auth-method/list`, {
+  >(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/auth-method/list`, {
     method: "GET",
     ...(options || {}),
   });
@@ -345,7 +348,7 @@ export async function getAuthMethodSmsPlatform(options?: {
 }) {
   return request<API.ResponseSuccessBean & { data?: API.PlatformResponse }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/auth-method/sms_platform`,
     {
       method: "GET",
@@ -361,7 +364,7 @@ export async function postAuthMethodTestEmailSend(
 ) {
   return request<API.ResponseSuccessBean>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/auth-method/test_email_send`,
     {
       method: "POST",
@@ -381,7 +384,7 @@ export async function postAuthMethodTestSmsSend(
 ) {
   return request<API.ResponseSuccessBean>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/auth-method/test_sms_send`,
     {
       method: "POST",
@@ -398,7 +401,7 @@ export async function postAuthMethodTestSmsSend(
 export async function getConsoleRevenue(options?: { [key: string]: any }) {
   return request<
     API.ResponseSuccessBean & { data?: API.RevenueStatisticsResponse }
-  >(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/console/revenue`, {
+  >(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/console/revenue`, {
     method: "GET",
     ...(options || {}),
   });
@@ -408,7 +411,7 @@ export async function getConsoleRevenue(options?: { [key: string]: any }) {
 export async function getConsoleServer(options?: { [key: string]: any }) {
   return request<
     API.ResponseSuccessBean & { data?: API.ServerTotalDataResponse }
-  >(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/console/server`, {
+  >(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/console/server`, {
     method: "GET",
     ...(options || {}),
   });
@@ -418,7 +421,7 @@ export async function getConsoleServer(options?: { [key: string]: any }) {
 export async function getConsoleTicket(options?: { [key: string]: any }) {
   return request<
     API.ResponseSuccessBean & { data?: API.TicketWaitRelpyResponse }
-  >(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/console/ticket`, {
+  >(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/console/ticket`, {
     method: "GET",
     ...(options || {}),
   });
@@ -428,7 +431,7 @@ export async function getConsoleTicket(options?: { [key: string]: any }) {
 export async function getConsoleUser(options?: { [key: string]: any }) {
   return request<
     API.ResponseSuccessBean & { data?: API.UserStatisticsResponse }
-  >(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/console/user`, {
+  >(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/console/user`, {
     method: "GET",
     ...(options || {}),
   });
@@ -440,7 +443,7 @@ export async function putCoupon(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/coupon/`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/coupon/`,
     {
       method: "PUT",
       headers: {
@@ -458,7 +461,7 @@ export async function postCoupon(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/coupon/`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/coupon/`,
     {
       method: "POST",
       headers: {
@@ -476,7 +479,7 @@ export async function deleteCoupon(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/coupon/`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/coupon/`,
     {
       method: "DELETE",
       headers: {
@@ -494,7 +497,7 @@ export async function deleteCouponBatch(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/coupon/batch`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/coupon/batch`,
     {
       method: "DELETE",
       headers: {
@@ -514,7 +517,7 @@ export async function getCouponList(
 ) {
   return request<
     API.ResponseSuccessBean & { data?: API.GetCouponListResponse }
-  >(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/coupon/list`, {
+  >(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/coupon/list`, {
     method: "GET",
     params: {
       ...params,
@@ -529,7 +532,7 @@ export async function putDocument(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/document/`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/document/`,
     {
       method: "PUT",
       headers: {
@@ -547,7 +550,7 @@ export async function postDocument(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/document/`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/document/`,
     {
       method: "POST",
       headers: {
@@ -565,7 +568,7 @@ export async function deleteDocument(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/document/`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/document/`,
     {
       method: "DELETE",
       headers: {
@@ -583,7 +586,7 @@ export async function deleteDocumentBatch(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/document/batch`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/document/batch`,
     {
       method: "DELETE",
       headers: {
@@ -602,7 +605,7 @@ export async function getDocumentDetail(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean & { data?: API.Document }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/document/detail`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/document/detail`,
     {
       method: "GET",
       params: {
@@ -621,7 +624,7 @@ export async function getDocumentList(
 ) {
   return request<
     API.ResponseSuccessBean & { data?: API.GetDocumentListResponse }
-  >(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/document/list`, {
+  >(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/document/list`, {
     method: "GET",
     params: {
       ...params,
@@ -638,7 +641,7 @@ export async function getLogAdminList(
 ) {
   return request<
     API.ResponseSuccessBean & { data?: API.FilterAdminActionLogResponse }
-  >(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/log/admin/list`, {
+  >(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/log/admin/list`, {
     method: "GET",
     params: {
       ...params,
@@ -655,7 +658,7 @@ export async function getLogBalanceList(
 ) {
   return request<
     API.ResponseSuccessBean & { data?: API.FilterBalanceLogResponse }
-  >(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/log/balance/list`, {
+  >(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/log/balance/list`, {
     method: "GET",
     params: {
       ...params,
@@ -672,13 +675,16 @@ export async function getLogCommissionList(
 ) {
   return request<
     API.ResponseSuccessBean & { data?: API.FilterCommissionLogResponse }
-  >(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/log/commission/list`, {
-    method: "GET",
-    params: {
-      ...params,
-    },
-    ...(options || {}),
-  });
+  >(
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/log/commission/list`,
+    {
+      method: "GET",
+      params: {
+        ...params,
+      },
+      ...(options || {}),
+    }
+  );
 }
 
 /** Filter email log GET /v1/admin/log/email/list */
@@ -689,7 +695,7 @@ export async function getLogEmailList(
 ) {
   return request<
     API.ResponseSuccessBean & { data?: API.FilterEmailLogResponse }
-  >(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/log/email/list`, {
+  >(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/log/email/list`, {
     method: "GET",
     params: {
       ...params,
@@ -706,7 +712,7 @@ export async function getLogGiftList(
 ) {
   return request<
     API.ResponseSuccessBean & { data?: API.FilterGiftLogResponse }
-  >(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/log/gift/list`, {
+  >(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/log/gift/list`, {
     method: "GET",
     params: {
       ...params,
@@ -723,7 +729,7 @@ export async function getLogLoginList(
 ) {
   return request<
     API.ResponseSuccessBean & { data?: API.FilterLoginLogResponse }
-  >(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/log/login/list`, {
+  >(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/log/login/list`, {
     method: "GET",
     params: {
       ...params,
@@ -740,7 +746,7 @@ export async function getLogMessageList(
 ) {
   return request<
     API.ResponseSuccessBean & { data?: API.GetMessageLogListResponse }
-  >(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/log/message/list`, {
+  >(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/log/message/list`, {
     method: "GET",
     params: {
       ...params,
@@ -757,7 +763,7 @@ export async function getLogMobileList(
 ) {
   return request<
     API.ResponseSuccessBean & { data?: API.FilterMobileLogResponse }
-  >(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/log/mobile/list`, {
+  >(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/log/mobile/list`, {
     method: "GET",
     params: {
       ...params,
@@ -774,7 +780,7 @@ export async function getLogOrderList(
 ) {
   return request<
     API.ResponseSuccessBean & { data?: API.FilterOrderLogResponse }
-  >(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/log/order/list`, {
+  >(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/log/order/list`, {
     method: "GET",
     params: {
       ...params,
@@ -793,7 +799,7 @@ export async function getLogPaymentUnmatchedList(
     API.ResponseSuccessBean & { data?: API.FilterUnmatchedPaymentLogResponse }
   >(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/log/unmatched-payment/list`,
     {
       method: "GET",
@@ -813,7 +819,7 @@ export async function getLogRegisterList(
 ) {
   return request<
     API.ResponseSuccessBean & { data?: API.FilterRegisterLogResponse }
-  >(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/log/register/list`, {
+  >(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/log/register/list`, {
     method: "GET",
     params: {
       ...params,
@@ -831,7 +837,7 @@ export async function getLogServerTrafficList(
   return request<
     API.ResponseSuccessBean & { data?: API.FilterServerTrafficLogResponse }
   >(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/log/server/traffic/list`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/log/server/traffic/list`,
     {
       method: "GET",
       params: {
@@ -845,7 +851,7 @@ export async function getLogServerTrafficList(
 /** Get log setting GET /v1/admin/log/setting */
 export async function getLogSetting(options?: { [key: string]: any }) {
   return request<API.ResponseSuccessBean & { data?: API.LogSetting }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/log/setting`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/log/setting`,
     {
       method: "GET",
       ...(options || {}),
@@ -859,7 +865,7 @@ export async function postLogSetting(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/log/setting`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/log/setting`,
     {
       method: "POST",
       headers: {
@@ -879,7 +885,7 @@ export async function getLogSubscribeList(
 ) {
   return request<
     API.ResponseSuccessBean & { data?: API.FilterSubscribeLogResponse }
-  >(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/log/subscribe/list`, {
+  >(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/log/subscribe/list`, {
     method: "GET",
     params: {
       ...params,
@@ -898,7 +904,7 @@ export async function getLogSubscribeResetList(
     API.ResponseSuccessBean & { data?: API.FilterResetSubscribeLogResponse }
   >(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/log/subscribe/reset/list`,
     {
       method: "GET",
@@ -920,7 +926,7 @@ export async function getLogSubscribeTrafficList(
     API.ResponseSuccessBean & { data?: API.FilterSubscribeTrafficResponse }
   >(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/log/subscribe/traffic/list`,
     {
       method: "GET",
@@ -940,13 +946,16 @@ export async function getLogTrafficDetails(
 ) {
   return request<
     API.ResponseSuccessBean & { data?: API.FilterTrafficLogDetailsResponse }
-  >(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/log/traffic/details`, {
-    method: "GET",
-    params: {
-      ...params,
-    },
-    ...(options || {}),
-  });
+  >(
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/log/traffic/details`,
+    {
+      method: "GET",
+      params: {
+        ...params,
+      },
+      ...(options || {}),
+    }
+  );
 }
 
 /** Get batch send email task list GET /v1/admin/marketing/email/batch/list */
@@ -959,7 +968,7 @@ export async function getMarketingEmailBatchList(
     API.ResponseSuccessBean & { data?: API.GetBatchSendEmailTaskListResponse }
   >(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/marketing/email/batch/list`,
     {
       method: "GET",
@@ -980,7 +989,7 @@ export async function postMarketingEmailBatchPreSendCount(
     API.ResponseSuccessBean & { data?: API.GetPreSendEmailCountResponse }
   >(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/marketing/email/batch/pre-send-count`,
     {
       method: "POST",
@@ -1000,7 +1009,7 @@ export async function postMarketingEmailBatchSend(
 ) {
   return request<API.ResponseSuccessBean>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/marketing/email/batch/send`,
     {
       method: "POST",
@@ -1022,7 +1031,7 @@ export async function postMarketingEmailBatchStatus(
     API.ResponseSuccessBean & { data?: API.GetBatchSendEmailTaskStatusResponse }
   >(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/marketing/email/batch/status`,
     {
       method: "POST",
@@ -1042,7 +1051,7 @@ export async function postMarketingEmailBatchStop(
 ) {
   return request<API.ResponseSuccessBean>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/marketing/email/batch/stop`,
     {
       method: "POST",
@@ -1061,7 +1070,7 @@ export async function postMarketingQuotaCreate(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/marketing/quota/create`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/marketing/quota/create`,
     {
       method: "POST",
       headers: {
@@ -1081,13 +1090,16 @@ export async function getMarketingQuotaList(
 ) {
   return request<
     API.ResponseSuccessBean & { data?: API.QueryQuotaTaskListResponse }
-  >(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/marketing/quota/list`, {
-    method: "GET",
-    params: {
-      ...params,
-    },
-    ...(options || {}),
-  });
+  >(
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/marketing/quota/list`,
+    {
+      method: "GET",
+      params: {
+        ...params,
+      },
+      ...(options || {}),
+    }
+  );
 }
 
 /** Query quota task pre-count POST /v1/admin/marketing/quota/pre-count */
@@ -1099,7 +1111,7 @@ export async function postMarketingQuotaPreCount(
     API.ResponseSuccessBean & { data?: API.QueryQuotaTaskPreCountResponse }
   >(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/marketing/quota/pre-count`,
     {
       method: "POST",
@@ -1118,7 +1130,7 @@ export async function postOrder(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/order/`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/order/`,
     {
       method: "POST",
       headers: {
@@ -1137,7 +1149,7 @@ export async function getOrderList(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean & { data?: API.GetOrderListResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/order/list`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/order/list`,
     {
       method: "GET",
       params: {
@@ -1154,7 +1166,7 @@ export async function putOrderStatus(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/order/status`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/order/status`,
     {
       method: "PUT",
       headers: {
@@ -1172,7 +1184,7 @@ export async function putPayment(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean & { data?: API.PaymentConfig }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/payment/`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/payment/`,
     {
       method: "PUT",
       headers: {
@@ -1190,7 +1202,7 @@ export async function postPayment(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean & { data?: API.PaymentConfig }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/payment/`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/payment/`,
     {
       method: "POST",
       headers: {
@@ -1208,7 +1220,7 @@ export async function deletePayment(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/payment/`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/payment/`,
     {
       method: "DELETE",
       headers: {
@@ -1228,7 +1240,7 @@ export async function getPaymentList(
 ) {
   return request<
     API.ResponseSuccessBean & { data?: API.GetPaymentMethodListResponse }
-  >(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/payment/list`, {
+  >(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/payment/list`, {
     method: "GET",
     params: {
       ...params,
@@ -1240,7 +1252,7 @@ export async function getPaymentList(
 /** Get supported payment platform GET /v1/admin/payment/platform */
 export async function getPaymentPlatform(options?: { [key: string]: any }) {
   return request<API.ResponseSuccessBean & { data?: API.PlatformResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/payment/platform`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/payment/platform`,
     {
       method: "GET",
       ...(options || {}),
@@ -1254,7 +1266,7 @@ export async function postServerCreate(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/server/create`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/server/create`,
     {
       method: "POST",
       headers: {
@@ -1272,7 +1284,7 @@ export async function postServerOpenApiDelete(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/server/delete`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/server/delete`,
     {
       method: "POST",
       headers: {
@@ -1292,7 +1304,7 @@ export async function getServerList(
 ) {
   return request<
     API.ResponseSuccessBean & { data?: API.FilterServerListResponse }
-  >(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/server/list`, {
+  >(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/server/list`, {
     method: "GET",
     params: {
       ...params,
@@ -1309,7 +1321,7 @@ export async function getServerNodeConfig(
 ) {
   return request<
     API.ResponseSuccessBean & { data?: API.GetServerNodeConfigResponse }
-  >(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/server/node_config`, {
+  >(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/server/node_config`, {
     method: "GET",
     params: {
       ...params,
@@ -1325,7 +1337,7 @@ export async function postServerNodeConfigUpdate(
 ) {
   return request<API.ResponseSuccessBean>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/server/node_config/update`,
     {
       method: "POST",
@@ -1344,7 +1356,7 @@ export async function postServerNodeCreate(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/server/node/create`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/server/node/create`,
     {
       method: "POST",
       headers: {
@@ -1362,7 +1374,7 @@ export async function postServerNodeOpenApiDelete(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/server/node/delete`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/server/node/delete`,
     {
       method: "POST",
       headers: {
@@ -1382,7 +1394,7 @@ export async function getServerNodeList(
 ) {
   return request<
     API.ResponseSuccessBean & { data?: API.FilterNodeListResponse }
-  >(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/server/node/list`, {
+  >(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/server/node/list`, {
     method: "GET",
     params: {
       ...params,
@@ -1397,7 +1409,7 @@ export async function postServerNodeSort(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/server/node/sort`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/server/node/sort`,
     {
       method: "POST",
       headers: {
@@ -1416,7 +1428,7 @@ export async function postServerNodeStatusToggle(
 ) {
   return request<API.ResponseSuccessBean>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/server/node/status/toggle`,
     {
       method: "POST",
@@ -1432,7 +1444,7 @@ export async function postServerNodeStatusToggle(
 /** Query all node tags GET /v1/admin/server/node/tags */
 export async function getServerNodeTags(options?: { [key: string]: any }) {
   return request<API.ResponseSuccessBean & { data?: API.QueryNodeTagResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/server/node/tags`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/server/node/tags`,
     {
       method: "GET",
       ...(options || {}),
@@ -1446,7 +1458,7 @@ export async function postServerNodeUpdate(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/server/node/update`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/server/node/update`,
     {
       method: "POST",
       headers: {
@@ -1466,7 +1478,7 @@ export async function getServerProtocols(
 ) {
   return request<
     API.ResponseSuccessBean & { data?: API.GetServerProtocolsResponse }
-  >(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/server/protocols`, {
+  >(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/server/protocols`, {
     method: "GET",
     params: {
       ...params,
@@ -1481,7 +1493,7 @@ export async function postServerServerSort(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/server/server/sort`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/server/server/sort`,
     {
       method: "POST",
       headers: {
@@ -1499,7 +1511,7 @@ export async function postServerUpdate(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/server/update`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/server/update`,
     {
       method: "POST",
       headers: {
@@ -1517,7 +1529,7 @@ export async function putSubscribe(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/subscribe/`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/subscribe/`,
     {
       method: "PUT",
       headers: {
@@ -1535,7 +1547,7 @@ export async function postSubscribe(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/subscribe/`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/subscribe/`,
     {
       method: "POST",
       headers: {
@@ -1553,7 +1565,7 @@ export async function deleteSubscribe(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/subscribe/`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/subscribe/`,
     {
       method: "DELETE",
       headers: {
@@ -1571,7 +1583,7 @@ export async function deleteSubscribeBatch(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/subscribe/batch`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/subscribe/batch`,
     {
       method: "DELETE",
       headers: {
@@ -1590,7 +1602,7 @@ export async function getSubscribeDetails(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean & { data?: API.Subscribe }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/subscribe/details`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/subscribe/details`,
     {
       method: "GET",
       params: {
@@ -1607,7 +1619,7 @@ export async function putSubscribeGroup(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/subscribe/group`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/subscribe/group`,
     {
       method: "PUT",
       headers: {
@@ -1625,7 +1637,7 @@ export async function postSubscribeGroup(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/subscribe/group`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/subscribe/group`,
     {
       method: "POST",
       headers: {
@@ -1643,7 +1655,7 @@ export async function deleteSubscribeGroup(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/subscribe/group`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/subscribe/group`,
     {
       method: "DELETE",
       headers: {
@@ -1661,7 +1673,7 @@ export async function deleteSubscribeGroupBatch(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/subscribe/group/batch`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/subscribe/group/batch`,
     {
       method: "DELETE",
       headers: {
@@ -1677,10 +1689,13 @@ export async function deleteSubscribeGroupBatch(
 export async function getSubscribeGroupList(options?: { [key: string]: any }) {
   return request<
     API.ResponseSuccessBean & { data?: API.GetSubscribeGroupListResponse }
-  >(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/subscribe/group/list`, {
-    method: "GET",
-    ...(options || {}),
-  });
+  >(
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/subscribe/group/list`,
+    {
+      method: "GET",
+      ...(options || {}),
+    }
+  );
 }
 
 /** Get subscribe list GET /v1/admin/subscribe/list */
@@ -1691,7 +1706,7 @@ export async function getSubscribeList(
 ) {
   return request<
     API.ResponseSuccessBean & { data?: API.GetSubscribeListResponse }
-  >(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/subscribe/list`, {
+  >(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/subscribe/list`, {
     method: "GET",
     params: {
       ...params,
@@ -1708,7 +1723,7 @@ export async function postSubscribeResetAllToken(options?: {
     API.ResponseSuccessBean & { data?: API.ResetAllSubscribeTokenResponse }
   >(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/subscribe/reset_all_token`,
     {
       method: "POST",
@@ -1723,7 +1738,7 @@ export async function postSubscribeSort(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/subscribe/sort`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/subscribe/sort`,
     {
       method: "POST",
       headers: {
@@ -1740,7 +1755,7 @@ export async function getSystemCurrencyConfig(options?: {
   [key: string]: any;
 }) {
   return request<API.ResponseSuccessBean & { data?: API.CurrencyConfig }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/system/currency_config`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/system/currency_config`,
     {
       method: "GET",
       ...(options || {}),
@@ -1754,7 +1769,7 @@ export async function putSystemCurrencyConfig(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/system/currency_config`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/system/currency_config`,
     {
       method: "PUT",
       headers: {
@@ -1774,7 +1789,7 @@ export async function getSystemGetNodeMultiplier(options?: {
     API.ResponseSuccessBean & { data?: API.GetNodeMultiplierResponse }
   >(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/system/get_node_multiplier`,
     {
       method: "GET",
@@ -1786,7 +1801,7 @@ export async function getSystemGetNodeMultiplier(options?: {
 /** Get invite config GET /v1/admin/system/invite_config */
 export async function getSystemInviteConfig(options?: { [key: string]: any }) {
   return request<API.ResponseSuccessBean & { data?: API.InviteConfig }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/system/invite_config`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/system/invite_config`,
     {
       method: "GET",
       ...(options || {}),
@@ -1800,7 +1815,7 @@ export async function putSystemInviteConfig(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/system/invite_config`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/system/invite_config`,
     {
       method: "PUT",
       headers: {
@@ -1815,7 +1830,7 @@ export async function putSystemInviteConfig(
 /** Get node config GET /v1/admin/system/node_config */
 export async function getSystemNodeConfig(options?: { [key: string]: any }) {
   return request<API.ResponseSuccessBean & { data?: API.NodeConfig }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/system/node_config`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/system/node_config`,
     {
       method: "GET",
       ...(options || {}),
@@ -1829,7 +1844,7 @@ export async function putSystemNodeConfig(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/system/node_config`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/system/node_config`,
     {
       method: "PUT",
       headers: {
@@ -1849,7 +1864,7 @@ export async function getSystemNodeMultiplierPreview(options?: {
     API.ResponseSuccessBean & { data?: API.PreViewNodeMultiplierResponse }
   >(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/system/node_multiplier/preview`,
     {
       method: "GET",
@@ -1861,7 +1876,7 @@ export async function getSystemNodeMultiplierPreview(options?: {
 /** get Privacy Policy Config GET /v1/admin/system/privacy */
 export async function getSystemPrivacy(options?: { [key: string]: any }) {
   return request<API.ResponseSuccessBean & { data?: API.PrivacyPolicyConfig }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/system/privacy`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/system/privacy`,
     {
       method: "GET",
       ...(options || {}),
@@ -1875,7 +1890,7 @@ export async function putSystemPrivacy(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/system/privacy`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/system/privacy`,
     {
       method: "PUT",
       headers: {
@@ -1892,7 +1907,7 @@ export async function getSystemRegisterConfig(options?: {
   [key: string]: any;
 }) {
   return request<API.ResponseSuccessBean & { data?: API.RegisterConfig }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/system/register_config`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/system/register_config`,
     {
       method: "GET",
       ...(options || {}),
@@ -1906,7 +1921,7 @@ export async function putSystemRegisterConfig(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/system/register_config`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/system/register_config`,
     {
       method: "PUT",
       headers: {
@@ -1925,7 +1940,7 @@ export async function postSystemSetNodeMultiplier(
 ) {
   return request<API.ResponseSuccessBean>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/system/set_node_multiplier`,
     {
       method: "POST",
@@ -1944,7 +1959,7 @@ export async function postSystemSettingTelegramBot(options?: {
 }) {
   return request<API.ResponseSuccessBean>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/system/setting_telegram_bot`,
     {
       method: "POST",
@@ -1956,7 +1971,7 @@ export async function postSystemSettingTelegramBot(options?: {
 /** Get site config GET /v1/admin/system/site_config */
 export async function getSystemSiteConfig(options?: { [key: string]: any }) {
   return request<API.ResponseSuccessBean & { data?: API.SiteConfig }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/system/site_config`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/system/site_config`,
     {
       method: "GET",
       ...(options || {}),
@@ -1970,7 +1985,7 @@ export async function putSystemSiteConfig(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/system/site_config`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/system/site_config`,
     {
       method: "PUT",
       headers: {
@@ -1987,7 +2002,7 @@ export async function getSystemSubscribeConfig(options?: {
   [key: string]: any;
 }) {
   return request<API.ResponseSuccessBean & { data?: API.SubscribeConfig }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/system/subscribe_config`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/system/subscribe_config`,
     {
       method: "GET",
       ...(options || {}),
@@ -2001,7 +2016,7 @@ export async function putSystemSubscribeConfig(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/system/subscribe_config`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/system/subscribe_config`,
     {
       method: "PUT",
       headers: {
@@ -2016,7 +2031,7 @@ export async function putSystemSubscribeConfig(
 /** Get Team of Service Config GET /v1/admin/system/tos_config */
 export async function getSystemTosConfig(options?: { [key: string]: any }) {
   return request<API.ResponseSuccessBean & { data?: API.TosConfig }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/system/tos_config`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/system/tos_config`,
     {
       method: "GET",
       ...(options || {}),
@@ -2030,7 +2045,7 @@ export async function putSystemTosConfig(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/system/tos_config`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/system/tos_config`,
     {
       method: "PUT",
       headers: {
@@ -2048,7 +2063,7 @@ export async function getSystemVerifyCodeConfig(options?: {
 }) {
   return request<API.ResponseSuccessBean & { data?: API.VerifyCodeConfig }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/system/verify_code_config`,
     {
       method: "GET",
@@ -2064,7 +2079,7 @@ export async function putSystemVerifyCodeConfig(
 ) {
   return request<API.ResponseSuccessBean>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/system/verify_code_config`,
     {
       method: "PUT",
@@ -2080,7 +2095,7 @@ export async function putSystemVerifyCodeConfig(
 /** Get verify config GET /v1/admin/system/verify_config */
 export async function getSystemVerifyConfig(options?: { [key: string]: any }) {
   return request<API.ResponseSuccessBean & { data?: API.VerifyConfig }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/system/verify_config`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/system/verify_config`,
     {
       method: "GET",
       ...(options || {}),
@@ -2094,7 +2109,7 @@ export async function putSystemVerifyConfig(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/system/verify_config`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/system/verify_config`,
     {
       method: "PUT",
       headers: {
@@ -2112,7 +2127,7 @@ export async function putTicket(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/ticket/`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/ticket/`,
     {
       method: "PUT",
       headers: {
@@ -2131,7 +2146,7 @@ export async function getTicketDetail(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean & { data?: API.Ticket }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/ticket/detail`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/ticket/detail`,
     {
       method: "GET",
       params: {
@@ -2148,7 +2163,7 @@ export async function postTicketFollow(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/ticket/follow`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/ticket/follow`,
     {
       method: "POST",
       headers: {
@@ -2168,7 +2183,7 @@ export async function getTicketList(
 ) {
   return request<
     API.ResponseSuccessBean & { data?: API.GetTicketListResponse }
-  >(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/ticket/list`, {
+  >(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/ticket/list`, {
     method: "GET",
     params: {
       ...params,
@@ -2185,7 +2200,7 @@ export async function getToolIpLocation(
 ) {
   return request<
     API.ResponseSuccessBean & { data?: API.QueryIPLocationResponse }
-  >(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/tool/ip/location`, {
+  >(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/tool/ip/location`, {
     method: "GET",
     params: {
       ...params,
@@ -2197,7 +2212,7 @@ export async function getToolIpLocation(
 /** Get System Log GET /v1/admin/tool/log */
 export async function getToolLog(options?: { [key: string]: any }) {
   return request<API.ResponseSuccessBean & { data?: API.LogResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/tool/log`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/tool/log`,
     {
       method: "GET",
       ...(options || {}),
@@ -2208,7 +2223,7 @@ export async function getToolLog(options?: { [key: string]: any }) {
 /** Restart System GET /v1/admin/tool/restart */
 export async function postToolRestart(options?: { [key: string]: any }) {
   return request<API.ResponseSuccessBean>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/tool/restart`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/tool/restart`,
     {
       method: "GET",
       ...(options || {}),
@@ -2219,7 +2234,7 @@ export async function postToolRestart(options?: { [key: string]: any }) {
 /** Get Version GET /v1/admin/tool/version */
 export async function getToolVersion(options?: { [key: string]: any }) {
   return request<API.ResponseSuccessBean & { data?: API.VersionResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/tool/version`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/tool/version`,
     {
       method: "GET",
       ...(options || {}),
@@ -2233,7 +2248,7 @@ export async function postUser(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/`,
     {
       method: "POST",
       headers: {
@@ -2251,7 +2266,7 @@ export async function deleteUser(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/`,
     {
       method: "DELETE",
       headers: {
@@ -2271,7 +2286,7 @@ export async function getUserAuthMethod(
 ) {
   return request<
     API.ResponseSuccessBean & { data?: API.GetUserAuthMethodResponse }
-  >(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/auth_method`, {
+  >(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/auth_method`, {
     method: "GET",
     params: {
       ...params,
@@ -2286,7 +2301,7 @@ export async function putUserAuthMethod(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/auth_method`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/auth_method`,
     {
       method: "PUT",
       headers: {
@@ -2304,7 +2319,7 @@ export async function postUserAuthMethod(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/auth_method`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/auth_method`,
     {
       method: "POST",
       headers: {
@@ -2322,7 +2337,7 @@ export async function deleteUserAuthMethod(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/auth_method`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/auth_method`,
     {
       method: "DELETE",
       headers: {
@@ -2340,7 +2355,7 @@ export async function putUserBasic(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/basic`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/basic`,
     {
       method: "PUT",
       headers: {
@@ -2358,7 +2373,7 @@ export async function deleteUserBatch(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/batch`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/batch`,
     {
       method: "DELETE",
       headers: {
@@ -2373,7 +2388,7 @@ export async function deleteUserBatch(
 /** Current user GET /v1/admin/user/current */
 export async function getUserCurrent(options?: { [key: string]: any }) {
   return request<API.ResponseSuccessBean & { data?: API.User }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/current`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/current`,
     {
       method: "GET",
       ...(options || {}),
@@ -2388,7 +2403,7 @@ export async function getUserDetail(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean & { data?: API.User }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/detail`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/detail`,
     {
       method: "GET",
       params: {
@@ -2405,7 +2420,7 @@ export async function putUserDevice(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/device`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/device`,
     {
       method: "PUT",
       headers: {
@@ -2423,7 +2438,7 @@ export async function deleteUserDevice(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/device`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/device`,
     {
       method: "DELETE",
       headers: {
@@ -2442,7 +2457,7 @@ export async function putUserDeviceKickOffline(
 ) {
   return request<API.ResponseSuccessBean>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/user/device/kick_offline`,
     {
       method: "PUT",
@@ -2462,7 +2477,7 @@ export async function getUserList(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean & { data?: API.GetUserListResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/list`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/list`,
     {
       method: "GET",
       params: {
@@ -2481,7 +2496,7 @@ export async function getUserLoginLogs(
 ) {
   return request<
     API.ResponseSuccessBean & { data?: API.GetUserLoginLogsResponse }
-  >(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/login/logs`, {
+  >(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/login/logs`, {
     method: "GET",
     params: {
       ...params,
@@ -2496,7 +2511,7 @@ export async function putUserNotify(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/notify`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/notify`,
     {
       method: "PUT",
       headers: {
@@ -2516,7 +2531,7 @@ export async function getUserSubscribe(
 ) {
   return request<
     API.ResponseSuccessBean & { data?: API.GetUserSubscribeListResponse }
-  >(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/subscribe`, {
+  >(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/subscribe`, {
     method: "GET",
     params: {
       ...params,
@@ -2531,7 +2546,7 @@ export async function putUserSubscribe(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/subscribe`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/subscribe`,
     {
       method: "PUT",
       headers: {
@@ -2549,7 +2564,7 @@ export async function postUserSubscribe(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/subscribe`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/subscribe`,
     {
       method: "POST",
       headers: {
@@ -2567,7 +2582,7 @@ export async function deleteUserSubscribe(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/subscribe`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/subscribe`,
     {
       method: "DELETE",
       headers: {
@@ -2586,7 +2601,7 @@ export async function getUserSubscribeDetail(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean & { data?: API.UserSubscribeDetail }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/subscribe/detail`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/subscribe/detail`,
     {
       method: "GET",
       params: {
@@ -2605,13 +2620,16 @@ export async function getUserSubscribeDevice(
 ) {
   return request<
     API.ResponseSuccessBean & { data?: API.GetUserSubscribeDevicesResponse }
-  >(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/subscribe/device`, {
-    method: "GET",
-    params: {
-      ...params,
-    },
-    ...(options || {}),
-  });
+  >(
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/subscribe/device`,
+    {
+      method: "GET",
+      params: {
+        ...params,
+      },
+      ...(options || {}),
+    }
+  );
 }
 
 /** Get user subcribe logs GET /v1/admin/user/subscribe/logs */
@@ -2622,13 +2640,16 @@ export async function getUserSubscribeLogs(
 ) {
   return request<
     API.ResponseSuccessBean & { data?: API.GetUserSubscribeLogsResponse }
-  >(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/subscribe/logs`, {
-    method: "GET",
-    params: {
-      ...params,
-    },
-    ...(options || {}),
-  });
+  >(
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/subscribe/logs`,
+    {
+      method: "GET",
+      params: {
+        ...params,
+      },
+      ...(options || {}),
+    }
+  );
 }
 
 /** Get user subcribe reset traffic logs GET /v1/admin/user/subscribe/reset/logs */
@@ -2643,7 +2664,7 @@ export async function getUserSubscribeResetLogs(
     }
   >(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/user/subscribe/reset/logs`,
     {
       method: "GET",
@@ -2662,7 +2683,7 @@ export async function postUserSubscribeResetToken(
 ) {
   return request<API.ResponseSuccessBean>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/user/subscribe/reset/token`,
     {
       method: "POST",
@@ -2682,7 +2703,7 @@ export async function postUserSubscribeResetTraffic(
 ) {
   return request<API.ResponseSuccessBean>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/user/subscribe/reset/traffic`,
     {
       method: "POST",
@@ -2701,7 +2722,7 @@ export async function postUserSubscribeToggle(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/subscribe/toggle`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/subscribe/toggle`,
     {
       method: "POST",
       headers: {
@@ -2723,7 +2744,7 @@ export async function getUserSubscribeTrafficLogs(
     API.ResponseSuccessBean & { data?: API.GetUserSubscribeTrafficLogsResponse }
   >(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/user/subscribe/traffic_logs`,
     {
       method: "GET",
@@ -2743,7 +2764,7 @@ export async function getWithdrawalList(
 ) {
   return request<
     API.ResponseSuccessBean & { data?: API.GetWithdrawalListResponse }
-  >(`${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/withdrawal/list`, {
+  >(`${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/withdrawal/list`, {
     method: "GET",
     params: {
       ...params,
@@ -2758,7 +2779,7 @@ export async function putWithdrawalStatus(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseSuccessBean>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/withdrawal/status`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/withdrawal/status`,
     {
       method: "PUT",
       headers: {

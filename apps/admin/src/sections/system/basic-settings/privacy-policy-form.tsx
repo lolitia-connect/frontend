@@ -1,3 +1,6 @@
+"use client";
+
+import { Sheet, Button as SheetButton } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@workspace/ui/components/button";
@@ -11,14 +14,7 @@ import {
   FormMessage,
 } from "@workspace/ui/components/form";
 import { ScrollArea } from "@workspace/ui/components/scroll-area";
-import {
-  Sheet,
-  SheetContent,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@workspace/ui/components/sheet";
+
 import { MarkdownEditor } from "@workspace/ui/composed/editor/index";
 import { Icon } from "@workspace/ui/composed/icon";
 import {
@@ -81,82 +77,96 @@ export default function PrivacyPolicyConfig() {
   }
 
   return (
-    <Sheet onOpenChange={setOpen} open={open}>
-      <SheetTrigger asChild>
-        <div className="flex cursor-pointer items-center justify-between transition-colors">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+    <Sheet isOpen={open} onOpenChange={setOpen} placement="right">
+      <Sheet.Trigger>
+        <SheetButton
+          className="settings-option justify-between"
+          variant="ghost"
+        >
+          <span className="flex items-center gap-3">
+            <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-50">
               <Icon
-                className="h-5 w-5 text-primary"
+                className="h-5 w-5 text-primary-500"
                 icon="mdi:shield-account-outline"
               />
-            </div>
-            <div className="flex-1">
-              <p className="font-medium">
+            </span>
+            <span className="flex-1">
+              <span className="block font-medium">
                 {t("privacyPolicy.title", "Privacy Policy")}
-              </p>
-              <p className="text-muted-foreground text-sm">
+              </span>
+              <span className="block text-muted text-sm">
                 {t(
                   "privacyPolicy.description",
                   "Edit and manage privacy policy content"
                 )}
-              </p>
-            </div>
-          </div>
+              </span>
+            </span>
+          </span>
           <Icon className="size-6" icon="mdi:chevron-right" />
-        </div>
-      </SheetTrigger>
-      <SheetContent className="w-[600px] max-w-full md:max-w-screen-md">
-        <SheetHeader>
-          <SheetTitle>{t("privacyPolicy.title", "Privacy Policy")}</SheetTitle>
-        </SheetHeader>
-        <ScrollArea className="h-[calc(100dvh-48px-36px-36px-24px-env(safe-area-inset-top))] px-6">
-          <Form {...form}>
-            <form
-              className="space-y-2 pt-4"
-              id="privacy-policy-form"
-              onSubmit={form.handleSubmit(onSubmit)}
-            >
-              <FormField
-                control={form.control}
-                name="privacy_policy"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      {t("privacyPolicy.title", "Privacy Policy")}
-                    </FormLabel>
-                    <FormControl>
-                      <MarkdownEditor
-                        onChange={field.onChange}
-                        value={field.value || ""}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      {t(
-                        "privacyPolicy.description",
-                        "Edit and manage privacy policy content"
-                      )}
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </form>
-          </Form>
-        </ScrollArea>
-        <SheetFooter className="flex-row justify-end gap-2 pt-3">
-          <Button
-            loading={loading}
-            onClick={() => setOpen(false)}
-            variant="outline"
-          >
-            {t("common.cancel", "Cancel")}
-          </Button>
-          <Button form="privacy-policy-form" loading={loading} type="submit">
-            {t("common.save", "Save Settings")}
-          </Button>
-        </SheetFooter>
-      </SheetContent>
+        </SheetButton>
+      </Sheet.Trigger>
+      <Sheet.Backdrop>
+        <Sheet.Content>
+          <Sheet.Dialog className="w-[600px] max-w-full md:max-w-screen-md">
+            <Sheet.Header>
+              <Sheet.Heading>
+                {t("privacyPolicy.title", "Privacy Policy")}
+              </Sheet.Heading>
+            </Sheet.Header>
+            <ScrollArea className="h-[calc(100dvh-48px-36px-36px-24px-env(safe-area-inset-top))] px-6">
+              <Form {...form}>
+                <form
+                  className="space-y-2 pt-4"
+                  id="privacy-policy-form"
+                  onSubmit={form.handleSubmit(onSubmit)}
+                >
+                  <FormField
+                    control={form.control}
+                    name="privacy_policy"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          {t("privacyPolicy.title", "Privacy Policy")}
+                        </FormLabel>
+                        <FormControl>
+                          <MarkdownEditor
+                            onChange={field.onChange}
+                            value={field.value || ""}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          {t(
+                            "privacyPolicy.description",
+                            "Edit and manage privacy policy content"
+                          )}
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </form>
+              </Form>
+            </ScrollArea>
+            <Sheet.Footer className="flex-row justify-end gap-2 pt-3">
+              <Button
+                loading={loading}
+                onClick={() => setOpen(false)}
+                variant="outline"
+              >
+                {t("common.cancel", "Cancel")}
+              </Button>
+              <Button
+                form="privacy-policy-form"
+                loading={loading}
+                type="submit"
+              >
+                {t("common.save", "Save Settings")}
+              </Button>
+            </Sheet.Footer>
+            <Sheet.CloseTrigger aria-label="Close" />
+          </Sheet.Dialog>
+        </Sheet.Content>
+      </Sheet.Backdrop>
     </Sheet>
   );
 }

@@ -1,3 +1,16 @@
+"use client";
+
+import {
+  ListBox,
+  Select,
+  SelectPopover as SelectContent,
+  SelectIndicator,
+  ListBoxItem as SelectItem,
+  SelectTrigger,
+  SelectValue,
+  Sheet,
+  Button as SheetButton,
+} from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@workspace/ui/components/button";
@@ -11,21 +24,7 @@ import {
   FormMessage,
 } from "@workspace/ui/components/form";
 import { ScrollArea } from "@workspace/ui/components/scroll-area";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@workspace/ui/components/select";
-import {
-  Sheet,
-  SheetContent,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@workspace/ui/components/sheet";
+
 import { Switch } from "@workspace/ui/components/switch";
 import { EnhancedInput } from "@workspace/ui/composed/enhanced-input";
 import { Icon } from "@workspace/ui/composed/icon";
@@ -99,120 +98,206 @@ export default function VerifyConfig() {
   }
 
   return (
-    <Sheet onOpenChange={setOpen} open={open}>
-      <SheetTrigger asChild>
-        <div className="flex cursor-pointer items-center justify-between transition-colors">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+    <Sheet isOpen={open} onOpenChange={setOpen} placement="right">
+      <Sheet.Trigger>
+        <SheetButton
+          className="settings-option justify-between"
+          variant="ghost"
+        >
+          <span className="flex items-center gap-3">
+            <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-50">
               <Icon
-                className="h-5 w-5 text-primary"
+                className="h-5 w-5 text-primary-500"
                 icon="mdi:shield-check-outline"
               />
-            </div>
-            <div className="flex-1">
-              <p className="font-medium">
+            </span>
+            <span className="flex-1">
+              <span className="block font-medium">
                 {t("verify.title", "Security Verification")}
-              </p>
-              <p className="text-muted-foreground text-sm">
+              </span>
+              <span className="block text-muted text-sm">
                 {t(
                   "verify.description",
                   "Configure Turnstile CAPTCHA and verification settings"
                 )}
-              </p>
-            </div>
-          </div>
+              </span>
+            </span>
+          </span>
           <Icon className="size-6" icon="mdi:chevron-right" />
-        </div>
-      </SheetTrigger>
-      <SheetContent className="w-[600px] max-w-full md:max-w-screen-md">
-        <SheetHeader>
-          <SheetTitle>{t("verify.title", "Security Verification")}</SheetTitle>
-        </SheetHeader>
-        <ScrollArea className="h-[calc(100dvh-48px-36px-36px-24px-env(safe-area-inset-top))] px-6">
-          <Form {...form}>
-            <form
-              className="space-y-2 pt-4"
-              id="verify-form"
-              onSubmit={form.handleSubmit(onSubmit)}
-            >
-              <FormField
-                control={form.control}
-                name="captcha_type"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      {t("verify.captchaType", "Captcha Type")}
-                    </FormLabel>
-                    <FormControl>
-                      <Select
-                        onValueChange={field.onChange}
-                        value={field.value}
-                      >
-                        <SelectTrigger>
-                          <SelectValue
+        </SheetButton>
+      </Sheet.Trigger>
+      <Sheet.Backdrop>
+        <Sheet.Content>
+          <Sheet.Dialog className="w-[600px] max-w-full md:max-w-screen-md">
+            <Sheet.Header>
+              <Sheet.Heading>
+                {t("verify.title", "Security Verification")}
+              </Sheet.Heading>
+            </Sheet.Header>
+            <ScrollArea className="h-[calc(100dvh-48px-36px-36px-24px-env(safe-area-inset-top))] px-6">
+              <Form {...form}>
+                <form
+                  className="space-y-2 pt-4"
+                  id="verify-form"
+                  onSubmit={form.handleSubmit(onSubmit)}
+                >
+                  <FormField
+                    control={form.control}
+                    name="captcha_type"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          {t("verify.captchaType", "Captcha Type")}
+                        </FormLabel>
+                        <FormControl>
+                          <Select
+                            aria-label={t(
+                              "verify.captchaTypePlaceholder",
+                              "Select captcha type"
+                            )}
+                            onSelectionChange={(key) => {
+                              if (key != null) field.onChange(String(key));
+                            }}
                             placeholder={t(
                               "verify.captchaTypePlaceholder",
                               "Select captcha type"
                             )}
-                          />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="local">
-                            {t(
-                              "verify.captchaTypeLocal",
-                              "Local Image Captcha"
-                            )}
-                          </SelectItem>
-                          <SelectItem value="slider">
-                            {t(
-                              "verify.captchaTypeSlider",
-                              "Local Slider Captcha"
-                            )}
-                          </SelectItem>
-                          <SelectItem value="turnstile">
-                            {t(
-                              "verify.captchaTypeTurnstile",
-                              "Cloudflare Turnstile"
-                            )}
-                          </SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormDescription>
-                      {t(
-                        "verify.captchaTypeDescription",
-                        "Choose between local image captcha (offline) or Cloudflare Turnstile"
-                      )}
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                            selectedKey={
+                              field.value == null
+                                ? undefined
+                                : String(field.value)
+                            }
+                          >
+                            <SelectTrigger>
+                              <SelectValue />
+                              <SelectIndicator />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <ListBox>
+                                <SelectItem id="local">
+                                  {t(
+                                    "verify.captchaTypeLocal",
+                                    "Local Image Captcha"
+                                  )}
+                                </SelectItem>
+                                <SelectItem id="slider">
+                                  {t(
+                                    "verify.captchaTypeSlider",
+                                    "Local Slider Captcha"
+                                  )}
+                                </SelectItem>
+                                <SelectItem id="turnstile">
+                                  {t(
+                                    "verify.captchaTypeTurnstile",
+                                    "Cloudflare Turnstile"
+                                  )}
+                                </SelectItem>
+                              </ListBox>
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                        <FormDescription>
+                          {t(
+                            "verify.captchaTypeDescription",
+                            "Choose between local image captcha (offline) or Cloudflare Turnstile"
+                          )}
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-              {form.watch("captcha_type") === "turnstile" && (
-                <>
+                  {form.watch("captcha_type") === "turnstile" && (
+                    <>
+                      <FormField
+                        control={form.control}
+                        name="turnstile_site_key"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>
+                              {t(
+                                "verify.turnstileSiteKey",
+                                "Turnstile Site Key"
+                              )}
+                            </FormLabel>
+                            <FormControl>
+                              <EnhancedInput
+                                onValueChange={field.onChange}
+                                placeholder={t(
+                                  "verify.turnstileSiteKeyPlaceholder",
+                                  "Enter Turnstile site key"
+                                )}
+                                value={field.value}
+                              />
+                            </FormControl>
+                            <FormDescription>
+                              {t(
+                                "verify.turnstileSiteKeyDescription",
+                                "Cloudflare Turnstile site key for frontend verification"
+                              )}
+                            </FormDescription>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="turnstile_secret"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>
+                              {t(
+                                "verify.turnstileSecret",
+                                "Turnstile Secret Key"
+                              )}
+                            </FormLabel>
+                            <FormControl>
+                              <EnhancedInput
+                                onValueChange={field.onChange}
+                                placeholder={t(
+                                  "verify.turnstileSecretPlaceholder",
+                                  "Enter Turnstile secret key"
+                                )}
+                                type="password"
+                                value={field.value}
+                              />
+                            </FormControl>
+                            <FormDescription>
+                              {t(
+                                "verify.turnstileSecretDescription",
+                                "Cloudflare Turnstile secret key for backend verification"
+                              )}
+                            </FormDescription>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </>
+                  )}
+
                   <FormField
                     control={form.control}
-                    name="turnstile_site_key"
+                    name="enable_user_login_captcha"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>
-                          {t("verify.turnstileSiteKey", "Turnstile Site Key")}
+                          {t(
+                            "verify.enableUserLoginCaptcha",
+                            "Enable User Login Captcha"
+                          )}
                         </FormLabel>
                         <FormControl>
-                          <EnhancedInput
-                            onValueChange={field.onChange}
-                            placeholder={t(
-                              "verify.turnstileSiteKeyPlaceholder",
-                              "Enter Turnstile site key"
-                            )}
-                            value={field.value}
+                          <Switch
+                            checked={field.value}
+                            className="!mt-0 float-end"
+                            onCheckedChange={field.onChange}
                           />
                         </FormControl>
                         <FormDescription>
                           {t(
-                            "verify.turnstileSiteKeyDescription",
-                            "Cloudflare Turnstile site key for frontend verification"
+                            "verify.enableUserLoginCaptchaDescription",
+                            "When enabled, users must pass captcha verification during login"
                           )}
                         </FormDescription>
                         <FormMessage />
@@ -222,167 +307,109 @@ export default function VerifyConfig() {
 
                   <FormField
                     control={form.control}
-                    name="turnstile_secret"
+                    name="enable_user_register_captcha"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>
-                          {t("verify.turnstileSecret", "Turnstile Secret Key")}
+                          {t(
+                            "verify.enableUserRegisterCaptcha",
+                            "Enable User Registration Captcha"
+                          )}
                         </FormLabel>
                         <FormControl>
-                          <EnhancedInput
-                            onValueChange={field.onChange}
-                            placeholder={t(
-                              "verify.turnstileSecretPlaceholder",
-                              "Enter Turnstile secret key"
-                            )}
-                            type="password"
-                            value={field.value}
+                          <Switch
+                            checked={field.value}
+                            className="!mt-0 float-end"
+                            onCheckedChange={field.onChange}
                           />
                         </FormControl>
                         <FormDescription>
                           {t(
-                            "verify.turnstileSecretDescription",
-                            "Cloudflare Turnstile secret key for backend verification"
+                            "verify.enableUserRegisterCaptchaDescription",
+                            "When enabled, users must pass captcha verification during registration"
                           )}
                         </FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
-                </>
-              )}
 
-              <FormField
-                control={form.control}
-                name="enable_user_login_captcha"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      {t(
-                        "verify.enableUserLoginCaptcha",
-                        "Enable User Login Captcha"
-                      )}
-                    </FormLabel>
-                    <FormControl>
-                      <Switch
-                        checked={field.value}
-                        className="!mt-0 float-end"
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      {t(
-                        "verify.enableUserLoginCaptchaDescription",
-                        "When enabled, users must pass captcha verification during login"
-                      )}
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                  <FormField
+                    control={form.control}
+                    name="enable_user_reset_password_captcha"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          {t(
+                            "verify.enableUserResetPasswordCaptcha",
+                            "Enable User Password Reset Captcha"
+                          )}
+                        </FormLabel>
+                        <FormControl>
+                          <Switch
+                            checked={field.value}
+                            className="!mt-0 float-end"
+                            onCheckedChange={field.onChange}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          {t(
+                            "verify.enableUserResetPasswordCaptchaDescription",
+                            "When enabled, users must pass captcha verification during password reset"
+                          )}
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-              <FormField
-                control={form.control}
-                name="enable_user_register_captcha"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      {t(
-                        "verify.enableUserRegisterCaptcha",
-                        "Enable User Registration Captcha"
-                      )}
-                    </FormLabel>
-                    <FormControl>
-                      <Switch
-                        checked={field.value}
-                        className="!mt-0 float-end"
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      {t(
-                        "verify.enableUserRegisterCaptchaDescription",
-                        "When enabled, users must pass captcha verification during registration"
-                      )}
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="enable_user_reset_password_captcha"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      {t(
-                        "verify.enableUserResetPasswordCaptcha",
-                        "Enable User Password Reset Captcha"
-                      )}
-                    </FormLabel>
-                    <FormControl>
-                      <Switch
-                        checked={field.value}
-                        className="!mt-0 float-end"
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      {t(
-                        "verify.enableUserResetPasswordCaptchaDescription",
-                        "When enabled, users must pass captcha verification during password reset"
-                      )}
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="enable_admin_login_captcha"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      {t(
-                        "verify.enableAdminLoginCaptcha",
-                        "Enable Admin Authentication Captcha"
-                      )}
-                    </FormLabel>
-                    <FormControl>
-                      <Switch
-                        checked={field.value}
-                        className="!mt-0 float-end"
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      {t(
-                        "verify.enableAdminLoginCaptchaDescription",
-                        "When enabled, administrators must pass captcha verification during login"
-                      )}
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </form>
-          </Form>
-        </ScrollArea>
-        <SheetFooter className="flex-row justify-end gap-2 pt-3">
-          <Button
-            loading={loading}
-            onClick={() => setOpen(false)}
-            variant="outline"
-          >
-            {t("common.cancel", "Cancel")}
-          </Button>
-          <Button form="verify-form" loading={loading} type="submit">
-            {t("common.save", "Save Settings")}
-          </Button>
-        </SheetFooter>
-      </SheetContent>
+                  <FormField
+                    control={form.control}
+                    name="enable_admin_login_captcha"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          {t(
+                            "verify.enableAdminLoginCaptcha",
+                            "Enable Admin Authentication Captcha"
+                          )}
+                        </FormLabel>
+                        <FormControl>
+                          <Switch
+                            checked={field.value}
+                            className="!mt-0 float-end"
+                            onCheckedChange={field.onChange}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          {t(
+                            "verify.enableAdminLoginCaptchaDescription",
+                            "When enabled, administrators must pass captcha verification during login"
+                          )}
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </form>
+              </Form>
+            </ScrollArea>
+            <Sheet.Footer className="flex-row justify-end gap-2 pt-3">
+              <Button
+                loading={loading}
+                onClick={() => setOpen(false)}
+                variant="outline"
+              >
+                {t("common.cancel", "Cancel")}
+              </Button>
+              <Button form="verify-form" loading={loading} type="submit">
+                {t("common.save", "Save Settings")}
+              </Button>
+            </Sheet.Footer>
+            <Sheet.CloseTrigger aria-label="Close" />
+          </Sheet.Dialog>
+        </Sheet.Content>
+      </Sheet.Backdrop>
     </Sheet>
   );
 }

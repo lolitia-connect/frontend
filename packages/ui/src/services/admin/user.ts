@@ -8,7 +8,7 @@ export async function createUser(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/`,
     {
       method: "POST",
       headers: {
@@ -27,7 +27,7 @@ export async function deleteUser(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/`,
     {
       method: "DELETE",
       params: {
@@ -41,7 +41,7 @@ export async function deleteUser(
 /** Get user auth method GET /v1/admin/user/auth_method */
 export async function getUserAuthMethod(options?: { [key: string]: any }) {
   return request<API.Response & { data?: API.GetUserAuthMethodResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/auth_method`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/auth_method`,
     {
       method: "GET",
       ...(options || {}),
@@ -55,7 +55,7 @@ export async function updateUserAuthMethod(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/auth_method`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/auth_method`,
     {
       method: "PUT",
       headers: {
@@ -73,7 +73,7 @@ export async function createUserAuthMethod(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/auth_method`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/auth_method`,
     {
       method: "POST",
       headers: {
@@ -91,7 +91,7 @@ export async function deleteUserAuthMethod(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/auth_method`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/auth_method`,
     {
       method: "DELETE",
       headers: {
@@ -109,7 +109,7 @@ export async function updateUserBasicInfo(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/basic`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/basic`,
     {
       method: "PUT",
       headers: {
@@ -127,7 +127,7 @@ export async function batchDeleteUser(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/batch`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/batch`,
     {
       method: "DELETE",
       headers: {
@@ -142,7 +142,7 @@ export async function batchDeleteUser(
 /** Current user GET /v1/admin/user/current */
 export async function currentUser(options?: { [key: string]: any }) {
   return request<API.Response & { data?: API.User }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/current`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/current`,
     {
       method: "GET",
       ...(options || {}),
@@ -157,7 +157,7 @@ export async function getUserDetail(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: API.User }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/detail`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/detail`,
     {
       method: "GET",
       params: {
@@ -174,7 +174,7 @@ export async function updateUserDevice(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/device`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/device`,
     {
       method: "PUT",
       headers: {
@@ -192,7 +192,7 @@ export async function deleteUserDevice(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/device`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/device`,
     {
       method: "DELETE",
       headers: {
@@ -211,7 +211,7 @@ export async function kickOfflineByUserDevice(
 ) {
   return request<API.Response & { data?: any }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/user/device/kick_offline`,
     {
       method: "PUT",
@@ -231,7 +231,7 @@ export async function getUserList(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: API.GetUserListResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/list`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/list`,
     {
       method: "GET",
       params: {
@@ -249,7 +249,7 @@ export async function getUserLoginLogs(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: API.GetUserLoginLogsResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/login/logs`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/login/logs`,
     {
       method: "GET",
       params: {
@@ -266,7 +266,7 @@ export async function updateUserNotifySetting(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/notify`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/notify`,
     {
       method: "PUT",
       headers: {
@@ -285,7 +285,7 @@ export async function getUserSubscribe(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: API.GetUserSubscribeListResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/subscribe`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/subscribe`,
     {
       method: "GET",
       params: {
@@ -328,7 +328,7 @@ export async function updateUserSubscribe(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/subscribe`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/subscribe`,
     {
       method: "PUT",
       headers: {
@@ -346,7 +346,7 @@ export async function createUserSubscribe(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/subscribe`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/subscribe`,
     {
       method: "POST",
       headers: {
@@ -364,7 +364,7 @@ export async function deleteUserSubscribe(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/subscribe`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/subscribe`,
     {
       method: "DELETE",
       headers: {
@@ -383,7 +383,7 @@ export async function getUserSubscribeById(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: API.UserSubscribeDetail }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/subscribe/detail`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/subscribe/detail`,
     {
       method: "GET",
       params: {
@@ -401,7 +401,7 @@ export async function getUserSubscribeDevices(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: API.GetUserSubscribeDevicesResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/subscribe/device`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/subscribe/device`,
     {
       method: "GET",
       params: {
@@ -419,7 +419,7 @@ export async function getUserSubscribeLogs(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: API.GetUserSubscribeLogsResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/subscribe/logs`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/subscribe/logs`,
     {
       method: "GET",
       params: {
@@ -440,7 +440,7 @@ export async function getUserSubscribeResetTrafficLogs(
     API.Response & { data?: API.GetUserSubscribeResetTrafficLogsResponse }
   >(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/user/subscribe/reset/logs`,
     {
       method: "GET",
@@ -459,7 +459,7 @@ export async function resetUserSubscribeToken(
 ) {
   return request<API.Response & { data?: any }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/user/subscribe/reset/token`,
     {
       method: "POST",
@@ -479,7 +479,7 @@ export async function resetUserSubscribeTraffic(
 ) {
   return request<API.Response & { data?: any }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/user/subscribe/reset/traffic`,
     {
       method: "POST",
@@ -498,7 +498,7 @@ export async function toggleUserSubscribeStatus(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/user/subscribe/toggle`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/user/subscribe/toggle`,
     {
       method: "POST",
       headers: {
@@ -520,7 +520,7 @@ export async function getUserSubscribeTrafficLogs(
     API.Response & { data?: API.GetUserSubscribeTrafficLogsResponse }
   >(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/user/subscribe/traffic_logs`,
     {
       method: "GET",

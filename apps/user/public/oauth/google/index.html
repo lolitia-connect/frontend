@@ -4,12 +4,13 @@
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <title>OAuth Redirect</title>
-    <meta content="0; url=/#/auth" http-equiv="refresh">
+    <meta content="0; url=/auth" http-equiv="refresh">
     <script>
     "use strict";
 
-    // Providers redirect to a path without URL fragments (#). Our app uses hash routing.
-    // Bridge /oauth/<provider>[/]?... -> /#/oauth/<provider>?...
+    // Providers redirect here without a URL fragment; forward to the App Router
+    // pathname route, preserving every query parameter.
+    // Bridge /oauth/<provider>[/]?... -> /oauth/<provider>?...
     (() => {
       try {
         // Normalize trailing slash so /oauth/google/ and /oauth/google both map to the same route.
@@ -17,10 +18,10 @@
         path = path.replace(/\/$/, "");
 
         const search = window.location.search || "";
-        const target = `/#${path}${search}`;
+        const target = `${path}${search}`;
         window.location.replace(target);
       } catch {
-        window.location.replace("/#/auth");
+        window.location.replace("/auth");
       }
     })();
     </script>

@@ -14,6 +14,22 @@ const mocks = vi.hoisted(() => ({
   oauthLogin: vi.fn(),
 }));
 
+// Mutable so individual tests can vary the global config the component reads.
+const store = vi.hoisted(() => ({
+  common: {
+    oauth_methods: ["google"],
+    // `enable_register_verify` was removed from the global-config payload and
+    // is no longer read. The OAuth block's challenge is now keyed off
+    // `enable_user_register_captcha`, and only applies when no email/phone form
+    // shares the page (both disabled here) — that is this file's default case.
+    verify: {
+      enable_user_register_captcha: true,
+      turnstile_site_key: "site-key",
+    },
+    auth: { email: { enable: false }, mobile: { enable: false } },
+  } as any,
+}));
+
 vi.mock("@workspace/ui/services/common/common", () => ({
   postAuthOauthLogin: mocks.oauthLogin,
 }));
@@ -25,20 +41,12 @@ vi.mock("react-i18next", () => ({
   }),
 }));
 
-vi.mock("@tanstack/react-router", () => ({
+vi.mock("@workspace/ui/lib/router-compat", () => ({
   useSearch: () => ({ invite: "invite-code" }),
 }));
 
 vi.mock("@/stores/global", () => ({
-  useGlobalStore: () => ({
-    common: {
-      oauth_methods: ["google"],
-      verify: {
-        enable_register_verify: true,
-        turnstile_site_key: "site-key",
-      },
-    },
-  }),
+  useGlobalStore: () => ({ common: store.common }),
 }));
 
 vi.mock("./turnstile", () => ({
@@ -78,5 +86,24 @@ describe("OAuth methods", () => {
         redirect: "http://localhost:3000/oauth/google/",
       });
     });
+  });
+
+  it("does not render a second challenge when an auth form already shows one", async () => {
+    // The reported defect: the email/phone form and this OAuth block each
+    // rendered a captcha on the same login page. When a form is present and a
+    // login/register captcha is enabled, the form owns the challenge.
+    store.common = {
+      ...store.common,
+      verify: {
+        ...store.common.verify,
+        enable_user_login_captcha: true,
+        enable_user_register_captcha: true,
+      },
+      auth: { email: { enable: true }, mobile: { enable: false } },
+    };
+    render(<OAuthMethods />);
+    expect(
+      screen.queryByRole("button", { name: "Solve challenge" })
+    ).toBeNull();
   });
 });

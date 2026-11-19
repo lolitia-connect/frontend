@@ -1,6 +1,6 @@
 "use client";
 
-import { Card, CardContent } from "@workspace/ui/components/card";
+import { Card } from "@heroui/react";
 import {
   ProList,
   type ProListActions,
@@ -47,7 +47,7 @@ export default function Wallet() {
   return (
     <div className="flex flex-col gap-4">
       <Card>
-        <CardContent>
+        <Card.Content>
           <h2 className="mb-4 font-bold text-2xl text-foreground">
             {t("assetOverview", "Asset Overview")}
           </h2>
@@ -65,73 +65,67 @@ export default function Wallet() {
             </div>
           </div>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-            <div className="rounded-lg bg-secondary p-4 shadow-sm transition-all duration-300 hover:shadow-md">
-              <p className="font-medium text-secondary-foreground text-sm opacity-80">
+            <div className="rounded-lg bg-accent-soft p-4 shadow-sm transition-all duration-300 hover:shadow-md">
+              <p className="font-medium text-accent-soft-foreground text-sm opacity-80">
                 {t("balance", "Balance")}
               </p>
-              <p className="font-bold text-2xl text-secondary-foreground">
+              <p className="font-bold text-2xl text-accent-soft-foreground">
                 <Display type="currency" value={user?.balance} />
               </p>
             </div>
-            <div className="rounded-lg bg-secondary p-4 shadow-sm transition-all duration-300 hover:shadow-md">
-              <p className="font-medium text-secondary-foreground text-sm opacity-80">
+            <div className="rounded-lg bg-accent-soft p-4 shadow-sm transition-all duration-300 hover:shadow-md">
+              <p className="font-medium text-accent-soft-foreground text-sm opacity-80">
                 {t("giftAmount", "Gift Amount")}
               </p>
-              <p className="font-bold text-2xl text-secondary-foreground">
+              <p className="font-bold text-2xl text-accent-soft-foreground">
                 <Display type="currency" value={user?.gift_amount} />
               </p>
             </div>
-            <div className="rounded-lg bg-secondary p-4 shadow-sm transition-all duration-300 hover:shadow-md">
-              <p className="font-medium text-secondary-foreground text-sm opacity-80">
+            <div className="rounded-lg bg-accent-soft p-4 shadow-sm transition-all duration-300 hover:shadow-md">
+              <p className="font-medium text-accent-soft-foreground text-sm opacity-80">
                 {t("commission", "Commission")}
               </p>
-              <p className="font-bold text-2xl text-secondary-foreground">
+              <p className="font-bold text-2xl text-accent-soft-foreground">
                 <Display type="currency" value={user?.commission} />
               </p>
             </div>
           </div>
-        </CardContent>
+        </Card.Content>
       </Card>
       <ProList<API.BalanceLog, Record<string, unknown>>
         action={ref}
         renderItem={(item) => (
           <Card className="overflow-hidden">
-            <CardContent className="text-sm">
+            <Card.Content className="text-sm">
               <ul className="grid grid-cols-2 gap-3 *:flex *:flex-col lg:grid-cols-4">
                 <li className="font-semibold">
-                  <span className="text-muted-foreground">
+                  <span className="text-muted">
                     {t("createdAt", "Created At")}
                   </span>
                   <time>{formatDate(item.timestamp)}</time>
                 </li>
                 <li className="font-semibold">
-                  <span className="text-muted-foreground">
-                    {t("type.0", "Type")}
-                  </span>
+                  <span className="text-muted">{t("type.0", "Type")}</span>
                   <span>
                     {typeMap[item.type] ||
                       t(`type.${item.type}`, "Unknown Type")}
                   </span>
                 </li>
                 <li className="font-semibold">
-                  <span className="text-muted-foreground">
-                    {t("amount", "Amount")}
-                  </span>
+                  <span className="text-muted">{t("amount", "Amount")}</span>
                   <span>
                     <Display type="currency" value={item.amount} />
                   </span>
                 </li>
 
                 <li>
-                  <span className="text-muted-foreground">
-                    {t("balance", "Balance")}
-                  </span>
+                  <span className="text-muted">{t("balance", "Balance")}</span>
                   <span>
                     <Display type="currency" value={item.balance} />
                   </span>
                 </li>
               </ul>
-            </CardContent>
+            </Card.Content>
           </Card>
         )}
         request={async (pagination, filter) => {

@@ -9,7 +9,7 @@ export async function getAuthMethodConfig(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: API.AuthMethodConfig }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/auth-method/config`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/auth-method/config`,
     {
       method: "GET",
       params: {
@@ -26,7 +26,7 @@ export async function updateAuthMethodConfig(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: API.AuthMethodConfig }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/auth-method/config`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/auth-method/config`,
     {
       method: "PUT",
       headers: {
@@ -42,7 +42,7 @@ export async function updateAuthMethodConfig(
 export async function getEmailPlatform(options?: { [key: string]: any }) {
   return request<API.Response & { data?: API.PlatformResponse }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/auth-method/email_platform`,
     {
       method: "GET",
@@ -54,7 +54,7 @@ export async function getEmailPlatform(options?: { [key: string]: any }) {
 /** Get auth method list GET /v1/admin/auth-method/list */
 export async function getAuthMethodList(options?: { [key: string]: any }) {
   return request<API.Response & { data?: API.GetAuthMethodListResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/auth-method/list`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/auth-method/list`,
     {
       method: "GET",
       ...(options || {}),
@@ -66,7 +66,7 @@ export async function getAuthMethodList(options?: { [key: string]: any }) {
 export async function getSmsPlatform(options?: { [key: string]: any }) {
   return request<API.Response & { data?: API.PlatformResponse }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/auth-method/sms_platform`,
     {
       method: "GET",
@@ -82,7 +82,7 @@ export async function testEmailSend(
 ) {
   return request<API.Response & { data?: any }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/auth-method/test_email_send`,
     {
       method: "POST",
@@ -102,7 +102,7 @@ export async function testSmsSend(
 ) {
   return request<API.Response & { data?: any }>(
     `${
-      import.meta.env.VITE_API_PREFIX || ""
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
     }/v1/admin/auth-method/test_sms_send`,
     {
       method: "POST",

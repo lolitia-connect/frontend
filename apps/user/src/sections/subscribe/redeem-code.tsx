@@ -1,12 +1,8 @@
+"use client";
+
+import { Card } from "@heroui/react";
 import { useMutation } from "@tanstack/react-query";
 import { Button } from "@workspace/ui/components/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@workspace/ui/components/card";
 import { Input } from "@workspace/ui/components/input";
 import { Label } from "@workspace/ui/components/label";
 import { redeemCode } from "@workspace/ui/services/user/user";
@@ -50,13 +46,13 @@ export default function RedeemCode({ onSuccess }: RedeemCodeProps) {
 
   return (
     <Card className="w-full">
-      <CardHeader>
-        <CardTitle>{t("redeemCodeTitle", "CDK 兑换")}</CardTitle>
-        <CardDescription>
+      <Card.Header>
+        <Card.Title>{t("redeemCodeTitle", "CDK 兑换")}</Card.Title>
+        <Card.Description>
           {t("redeemCodeDescription", "输入兑换码即可兑换对应的订阅套餐")}
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
+        </Card.Description>
+      </Card.Header>
+      <Card.Content>
         <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
           <div className="flex flex-col gap-2">
             <Label htmlFor="redemption-code">
@@ -64,12 +60,14 @@ export default function RedeemCode({ onSuccess }: RedeemCodeProps) {
             </Label>
             <div className="flex gap-2">
               <Input
+                className="flex-1"
                 id="redemption-code"
                 onChange={(e) => setCode(e.target.value)}
                 placeholder={t("enterRedemptionCode", "请输入兑换码")}
                 value={code}
               />
               <Button
+                className="shrink-0 whitespace-nowrap"
                 disabled={redeemMutation.isPending || !code.trim()}
                 type="submit"
               >
@@ -80,7 +78,7 @@ export default function RedeemCode({ onSuccess }: RedeemCodeProps) {
             </div>
           </div>
         </form>
-      </CardContent>
+      </Card.Content>
     </Card>
   );
 }

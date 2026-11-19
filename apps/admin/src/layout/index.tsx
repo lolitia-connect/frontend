@@ -1,4 +1,5 @@
-import { Outlet } from "@tanstack/react-router";
+"use client";
+
 import {
   SidebarInset,
   SidebarProvider,
@@ -8,7 +9,11 @@ import { useEffect, useState } from "react";
 import { Header } from "@/layout/header";
 import { SidebarLeft } from "./sidebar-left";
 
-export default function DashboardLayout() {
+export default function DashboardLayout({
+  children,
+}: {
+  children?: React.ReactNode;
+}) {
   const [open, setOpen] = useState(true);
 
   useEffect(() => {
@@ -24,7 +29,7 @@ export default function DashboardLayout() {
       <SidebarInset className="relative flex-grow overflow-hidden">
         <Header />
         <div className="h-[calc(100vh-56px)] flex-grow gap-4 overflow-auto p-4">
-          <Outlet />
+          {children}
         </div>
       </SidebarInset>
     </SidebarProvider>

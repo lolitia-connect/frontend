@@ -2,20 +2,22 @@
 
 import {
   Accordion,
-  AccordionContent,
+  AccordionPanel as AccordionContent,
+  AccordionHeading,
+  AccordionIndicator,
   AccordionItem,
   AccordionTrigger,
-} from "@workspace/ui/components/accordion";
+  ListBox,
+  Select,
+  SelectPopover as SelectContent,
+  SelectIndicator,
+  ListBoxItem as SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@heroui/react";
 import { Badge } from "@workspace/ui/components/badge";
 import { Button } from "@workspace/ui/components/button";
 import { Label } from "@workspace/ui/components/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@workspace/ui/components/select";
 import { Switch } from "@workspace/ui/components/switch";
 import { Textarea } from "@workspace/ui/components/textarea";
 import { EnhancedInput } from "@workspace/ui/composed/enhanced-input";
@@ -203,7 +205,7 @@ export function OutboundConfigInput({
       <>
         {field.label}
         {field.required ? (
-          <span aria-hidden="true" className="ml-1 text-destructive">
+          <span aria-hidden="true" className="ml-1 text-danger">
             *
           </span>
         ) : null}
@@ -220,18 +222,32 @@ export function OutboundConfigInput({
           <div className={cn("space-y-2", field.className)} key={field.name}>
             <Label>{label}</Label>
             <Select
-              onValueChange={(nextValue) => updateItem(index, field, nextValue)}
-              value={String(value || "")}
+              aria-label={field.placeholder}
+              onSelectionChange={(key) => {
+                if (key != null)
+                  ((nextValue) => updateItem(index, field, nextValue))(
+                    String(key)
+                  );
+              }}
+              placeholder={field.placeholder}
+              selectedKey={
+                String(value || "") == null
+                  ? undefined
+                  : String(String(value || ""))
+              }
             >
               <SelectTrigger>
-                <SelectValue placeholder={field.placeholder} />
+                <SelectValue />
+                <SelectIndicator />
               </SelectTrigger>
               <SelectContent>
-                {options.map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </SelectItem>
-                ))}
+                <ListBox>
+                  {options.map((option) => (
+                    <SelectItem id={option.value} key={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </ListBox>
               </SelectContent>
             </Select>
           </div>
@@ -315,35 +331,41 @@ export function OutboundConfigInput({
       {items.length > 0 && (
         <Accordion
           className="space-y-3"
-          collapsible
-          onValueChange={setAccordionValue}
-          type="single"
-          value={accordionValue}
+          expandedKeys={accordionValue ? [accordionValue] : []}
+          onExpandedChange={(keys) =>
+            ((value) =>
+              setAccordionValue(Array.isArray(value) ? value[0] : value))(
+              [...keys].map(String)[0] ?? ""
+            )
+          }
         >
           {items.map((item, index) => (
             <div className="flex items-start gap-2" key={index}>
               <AccordionItem
                 className="flex-1 rounded-lg border"
-                value={String(index)}
+                id={String(index)}
               >
-                <AccordionTrigger className="px-4 py-3 hover:no-underline">
-                  <div className="flex w-full min-w-0 flex-col items-start gap-2">
-                    <span className="max-w-full truncate font-medium text-sm">
-                      {getItemTitle(item, index)}
-                    </span>
-                    <div className="flex flex-wrap gap-1">
-                      {getItemBadges(item).map((badge) => (
-                        <Badge
-                          className="text-xs"
-                          key={badge}
-                          variant="outline"
-                        >
-                          {badge}
-                        </Badge>
-                      ))}
+                <AccordionHeading>
+                  <AccordionTrigger className="px-4 py-3 hover:no-underline">
+                    <div className="flex w-full min-w-0 flex-col items-start gap-2">
+                      <span className="max-w-full truncate font-medium text-sm">
+                        {getItemTitle(item, index)}
+                      </span>
+                      <div className="flex flex-wrap gap-1">
+                        {getItemBadges(item).map((badge) => (
+                          <Badge
+                            className="text-xs"
+                            key={badge}
+                            variant="outline"
+                          >
+                            {badge}
+                          </Badge>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                </AccordionTrigger>
+                    <AccordionIndicator />
+                  </AccordionTrigger>
+                </AccordionHeading>
                 <AccordionContent className="px-4 pt-0 pb-4">
                   <div className="-mx-4 space-y-4 rounded-b-lg border-t px-4 pt-4">
                     {FIELD_GROUPS.map((group) =>

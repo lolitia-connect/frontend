@@ -1,15 +1,15 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
-import { Badge } from "@workspace/ui/components/badge";
-import { Button } from "@workspace/ui/components/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@workspace/ui/components/card";
+} from "@heroui/react";
+import { useQuery } from "@tanstack/react-query";
+import { Badge } from "@workspace/ui/components/badge";
+import { Button } from "@workspace/ui/components/button";
 import { Spinner } from "@workspace/ui/components/spinner";
 import {
   getNodeGroupList,
@@ -136,8 +136,8 @@ export default function TrafficModeTab() {
         <CardContent className="space-y-4">
           {isLoadingNodeGroups ? (
             <div className="flex items-center justify-center py-8">
-              <Spinner className="size-6 text-muted-foreground" />
-              <span className="ml-2 text-muted-foreground text-sm">
+              <Spinner className="size-6 text-muted" />
+              <span className="ml-2 text-muted text-sm">
                 {t("loading", "Loading...")}
               </span>
             </div>
@@ -187,9 +187,9 @@ export default function TrafficModeTab() {
                     {status.progress} / {status.total || 0}
                   </span>
                 </div>
-                <div className="h-2 overflow-hidden rounded-full bg-muted">
+                <div className="h-2 overflow-hidden rounded-full bg-default">
                   <div
-                    className="h-full bg-primary transition-all"
+                    className="h-full bg-accent transition-all"
                     style={{
                       width: `${status.total > 0 ? (status.progress / status.total) * 100 : 0}%`,
                     }}
@@ -199,7 +199,7 @@ export default function TrafficModeTab() {
             )}
 
             {status?.state === "completed" && (
-              <div className="text-muted-foreground text-sm">
+              <div className="text-muted text-sm">
                 {t(
                   "recalculationCompleted",
                   "Recalculation completed successfully"
@@ -208,7 +208,7 @@ export default function TrafficModeTab() {
             )}
 
             {status?.state === "failed" && (
-              <div className="text-destructive text-sm">
+              <div className="text-danger text-sm">
                 {t(
                   "recalculationFailed",
                   "Recalculation failed. Please try again."
@@ -229,7 +229,7 @@ export default function TrafficModeTab() {
           </div>
 
           {/* Warning */}
-          <div className="rounded-md bg-yellow-50 p-4 text-sm text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400">
+          <div className="rounded-md bg-warning-soft p-4 text-sm text-warning-soft-foreground">
             <strong>{t("warning", "Warning")}:</strong>{" "}
             {t(
               "recalculationWarning",

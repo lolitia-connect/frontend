@@ -1,33 +1,28 @@
-import { useQuery } from "@tanstack/react-query";
-import { Link } from "@tanstack/react-router";
+"use client";
+
 import {
   Accordion,
-  AccordionContent,
+  AccordionPanel as AccordionContent,
+  AccordionHeading,
+  AccordionIndicator,
   AccordionItem,
   AccordionTrigger,
-} from "@workspace/ui/components/accordion";
-import {
   AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@workspace/ui/components/alert-dialog";
-import { Button } from "@workspace/ui/components/button";
-import {
   Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@workspace/ui/components/card";
+  Description,
+  TabIndicator,
+  Tabs,
+  TabList as TabsList,
+  TabListContainer as TabsListContainer,
+  Tab as TabsTrigger,
+} from "@heroui/react";
+import { useQuery } from "@tanstack/react-query";
+import { Button } from "@workspace/ui/components/button";
 import { Separator } from "@workspace/ui/components/separator";
-import { Tabs, TabsList, TabsTrigger } from "@workspace/ui/components/tabs";
 import { Icon } from "@workspace/ui/composed/icon";
 import { RefreshButton } from "@workspace/ui/composed/refresh-button";
+import { useThemeColor } from "@workspace/ui/hooks/use-theme-color";
+import { Link } from "@workspace/ui/lib/router-compat";
 import { cn } from "@workspace/ui/lib/utils";
 import { getClient, getStat } from "@workspace/ui/services/common/common";
 import {
@@ -64,6 +59,9 @@ const platforms: (keyof API.DownloadLink)[] = [
 
 export default function Content() {
   const { t } = useTranslation("dashboard");
+  // `qrcode.react` paints onto a canvas and cannot resolve `var(...)`, so the
+  // theme token has to be read as a concrete colour here.
+  const qrColor = useThemeColor("--color-primary-500", "#ec4899");
   const { getUserSubscribe, getAppSubLink, commonError, isLoadingCommon } =
     useGlobalStore();
 
@@ -166,54 +164,62 @@ export default function Content() {
           <div className="flex flex-wrap justify-between gap-4">
             {availablePlatforms.length > 0 && (
               <Tabs
-                className="w-full max-w-full md:w-auto"
-                onValueChange={(value) =>
-                  setPlatform(value as keyof API.DownloadLink)
+                className="w-full min-w-0 max-w-full md:w-auto"
+                onSelectionChange={(key) =>
+                  ((value) => setPlatform(value as keyof API.DownloadLink))(
+                    String(key)
+                  )
                 }
-                value={platform}
+                selectedKey={platform}
               >
-                <TabsList className="flex *:flex-auto">
-                  {availablePlatforms.map((item) => (
-                    <TabsTrigger
-                      className="px-1 lg:px-3"
-                      key={item}
-                      value={item}
-                    >
-                      <Icon
-                        className="size-5"
-                        icon={`${
-                          {
-                            windows: "mdi:microsoft-windows",
-                            mac: "uil:apple",
-                            linux: "uil:linux",
-                            ios: "simple-icons:ios",
-                            android: "uil:android",
-                            harmony: "simple-icons:harmonyos",
-                          }[item]
-                        }`}
-                      />
-                    </TabsTrigger>
-                  ))}
-                </TabsList>
+                <TabsListContainer className="min-w-0 max-w-full">
+                  <TabsList aria-label={t("sections", "Sections")}>
+                    {availablePlatforms.map((item) => (
+                      <TabsTrigger
+                        className="w-auto flex-1 whitespace-nowrap px-1 lg:px-3"
+                        id={item}
+                        key={item}
+                      >
+                        <Icon
+                          className="size-5"
+                          icon={`${
+                            {
+                              windows: "mdi:microsoft-windows",
+                              mac: "uil:apple",
+                              linux: "uil:linux",
+                              ios: "simple-icons:ios",
+                              android: "uil:android",
+                              harmony: "simple-icons:harmonyos",
+                            }[item]
+                          }`}
+                        />
+                        <TabIndicator />
+                      </TabsTrigger>
+                    ))}
+                  </TabsList>
+                </TabsListContainer>
               </Tabs>
             )}
             {data?.protocol && data?.protocol.length > 1 && (
               <Tabs
-                className="w-full max-w-full md:w-auto"
-                onValueChange={setProtocol}
-                value={protocol}
+                className="w-full min-w-0 max-w-full md:w-auto"
+                onSelectionChange={(key) => setProtocol(String(key))}
+                selectedKey={protocol}
               >
-                <TabsList className="flex *:flex-auto">
-                  {["all", ...(data?.protocol || [])].map((item) => (
-                    <TabsTrigger
-                      className="px-1 uppercase lg:px-3"
-                      key={item}
-                      value={item === "all" ? "" : item}
-                    >
-                      {item}
-                    </TabsTrigger>
-                  ))}
-                </TabsList>
+                <TabsListContainer className="min-w-0 max-w-full">
+                  <TabsList aria-label={t("sections", "Sections")}>
+                    {["all", ...(data?.protocol || [])].map((item) => (
+                      <TabsTrigger
+                        className="w-auto flex-1 whitespace-nowrap px-1 uppercase lg:px-3"
+                        id={item === "all" ? "" : item}
+                        key={item}
+                      >
+                        {item}
+                        <TabIndicator />
+                      </TabsTrigger>
+                    ))}
+                  </TabsList>
+                </TabsListContainer>
               </Tabs>
             )}
           </div>
@@ -247,7 +253,7 @@ export default function Content() {
                     className={cn(
                       "pointer-events-none absolute top-0 left-0 z-10 h-full w-full overflow-hidden mix-blend-difference brightness-150 contrast-200 invert-[0.2]",
                       {
-                        "text-destructive": item.status === 2,
+                        "text-danger": item.status === 2,
                         "text-white": isActuallyExpired || item.status === 4,
                       }
                     )}
@@ -261,7 +267,7 @@ export default function Content() {
 
                         return (
                           <span
-                            className="absolute rotate-[-30deg] whitespace-nowrap font-black text-lg opacity-40 shadow-[0px_0px_1px_rgba(255,255,255,0.5)]"
+                            className="absolute rotate-[-30deg] whitespace-nowrap font-black text-lg opacity-40 shadow-[0px_0px_1px_var(--surface)]"
                             key={i}
                             style={{
                               top: `${top}%`,
@@ -279,8 +285,8 @@ export default function Content() {
                     </div>
                   </div>
                 )}
-                <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-2 space-y-0">
-                  <CardTitle className="font-medium">
+                <Card.Header className="flex flex-row flex-wrap items-center justify-between gap-2 space-y-0">
+                  <Card.Title className="font-medium">
                     {item.subscribe.name}
                     <p className="mt-1 text-foreground/50 text-sm">
                       {t("expireAt", "Expires At")}:{" "}
@@ -288,51 +294,55 @@ export default function Content() {
                         ? formatDate(item.expire_time)
                         : t("noLimit", "No Limit")}
                     </p>
-                  </CardTitle>
+                  </Card.Title>
                   {item.status !== 4 && (
                     <div className="flex flex-wrap gap-2">
                       {!isActuallyExpired && (
                         <>
                           <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                              <Button size="sm" variant="destructive">
-                                {t("resetSubscription", "Reset Subscription")}
-                              </Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>
-                                  {t(
-                                    "resetSubscriptionTitle",
-                                    "After resetting, re-add your subscription in every app"
-                                  )}
-                                </AlertDialogTitle>
-                                <AlertDialogDescription>
-                                  {t(
-                                    "resetSubscriptionDescription",
-                                    "The old link and imported nodes stop working. Delete the old subscription in every app, then add the new link. Your plan, expiry date and used traffic are not affected."
-                                  )}
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>
-                                  {t("cancel", "Cancel")}
-                                </AlertDialogCancel>
-                                <AlertDialogAction
-                                  onClick={async () => {
-                                    await resetUserSubscribeToken({
-                                      user_subscribe_id: item.id,
-                                    });
-                                    await refetch();
-                                    toast.success(
-                                      t("resetSuccess", "Reset Success")
-                                    );
-                                  }}
-                                >
-                                  {t("confirm", "Confirm")}
-                                </AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
+                            <Button size="sm" variant="destructive">
+                              {t("resetSubscription", "Reset Subscription")}
+                            </Button>
+
+                            <AlertDialog.Backdrop>
+                              <AlertDialog.Container>
+                                <AlertDialog.Dialog>
+                                  <AlertDialog.Header>
+                                    <AlertDialog.Heading>
+                                      {t(
+                                        "resetSubscriptionTitle",
+                                        "After resetting, re-add your subscription in every app"
+                                      )}
+                                    </AlertDialog.Heading>
+                                    <Description>
+                                      {t(
+                                        "resetSubscriptionDescription",
+                                        "The old link and imported nodes stop working. Delete the old subscription in every app, then add the new link. Your plan, expiry date and used traffic are not affected."
+                                      )}
+                                    </Description>
+                                  </AlertDialog.Header>
+                                  <AlertDialog.Footer>
+                                    <Button slot="close" variant="secondary">
+                                      {t("cancel", "Cancel")}
+                                    </Button>
+                                    <Button
+                                      onClick={async () => {
+                                        await resetUserSubscribeToken({
+                                          user_subscribe_id: item.id,
+                                        });
+                                        await refetch();
+                                        toast.success(
+                                          t("resetSuccess", "Reset Success")
+                                        );
+                                      }}
+                                      slot="close"
+                                    >
+                                      {t("confirm", "Confirm")}
+                                    </Button>
+                                  </AlertDialog.Footer>
+                                </AlertDialog.Dialog>
+                              </AlertDialog.Container>
+                            </AlertDialog.Backdrop>
                           </AlertDialog>
                           <ResetTraffic
                             id={item.id}
@@ -351,13 +361,11 @@ export default function Content() {
                       />
                     </div>
                   )}
-                </CardHeader>
-                <CardContent>
+                </Card.Header>
+                <Card.Content>
                   <ul className="grid grid-cols-2 gap-3 *:flex *:flex-col *:justify-between lg:grid-cols-4">
                     <li>
-                      <span className="text-muted-foreground">
-                        {t("used", "Used")}
-                      </span>
+                      <span className="text-muted">{t("used", "Used")}</span>
                       <span className="font-bold text-2xl">
                         <Display
                           type="traffic"
@@ -367,7 +375,7 @@ export default function Content() {
                       </span>
                     </li>
                     <li>
-                      <span className="text-muted-foreground">
+                      <span className="text-muted">
                         {t("totalTraffic", "Total Traffic")}
                       </span>
                       <span className="font-bold text-2xl">
@@ -379,7 +387,7 @@ export default function Content() {
                       </span>
                     </li>
                     <li>
-                      <span className="text-muted-foreground">
+                      <span className="text-muted">
                         {t("nextResetDays", "Next Reset Days")}
                       </span>
                       <span className="font-semibold text-2xl">
@@ -392,7 +400,7 @@ export default function Content() {
                       </span>
                     </li>
                     <li>
-                      <span className="text-muted-foreground">
+                      <span className="text-muted">
                         {isActuallyExpired
                           ? t("expiredDays", "Days Expired")
                           : t("remainingDays", "Remaining Days")}
@@ -411,7 +419,7 @@ export default function Content() {
                   </ul>
                   <Separator className="mt-4" />
                   {subscriptionUrlAvailability !== "ready" && (
-                    <p className="py-4 text-center text-muted-foreground text-sm">
+                    <p className="py-4 text-center text-muted text-sm">
                       {subscriptionUrlAvailability === "loading"
                         ? t(
                             "loadingSubscriptionConfig",
@@ -423,41 +431,42 @@ export default function Content() {
                           )}
                     </p>
                   )}
-                  <Accordion
-                    className="w-full"
-                    collapsible
-                    defaultValue="0"
-                    type="single"
-                  >
+                  <Accordion className="w-full" defaultExpandedKeys={["0"]}>
                     {subscriptionUrls.map((url, index) => (
-                      <AccordionItem key={url} value={String(index)}>
-                        <AccordionTrigger className="hover:no-underline">
-                          <div className="flex w-full flex-row items-center justify-between">
-                            <CardTitle className="font-medium text-sm">
-                              {t("subscriptionUrl", "Subscription URL")}{" "}
-                              {index + 1}
-                            </CardTitle>
+                      <AccordionItem id={String(index)} key={url}>
+                        <AccordionHeading>
+                          <AccordionTrigger className="hover:no-underline">
+                            <div className="flex w-full flex-row items-center justify-between">
+                              <Card.Title className="font-medium text-sm">
+                                {t("subscriptionUrl", "Subscription URL")}{" "}
+                                {index + 1}
+                              </Card.Title>
 
-                            <CopyToClipboard
-                              onCopy={(_, result) => {
-                                if (result) {
-                                  toast.success(
-                                    t("copySuccess", "Copy Success")
-                                  );
-                                }
-                              }}
-                              text={url}
-                            >
-                              <span
-                                className="mr-4 flex cursor-pointer rounded p-2 text-primary text-sm hover:bg-accent"
-                                onClick={(e) => e.stopPropagation()}
+                              <CopyToClipboard
+                                onCopy={(_, result) => {
+                                  if (result) {
+                                    toast.success(
+                                      t("copySuccess", "Copy Success")
+                                    );
+                                  }
+                                }}
+                                text={url}
                               >
-                                <Icon className="mr-2 size-5" icon="uil:copy" />
-                                {t("copy", "Copy")}
-                              </span>
-                            </CopyToClipboard>
-                          </div>
-                        </AccordionTrigger>
+                                <span
+                                  className="mr-4 flex cursor-pointer rounded p-2 text-accent text-sm hover:bg-default"
+                                  onClick={(e) => e.stopPropagation()}
+                                >
+                                  <Icon
+                                    className="mr-2 size-5"
+                                    icon="uil:copy"
+                                  />
+                                  {t("copy", "Copy")}
+                                </span>
+                              </CopyToClipboard>
+                            </div>
+                            <AccordionIndicator />
+                          </AccordionTrigger>
+                        </AccordionHeading>
                         <AccordionContent>
                           <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
                             {applications
@@ -534,7 +543,7 @@ export default function Content() {
 
                                 return (
                                   <div
-                                    className="flex size-full flex-col items-center justify-between gap-2 text-muted-foreground text-xs"
+                                    className="flex size-full flex-col items-center justify-between gap-2 text-muted text-xs"
                                     key={application.name}
                                   >
                                     <span>{application.name}</span>
@@ -548,15 +557,11 @@ export default function Content() {
                                         width={64}
                                       />
                                     )}
-                                    <div className="flex">
+                                    <div className="flex w-full flex-wrap justify-center gap-1">
                                       {downloadUrl && (
                                         <Button
                                           asChild
-                                          className={
-                                            application.scheme
-                                              ? "rounded-r-none px-1.5"
-                                              : "px-1.5"
-                                          }
+                                          className="px-1.5"
                                           size="sm"
                                           variant="secondary"
                                         >
@@ -575,14 +580,7 @@ export default function Content() {
                                           onCopy={handleCopy}
                                           text={url}
                                         >
-                                          <Button
-                                            className={
-                                              downloadUrl
-                                                ? "rounded-l-none p-2"
-                                                : "p-2"
-                                            }
-                                            size="sm"
-                                          >
+                                          <Button className="p-2" size="sm">
                                             {isHttpLink
                                               ? t(
                                                   "clickToCopy",
@@ -596,11 +594,11 @@ export default function Content() {
                                   </div>
                                 );
                               })}
-                            <div className="hidden size-full flex-col items-center justify-between gap-2 text-muted-foreground text-sm lg:flex">
+                            <div className="hidden size-full flex-col items-center justify-between gap-2 text-muted text-sm lg:flex">
                               <span>{t("qrCode", "QR Code")}</span>
                               <QRCodeCanvas
                                 bgColor="transparent"
-                                fgColor="rgb(59, 130, 246)"
+                                fgColor={qrColor}
                                 size={80}
                                 value={url}
                               />
@@ -613,7 +611,7 @@ export default function Content() {
                       </AccordionItem>
                     ))}
                   </Accordion>
-                </CardContent>
+                </Card.Content>
               </Card>
             );
           })}

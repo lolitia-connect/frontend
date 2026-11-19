@@ -1,3 +1,5 @@
+"use client";
+
 import Announcement from "../announcement";
 import Content from "./content";
 

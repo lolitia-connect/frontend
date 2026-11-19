@@ -1,17 +1,6 @@
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@workspace/ui/components/dialog";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@workspace/ui/components/table";
+"use client";
+
+import { Modal, Table } from "@heroui/react";
 import { getRedemptionRecordList } from "@workspace/ui/services/admin/redemption";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -59,94 +48,114 @@ export default function RedemptionRecords({
   }, [open, codeId, pagination]);
 
   return (
-    <Dialog onOpenChange={onOpenChange} open={open}>
-      <DialogContent className="max-h-[80vh] max-w-4xl overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>{t("records", "Redemption Records")}</DialogTitle>
-        </DialogHeader>
-        <div className="mt-4">
-          {loading ? (
-            <div className="flex justify-center py-8">
-              <span>{t("loading", "Loading...")}</span>
-            </div>
-          ) : records.length === 0 ? (
-            <div className="py-8 text-center text-muted-foreground">
-              {t("noRecords", "No records found")}
-            </div>
-          ) : (
-            <>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>{t("id", "ID")}</TableHead>
-                    <TableHead>{t("userId", "User ID")}</TableHead>
-                    <TableHead>{t("subscribeId", "Subscribe ID")}</TableHead>
-                    <TableHead>{t("unitTime", "Unit Time")}</TableHead>
-                    <TableHead>{t("quantity", "Quantity")}</TableHead>
-                    <TableHead>{t("redeemedAt", "Redeemed At")}</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {records.map((record) => {
-                    const unitTimeMap: Record<string, string> = {
-                      Day: t("form.day", "Day"),
-                      Month: t("form.month", "Month"),
-                      Quarter: t("form.quarter", "Quarter"),
-                      HalfYear: t("form.halfYear", "Half Year"),
-                      Year: t("form.year", "Year"),
-                    };
-                    return (
-                      <TableRow key={record.id}>
-                        <TableCell>{record.id}</TableCell>
-                        <TableCell>{record.user_id}</TableCell>
-                        <TableCell>{record.subscribe_id}</TableCell>
-                        <TableCell>
-                          {unitTimeMap[record.unit_time] || record.unit_time}
-                        </TableCell>
-                        <TableCell>{record.quantity}</TableCell>
-                        <TableCell>
-                          {record.redeemed_at
-                            ? formatDate(record.redeemed_at)
-                            : "--"}
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-              {total > pagination.size && (
-                <div className="mt-4 flex items-center justify-between">
-                  <span className="text-muted-foreground text-sm">
-                    {t("total", "Total")}: {total}
-                  </span>
-                  <div className="flex gap-2">
-                    <button
-                      className="rounded border px-3 py-1 text-sm hover:bg-accent disabled:opacity-50"
-                      disabled={pagination.page === 1}
-                      onClick={() =>
-                        setPagination((p) => ({ ...p, page: p.page - 1 }))
-                      }
-                      type="button"
+    <Modal.Backdrop isOpen={open} onOpenChange={onOpenChange}>
+      <Modal.Container>
+        <Modal.Dialog className="max-h-[80vh] max-w-4xl overflow-y-auto">
+          <Modal.Header>
+            <Modal.Heading>{t("records", "Redemption Records")}</Modal.Heading>
+          </Modal.Header>
+          <div className="mt-4">
+            {loading ? (
+              <div className="flex justify-center py-8">
+                <span>{t("loading", "Loading...")}</span>
+              </div>
+            ) : records.length === 0 ? (
+              <div className="py-8 text-center text-muted">
+                {t("noRecords", "No records found")}
+              </div>
+            ) : (
+              <>
+                <Table>
+                  <Table.ScrollContainer>
+                    <Table.Content
+                      aria-label={t("records", "Redemption Records")}
                     >
-                      {t("previous", "Previous")}
-                    </button>
-                    <button
-                      className="rounded border px-3 py-1 text-sm hover:bg-accent disabled:opacity-50"
-                      disabled={pagination.page * pagination.size >= total}
-                      onClick={() =>
-                        setPagination((p) => ({ ...p, page: p.page + 1 }))
-                      }
-                      type="button"
-                    >
-                      {t("next", "Next")}
-                    </button>
+                      <Table.Header>
+                        <Table.Column id="column-0" isRowHeader>
+                          {t("id", "ID")}
+                        </Table.Column>
+                        <Table.Column id="column-1">
+                          {t("userId", "User ID")}
+                        </Table.Column>
+                        <Table.Column id="column-2">
+                          {t("subscribeId", "Subscribe ID")}
+                        </Table.Column>
+                        <Table.Column id="column-3">
+                          {t("unitTime", "Unit Time")}
+                        </Table.Column>
+                        <Table.Column id="column-4">
+                          {t("quantity", "Quantity")}
+                        </Table.Column>
+                        <Table.Column id="column-5">
+                          {t("redeemedAt", "Redeemed At")}
+                        </Table.Column>
+                      </Table.Header>
+                      <Table.Body>
+                        {records.map((record) => {
+                          const unitTimeMap: Record<string, string> = {
+                            Day: t("form.day", "Day"),
+                            Month: t("form.month", "Month"),
+                            Quarter: t("form.quarter", "Quarter"),
+                            HalfYear: t("form.halfYear", "Half Year"),
+                            Year: t("form.year", "Year"),
+                          };
+                          return (
+                            <Table.Row id={record.id} key={record.id}>
+                              <Table.Cell>{record.id}</Table.Cell>
+                              <Table.Cell>{record.user_id}</Table.Cell>
+                              <Table.Cell>{record.subscribe_id}</Table.Cell>
+                              <Table.Cell>
+                                {unitTimeMap[record.unit_time] ||
+                                  record.unit_time}
+                              </Table.Cell>
+                              <Table.Cell>{record.quantity}</Table.Cell>
+                              <Table.Cell>
+                                {record.redeemed_at
+                                  ? formatDate(record.redeemed_at)
+                                  : "--"}
+                              </Table.Cell>
+                            </Table.Row>
+                          );
+                        })}
+                      </Table.Body>
+                    </Table.Content>
+                  </Table.ScrollContainer>
+                </Table>
+                {total > pagination.size && (
+                  <div className="mt-4 flex items-center justify-between">
+                    <span className="text-muted text-sm">
+                      {t("total", "Total")}: {total}
+                    </span>
+                    <div className="flex gap-2">
+                      <button
+                        className="rounded border px-3 py-1 text-sm hover:bg-default disabled:opacity-50"
+                        disabled={pagination.page === 1}
+                        onClick={() =>
+                          setPagination((p) => ({ ...p, page: p.page - 1 }))
+                        }
+                        type="button"
+                      >
+                        {t("previous", "Previous")}
+                      </button>
+                      <button
+                        className="rounded border px-3 py-1 text-sm hover:bg-default disabled:opacity-50"
+                        disabled={pagination.page * pagination.size >= total}
+                        onClick={() =>
+                          setPagination((p) => ({ ...p, page: p.page + 1 }))
+                        }
+                        type="button"
+                      >
+                        {t("next", "Next")}
+                      </button>
+                    </div>
                   </div>
-                </div>
-              )}
-            </>
-          )}
-        </div>
-      </DialogContent>
-    </Dialog>
+                )}
+              </>
+            )}
+          </div>
+          <Modal.CloseTrigger aria-label="Close" />
+        </Modal.Dialog>
+      </Modal.Container>
+    </Modal.Backdrop>
   );
 }

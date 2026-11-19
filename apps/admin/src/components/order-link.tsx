@@ -1,5 +1,7 @@
-import { Link } from "@tanstack/react-router";
+"use client";
+
 import { Button } from "@workspace/ui/components/button";
+import { Link } from "@workspace/ui/lib/router-compat";
 
 interface OrderLinkProps {
   className?: string;

@@ -45,8 +45,11 @@ export function HoverBorderGradient({
       "radial-gradient(16.2% 41.199999999999996% at 100% 50%, hsl(0, 0%, 100%) 0%, rgba(255, 255, 255, 0) 100%)",
   };
 
+  // Exposed but currently unused; kept on the brand token instead of the
+  // original hardcoded blue so it cannot reintroduce an off-palette colour if a
+  // call site is ever added.
   const highlight =
-    "radial-gradient(75% 181.15942028985506% at 50% 50%, #3275F8 0%, rgba(255, 255, 255, 0) 100%)";
+    "radial-gradient(75% 181.15942028985506% at 50% 50%, var(--accent) 0%, transparent 100%)";
 
   useEffect(() => {
     if (!hovered) {

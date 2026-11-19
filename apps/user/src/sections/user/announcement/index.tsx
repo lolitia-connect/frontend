@@ -2,17 +2,13 @@
 
 import {
   Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@workspace/ui/components/card";
-import {
+  TabIndicator,
   Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@workspace/ui/components/tabs";
+  TabPanel as TabsContent,
+  TabList as TabsList,
+  TabListContainer as TabsListContainer,
+  Tab as TabsTrigger,
+} from "@heroui/react";
 import { Icon } from "@workspace/ui/composed/icon";
 import { Markdown } from "@workspace/ui/composed/markdown";
 import {
@@ -55,35 +51,35 @@ export default function Announcement() {
 
   const renderAnnouncement = (item: any) => (
     <Card className="overflow-hidden">
-      <CardHeader>
+      <Card.Header>
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-center gap-2">
-            <CardTitle className="text-lg">{item.title}</CardTitle>
+            <Card.Title className="text-lg">{item.title}</Card.Title>
             {item.pinned && (
-              <span className="flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 font-medium text-primary text-xs">
-                <Icon className="size-3" icon="uil:pin" />
+              <span className="flex items-center gap-1 rounded-full bg-primary-50 px-2 py-0.5 font-medium text-primary-600 text-xs">
+                <Icon className="size-3" icon="uil:bookmark" />
                 {t("pinned", "Pinned")}
               </span>
             )}
             {item.popup && (
-              <span className="flex items-center gap-1 rounded-full bg-orange-500/10 px-2 py-0.5 font-medium text-orange-500 text-xs">
-                <Icon className="size-3" icon="uil:popcorn" />
+              <span className="flex items-center gap-1 rounded-full bg-warning-soft px-2 py-0.5 font-medium text-warning-soft-foreground text-xs">
+                <Icon className="size-3" icon="uil:exclamation-triangle" />
                 {t("popup", "Popup")}
               </span>
             )}
           </div>
-          <CardDescription className="text-sm">
+          <Card.Description className="text-sm">
             <time dateTime={item.created_at}>
               {formatDate(item.created_at)}
             </time>
-          </CardDescription>
+          </Card.Description>
         </div>
-      </CardHeader>
-      <CardContent>
+      </Card.Header>
+      <Card.Content>
         <div className="prose prose-sm dark:prose-invert max-w-none">
           <Markdown>{item.content}</Markdown>
         </div>
-      </CardContent>
+      </Card.Content>
     </Card>
   );
 
@@ -93,18 +89,32 @@ export default function Announcement() {
         <Icon className="size-5" icon="uil:bell" />
         {t("announcements", "Announcements")}
       </h2>
-      <Tabs defaultValue="all" onValueChange={setActiveTab}>
-        <TabsList>
-          <TabsTrigger value="all">{t("all", "All")}</TabsTrigger>
-          <TabsTrigger value="pinned">
-            {t("pinnedOnly", "Pinned Only")}
-          </TabsTrigger>
-          <TabsTrigger value="popup">
-            {t("popupOnly", "Popup Only")}
-          </TabsTrigger>
-        </TabsList>
+      <Tabs
+        className="min-w-0 max-w-full"
+        defaultSelectedKey="all"
+        onSelectionChange={(key) => setActiveTab(String(key))}
+      >
+        <TabsListContainer className="min-w-0 max-w-full">
+          <TabsList aria-label={t("sections", "Sections")}>
+            <TabsTrigger className="w-auto flex-1 whitespace-nowrap" id="all">
+              {t("all", "All")}
+              <TabIndicator />
+            </TabsTrigger>
+            <TabsTrigger
+              className="w-auto flex-1 whitespace-nowrap"
+              id="pinned"
+            >
+              {t("pinnedOnly", "Pinned Only")}
+              <TabIndicator />
+            </TabsTrigger>
+            <TabsTrigger className="w-auto flex-1 whitespace-nowrap" id="popup">
+              {t("popupOnly", "Popup Only")}
+              <TabIndicator />
+            </TabsTrigger>
+          </TabsList>
+        </TabsListContainer>
 
-        <TabsContent value="all">
+        <TabsContent id="all">
           <ProList
             action={normalRef}
             renderItem={renderAnnouncement}
@@ -112,7 +122,7 @@ export default function Announcement() {
           />
         </TabsContent>
 
-        <TabsContent value="pinned">
+        <TabsContent id="pinned">
           <ProList
             action={pinnedRef}
             renderItem={renderAnnouncement}
@@ -122,7 +132,7 @@ export default function Announcement() {
           />
         </TabsContent>
 
-        <TabsContent value="popup">
+        <TabsContent id="popup">
           <ProList
             action={normalRef}
             renderItem={renderAnnouncement}

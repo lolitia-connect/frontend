@@ -8,7 +8,7 @@ export async function updatePaymentMethod(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: API.PaymentConfig }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/payment/`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/payment/`,
     {
       method: "PUT",
       headers: {
@@ -26,7 +26,7 @@ export async function createPaymentMethod(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: API.PaymentConfig }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/payment/`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/payment/`,
     {
       method: "POST",
       headers: {
@@ -44,7 +44,7 @@ export async function deletePaymentMethod(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: any }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/payment/`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/payment/`,
     {
       method: "DELETE",
       headers: {
@@ -63,7 +63,7 @@ export async function getPaymentMethodList(
   options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: API.GetPaymentMethodListResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/payment/list`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/payment/list`,
     {
       method: "GET",
       params: {
@@ -77,7 +77,7 @@ export async function getPaymentMethodList(
 /** Get supported payment platform GET /v1/admin/payment/platform */
 export async function getPaymentPlatform(options?: { [key: string]: any }) {
   return request<API.Response & { data?: API.PlatformResponse }>(
-    `${import.meta.env.VITE_API_PREFIX || ""}/v1/admin/payment/platform`,
+    `${process.env.NEXT_PUBLIC_API_PREFIX || ""}/v1/admin/payment/platform`,
     {
       method: "GET",
       ...(options || {}),

@@ -1,3 +1,5 @@
+"use client";
+
 const sessionTokens = new Map<string, string>();
 
 export function saveCheckoutToken(orderNo: string, token?: string) {

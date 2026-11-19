@@ -1,4 +1,4 @@
-const DEFAULT_AMOUNTS = [1000, 2000, 5000, 10_000];
+const DEFAULT_AMOUNTS = [10, 20, 50, 100];
 const DEFAULT_NEWS = [
   "Existing backend login is reused directly for authentication.",
   "Enabled payment methods are loaded from the current portal payment API.",
@@ -16,12 +16,9 @@ function parseAmounts(value?: string): number[] {
   const parsed = value
     .split(",")
     .map((item) => {
-      const num = Number(item.trim());
-      // If values look like dollars (< 10000), convert to cents
-      if (Number.isFinite(num) && num > 0) {
-        return num < 10_000 ? num * 100 : num;
-      }
-      return Number.NaN;
+      const amount = Number(item.trim());
+      // main accepted presets >= 10000 as cents; normalize only once for the UI.
+      return amount >= 10_000 ? amount / 100 : amount;
     })
     .filter((item) => Number.isFinite(item) && item > 0);
 
@@ -49,11 +46,11 @@ export const supportedLngs = [
 ] as const;
 
 export const portalConfig = {
-  currency: import.meta.env.VITE_PAYMENT_PORTAL_CURRENCY,
-  rechargeAmounts: parseAmounts(import.meta.env.VITE_PAYMENT_PORTAL_AMOUNTS),
+  currency: process.env.NEXT_PUBLIC_PAYMENT_PORTAL_CURRENCY,
+  rechargeAmounts: parseAmounts(process.env.NEXT_PUBLIC_PAYMENT_PORTAL_AMOUNTS),
   minCustomAmount: Math.max(
-    parseNumber(import.meta.env.VITE_PAYMENT_PORTAL_MIN_CUSTOM_AMOUNT, 100),
-    100
+    parseNumber(process.env.NEXT_PUBLIC_PAYMENT_PORTAL_MIN_CUSTOM_AMOUNT, 1),
+    1
   ),
-  newsItems: parseNews(import.meta.env.VITE_PAYMENT_PORTAL_NEWS),
+  newsItems: parseNews(process.env.NEXT_PUBLIC_PAYMENT_PORTAL_NEWS),
 };

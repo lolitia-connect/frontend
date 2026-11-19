@@ -1,11 +1,13 @@
 "use client";
 
 import {
+  TabIndicator,
   Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@workspace/ui/components/tabs";
+  TabPanel as TabsContent,
+  TabList as TabsList,
+  TabListContainer as TabsListContainer,
+  Tab as TabsTrigger,
+} from "@heroui/react";
 import { useTranslation } from "react-i18next";
 import AverageModeTab from "./average-mode-tab";
 import CurrentGroupResults from "./current-group-results";
@@ -25,31 +27,62 @@ export default function Group() {
         {t("title", "Group Management")}
       </h2>
 
-      <Tabs defaultValue="config">
-        <TabsList className="flex h-auto w-full flex-wrap gap-2">
-          <TabsTrigger value="config">{t("config", "Config")}</TabsTrigger>
-          {/* <TabsTrigger value="user">
-            {t("userGroups", "User Groups")}
-          </TabsTrigger> */}
-          <TabsTrigger value="node">
-            {t("nodeGroups", "Node Groups")}
-          </TabsTrigger>
-          <TabsTrigger value="average">
-            {t("averageMode", "Average Mode")}
-          </TabsTrigger>
-          <TabsTrigger value="subscribe">
-            {t("subscribeMode", "Subscribe Mode")}
-          </TabsTrigger>
-          <TabsTrigger value="traffic">
-            {t("trafficMode", "Traffic Mode")}
-          </TabsTrigger>
-          <TabsTrigger value="results">
-            {t("currentGroupingResult", "Current Grouping Result")}
-          </TabsTrigger>
-          <TabsTrigger value="history">{t("history", "History")}</TabsTrigger>
-        </TabsList>
+      <Tabs className="min-w-0 max-w-full" defaultSelectedKey="config">
+        <TabsListContainer className="min-w-0 max-w-full">
+          <TabsList aria-label={t("sections", "Sections")}>
+            <TabsTrigger
+              className="w-auto flex-1 whitespace-nowrap"
+              id="config"
+            >
+              {t("config", "Config")}
+              <TabIndicator />
+            </TabsTrigger>
+            {/* <TabsTrigger value="user">
+              {t("userGroups", "User Groups")}
+            </TabsTrigger> */}
+            <TabsTrigger className="w-auto flex-1 whitespace-nowrap" id="node">
+              {t("nodeGroups", "Node Groups")}
+              <TabIndicator />
+            </TabsTrigger>
+            <TabsTrigger
+              className="w-auto flex-1 whitespace-nowrap"
+              id="average"
+            >
+              {t("averageMode", "Average Mode")}
+              <TabIndicator />
+            </TabsTrigger>
+            <TabsTrigger
+              className="w-auto flex-1 whitespace-nowrap"
+              id="subscribe"
+            >
+              {t("subscribeMode", "Subscribe Mode")}
+              <TabIndicator />
+            </TabsTrigger>
+            <TabsTrigger
+              className="w-auto flex-1 whitespace-nowrap"
+              id="traffic"
+            >
+              {t("trafficMode", "Traffic Mode")}
+              <TabIndicator />
+            </TabsTrigger>
+            <TabsTrigger
+              className="w-auto flex-1 whitespace-nowrap"
+              id="results"
+            >
+              {t("currentGroupingResult", "Current Grouping Result")}
+              <TabIndicator />
+            </TabsTrigger>
+            <TabsTrigger
+              className="w-auto flex-1 whitespace-nowrap"
+              id="history"
+            >
+              {t("history", "History")}
+              <TabIndicator />
+            </TabsTrigger>
+          </TabsList>
+        </TabsListContainer>
 
-        <TabsContent className="mt-4" value="config">
+        <TabsContent className="mt-4" id="config">
           <GroupConfig />
         </TabsContent>
 
@@ -57,27 +90,27 @@ export default function Group() {
           <UserGroups />
         </TabsContent> */}
 
-        <TabsContent className="mt-4" value="node">
+        <TabsContent className="mt-4" id="node">
           <NodeGroups />
         </TabsContent>
 
-        <TabsContent className="mt-4" value="average">
+        <TabsContent className="mt-4" id="average">
           <AverageModeTab />
         </TabsContent>
 
-        <TabsContent className="mt-4" value="subscribe">
+        <TabsContent className="mt-4" id="subscribe">
           <SubscribeModeTab />
         </TabsContent>
 
-        <TabsContent className="mt-4" value="traffic">
+        <TabsContent className="mt-4" id="traffic">
           <TrafficModeTab />
         </TabsContent>
 
-        <TabsContent className="mt-4" value="results">
+        <TabsContent className="mt-4" id="results">
           <CurrentGroupResults />
         </TabsContent>
 
-        <TabsContent className="mt-4" value="history">
+        <TabsContent className="mt-4" id="history">
           <GroupHistory />
         </TabsContent>
       </Tabs>

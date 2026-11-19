@@ -1,4 +1,3 @@
-import { unitConversion } from "@workspace/ui/utils/unit-conversions";
 import { usePortalStore } from "@/stores/global";
 
 type DisplayType = "currency" | "number";
@@ -17,8 +16,7 @@ export function Display<T extends number | undefined | null>({
 
   if (type === "currency") {
     const symbol = currency?.currency_symbol ?? "$";
-    const formattedValue = `${symbol}${unitConversion("centsToDollars", value as number)?.toFixed(2) ?? "0.00"}`;
-    return formattedValue;
+    return `${symbol}${(Number(value) || 0).toFixed(2)}`;
   }
 
   if (type === "number") {

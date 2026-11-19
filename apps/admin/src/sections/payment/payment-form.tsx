@@ -1,3 +1,15 @@
+"use client";
+
+import {
+  ListBox,
+  Select,
+  SelectPopover as SelectContent,
+  SelectIndicator,
+  ListBoxItem as SelectItem,
+  SelectTrigger,
+  SelectValue,
+  Sheet,
+} from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@workspace/ui/components/button";
@@ -14,21 +26,7 @@ import {
   RadioGroupItem,
 } from "@workspace/ui/components/radio-group";
 import { ScrollArea } from "@workspace/ui/components/scroll-area";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@workspace/ui/components/select";
-import {
-  Sheet,
-  SheetContent,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@workspace/ui/components/sheet";
+
 import { MarkdownEditor } from "@workspace/ui/composed/editor/markdown";
 import { EnhancedInput } from "@workspace/ui/composed/enhanced-input";
 import { Icon } from "@workspace/ui/composed/icon";
@@ -62,7 +60,7 @@ interface PaymentFormProps<T extends { platform?: string }> {
   loading?: boolean;
   onSubmit: (values: T) => Promise<boolean>;
   title: string;
-  trigger: React.ReactNode;
+  trigger: React.ReactElement<{ onPress?: (event: unknown) => void }>;
 }
 
 export default function PaymentForm<T extends { platform?: string }>({
@@ -172,165 +170,441 @@ export default function PaymentForm<T extends { platform?: string }>({
   };
 
   return (
-    <Sheet onOpenChange={setOpen} open={open}>
-      <SheetTrigger asChild>{trigger}</SheetTrigger>
-      <SheetContent className="w-[550px] max-w-full md:max-w-screen-md">
-        <SheetHeader>
-          <SheetTitle>{title}</SheetTitle>
-        </SheetHeader>
-        <ScrollArea className="h-[calc(100vh-48px-36px-36px-24px-env(safe-area-inset-top))]">
-          <Form {...form}>
-            <form
-              className="space-y-6 px-6 pt-4"
-              onSubmit={form.handleSubmit(handleSubmit)}
-            >
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  <FormField
-                    control={form.control}
-                    name="name"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{t("name", "Name")}</FormLabel>
-                        <FormControl>
-                          <EnhancedInput
-                            onValueChange={(value) =>
-                              form.setValue("name", value as string)
-                            }
-                            placeholder={t(
-                              "namePlaceholder",
-                              "Enter payment method name"
-                            )}
-                            value={field.value}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="icon"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{t("icon", "Icon")}</FormLabel>
-                        <FormControl>
-                          <EnhancedInput
-                            onValueChange={(value) =>
-                              form.setValue("icon", value as string)
-                            }
-                            placeholder={t("iconPlaceholder", "Enter icon URL")}
-                            value={field.value}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <FormField
-                  control={form.control}
-                  name="domain"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t("domain", "Domain")}</FormLabel>
-                      <FormControl>
-                        <EnhancedInput
-                          onValueChange={(value) =>
-                            form.setValue("domain", value as string)
-                          }
-                          placeholder="http(s)://example.com"
-                          value={field.value}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="sort"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t("sort", "Sort")}</FormLabel>
-                      <FormControl>
-                        <EnhancedInput
-                          min={0}
-                          onValueChange={(value) =>
-                            form.setValue("sort", Number(value) || 0)
-                          }
-                          type="number"
-                          value={field.value ?? 0}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              <div className="space-y-4">
-                <FormField
-                  control={form.control}
-                  name="fee_mode"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t("handlingFee", "Handling Fee")}</FormLabel>
-                      <FormControl>
-                        <RadioGroup
-                          className="flex flex-wrap gap-4"
-                          onValueChange={(value) =>
-                            field.onChange(Number.parseInt(value, 10))
-                          }
-                          value={field.value.toString()}
-                        >
-                          <FormItem className="flex items-center space-x-2">
+    <Sheet isOpen={open} onOpenChange={setOpen} placement="right">
+      <Sheet.Trigger>{trigger}</Sheet.Trigger>
+      <Sheet.Backdrop>
+        <Sheet.Content>
+          <Sheet.Dialog className="w-[550px] max-w-full md:max-w-screen-md">
+            <Sheet.Header>
+              <Sheet.Heading>{title}</Sheet.Heading>
+            </Sheet.Header>
+            <ScrollArea className="h-[calc(100vh-48px-36px-36px-24px-env(safe-area-inset-top))]">
+              <Form {...form}>
+                <form
+                  className="space-y-6 px-6 pt-4"
+                  onSubmit={form.handleSubmit(handleSubmit)}
+                >
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                      <FormField
+                        control={form.control}
+                        name="name"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>{t("name", "Name")}</FormLabel>
                             <FormControl>
-                              <RadioGroupItem value="0" />
+                              <EnhancedInput
+                                onValueChange={(value) =>
+                                  form.setValue("name", value as string)
+                                }
+                                placeholder={t(
+                                  "namePlaceholder",
+                                  "Enter payment method name"
+                                )}
+                                value={field.value}
+                              />
                             </FormControl>
-                            <FormLabel className="!mt-0 cursor-pointer">
-                              {t("noFee", "No Fee")}
-                            </FormLabel>
+                            <FormMessage />
                           </FormItem>
-                          <FormItem className="flex items-center space-x-2">
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="icon"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>{t("icon", "Icon")}</FormLabel>
                             <FormControl>
-                              <RadioGroupItem value="1" />
+                              <EnhancedInput
+                                onValueChange={(value) =>
+                                  form.setValue("icon", value as string)
+                                }
+                                placeholder={t(
+                                  "iconPlaceholder",
+                                  "Enter icon URL"
+                                )}
+                                value={field.value}
+                              />
                             </FormControl>
-                            <FormLabel className="!mt-0 cursor-pointer">
-                              {t("percentFee", "Percentage")}
-                            </FormLabel>
+                            <FormMessage />
                           </FormItem>
-                          <FormItem className="flex items-center space-x-2">
-                            <FormControl>
-                              <RadioGroupItem value="2" />
-                            </FormControl>
-                            <FormLabel className="!mt-0 cursor-pointer">
-                              {t("fixedFee", "Fixed Amount")}
-                            </FormLabel>
-                          </FormItem>
-                        </RadioGroup>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                {feeMode === 1 && (
-                  <div className="grid grid-cols-1 sm:w-1/2">
+                        )}
+                      />
+                    </div>
                     <FormField
                       control={form.control}
-                      name="fee_percent"
+                      name="domain"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{t("domain", "Domain")}</FormLabel>
+                          <FormControl>
+                            <EnhancedInput
+                              onValueChange={(value) =>
+                                form.setValue("domain", value as string)
+                              }
+                              placeholder="http(s)://example.com"
+                              value={field.value}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="sort"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{t("sort", "Sort")}</FormLabel>
+                          <FormControl>
+                            <EnhancedInput
+                              min={0}
+                              onValueChange={(value) =>
+                                form.setValue("sort", Number(value) || 0)
+                              }
+                              type="number"
+                              value={field.value ?? 0}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <div className="space-y-4">
+                    <FormField
+                      control={form.control}
+                      name="fee_mode"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>
-                            {t("feePercent", "Fee Percentage")}
+                            {t("handlingFee", "Handling Fee")}
+                          </FormLabel>
+                          <FormControl>
+                            <RadioGroup
+                              className="flex flex-wrap gap-4"
+                              onValueChange={(value) =>
+                                field.onChange(Number.parseInt(value, 10))
+                              }
+                              value={field.value.toString()}
+                            >
+                              <FormItem className="flex items-center space-x-2">
+                                <FormControl>
+                                  <RadioGroupItem value="0" />
+                                </FormControl>
+                                <FormLabel className="!mt-0 cursor-pointer">
+                                  {t("noFee", "No Fee")}
+                                </FormLabel>
+                              </FormItem>
+                              <FormItem className="flex items-center space-x-2">
+                                <FormControl>
+                                  <RadioGroupItem value="1" />
+                                </FormControl>
+                                <FormLabel className="!mt-0 cursor-pointer">
+                                  {t("percentFee", "Percentage")}
+                                </FormLabel>
+                              </FormItem>
+                              <FormItem className="flex items-center space-x-2">
+                                <FormControl>
+                                  <RadioGroupItem value="2" />
+                                </FormControl>
+                                <FormLabel className="!mt-0 cursor-pointer">
+                                  {t("fixedFee", "Fixed Amount")}
+                                </FormLabel>
+                              </FormItem>
+                            </RadioGroup>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    {feeMode === 1 && (
+                      <div className="grid grid-cols-1 sm:w-1/2">
+                        <FormField
+                          control={form.control}
+                          name="fee_percent"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>
+                                {t("feePercent", "Fee Percentage")}
+                              </FormLabel>
+                              <FormControl>
+                                <EnhancedInput
+                                  onValueChange={field.onChange}
+                                  step="0.01"
+                                  suffix="%"
+                                  type="number"
+                                  value={field.value}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    )}
+
+                    {feeMode === 2 && (
+                      <div className="grid grid-cols-1 sm:w-1/2">
+                        <FormField
+                          control={form.control}
+                          name="fee_amount"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>
+                                {t("feeAmount", "Fixed Amount")}
+                              </FormLabel>
+                              <FormControl>
+                                <EnhancedInput
+                                  onValueChange={(value) =>
+                                    field.onChange(
+                                      unitConversion("dollarsToCents", value)
+                                    )
+                                  }
+                                  prefix={currency.currency_symbol}
+                                  step="0.01"
+                                  suffix={currency.currency_unit}
+                                  type="number"
+                                  value={unitConversion(
+                                    "centsToDollars",
+                                    field.value
+                                  )}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                      <FormField
+                        control={form.control}
+                        name="currency_unit"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>
+                              {t("currencyUnit", "Payment Currency")}
+                            </FormLabel>
+                            <FormControl>
+                              <EnhancedInput
+                                onValueChange={(value) =>
+                                  form.setValue(
+                                    "currency_unit",
+                                    (value as string).toUpperCase()
+                                  )
+                                }
+                                placeholder={t(
+                                  "currencyUnitPlaceholder",
+                                  "e.g. USD, CNY, EUR"
+                                )}
+                                value={field.value ?? ""}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="exchange_rate"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>
+                              {t("exchangeRate", "Exchange Rate")}
+                            </FormLabel>
+                            <FormControl>
+                              <EnhancedInput
+                                onValueChange={(value) =>
+                                  form.setValue(
+                                    "exchange_rate",
+                                    Number.parseFloat(String(value)) || 1
+                                  )
+                                }
+                                placeholder={t(
+                                  "exchangeRatePlaceholder",
+                                  "Rate from system currency"
+                                )}
+                                step="0.00000001"
+                                type="number"
+                                value={field.value ?? 1}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    <FormField
+                      control={form.control}
+                      name="bill_desc"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>
+                            {t("billDesc", "Billing Description")}
                           </FormLabel>
                           <FormControl>
                             <EnhancedInput
-                              onValueChange={field.onChange}
-                              step="0.01"
-                              suffix="%"
-                              type="number"
+                              onValueChange={(value) =>
+                                form.setValue("bill_desc", value as string)
+                              }
+                              placeholder={t(
+                                "billDescPlaceholder",
+                                "e.g. {item_name} - {order_no}"
+                              )}
+                              value={field.value ?? ""}
+                            />
+                          </FormControl>
+                          <div className="text-muted text-xs">
+                            {t(
+                              "billDescHelp",
+                              "Variables: {order_no}, {item_name}, {amount}, {trade_no}"
+                            )}
+                          </div>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <div className="space-y-4">
+                    {(!platformValue ||
+                      platformData?.find(
+                        (p) => p.platform === platformValue
+                      )) && (
+                      <FormField
+                        control={form.control}
+                        name="platform"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>{t("platform", "Platform")}</FormLabel>
+                            <Select
+                              aria-label={t(
+                                "selectPlatform",
+                                "Select Platform"
+                              )}
+                              defaultSelectedKey={
+                                field.value == null
+                                  ? undefined
+                                  : String(field.value)
+                              }
+                              isDisabled={
+                                isEdit && Boolean(initialValues?.platform)
+                              }
+                              onSelectionChange={(key) => {
+                                if (key != null)
+                                  ((value) => {
+                                    form.setValue("platform", value as string);
+                                    form.setValue("config", {});
+                                  })(String(key));
+                              }}
+                              placeholder={t(
+                                "selectPlatform",
+                                "Select Platform"
+                              )}
+                              selectedKey={
+                                field.value == null
+                                  ? undefined
+                                  : String(field.value)
+                              }
+                            >
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue />
+                                  <SelectIndicator />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <ListBox>
+                                  {platformData?.map((platform) => (
+                                    <SelectItem
+                                      id={platform.platform}
+                                      key={platform.platform}
+                                    >
+                                      {platform.platform}
+                                    </SelectItem>
+                                  ))}
+                                </ListBox>
+                              </SelectContent>
+                            </Select>
+                            {platformUrl ? (
+                              <div className="mt-1 flex justify-end">
+                                <Button
+                                  className="h-6 px-2 text-xs"
+                                  onClick={openPlatformUrl}
+                                  size="sm"
+                                  variant="ghost"
+                                >
+                                  <Icon
+                                    className="mr-1 h-3 w-3"
+                                    icon="tabler:external-link"
+                                  />
+                                  {t("applyForPayment", "Apply for Payment")}
+                                </Button>
+                              </div>
+                            ) : (
+                              <div className="mt-1 h-6" />
+                            )}
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    )}
+
+                    {configFields.length > 0 && (
+                      <div className="mt-4 space-y-4">
+                        {configFields.map((fieldKey) => (
+                          <FormItem key={fieldKey}>
+                            <FormLabel>
+                              {currentFieldDescriptions[fieldKey]}
+                            </FormLabel>
+                            <FormControl>
+                              <EnhancedInput
+                                disabled={fieldKey === "webhook_secret"}
+                                onValueChange={(value) => {
+                                  const newConfig = { ...configValues };
+                                  newConfig[fieldKey] = value;
+                                  form.setValue("config", newConfig);
+                                }}
+                                placeholder={t("configPlaceholder", {
+                                  field: currentFieldDescriptions[fieldKey],
+                                  defaultValue:
+                                    "Please fill in the provided {{field}} configuration",
+                                })}
+                                value={
+                                  configValues &&
+                                  configValues[fieldKey] !== undefined
+                                    ? configValues[fieldKey]
+                                    : ""
+                                }
+                              />
+                            </FormControl>
+                          </FormItem>
+                        ))}
+                      </div>
+                    )}
+
+                    <FormField
+                      control={form.control}
+                      name="description"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>
+                            {t("description", "Description")}
+                          </FormLabel>
+                          <FormControl>
+                            <MarkdownEditor
+                              onChange={(value: string | undefined) =>
+                                form.setValue(field.name, value as string)
+                              }
                               value={field.value}
                             />
                           </FormControl>
@@ -339,265 +613,25 @@ export default function PaymentForm<T extends { platform?: string }>({
                       )}
                     />
                   </div>
-                )}
+                </form>
+              </Form>
+            </ScrollArea>
 
-                {feeMode === 2 && (
-                  <div className="grid grid-cols-1 sm:w-1/2">
-                    <FormField
-                      control={form.control}
-                      name="fee_amount"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>
-                            {t("feeAmount", "Fixed Amount")}
-                          </FormLabel>
-                          <FormControl>
-                            <EnhancedInput
-                              onValueChange={(value) =>
-                                field.onChange(
-                                  unitConversion("dollarsToCents", value)
-                                )
-                              }
-                              prefix={currency.currency_symbol}
-                              step="0.01"
-                              suffix={currency.currency_unit}
-                              type="number"
-                              value={unitConversion(
-                                "centsToDollars",
-                                field.value
-                              )}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                )}
-              </div>
-
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  <FormField
-                    control={form.control}
-                    name="currency_unit"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>
-                          {t("currencyUnit", "Payment Currency")}
-                        </FormLabel>
-                        <FormControl>
-                          <EnhancedInput
-                            onValueChange={(value) =>
-                              form.setValue(
-                                "currency_unit",
-                                (value as string).toUpperCase()
-                              )
-                            }
-                            placeholder={t(
-                              "currencyUnitPlaceholder",
-                              "e.g. USD, CNY, EUR"
-                            )}
-                            value={field.value ?? ""}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="exchange_rate"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>
-                          {t("exchangeRate", "Exchange Rate")}
-                        </FormLabel>
-                        <FormControl>
-                          <EnhancedInput
-                            onValueChange={(value) =>
-                              form.setValue(
-                                "exchange_rate",
-                                Number.parseFloat(String(value)) || 1
-                              )
-                            }
-                            placeholder={t(
-                              "exchangeRatePlaceholder",
-                              "Rate from system currency"
-                            )}
-                            step="0.00000001"
-                            type="number"
-                            value={field.value ?? 1}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <FormField
-                  control={form.control}
-                  name="bill_desc"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        {t("billDesc", "Billing Description")}
-                      </FormLabel>
-                      <FormControl>
-                        <EnhancedInput
-                          onValueChange={(value) =>
-                            form.setValue("bill_desc", value as string)
-                          }
-                          placeholder={t(
-                            "billDescPlaceholder",
-                            "e.g. {item_name} - {order_no}"
-                          )}
-                          value={field.value ?? ""}
-                        />
-                      </FormControl>
-                      <div className="text-muted-foreground text-xs">
-                        {t(
-                          "billDescHelp",
-                          "Variables: {order_no}, {item_name}, {amount}, {trade_no}"
-                        )}
-                      </div>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              <div className="space-y-4">
-                {(!platformValue ||
-                  platformData?.find((p) => p.platform === platformValue)) && (
-                  <FormField
-                    control={form.control}
-                    name="platform"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{t("platform", "Platform")}</FormLabel>
-                        <Select
-                          defaultValue={field.value}
-                          disabled={isEdit && Boolean(initialValues?.platform)}
-                          onValueChange={(value) => {
-                            form.setValue("platform", value as string);
-                            form.setValue("config", {});
-                          }}
-                          value={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue
-                                placeholder={t(
-                                  "selectPlatform",
-                                  "Select Platform"
-                                )}
-                              />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {platformData?.map((platform) => (
-                              <SelectItem
-                                key={platform.platform}
-                                value={platform.platform}
-                              >
-                                {platform.platform}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        {platformUrl ? (
-                          <div className="mt-1 flex justify-end">
-                            <Button
-                              className="h-6 px-2 text-xs"
-                              onClick={openPlatformUrl}
-                              size="sm"
-                              variant="ghost"
-                            >
-                              <Icon
-                                className="mr-1 h-3 w-3"
-                                icon="tabler:external-link"
-                              />
-                              {t("applyForPayment", "Apply for Payment")}
-                            </Button>
-                          </div>
-                        ) : (
-                          <div className="mt-1 h-6" />
-                        )}
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                )}
-
-                {configFields.length > 0 && (
-                  <div className="mt-4 space-y-4">
-                    {configFields.map((fieldKey) => (
-                      <FormItem key={fieldKey}>
-                        <FormLabel>
-                          {currentFieldDescriptions[fieldKey]}
-                        </FormLabel>
-                        <FormControl>
-                          <EnhancedInput
-                            disabled={fieldKey === "webhook_secret"}
-                            onValueChange={(value) => {
-                              const newConfig = { ...configValues };
-                              newConfig[fieldKey] = value;
-                              form.setValue("config", newConfig);
-                            }}
-                            placeholder={t("configPlaceholder", {
-                              field: currentFieldDescriptions[fieldKey],
-                              defaultValue:
-                                "Please fill in the provided {{field}} configuration",
-                            })}
-                            value={
-                              configValues &&
-                              configValues[fieldKey] !== undefined
-                                ? configValues[fieldKey]
-                                : ""
-                            }
-                          />
-                        </FormControl>
-                      </FormItem>
-                    ))}
-                  </div>
-                )}
-
-                <FormField
-                  control={form.control}
-                  name="description"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t("description", "Description")}</FormLabel>
-                      <FormControl>
-                        <MarkdownEditor
-                          onChange={(value: string | undefined) =>
-                            form.setValue(field.name, value as string)
-                          }
-                          value={field.value}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </form>
-          </Form>
-        </ScrollArea>
-
-        <SheetFooter className="flex-row justify-end gap-2 pt-3">
-          <Button loading={loading} onClick={handleClose} variant="outline">
-            {t("cancel", "Cancel")}
-          </Button>
-          <Button loading={loading} onClick={form.handleSubmit(handleSubmit)}>
-            {t("submit", "Submit")}
-          </Button>
-        </SheetFooter>
-      </SheetContent>
+            <Sheet.Footer className="flex-row justify-end gap-2 pt-3">
+              <Button loading={loading} onClick={handleClose} variant="outline">
+                {t("cancel", "Cancel")}
+              </Button>
+              <Button
+                loading={loading}
+                onClick={form.handleSubmit(handleSubmit)}
+              >
+                {t("submit", "Submit")}
+              </Button>
+            </Sheet.Footer>
+            <Sheet.CloseTrigger aria-label="Close" />
+          </Sheet.Dialog>
+        </Sheet.Content>
+      </Sheet.Backdrop>
     </Sheet>
   );
 }

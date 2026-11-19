@@ -1,12 +1,14 @@
-import type { Table } from "@tanstack/react-table";
-import { Button } from "@workspace/ui/components/button";
 import {
+  ListBox,
   Select,
-  SelectContent,
-  SelectItem,
+  SelectPopover as SelectContent,
+  SelectIndicator,
+  ListBoxItem as SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@workspace/ui/components/select";
+} from "@heroui/react";
+import type { Table } from "@tanstack/react-table";
+import { Button } from "@workspace/ui/components/button";
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
@@ -24,32 +26,39 @@ export function Pagination<TData>({ table }: PaginationProps<TData>) {
 
   return (
     <div className="flex flex-wrap items-center justify-between gap-2">
-      <div className="flex-1 whitespace-nowrap text-center text-muted-foreground sm:text-left">
+      <div className="flex-1 whitespace-nowrap text-center text-muted sm:text-left">
         {t("pagination.pageInfo", "Page {{page}} of {{total}}", {
           page: table.getState().pagination.pageIndex + 1,
           total: table.getPageCount(),
         })}
       </div>
-      <div className="flex flex-grow items-center justify-center gap-2 sm:justify-end">
+      <div className="flex min-w-0 flex-grow flex-wrap items-center justify-center gap-2 sm:justify-end">
         <div className="flex items-center space-x-2">
           <p className="font-medium">
             {t("pagination.rowsPerPage", "Rows per page")}
           </p>
           <Select
-            onValueChange={(value) => {
-              table.setPageSize(Number(value));
+            aria-label={t("pagination.rowsPerPage", "Rows per page")}
+            onSelectionChange={(key) => {
+              if (key != null)
+                ((value) => {
+                  table.setPageSize(Number(value));
+                })(String(key));
             }}
-            value={`${table.getState().pagination.pageSize}`}
+            selectedKey={String(table.getState().pagination.pageSize)}
           >
             <SelectTrigger className="h-8 w-[70px]">
-              <SelectValue placeholder={table.getState().pagination.pageSize} />
+              <SelectValue />
+              <SelectIndicator />
             </SelectTrigger>
-            <SelectContent side="top">
-              {[10, 20, 50, 100].map((pageSize) => (
-                <SelectItem key={pageSize} value={`${pageSize}`}>
-                  {pageSize}
-                </SelectItem>
-              ))}
+            <SelectContent>
+              <ListBox>
+                {[10, 20, 50, 100].map((pageSize) => (
+                  <SelectItem id={`${pageSize}`} key={pageSize}>
+                    {pageSize}
+                  </SelectItem>
+                ))}
+              </ListBox>
             </SelectContent>
           </Select>
         </div>
@@ -60,7 +69,9 @@ export function Pagination<TData>({ table }: PaginationProps<TData>) {
           size="icon"
           variant="outline"
         >
-          <span className="sr-only">Go to first page</span>
+          <span className="sr-only">
+            {t("pagination.first", "Go to first page")}
+          </span>
           <ChevronsLeftIcon className="h-4 w-4" />
         </Button>
         <Button
@@ -69,22 +80,32 @@ export function Pagination<TData>({ table }: PaginationProps<TData>) {
           size="icon"
           variant="outline"
         >
-          <span className="sr-only">Go to previous page</span>
+          <span className="sr-only">
+            {t("pagination.previous", "Go to previous page")}
+          </span>
           <ChevronLeftIcon className="h-4 w-4" />
         </Button>
         <Select
-          onValueChange={(value) => table.setPageIndex(Number(value) - 1)}
-          value={`${table.getState().pagination.pageIndex + 1}`}
+          aria-label={t("pagination.selectPage", "Select page number")}
+          onSelectionChange={(key) => {
+            if (key != null)
+              ((value) => table.setPageIndex(Number(value) - 1))(String(key));
+          }}
+          placeholder={t("pagination.selectPage", "Select page number")}
+          selectedKey={String(table.getState().pagination.pageIndex + 1)}
         >
           <SelectTrigger className="w-[70px]">
-            <SelectValue placeholder="Select page number" />
+            <SelectValue />
+            <SelectIndicator />
           </SelectTrigger>
           <SelectContent className="w-12">
-            {Array.from({ length: table.getPageCount() }, (_, i) => (
-              <SelectItem key={i} value={`${i + 1}`}>
-                {i + 1}
-              </SelectItem>
-            ))}
+            <ListBox>
+              {Array.from({ length: table.getPageCount() }, (_, i) => (
+                <SelectItem id={`${i + 1}`} key={i}>
+                  {i + 1}
+                </SelectItem>
+              ))}
+            </ListBox>
           </SelectContent>
         </Select>
         <Button
@@ -93,7 +114,9 @@ export function Pagination<TData>({ table }: PaginationProps<TData>) {
           size="icon"
           variant="outline"
         >
-          <span className="sr-only">Go to next page</span>
+          <span className="sr-only">
+            {t("pagination.next", "Go to next page")}
+          </span>
           <ChevronRightIcon className="h-4 w-4" />
         </Button>
         <Button
@@ -103,7 +126,9 @@ export function Pagination<TData>({ table }: PaginationProps<TData>) {
           size="icon"
           variant="outline"
         >
-          <span className="sr-only">Go to last page</span>
+          <span className="sr-only">
+            {t("pagination.last", "Go to last page")}
+          </span>
           <ChevronsRightIcon className="h-4 w-4" />
         </Button>
       </div>

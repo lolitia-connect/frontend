@@ -1,17 +1,16 @@
-import { useSearch } from "@tanstack/react-router";
+"use client";
+
+import { Tooltip } from "@heroui/react";
 import { Badge } from "@workspace/ui/components/badge";
 import { Button } from "@workspace/ui/components/button";
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "@workspace/ui/components/hover-card";
+
 import { Separator } from "@workspace/ui/components/separator";
 import { Combobox } from "@workspace/ui/composed/combobox";
 import {
   ProTable,
   type ProTableActions,
 } from "@workspace/ui/composed/pro-table/pro-table";
+import { useSearch } from "@workspace/ui/lib/router-compat";
 import { cn } from "@workspace/ui/lib/utils";
 import {
   getOrderList,
@@ -28,23 +27,34 @@ export default function Order() {
   const { t } = useTranslation("order");
   const sp = useSearch({ strict: false }) as Record<string, string | undefined>;
 
+  // Soft semantic tints rather than solid saturated fills: this value is also
+  // the Combobox trigger background, and a solid block there had dark text on a
+  // saturated colour in light mode.
   const statusOptions = [
     {
       value: 1,
       label: t("status.1", "Pending"),
-      className: "bg-orange-500",
+      className: "bg-warning-soft text-warning-soft-foreground",
     },
-    { value: 2, label: t("status.2", "Paid"), className: "bg-green-500" },
+    {
+      value: 2,
+      label: t("status.2", "Paid"),
+      className: "bg-success-soft text-success-soft-foreground",
+    },
     {
       value: 3,
       label: t("status.3", "Cancelled"),
-      className: "bg-gray-500",
+      className: "bg-default-soft text-default-soft-foreground",
     },
-    { value: 4, label: t("status.4", "Closed"), className: "bg-red-500" },
+    {
+      value: 4,
+      label: t("status.4", "Closed"),
+      className: "bg-danger-soft text-danger-soft-foreground",
+    },
     {
       value: 5,
       label: t("status.5", "Completed"),
-      className: "bg-green-500",
+      className: "bg-success-soft text-success-soft-foreground",
     },
   ];
 
@@ -108,20 +118,19 @@ export default function Order() {
           cell: ({ row }) => {
             const order = row.original as API.Order;
             return (
-              <HoverCard>
-                <HoverCardTrigger asChild>
-                  <Button className="p-0" variant="link">
-                    <Display type="currency" value={order.amount} />
-                  </Button>
-                </HoverCardTrigger>
-                <HoverCardContent className="w-auto max-w-[80vw]">
+              <Tooltip>
+                <Button className="p-0" variant="link">
+                  <Display type="currency" value={order.amount} />
+                </Button>
+
+                <Tooltip.Content className="w-auto max-w-[80vw]">
                   <div className="grid gap-3">
                     {order.trade_no && (
                       <>
                         <div className="font-semibold">
                           {t("tradeNo", "Transaction Number")}
                         </div>
-                        <span className="break-all text-muted-foreground">
+                        <span className="break-all text-muted">
                           {order.trade_no}
                         </span>
                         <Separator className="my-2" />
@@ -129,7 +138,7 @@ export default function Order() {
                     )}
                     <ul className="grid gap-3">
                       <li className="flex items-center justify-between">
-                        <span className="text-muted-foreground">
+                        <span className="text-muted">
                           {t("subscribePrice", "Subscription Price")}
                         </span>
                         <span>
@@ -137,7 +146,7 @@ export default function Order() {
                         </span>
                       </li>
                       <li className="flex items-center justify-between">
-                        <span className="text-muted-foreground">
+                        <span className="text-muted">
                           {t("discount", "Discount Amount")}
                         </span>
                         <span>
@@ -145,7 +154,7 @@ export default function Order() {
                         </span>
                       </li>
                       <li className="flex items-center justify-between">
-                        <span className="text-muted-foreground">
+                        <span className="text-muted">
                           {t("couponDiscount", "Coupon Discount")}
                         </span>
                         <span>
@@ -156,7 +165,7 @@ export default function Order() {
                         </span>
                       </li>
                       <li className="flex items-center justify-between">
-                        <span className="text-muted-foreground">
+                        <span className="text-muted">
                           {t("feeAmount", "Fee Amount")}
                         </span>
                         <span>
@@ -164,7 +173,7 @@ export default function Order() {
                         </span>
                       </li>
                       <li className="flex items-center justify-between font-semibold">
-                        <span className="text-muted-foreground">
+                        <span className="text-muted">
                           {t("total", "Total")}
                         </span>
                         <span>
@@ -176,7 +185,7 @@ export default function Order() {
                   <Separator className="my-4" />
                   <ul className="grid gap-3">
                     <li className="flex items-center justify-between">
-                      <span className="text-muted-foreground">
+                      <span className="text-muted">
                         {t("method", "Payment Method")}
                       </span>
                       <span>
@@ -184,8 +193,8 @@ export default function Order() {
                       </span>
                     </li>
                   </ul>
-                </HoverCardContent>
-              </HoverCard>
+                </Tooltip.Content>
+              </Tooltip>
             );
           },
         },

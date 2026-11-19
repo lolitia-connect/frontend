@@ -1,15 +1,15 @@
-import { Button, type buttonVariants } from "@workspace/ui/components/button";
+import { Button } from "@workspace/ui/components/button";
 import { Spinner } from "@workspace/ui/components/spinner";
-import type { VariantProps } from "class-variance-authority";
 import { RefreshCcw } from "lucide-react";
+import type { ComponentProps } from "react";
 import { useCallback, useState } from "react";
 
-interface RefreshButtonProps
-  extends Omit<React.ComponentProps<"button">, "onClick"> {
+type RefreshButtonProps = Omit<
+  ComponentProps<typeof Button>,
+  "loading" | "onClick"
+> & {
   onClick?: () => Promise<unknown> | unknown;
-  size?: VariantProps<typeof buttonVariants>["size"];
-  variant?: VariantProps<typeof buttonVariants>["variant"];
-}
+};
 
 /**
  * A button that shows a spinning RefreshCcw icon while the async onClick

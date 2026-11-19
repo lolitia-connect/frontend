@@ -17,8 +17,8 @@ const mocks = vi.hoisted(() => ({
   takeOAuthVerification: vi.fn(),
 }));
 
-vi.mock("@tanstack/react-router", () => ({
-  useRouter: () => ({ navigate: mocks.navigate }),
+vi.mock("@workspace/ui/lib/router-compat", () => ({
+  useNavigate: () => mocks.navigate,
   useSearch: () => mocks.search,
 }));
 

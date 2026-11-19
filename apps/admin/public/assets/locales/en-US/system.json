@@ -3,8 +3,8 @@
   "common": {
     "cancel": "Cancel",
     "save": "Save Settings",
-    "saveFailed": "Save Failed",
-    "saveSuccess": "Save Successful"
+    "saveFailed": "Save failed",
+    "saveSuccess": "Saved successfully"
   },
   "currency": {
     "accessKey": "API Key",
@@ -29,8 +29,8 @@
     "onlyFirstPurchaseDescription": "When enabled, referrers only receive rewards for the first purchase by referred users",
     "referralPercentage": "Referral Reward Percentage",
     "referralPercentageDescription": "Percentage of reward given to referrers",
-    "saveFailed": "Save Failed",
-    "saveSuccess": "Save Successful",
+    "saveFailed": "Save failed",
+    "saveSuccess": "Saved successfully",
     "title": "Invitation Settings"
   },
   "logCleanup": {
@@ -65,8 +65,8 @@
     "registrationLimitCountDescription": "Number of registrations allowed per IP within the limit period",
     "registrationLimitExpire": "Limit Period",
     "registrationLimitExpireDescription": "Duration for IP registration limit (minutes)",
-    "saveFailed": "Save Failed",
-    "saveSuccess": "Save Successful",
+    "saveFailed": "Save failed",
+    "saveSuccess": "Saved successfully",
     "selectPlaceholder": "Please select",
     "stopNewUserRegistration": "Stop New User Registration",
     "stopNewUserRegistrationDescription": "When enabled, new user registration will be disabled",
@@ -119,8 +119,8 @@
     "enableUserRegisterCaptchaDescription": "When enabled, users must pass captcha verification during registration",
     "enableUserResetPasswordCaptcha": "Enable User Password Reset Captcha",
     "enableUserResetPasswordCaptchaDescription": "When enabled, users must pass captcha verification during password reset",
-    "saveFailed": "Save Failed",
-    "saveSuccess": "Save Successful",
+    "saveFailed": "Save failed",
+    "saveSuccess": "Saved successfully",
     "title": "Security Verification",
     "turnstileSecret": "Turnstile Secret Key",
     "turnstileSecretDescription": "Cloudflare Turnstile secret key for backend verification",
@@ -138,8 +138,8 @@
     "inputPlaceholder": "Please enter",
     "interval": "Sending Interval",
     "intervalDescription": "Minimum interval between two verification code sends (seconds)",
-    "saveFailed": "Save Failed",
-    "saveSuccess": "Save Successful",
+    "saveFailed": "Save failed",
+    "saveSuccess": "Saved successfully",
     "seconds": "seconds",
     "times": "time(s)",
     "title": "Verification Code Settings"

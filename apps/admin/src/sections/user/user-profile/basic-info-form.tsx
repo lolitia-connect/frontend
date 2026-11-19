@@ -1,11 +1,8 @@
+"use client";
+
+import { Card, CardContent, CardHeader, CardTitle } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@workspace/ui/components/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@workspace/ui/components/card";
 import {
   Form,
   FormControl,
@@ -304,7 +301,7 @@ export function BasicInfoForm({
                       }}
                       suffix={
                         <UploadImage
-                          className="h-9 rounded-none border-none bg-muted px-2"
+                          className="h-9 rounded-none border-none bg-default px-2"
                           onChange={(value) =>
                             form.setValue("avatar", value as string)
                           }

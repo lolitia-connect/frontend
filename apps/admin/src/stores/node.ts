@@ -1,3 +1,5 @@
+"use client";
+
 import {
   getServerNodeList as filterNodeList,
   getServerNodeTags as queryNodeTag,

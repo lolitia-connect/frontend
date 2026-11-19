@@ -1,3 +1,4 @@
+import { useTheme } from "@workspace/ui/integrations/theme";
 import { useEffect, useRef } from "react";
 import Turnstile from "react-turnstile";
 
@@ -14,6 +15,7 @@ export function CloudflareTurnstile({
   resetKey,
   onChange,
 }: Readonly<CloudflareTurnstileProps>) {
+  const { theme } = useTheme();
   const widgetRef = useRef<{ reset: () => void } | null>(null);
 
   useEffect(() => {
@@ -54,7 +56,7 @@ export function CloudflareTurnstile({
         }}
         sitekey={siteKey}
         size="flexible"
-        theme="light"
+        theme={theme === "system" ? "auto" : theme}
       />
     </div>
   );

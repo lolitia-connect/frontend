@@ -73,6 +73,19 @@ bun dev
 
 在浏览器中打开 <http://localhost:3000> 查看结果。
 
+### 首页组件风格
+
+首页沿用用户主界面的 HeroUI `Card`、`Card.Title`、`Card.Description`、`Chip` 和共享按钮封装，
+使用主题默认的背景、表面色、圆角和交互状态。首页服务介绍和套餐卡片不单独覆盖玻璃背景、
+阴影或悬浮位移动效；首屏的 WebGL 地球动画保持独立。
+
+### 主内容区空状态
+
+页面级空状态使用 [MainEmpty](./src/components/main-empty.tsx)，采用与工单支持列表一致的
+`py-24` 上下留白。该组件仅用于主内容区域，不修改共享空状态的默认样式，也不用于
+侧栏、弹窗或图表内部的局部占位。包裹主区域空状态的卡片不应额外增加上下内边距。
+
+
 ## 🚀 在 Vercel 上部署
 
 [![使用 Vercel 部署](https://vercel.com/button)](https://vercel.com/new/clone?demo-description=PPanel%20is%20a%20pure%2C%20professional%2C%20and%20perfect%20open-source%20proxy%20panel%20tool%2C%20designed%20to%20be%20your%20ideal%20choice%20for%20learning%20and%20practical%20use&demo-image=https%3A%2F%2Furlscan.io%2Fliveshot%2F%3Fwidth%3D1920%26height%3D1080%26url%3Dhttps%3A%2F%2Fuser.ppanel.dev&demo-title=PPanel%20User%20Web&demo-url=https%3A%2F%2Fuser.ppanel.dev%2F&from=.&project-name=ppanel-user-web&repository-name=ppanel-web&repository-url=https%3A%2F%2Fgithub.com%2Fperfect-panel%2Fppanel-web&root-directory=apps%2Fuser&skippable-integrations=1)

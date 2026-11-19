@@ -2,15 +2,11 @@
 
 import {
   AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@workspace/ui/components/alert-dialog";
+  Button,
+  Description,
+  ErrorMessage,
+  Spinner,
+} from "@heroui/react";
 import type React from "react";
 import { type ReactNode, useState } from "react";
 
@@ -32,34 +28,47 @@ export const ConfirmButton: React.FC<ConfirmationButtonProps> = ({
   confirmText = "Confirm",
 }) => {
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string>();
 
   return (
     <AlertDialog>
-      <AlertDialogTrigger asChild>{trigger}</AlertDialogTrigger>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>{title}</AlertDialogTitle>
-          <AlertDialogDescription>{description}</AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel disabled={loading}>{cancelText}</AlertDialogCancel>
-          <AlertDialogAction
-            disabled={loading}
-            onClick={async (e) => {
-              e.preventDefault();
-              if (loading) return;
-              setLoading(true);
-              try {
-                await onConfirm();
-              } finally {
-                setLoading(false);
-              }
-            }}
-          >
-            {confirmText}
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
+      {trigger}
+      <AlertDialog.Backdrop>
+        <AlertDialog.Container>
+          <AlertDialog.Dialog>
+            <AlertDialog.Header>
+              <AlertDialog.Heading>{title}</AlertDialog.Heading>
+              <Description>{description}</Description>
+            </AlertDialog.Header>
+            {error && <ErrorMessage role="alert">{error}</ErrorMessage>}
+            <AlertDialog.Footer>
+              <Button isDisabled={loading} slot="close" variant="secondary">
+                {cancelText}
+              </Button>
+              <Button
+                isPending={loading}
+                onPress={async () => {
+                  if (loading) return;
+                  setLoading(true);
+                  setError(undefined);
+                  try {
+                    await onConfirm();
+                  } catch (error) {
+                    setError(
+                      error instanceof Error ? error.message : String(error)
+                    );
+                  } finally {
+                    setLoading(false);
+                  }
+                }}
+              >
+                {loading && <Spinner size="sm" />}
+                {confirmText}
+              </Button>
+            </AlertDialog.Footer>
+          </AlertDialog.Dialog>
+        </AlertDialog.Container>
+      </AlertDialog.Backdrop>
     </AlertDialog>
   );
 };

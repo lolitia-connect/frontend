@@ -1,12 +1,6 @@
+import { buttonVariants, Dropdown, Separator } from "@heroui/react";
 import { flexRender, type Header } from "@tanstack/react-table";
-import { Button } from "@workspace/ui/components/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@workspace/ui/components/dropdown-menu";
+
 import { cn } from "@workspace/ui/lib/utils";
 import {
   ArrowDownIcon,
@@ -40,42 +34,45 @@ export function ColumnHeader<TData, TValue>({
 
   return (
     <div className={cn("flex w-full items-center", className)}>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
-            className="!bg-transparent flex h-8 w-full justify-start p-0 text-sm"
-            variant="ghost"
-          >
-            <span>{title}</span>
-            {column.getIsSorted() === "desc" ? (
-              <ArrowDownIcon className="ml-2 h-4 w-4" />
-            ) : column.getIsSorted() === "asc" ? (
-              <ArrowUpIcon className="ml-2 h-4 w-4" />
-            ) : (
-              <ArrowDownUpIcon className="ml-2 h-4 w-4" />
-            )}
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="start">
-          <DropdownMenuItem onClick={() => column.toggleSorting(false)}>
-            <ArrowUpIcon className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
-            {text?.asc || "ASC"}
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => column.toggleSorting(true)}>
-            <ArrowDownIcon className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
-            {text?.desc || "DESC"}
-          </DropdownMenuItem>
-          {column.getCanHide() && (
-            <>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => column.toggleVisibility(false)}>
-                <EyeOffIcon className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
-                {text?.hide || "Hide"}
-              </DropdownMenuItem>
-            </>
+      <Dropdown>
+        <Dropdown.Trigger
+          className={buttonVariants({
+            variant: "ghost",
+            size: "md",
+            class: "!bg-transparent flex h-8 w-full justify-start p-0 text-sm",
+          })}
+        >
+          <span>{title}</span>
+          {column.getIsSorted() === "desc" ? (
+            <ArrowDownIcon className="ml-2 h-4 w-4" />
+          ) : column.getIsSorted() === "asc" ? (
+            <ArrowUpIcon className="ml-2 h-4 w-4" />
+          ) : (
+            <ArrowDownUpIcon className="ml-2 h-4 w-4" />
           )}
-        </DropdownMenuContent>
-      </DropdownMenu>
+        </Dropdown.Trigger>
+        <Dropdown.Popover placement="bottom start">
+          <Dropdown.Menu aria-label="Actions">
+            <Dropdown.Item onAction={() => column.toggleSorting(false)}>
+              <ArrowUpIcon className="mr-2 h-3.5 w-3.5 text-muted/70" />
+              {text?.asc || "ASC"}
+            </Dropdown.Item>
+            <Dropdown.Item onAction={() => column.toggleSorting(true)}>
+              <ArrowDownIcon className="mr-2 h-3.5 w-3.5 text-muted/70" />
+              {text?.desc || "DESC"}
+            </Dropdown.Item>
+            {column.getCanHide() && (
+              <>
+                <Separator />
+                <Dropdown.Item onAction={() => column.toggleVisibility(false)}>
+                  <EyeOffIcon className="mr-2 h-3.5 w-3.5 text-muted/70" />
+                  {text?.hide || "Hide"}
+                </Dropdown.Item>
+              </>
+            )}
+          </Dropdown.Menu>
+        </Dropdown.Popover>
+      </Dropdown>
     </div>
   );
 }

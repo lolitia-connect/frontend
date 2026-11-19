@@ -1,3 +1,6 @@
+"use client";
+
+import { Sheet, Button as SheetButton } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@workspace/ui/components/button";
@@ -11,14 +14,7 @@ import {
   FormMessage,
 } from "@workspace/ui/components/form";
 import { ScrollArea } from "@workspace/ui/components/scroll-area";
-import {
-  Sheet,
-  SheetContent,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@workspace/ui/components/sheet";
+
 import { Switch } from "@workspace/ui/components/switch";
 import { EnhancedInput } from "@workspace/ui/composed/enhanced-input";
 import { Icon } from "@workspace/ui/composed/icon";
@@ -82,113 +78,126 @@ export default function LogCleanupForm() {
   }
 
   return (
-    <Sheet onOpenChange={setOpen} open={open}>
-      <SheetTrigger asChild>
-        <div className="flex cursor-pointer items-center justify-between transition-colors">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-              <Icon className="h-5 w-5 text-primary" icon="mdi:delete-sweep" />
-            </div>
-            <div className="flex-1">
-              <p className="font-medium">
+    <Sheet isOpen={open} onOpenChange={setOpen} placement="right">
+      <Sheet.Trigger>
+        <SheetButton
+          className="settings-option justify-between"
+          variant="ghost"
+        >
+          <span className="flex items-center gap-3">
+            <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-50">
+              <Icon
+                className="h-5 w-5 text-primary-500"
+                icon="mdi:delete-sweep"
+              />
+            </span>
+            <span className="flex-1">
+              <span className="block font-medium">
                 {t("logCleanup.title", "Log Cleanup Settings")}
-              </p>
-              <p className="text-muted-foreground text-sm">
+              </span>
+              <span className="block text-muted text-sm">
                 {t(
                   "logCleanup.description",
                   "Configure automatic log cleanup rules and retention period"
                 )}
-              </p>
-            </div>
-          </div>
+              </span>
+            </span>
+          </span>
           <Icon className="size-6" icon="mdi:chevron-right" />
-        </div>
-      </SheetTrigger>
-      <SheetContent className="w-[600px] max-w-full md:max-w-screen-md">
-        <SheetHeader>
-          <SheetTitle>
-            {t("logCleanup.title", "Log Cleanup Settings")}
-          </SheetTitle>
-        </SheetHeader>
-        <ScrollArea className="h-[calc(100dvh-48px-36px-36px-24px-env(safe-area-inset-top))] px-6">
-          <Form {...form}>
-            <form
-              className="space-y-2 pt-4"
-              id="log-cleanup-form"
-              onSubmit={form.handleSubmit(onSubmit)}
-            >
-              <FormField
-                control={form.control}
-                name="auto_clear"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      {t("logCleanup.autoClear", "Enable Auto Cleanup")}
-                    </FormLabel>
-                    <FormControl>
-                      <Switch
-                        checked={field.value}
-                        className="!mt-0 float-end"
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      {t(
-                        "logCleanup.autoClearDescription",
-                        "When enabled, the system will automatically clear expired log records"
-                      )}
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+        </SheetButton>
+      </Sheet.Trigger>
+      <Sheet.Backdrop>
+        <Sheet.Content>
+          <Sheet.Dialog className="w-[600px] max-w-full md:max-w-screen-md">
+            <Sheet.Header>
+              <Sheet.Heading>
+                {t("logCleanup.title", "Log Cleanup Settings")}
+              </Sheet.Heading>
+            </Sheet.Header>
+            <ScrollArea className="h-[calc(100dvh-48px-36px-36px-24px-env(safe-area-inset-top))] px-6">
+              <Form {...form}>
+                <form
+                  className="space-y-2 pt-4"
+                  id="log-cleanup-form"
+                  onSubmit={form.handleSubmit(onSubmit)}
+                >
+                  <FormField
+                    control={form.control}
+                    name="auto_clear"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          {t("logCleanup.autoClear", "Enable Auto Cleanup")}
+                        </FormLabel>
+                        <FormControl>
+                          <Switch
+                            checked={field.value}
+                            className="!mt-0 float-end"
+                            onCheckedChange={field.onChange}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          {t(
+                            "logCleanup.autoClearDescription",
+                            "When enabled, the system will automatically clear expired log records"
+                          )}
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-              <FormField
-                control={form.control}
-                name="clear_days"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      {t("logCleanup.clearDays", "Retention Days")}
-                    </FormLabel>
-                    <FormControl>
-                      <EnhancedInput
-                        disabled={!form.watch("auto_clear")}
-                        onValueChange={(value) => field.onChange(Number(value))}
-                        placeholder={t(
-                          "logCleanup.clearDaysPlaceholder",
-                          "Enter retention days"
-                        )}
-                        type="number"
-                        value={field.value?.toString()}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      {t(
-                        "logCleanup.clearDaysDescription",
-                        "Number of days to retain logs; logs older than this will be cleaned up"
-                      )}
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </form>
-          </Form>
-        </ScrollArea>
-        <SheetFooter className="flex-row justify-end gap-2 pt-3">
-          <Button
-            loading={loading}
-            onClick={() => setOpen(false)}
-            variant="outline"
-          >
-            {t("common.cancel", "Cancel")}
-          </Button>
-          <Button form="log-cleanup-form" loading={loading} type="submit">
-            {t("common.save", "Save Settings")}
-          </Button>
-        </SheetFooter>
-      </SheetContent>
+                  <FormField
+                    control={form.control}
+                    name="clear_days"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          {t("logCleanup.clearDays", "Retention Days")}
+                        </FormLabel>
+                        <FormControl>
+                          <EnhancedInput
+                            disabled={!form.watch("auto_clear")}
+                            onValueChange={(value) =>
+                              field.onChange(Number(value))
+                            }
+                            placeholder={t(
+                              "logCleanup.clearDaysPlaceholder",
+                              "Enter retention days"
+                            )}
+                            type="number"
+                            value={field.value?.toString()}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          {t(
+                            "logCleanup.clearDaysDescription",
+                            "Number of days to retain logs; logs older than this will be cleaned up"
+                          )}
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </form>
+              </Form>
+            </ScrollArea>
+            <Sheet.Footer className="flex-row justify-end gap-2 pt-3">
+              <Button
+                loading={loading}
+                onClick={() => setOpen(false)}
+                variant="outline"
+              >
+                {t("common.cancel", "Cancel")}
+              </Button>
+              <Button form="log-cleanup-form" loading={loading} type="submit">
+                {t("common.save", "Save Settings")}
+              </Button>
+            </Sheet.Footer>
+            <Sheet.CloseTrigger aria-label="Close" />
+          </Sheet.Dialog>
+        </Sheet.Content>
+      </Sheet.Backdrop>
     </Sheet>
   );
 }

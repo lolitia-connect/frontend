@@ -4,6 +4,7 @@ import { useNavigate, useSearch } from "@workspace/ui/lib/router-compat";
 import { postV1PublicUserBindOauthCallback as bindOAuthCallback } from "@workspace/ui/services/user/user";
 import { useEffect, useRef } from "react";
 import { useGlobalStore } from "@/stores/global";
+import { relayTelegramCallbackToOpener } from "@/utils/oauth/telegram-popup";
 
 interface CertificationProps {
   children: React.ReactNode;
@@ -24,6 +25,13 @@ export default function Certification({
   useEffect(() => {
     if (submitted.current) return;
     submitted.current = true;
+
+    // Running inside the Telegram OAuth popup: relay the signed payload to the
+    // opener (which runs the bind callback in the main window) and stop.
+    if (platform === "telegram" && relayTelegramCallbackToOpener()) {
+      return;
+    }
+
     const callback =
       platform === "telegram" && typeof searchParams.tgAuthResult === "string"
         ? { tgAuthResult: searchParams.tgAuthResult }

@@ -10,6 +10,7 @@ import {
   takeOAuthInvite,
   takeOAuthVerification,
 } from "@/utils/oauth";
+import { relayTelegramCallbackToOpener } from "@/utils/oauth/telegram-popup";
 
 interface CertificationProps {
   children: React.ReactNode;
@@ -30,6 +31,14 @@ export default function Certification({
   useEffect(() => {
     if (submitted.current) return;
     submitted.current = true;
+
+    // Running inside the Telegram OAuth popup: hand the signed payload back to
+    // the window that opened it and stop. The opener performs the token
+    // exchange in the main window, so doing it here would strand the sign-in.
+    if (platform === "telegram" && relayTelegramCallbackToOpener()) {
+      return;
+    }
+
     const callback =
       platform === "telegram" && typeof searchParams.tgAuthResult === "string"
         ? { tgAuthResult: searchParams.tgAuthResult }

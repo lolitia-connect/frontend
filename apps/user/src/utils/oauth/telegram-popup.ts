@@ -268,6 +268,73 @@ export function navigateToTelegramCallbackRoute(
   window.location.assign(target);
 }
 
+// Merge the query string and the hash fragment of the current document into a
+// single flat record. Telegram's redirect flow returns the signed payload in
+// the hash (`#tgAuthResult=...`), while the opener re-navigates the main window
+// with it in the query, so both have to be considered.
+function readTelegramCallbackParams(): Record<string, string> | null {
+  if (!isBrowser()) {
+    return null;
+  }
+
+  const params = new URLSearchParams(window.location.search || "");
+  const hash = (window.location.hash || "").replace(/^#/, "");
+  if (hash) {
+    new URLSearchParams(hash).forEach((value, key) => {
+      if (!params.has(key)) {
+        params.set(key, value);
+      }
+    });
+  }
+
+  const record = Object.fromEntries(params.entries());
+  return extractTelegramAuthCallbackPayload(record) ? record : null;
+}
+
+// When the Telegram OAuth popup lands back on the callback route, relay the
+// signed payload to the window that opened it and close, mirroring the static
+// bridge page. Under SSR the `/oauth/telegram/` (and `/bind/telegram/`) bridge
+// no longer serves `public/.../index.html` — the trailing slash is redirected
+// to the App Router route — so the popup would otherwise run the token exchange
+// against itself and the opener's `requestTelegramAuthCallback` promise would
+// never settle. Returns true when the payload was relayed, in which case the
+// caller must NOT run the callback exchange in this (popup) window.
+export function relayTelegramCallbackToOpener(): boolean {
+  if (!isBrowser()) {
+    return false;
+  }
+
+  const opener = window.opener as Window | null;
+  if (!opener || opener === window) {
+    return false;
+  }
+
+  try {
+    if (opener.closed) {
+      return false;
+    }
+  } catch {
+    // Cross-origin openers can throw on `closed`; treat as still open.
+  }
+
+  const payload = readTelegramCallbackParams();
+  if (!payload) {
+    return false;
+  }
+
+  try {
+    opener.postMessage(payload, window.location.origin);
+    opener.focus();
+  } catch {
+    // ignore opener message errors
+  }
+
+  // Defer the close so an in-flight `postMessage` is delivered before the popup
+  // tears itself down.
+  window.setTimeout(() => closePopup(window), 150);
+  return true;
+}
+
 export function openCenteredPopup(
   url: string,
   name: string,

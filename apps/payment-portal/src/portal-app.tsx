@@ -36,7 +36,11 @@ function handleReportedRequestError() {
   // The shared request interceptor already displays the API error notification.
 }
 
-export default function App() {
+export default function App({
+  initialAuthenticated = false,
+}: {
+  initialAuthenticated?: boolean;
+}) {
   const { t, i18n } = useTranslation("app");
   const {
     paymentMethods,
@@ -67,9 +71,7 @@ export default function App() {
   const [captchaValue, setCaptchaValue] = useState("");
   const [captchaId, setCaptchaId] = useState("");
   const [captchaResetKey, setCaptchaResetKey] = useState(0);
-  const [authenticated, setAuthenticated] = useState(
-    Boolean(getAuthorization())
-  );
+  const [authenticated, setAuthenticated] = useState(initialAuthenticated);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [confirmOrderNo, setConfirmOrderNo] = useState("");
   const [confirmBreakdown, setConfirmBreakdown] = useState<FeeBreakdown | null>(
@@ -107,7 +109,6 @@ export default function App() {
   useEffect(() => {
     if (configLoadedRef.current) return;
     configLoadedRef.current = true;
-
     const loadConfig = async () => {
       setConfigLoading(true);
       try {
@@ -123,6 +124,14 @@ export default function App() {
     };
 
     loadConfig();
+  }, []);
+
+  // Reconcile the auth state with the browser cookie after mount. The server
+  // already seeded `initialAuthenticated` from the same cookie, so this is a
+  // no-op on the common path; it only corrects the rare case where the cookie
+  // changed between the server render and hydration.
+  useEffect(() => {
+    setAuthenticated(Boolean(getAuthorization()));
   }, []);
 
   // Reset captcha when type changes

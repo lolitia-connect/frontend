@@ -12,7 +12,11 @@ import { UserDetail } from "@/sections/user/user-detail";
 import { formatDate } from "@/utils/common";
 import { useTableSearchParams } from "@/utils/use-table-search-params";
 
-export default function CommissionLogPage() {
+export default function CommissionLogPage({
+  today = new Date().toISOString().split("T")[0],
+}: {
+  today?: string;
+}) {
   const { t } = useTranslation("log");
   const sp = useSearch({ strict: false }) as Record<string, string | undefined>;
   const syncFilters = useTableSearchParams([
@@ -21,8 +25,6 @@ export default function CommissionLogPage() {
     "end_date",
     "user_id",
   ]);
-
-  const today = new Date().toISOString().split("T")[0];
 
   const getCommissionTypeText = (type: number) => {
     const typeText = t(`type.${type}`, { defaultValue: "" });

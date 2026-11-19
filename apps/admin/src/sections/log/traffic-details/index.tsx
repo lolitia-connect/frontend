@@ -10,7 +10,11 @@ import { useServer } from "@/stores/server";
 import { formatDate } from "@/utils/common";
 import { useTableSearchParams } from "@/utils/use-table-search-params";
 
-export default function TrafficDetailsPage() {
+export default function TrafficDetailsPage({
+  today = new Date().toISOString().split("T")[0],
+}: {
+  today?: string;
+}) {
   const { t } = useTranslation("log");
   const sp = useSearch({ strict: false }) as Record<string, string | undefined>;
   const syncFilters = useTableSearchParams([
@@ -22,8 +26,6 @@ export default function TrafficDetailsPage() {
     "subscribe_id",
   ]);
   const { getServerName } = useServer();
-
-  const today = new Date().toISOString().split("T")[0];
 
   const initialFilters = {
     start_date: sp.start_date || (sp.end_date ? undefined : sp.date || today),

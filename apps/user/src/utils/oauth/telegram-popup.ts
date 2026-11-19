@@ -2,27 +2,6 @@ import { isBrowser } from "@workspace/ui/utils/index";
 
 export type TelegramAuthMode = "login" | "bind";
 
-const TELEGRAM_WIDGET_SCRIPT_SRC =
-  "https://telegram.org/js/telegram-widget.js?23";
-
-let telegramWidgetScriptPromise: Promise<void> | null = null;
-
-declare global {
-  interface Window {
-    Telegram?: {
-      Login?: {
-        auth: (
-          options: {
-            bot_id: number;
-            request_access?: string;
-          },
-          callback: (user: unknown) => void
-        ) => void;
-      };
-    };
-  }
-}
-
 function isTelegramAuthMode(value: unknown): value is TelegramAuthMode {
   return value === "login" || value === "bind";
 }
@@ -67,22 +46,51 @@ function hasTelegramAuthFields(value: Record<string, unknown>) {
   );
 }
 
+// Telegram's redirect flow hands the signed payload back as a base64 (standard
+// or URL-safe) `tgAuthResult` blob. Decode it so the fields can flow through the
+// same normalization path as the individual query parameters some setups emit.
+function decodeTelegramAuthResult(
+  value: string
+): Record<string, unknown> | null {
+  let normalized = value.replace(/-/g, "+").replace(/_/g, "/");
+  const remainder = normalized.length % 4;
+  if (remainder) {
+    normalized += "=".repeat(4 - remainder);
+  }
+
+  try {
+    const binary = atob(normalized);
+    const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
+    const json = new TextDecoder().decode(bytes);
+    const parsed = JSON.parse(json);
+    return isRecord(parsed) ? parsed : null;
+  } catch {
+    return null;
+  }
+}
+
 export function extractTelegramAuthCallbackPayload(
   value: unknown
 ): Record<string, string> | null {
-  let source = value;
+  let source: unknown = value;
 
   if (typeof source === "string") {
-    const queryString = source.startsWith("?") ? source.slice(1) : source;
+    const raw = source;
+    const queryString = raw.startsWith("?") ? raw.slice(1) : raw;
     const queryParams = new URLSearchParams(queryString);
     if (queryParams.get("auth_date") && queryParams.get("hash")) {
       return Object.fromEntries(queryParams.entries());
     }
 
-    try {
-      source = JSON.parse(source);
-    } catch {
-      return null;
+    const tgAuthResult = queryParams.get("tgAuthResult");
+    if (tgAuthResult) {
+      source = decodeTelegramAuthResult(tgAuthResult);
+    } else {
+      try {
+        source = JSON.parse(raw);
+      } catch {
+        source = decodeTelegramAuthResult(raw);
+      }
     }
   }
 
@@ -90,13 +98,24 @@ export function extractTelegramAuthCallbackPayload(
     return null;
   }
 
+  let record: Record<string, unknown> = source;
+
+  // Some bridges forward the raw `tgAuthResult` blob instead of the decoded
+  // fields; unwrap it so downstream candidates see the signed user object.
+  if (typeof record.tgAuthResult === "string") {
+    const decoded = decodeTelegramAuthResult(record.tgAuthResult);
+    if (decoded) {
+      record = decoded;
+    }
+  }
+
   const candidates = [
-    source,
-    isRecord(source.payload) ? source.payload : null,
-    isRecord(source.data) ? source.data : null,
-    isRecord(source.user) ? source.user : null,
-    isRecord(source.auth_data) ? source.auth_data : null,
-    isRecord(source.result) ? source.result : null,
+    record,
+    isRecord(record.payload) ? record.payload : null,
+    isRecord(record.data) ? record.data : null,
+    isRecord(record.user) ? record.user : null,
+    isRecord(record.auth_data) ? record.auth_data : null,
+    isRecord(record.result) ? record.result : null,
   ].filter((candidate): candidate is Record<string, unknown> => !!candidate);
 
   for (const candidate of candidates) {
@@ -123,109 +142,99 @@ export function extractTelegramAuthCallbackPayload(
   return null;
 }
 
-function ensureTelegramWidgetLoaded(): Promise<void> {
+function resolveAllowedCallbackOrigins(): Set<string> {
+  const origins = new Set<string>();
+
+  if (isBrowser()) {
+    origins.add(window.location.origin);
+  }
+
+  return origins;
+}
+
+// Open the Telegram authorization window. This MUST be called synchronously
+// from the user's click handler — browsers only allow `window.open` as a direct
+// response to a user gesture, so opening it after the awaited backend round
+// trip (as the previous widget-based flow did) got silently blocked.
+export function openTelegramAuthPopup(mode: TelegramAuthMode): Window | null {
+  if (!isTelegramAuthMode(mode)) {
+    throw new Error("Invalid Telegram auth mode");
+  }
+
+  return openCenteredPopup("about:blank", `telegram-${mode}-popup`);
+}
+
+// Drive the already-open popup through the Telegram OAuth URL and resolve once
+// the static bridge page (`public/{oauth,bind}/telegram/index.html`) relays the
+// signed payload back via `postMessage`.
+export function requestTelegramAuthCallback(
+  redirectUrl: string,
+  popup: Window | null
+): Promise<Record<string, string>> {
   if (!isBrowser()) {
     return Promise.reject(
-      new Error("Telegram widget can only be loaded in browser")
+      new Error("Telegram auth callback can only run in browser")
     );
   }
 
-  if (typeof window.Telegram?.Login?.auth === "function") {
-    return Promise.resolve();
+  // The popup was blocked (or never opened). Fall back to a full-page redirect
+  // so the user can still authenticate; the page unloads, so this promise never
+  // settles.
+  if (!popup || popup.closed) {
+    window.location.href = redirectUrl;
+    return new Promise<Record<string, string>>(() => {
+      /* intentionally never settles: the document is navigating away */
+    });
   }
 
-  if (telegramWidgetScriptPromise) {
-    return telegramWidgetScriptPromise;
-  }
+  return new Promise<Record<string, string>>((resolve, reject) => {
+    const allowedOrigins = resolveAllowedCallbackOrigins();
+    let settled = false;
+    let closeTimer = 0;
 
-  telegramWidgetScriptPromise = new Promise((resolve, reject) => {
-    const existingScript = document.querySelector<HTMLScriptElement>(
-      `script[src="${TELEGRAM_WIDGET_SCRIPT_SRC}"]`
-    );
-
-    const handleLoad = () => {
-      if (typeof window.Telegram?.Login?.auth === "function") {
-        resolve();
+    const handleMessage = (event: MessageEvent) => {
+      if (allowedOrigins.size > 0 && !allowedOrigins.has(event.origin)) {
         return;
       }
 
-      reject(new Error("Telegram widget loaded but Login.auth is unavailable"));
-    };
-
-    const handleError = () => {
-      telegramWidgetScriptPromise = null;
-      reject(new Error("Failed to load Telegram widget script"));
-    };
-
-    if (existingScript) {
-      existingScript.addEventListener("load", handleLoad, { once: true });
-      existingScript.addEventListener("error", handleError, { once: true });
-
-      if (typeof window.Telegram?.Login?.auth === "function") {
-        handleLoad();
+      const payload = extractTelegramAuthCallbackPayload(event.data);
+      if (!payload) {
+        return;
       }
 
-      return;
-    }
+      settled = true;
+      window.removeEventListener("message", handleMessage);
+      if (closeTimer) {
+        window.clearInterval(closeTimer);
+        closeTimer = 0;
+      }
+      closePopup(popup);
+      resolve(payload);
+    };
 
-    const script = document.createElement("script");
-    script.async = true;
-    script.src = TELEGRAM_WIDGET_SCRIPT_SRC;
-    script.addEventListener("load", handleLoad, { once: true });
-    script.addEventListener("error", handleError, { once: true });
-    document.head.appendChild(script);
-  });
+    window.addEventListener("message", handleMessage);
 
-  return telegramWidgetScriptPromise;
-}
+    // Detect the user dismissing the popup so the triggering button does not
+    // stay stuck in its loading state forever. A short grace period lets an
+    // in-flight `postMessage` win the race against the bridge closing itself.
+    closeTimer = window.setInterval(() => {
+      if (settled || !popup.closed) {
+        return;
+      }
 
-function parseTelegramRedirectConfig(redirectUrl: string) {
-  const url = new URL(redirectUrl);
-  const botId = Number(url.searchParams.get("bot_id"));
-
-  if (!Number.isFinite(botId)) {
-    throw new Error("Telegram redirect url does not include a valid bot_id");
-  }
-
-  const requestAccess = url.searchParams.get("request_access") || undefined;
-
-  return {
-    botId,
-    requestAccess,
-  };
-}
-
-export async function requestTelegramAuthCallback(redirectUrl: string) {
-  await ensureTelegramWidgetLoaded();
-
-  const { botId, requestAccess } = parseTelegramRedirectConfig(redirectUrl);
-
-  return new Promise<Record<string, string>>((resolve, reject) => {
-    const telegramLogin = window.Telegram?.Login?.auth;
-
-    if (typeof telegramLogin !== "function") {
-      reject(new Error("Telegram Login.auth is unavailable"));
-      return;
-    }
-
-    telegramLogin(
-      {
-        bot_id: botId,
-        ...(requestAccess ? { request_access: requestAccess } : {}),
-      },
-      (user) => {
-        const payload = extractTelegramAuthCallbackPayload(user);
-
-        if (!payload) {
-          reject(
-            new Error("Telegram auth callback did not return valid payload")
-          );
+      window.clearInterval(closeTimer);
+      closeTimer = 0;
+      window.setTimeout(() => {
+        if (settled) {
           return;
         }
+        window.removeEventListener("message", handleMessage);
+        reject(new Error("Telegram auth popup was closed before completing"));
+      }, 500);
+    }, 500);
 
-        resolve(payload);
-      }
-    );
+    popup.location.replace(redirectUrl);
+    popup.focus();
   });
 }
 
@@ -288,4 +297,14 @@ export function openCenteredPopup(
   popup?.focus();
 
   return popup;
+}
+
+export function closePopup(popup: Window | null) {
+  try {
+    if (popup && !popup.closed) {
+      popup.close();
+    }
+  } catch {
+    // ignore popup close errors
+  }
 }

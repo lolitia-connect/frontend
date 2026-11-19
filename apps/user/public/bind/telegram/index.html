@@ -9,18 +9,28 @@
     "use strict";
 
     // Providers redirect here without a URL fragment. Forward to the App Router
-    // pathname route (`/bind/<provider>`), which is where the callback is handled.
+    // pathname route (`/bind/<provider>`), where the callback is handled.
+    // Telegram's redirect flow can return the signed payload in the hash
+    // fragment (`#tgAuthResult=...`), so merge the hash into the query first.
     // Bridge /bind/<provider>[/]?... -> /bind/<provider>?...
     (() => {
       try {
         let path = window.location.pathname || "/";
         path = path.replace(/\/$/, "");
 
-        const search = window.location.search || "";
-        const target = `${path}${search}`;
-        const payload = Object.fromEntries(
-          new URLSearchParams(search).entries()
-        );
+        const params = new URLSearchParams(window.location.search || "");
+        const hash = (window.location.hash || "").replace(/^#/, "");
+        if (hash) {
+          new URLSearchParams(hash).forEach((value, key) => {
+            if (!params.has(key)) {
+              params.set(key, value);
+            }
+          });
+        }
+
+        const mergedSearch = params.toString();
+        const target = mergedSearch ? `${path}?${mergedSearch}` : path;
+        const payload = Object.fromEntries(params.entries());
 
         if (window.opener && !window.opener.closed) {
           try {

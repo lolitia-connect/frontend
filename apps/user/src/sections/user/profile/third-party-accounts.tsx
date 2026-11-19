@@ -29,7 +29,9 @@ import SendCode from "@/sections/auth/send-code";
 import { useGlobalStore } from "@/stores/global";
 import { Logout } from "@/utils/common";
 import {
+  closePopup,
   navigateToTelegramCallbackRoute,
+  openTelegramAuthPopup,
   requestTelegramAuthCallback,
 } from "@/utils/oauth/telegram-popup";
 import CurrentCredentialFields, {
@@ -400,11 +402,20 @@ export default function ThirdPartyAccounts() {
   const handleAccountAction = async (account: (typeof accounts)[number]) => {
     if (actionLoading) return;
     setActionLoading(account.id);
-    try {
-      const isBound = user?.auth_methods?.find(
-        (auth) => auth.auth_type === account.id
-      )?.auth_identifier;
 
+    const isBound = user?.auth_methods?.find(
+      (auth) => auth.auth_type === account.id
+    )?.auth_identifier;
+
+    // Open the Telegram window synchronously inside the click gesture (only
+    // when binding, i.e. not already bound); opening it after the awaited
+    // backend call below is rejected by popup blockers.
+    const telegramPopup =
+      account.id === "telegram" && !isBound
+        ? openTelegramAuthPopup("bind")
+        : null;
+
+    try {
       if (isBound) {
         await unbindOAuth({ method: account.id });
         await getUserInfo();
@@ -421,11 +432,15 @@ export default function ThirdPartyAccounts() {
         const redirectUrl = res.data?.data?.redirect;
 
         if (!redirectUrl) {
+          closePopup(telegramPopup);
           return;
         }
 
         if (account.id === "telegram") {
-          const payload = await requestTelegramAuthCallback(redirectUrl);
+          const payload = await requestTelegramAuthCallback(
+            redirectUrl,
+            telegramPopup
+          );
           navigateToTelegramCallbackRoute("bind", payload);
           return;
         }
@@ -433,6 +448,7 @@ export default function ThirdPartyAccounts() {
         window.location.href = redirectUrl;
       }
     } catch {
+      closePopup(telegramPopup);
       toast.error(t("thirdParty.bindFailed", "Failed to connect"));
     } finally {
       setActionLoading(null);

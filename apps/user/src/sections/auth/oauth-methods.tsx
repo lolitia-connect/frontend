@@ -14,7 +14,9 @@ import {
   storeOAuthVerification,
 } from "@/utils/oauth";
 import {
+  closePopup,
   navigateToTelegramCallbackRoute,
+  openTelegramAuthPopup,
   requestTelegramAuthCallback,
 } from "@/utils/oauth/telegram-popup";
 import { resolveInviteCode } from "./invite";
@@ -109,6 +111,12 @@ export function OAuthMethods() {
                   setRedirectUrl(searchParams.redirect);
                 }
 
+                // Open the Telegram window synchronously inside the click
+                // gesture; opening it after the awaited backend call below is
+                // rejected by popup blockers.
+                const telegramPopup =
+                  method === "telegram" ? openTelegramAuthPopup("login") : null;
+
                 setLoadingMethod(method);
                 try {
                   const { data } = await oAuthLogin({
@@ -126,6 +134,7 @@ export function OAuthMethods() {
                   });
 
                   if (!data.data?.redirect) {
+                    closePopup(telegramPopup);
                     return;
                   }
 
@@ -143,7 +152,8 @@ export function OAuthMethods() {
 
                   if (method === "telegram") {
                     const payload = await requestTelegramAuthCallback(
-                      data.data.redirect
+                      data.data.redirect,
+                      telegramPopup
                     );
                     navigateToTelegramCallbackRoute("login", payload);
                     return;
@@ -151,6 +161,7 @@ export function OAuthMethods() {
 
                   window.location.href = data.data.redirect;
                 } catch {
+                  closePopup(telegramPopup);
                   storeOAuthCfToken();
                   storeOAuthInvite();
                   storeOAuthVerification();

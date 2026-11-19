@@ -13,7 +13,7 @@ import { Input } from "@workspace/ui/components/input";
 import { Spinner } from "@workspace/ui/components/spinner";
 import { Markdown } from "@workspace/ui/composed/markdown";
 import type { Dispatch, SetStateAction } from "react";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
@@ -83,9 +83,21 @@ export default function RegisterForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       ...initialValues,
-      invite: localStorage.getItem("invite") || "",
+      invite: initialValues?.invite || "",
     },
   });
+
+  // `localStorage` is browser-only, so the saved invite code is read after mount
+  // instead of during render. This keeps the form prerenderable (server-rendered
+  // HTML has an empty, enabled invite field) and fills/locks it on the client.
+  const [hasStoredInvite, setHasStoredInvite] = useState(false);
+  useEffect(() => {
+    const storedInvite = localStorage.getItem("invite");
+    if (storedInvite) {
+      setHasStoredInvite(true);
+      form.setValue("invite", storedInvite);
+    }
+  }, [form]);
 
   const turnstile = useRef<TurnstileRef>(null);
   const handleSubmit = form.handleSubmit((data) => {
@@ -200,7 +212,7 @@ export default function RegisterForm({
                 <FormItem>
                   <FormControl>
                     <Input
-                      disabled={loading || !!localStorage.getItem("invite")}
+                      disabled={loading || hasStoredInvite}
                       placeholder={t(
                         invite.forced_invite
                           ? "register.inviteRequired"

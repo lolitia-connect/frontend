@@ -11,7 +11,11 @@ import { UserDetail, UserSubscribeDetail } from "@/sections/user/user-detail";
 import { formatDate } from "@/utils/common";
 import { useTableSearchParams } from "@/utils/use-table-search-params";
 
-export default function ResetSubscribeLogPage() {
+export default function ResetSubscribeLogPage({
+  today = new Date().toISOString().split("T")[0],
+}: {
+  today?: string;
+}) {
   const { t } = useTranslation("log");
   const sp = useSearch({ strict: false }) as Record<string, string | undefined>;
   const syncFilters = useTableSearchParams([
@@ -20,8 +24,6 @@ export default function ResetSubscribeLogPage() {
     "end_date",
     "user_subscribe_id",
   ]);
-
-  const today = new Date().toISOString().split("T")[0];
 
   const getResetSubscribeTypeText = (type: number) => {
     const typeText = t(`type.${type}`, { defaultValue: "" });

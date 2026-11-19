@@ -10,6 +10,7 @@ import { initializeI18n } from "@workspace/ui/lib/i18n";
 import { useState } from "react";
 import { Notifications } from "@/components/notifications";
 import { fallbackLng, supportedLngs } from "@/config";
+import { fallbackResources } from "@/config/locale-resources";
 import { clearAuthorization } from "@/lib/auth";
 
 // i18next is initialised once. Guarded so React strict-mode double invocation
@@ -27,6 +28,11 @@ function ensureI18n() {
     defaultNS: "app",
     ns: ["app", "components"],
     react: { useSuspense: false },
+    // Bundle the fallback language synchronously so the SSR render and the
+    // client's hydration render produce identical text (see the admin app and
+    // `scripts/generate-locale-resources.mjs`). Other languages still load from
+    // the HTTP backend after mount.
+    resources: fallbackResources,
   });
   if (typeof window !== "undefined") {
     window.logout = () => {

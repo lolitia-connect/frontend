@@ -1,18 +1,14 @@
-"use client";
+import Section from "@/sections/withdrawal";
 
-import { PageLoading } from "@workspace/ui/composed/page-loading";
-import dynamic from "next/dynamic";
-
-// Admin is a client-only, auth-gated SPA. Sections read cookies/localStorage,
-// drive i18next from browser detection and read table filters from the query
-// string via useSearchParams. Mounting them client-side keeps the production
-// build free of "window is not defined" and of the useSearchParams CSR
-// bailout, matching the original hash-router SPA behaviour.
-const Section = dynamic(() => import("@/sections/withdrawal"), {
-  loading: () => <PageLoading />,
-  ssr: false,
-});
-
-export default function Page() {
+// Reading `searchParams` opts this route into dynamic (request-time) rendering,
+// so the client section — which reads table filters from the query string via
+// `useSearchParams` — is server-rendered on demand instead of switched to a
+// client-only (CSR) shell. The section body ends up in the SSR HTML.
+export default async function Page({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  await searchParams;
   return <Section />;
 }

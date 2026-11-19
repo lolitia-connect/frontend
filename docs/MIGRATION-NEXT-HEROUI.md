@@ -283,8 +283,10 @@ hydration mismatch; the third is what broke language detection when fixing it.
 - **Regenerate `locale-resources.ts`** whenever a namespace is added, or that
   namespace falls back to inline defaults during SSR and mismatches again.
 
-Because `apps/payment-portal` mounts its shell with `dynamic(..., { ssr: false })`,
-it is not exposed to this class of bug.
+`apps/payment-portal` now server-renders its shell as well, so it relies on the
+same guarantee: its providers bundle `fallbackResources` (generated into
+`src/config/locale-resources.ts`) so the SSR render and the client's first render
+produce identical text.
 
 Regression coverage: `apps/user/src/lib/i18n-language.test.ts` (detection,
 persistence, config precedence). It builds its own i18next instance via
@@ -324,8 +326,29 @@ package that is not the TypeScript compiler and reports nothing useful.
   `TS2503: Cannot find namespace 'API'`. Keep it.
 - **`ThemeProvider`/`LanguageProvider` render-time browser reads** crash
   prerendering. Already fixed in `packages/ui` — do not reintroduce in app code.
-- **`dynamic(..., { ssr: false })`** is needed for client-only SPA shells to keep
-  builds warning-free (see `apps/payment-portal/app/portal-client.tsx`).
+- **`dynamic(..., { ssr: false })`** is now reserved for genuinely client-only
+  UI, not whole pages. The only remaining users are the route-progress widgets
+  (`apps/admin/app/navigation-progress.tsx`, `apps/user/app/providers.tsx`): they
+  track navigation through `useSearchParams` and would otherwise collapse the
+  prerendered shell to the root Suspense fallback, and they render no page body,
+  so client-only is correct. Everything that is a page body is server-rendered:
+  - Pages with **no** render-time browser read and **no** search-param read are
+    plain SSR (static). Two render-time reads had to move into effects to unblock
+    this: `formatDate` in `apps/admin/src/utils/common.ts` guards its
+    `localStorage` timezone read, and `apps/admin/src/sections/auth/email/register-form.tsx`
+    applies the saved invite code after mount instead of in the form defaults.
+  - Pages whose body reads the query string (`apps/admin` list/log pages —
+    `user`, `order`, `withdrawal`, `log/*`) are **dynamic server components**: the
+    `page.tsx` is a Server Component that `await`s `searchParams`, which opts the
+    route into request-time rendering. On a dynamic route the client section's
+    `useSearchParams`/`useTableSearchParams` run on the server without the static
+    `useSearchParams` CSR bailout, so the table body ends up in the SSR HTML
+    instead of behind `ssr: false`. The server also passes a deterministic
+    `today` so the first render is not seeded by a non-deterministic `new Date()`.
+  - `apps/payment-portal` reads its auth cookie in the Server Component
+    (`app/page.tsx` via `next/headers`) and passes `initialAuthenticated` down, so
+    the portal SSRs the correct screen with no login flash and no hydration
+    mismatch.
 - Sections that were purely `Outlet` wrappers become real `layout.tsx` files.
 - `useSearch({ from: "/(main)/purchasing/" })` → the shim's `useSearch()`; drop
   `from`, read the key you need (`const { id } = useSearch() as { id: string }`).

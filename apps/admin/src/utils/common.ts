@@ -44,7 +44,11 @@ export function formatDate(date?: Date | number, showTime = true) {
     dateValue = date * 1000;
   }
 
-  const timeZone = localStorage.getItem("timezone") || "UTC";
+  // Guard the browser-only read so the function is safe to call while
+  // prerendering (server-rendered date cells default to UTC; the client
+  // re-renders with the saved timezone after hydration).
+  const timeZone =
+    (isBrowser() ? localStorage.getItem("timezone") : null) || "UTC";
   return intlFormat(dateValue, {
     year: "numeric",
     month: "numeric",

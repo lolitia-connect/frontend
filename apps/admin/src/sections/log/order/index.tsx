@@ -26,7 +26,11 @@ function PriceRow({ label, value }: { label: string; value: number }) {
   );
 }
 
-export default function OrderLogPage() {
+export default function OrderLogPage({
+  today = new Date().toISOString().split("T")[0],
+}: {
+  today?: string;
+}) {
   const { t } = useTranslation("log");
   const sp = useSearch({ strict: false }) as Record<string, string | undefined>;
   const syncFilters = useTableSearchParams([
@@ -36,7 +40,6 @@ export default function OrderLogPage() {
     "search",
     "user_id",
   ]);
-  const today = new Date().toISOString().split("T")[0];
 
   const initialFilters = {
     start_date: sp.start_date || (sp.end_date ? undefined : sp.date || today),

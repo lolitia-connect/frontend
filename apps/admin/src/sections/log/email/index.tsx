@@ -9,7 +9,11 @@ import { RequestSource } from "@/sections/log/request-source";
 import { formatDate } from "@/utils/common";
 import { useTableSearchParams } from "@/utils/use-table-search-params";
 
-export default function EmailLogPage() {
+export default function EmailLogPage({
+  today = new Date().toISOString().split("T")[0],
+}: {
+  today?: string;
+}) {
   const { t } = useTranslation("log");
   const sp = useSearch({ strict: false }) as Record<string, string | undefined>;
   const syncFilters = useTableSearchParams([
@@ -18,8 +22,6 @@ export default function EmailLogPage() {
     "end_date",
     "search",
   ]);
-
-  const today = new Date().toISOString().split("T")[0];
 
   const initialFilters = {
     search: sp.search || undefined,

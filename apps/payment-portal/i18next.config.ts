@@ -19,6 +19,13 @@ export default defineConfig({
       "app/**/*.{js,jsx,ts,tsx}",
       "../../packages/ui/src/**/*.{js,jsx,ts,tsx}",
     ], // Source files to scan
+    ignore: [
+      "**/*.{test,spec}.{js,jsx,ts,tsx}",
+      "**/__tests__/**",
+      // Globstars do not match the parent segments in shared package paths.
+      "../../packages/ui/src/**/*.{test,spec}.{js,jsx,ts,tsx}",
+      "../../packages/ui/src/**/__tests__/**",
+    ],
     output: "public/assets/locales/{{language}}/{{namespace}}.json", // Output path template
   },
 });

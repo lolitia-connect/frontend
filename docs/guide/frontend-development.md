@@ -182,6 +182,11 @@ appropriate language-aware cache key. The payment portal keeps its existing
 language initialization. Both apps' `i18n-ssr.spec.ts` cover concurrent request
 languages and hydration with a conflicting saved preference.
 
+All three apps exclude `*.test.*`, `*.spec.*`, and `__tests__` directories from
+translation extraction and status checks, including within shared UI sources.
+Test-only keys belong in test fixtures, not production catalogs. Run
+`bun run i18n:status` before pushing to verify production translation coverage.
+
 ## Startup performance (user and admin)
 
 Site configuration and session recovery run independently: slow or failed public

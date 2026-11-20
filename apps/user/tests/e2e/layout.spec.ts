@@ -81,11 +81,14 @@ test("profile credential fields align with new password fields in both tabs", as
         })
       );
       expect(bounds).toHaveLength(3);
+      const [firstBound] = bounds;
+      if (!firstBound)
+        throw new Error("Expected credential fields to be rendered");
       for (const bound of bounds) {
         expect(bound.width).toBeGreaterThan(0);
-        expect(Math.abs(bound.left - bounds[0].left)).toBeLessThanOrEqual(1);
-        expect(Math.abs(bound.right - bounds[0].right)).toBeLessThanOrEqual(1);
-        expect(Math.abs(bound.width - bounds[0].width)).toBeLessThanOrEqual(1);
+        expect(Math.abs(bound.left - firstBound.left)).toBeLessThanOrEqual(1);
+        expect(Math.abs(bound.right - firstBound.right)).toBeLessThanOrEqual(1);
+        expect(Math.abs(bound.width - firstBound.width)).toBeLessThanOrEqual(1);
       }
     }).toPass({ timeout: 5000 });
   }

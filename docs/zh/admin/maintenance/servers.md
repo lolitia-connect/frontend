@@ -165,7 +165,7 @@
   - Spider X: Spider X 参数
 
 **高级配置:**
-- **Multiplex**: 多路复用设置
+- **Multiplex**: 多路复用设置。Mieru 使用专用等级 **Off / Low / Middle / High**，默认 **Low**，不能使用其他协议的 H2Mux / SMux / YAMux 选项。新建或编辑 Mieru 时，填写端口并选择 TCP 或 UDP 传输后即可保存。
 - **Encryption**: 额外加密层
 - **Flow Control**: 流量控制参数
 

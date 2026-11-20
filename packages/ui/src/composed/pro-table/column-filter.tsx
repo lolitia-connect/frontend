@@ -51,7 +51,7 @@ export function ColumnFilter<TData>({
         if (param.options || param.type === "select") {
           return (
             <Combobox
-              className="min-w-32 max-w-48 flex-1"
+              className="min-w-48 max-w-64 flex-1"
               key={param.key}
               onChange={(value) => {
                 updateFilter(param.key, value);

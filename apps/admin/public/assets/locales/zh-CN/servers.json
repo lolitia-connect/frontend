@@ -224,6 +224,7 @@
   "obfs_param": "混淆参数",
   "nodeProtocolUnavailable": "此协议需要兼容的节点实现。",
   "validation": {
+    "invalidForm": "请检查标记的字段。",
     "requiredNumberField": "{{field}} 为必填项，数值必须介于 {{min}} 和 {{max}} 之间",
     "requiredSelectField": "请选择{{field}}",
     "requiredField": "请填写{{field}}"

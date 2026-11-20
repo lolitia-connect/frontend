@@ -224,6 +224,7 @@
   "obfs_param": "Obfuscation Param",
   "nodeProtocolUnavailable": "This protocol requires a compatible node implementation.",
   "validation": {
+    "invalidForm": "Please check the highlighted fields.",
     "requiredNumberField": "{{field}} is required and must be between {{min}} and {{max}}",
     "requiredSelectField": "{{field}} is required",
     "requiredField": "{{field}} is required"

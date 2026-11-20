@@ -61,7 +61,7 @@ export function Combobox<T, M extends boolean = false>({
       value={multiple ? selected : (selected[0] ?? null)}
     >
       <Autocomplete.Trigger aria-label={placeholder}>
-        <Autocomplete.Value />
+        <Autocomplete.Value className="min-w-0 truncate whitespace-nowrap" />
         <Autocomplete.Indicator />
       </Autocomplete.Trigger>
       <Autocomplete.Popover>

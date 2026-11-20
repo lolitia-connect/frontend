@@ -663,25 +663,12 @@ export function useProtocolFields() {
           group: "transport",
         },
         {
-          name: "traffic_pattern",
-          type: "textarea",
-          label: t("traffic_pattern", "Traffic Pattern"),
-          placeholder: "default",
-          group: "basic",
-        },
-        {
           name: "multiplex",
           type: "select",
           label: t("multiplex", "Multiplex"),
           options: MIERU_MULTIPLEX,
           defaultValue: "MULTIPLEXING_LOW",
           group: "transport",
-        },
-        {
-          name: "user_hint_is_mandatory",
-          type: "switch",
-          label: t("user_hint_is_mandatory", "Require User Hint"),
-          group: "basic",
         },
       ],
       shadowsocksr: [
@@ -788,18 +775,6 @@ export function useProtocolFields() {
       port(),
       streamSecurity(SECURITY.naive),
       ...certificateFields((protocol) => protocol.security === "tls"),
-    ];
-    fields.mieru = [
-      ratio(),
-      port(),
-      {
-        name: "transport",
-        type: "select",
-        label: t("transport", "Transport"),
-        options: TRANSPORTS.mieru,
-        group: "transport",
-      },
-      multiplex(),
     ];
     fields.nowhere = [
       ratio(),

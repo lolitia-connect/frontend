@@ -79,6 +79,24 @@ function getVisibleRequiredFields(
   );
 }
 
+function findFirstFormError(
+  errors: unknown,
+  path: string[] = []
+): { path: string[]; message: string } | undefined {
+  if (!errors || typeof errors !== "object") return;
+
+  // FieldError.ref can point to a DOM node; only traverse nested field errors.
+  for (const [key, value] of Object.entries(errors)) {
+    if (key === "ref" || key === "types") continue;
+    const nested = findFirstFormError(value, [...path, key]);
+    if (nested) return nested;
+  }
+
+  if ("message" in errors && typeof errors.message === "string") {
+    return { path, message: errors.message };
+  }
+}
+
 function nextProtocolId(protocols: any[], type: ProtocolType) {
   const maxId = protocols
     .filter((p) => p?.type === type)
@@ -1033,8 +1051,23 @@ export default function ServerForm(props: {
               <Button
                 loading={loading}
                 onClick={form.handleSubmit(handleSubmit, (errors) => {
-                  const key = Object.keys(errors)[0] as keyof typeof errors;
-                  if (key) toast.error(String(errors[key]?.message));
+                  const error = findFirstFormError(errors);
+                  if (error?.path[0] === "protocols") {
+                    const index = Number(error.path[1]);
+                    const protocol = form.getValues("protocols")?.[index];
+                    if (protocol) {
+                      setAccordionValue(
+                        `${protocol.type}:${protocol.id || index + 1}:${index}`
+                      );
+                    }
+                  }
+                  toast.error(
+                    error?.message ||
+                      t(
+                        "validation.invalidForm",
+                        "Please check the highlighted fields."
+                      )
+                  );
                   return false;
                 })}
               >

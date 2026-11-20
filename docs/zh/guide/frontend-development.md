@@ -84,6 +84,8 @@ Bun 命令在载入配置前设置 `PLAYWRIGHT_TRANSFORM_CACHE_DIR`，避免 Win
 
 用户端 `layout.spec.ts` 覆盖账户卡片、长文档和支付账单；管理端 `drawers.spec.ts` 覆盖创建抽屉的 320px/375px 布局；支付门户 `recharge.spec.ts` 覆盖长支付名称的确认弹窗与二维码。测试使用模拟 API，不产生真实业务订单。并发测试除端口和构建目录外，还应使用不同的 Playwright `--output` 目录，避免测试产物互相覆盖。
 
+服务器管理的地址列在 location 下一行显示地址；两行分别在溢出时显示省略号，并在悬停或键盘聚焦时展示完整内容。该自定义单元格禁用表格级截断包装，避免把两个标签作为整体裁切。管理端布局回归覆盖手机和桌面宽度下的此行为。
+
 ## 支付门户维护
 
 支付门户直接使用 HeroUI v3，独立样式导入 Tailwind v4、HeroUI 和共享语义主题；三端共享 accent、surface、field、圆角与明暗 token。[共享认证壳](https://github.com/lolitia-connect/frontend/blob/main/packages/ui/src/composed/auth-shell.tsx)统一登录面板宽度和响应式间距。门户不导入共享组件的覆盖样式，语言/主题持久化和后端服务仍共享，API 错误提示使用 HeroUI。

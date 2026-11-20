@@ -7,6 +7,7 @@ import {
   ProTable,
   type ProTableActions,
 } from "@workspace/ui/composed/pro-table/pro-table";
+import { TruncatedCell } from "@workspace/ui/composed/pro-table/truncated-cell";
 import { cn } from "@workspace/ui/lib/utils";
 import {
   createServer,
@@ -77,9 +78,13 @@ function RegionIpCell({
   const region =
     [country, city].filter(Boolean).join(" / ") || notAvailableText;
   return (
-    <div className="flex items-center gap-1">
-      <Badge variant="outline">{region}</Badge>
-      <Badge variant="secondary">{ip || notAvailableText}</Badge>
+    <div className="flex max-w-60 flex-col items-start gap-1">
+      <Badge className="max-w-full" variant="outline">
+        <TruncatedCell maxWidth={240}>{region}</TruncatedCell>
+      </Badge>
+      <Badge className="max-w-full" variant="secondary">
+        <TruncatedCell maxWidth={240}>{ip || notAvailableText}</TruncatedCell>
+      </Badge>
     </div>
   );
 }
@@ -226,6 +231,7 @@ export default function Servers() {
           {
             id: "region_ip",
             header: t("address", "Address"),
+            meta: { proTable: { truncate: false } },
             cell: ({ row }) => (
               <RegionIpCell
                 city={row.original.city as unknown as string}

@@ -138,6 +138,49 @@ test("server table and editor stay within mobile viewport", async ({
   await expectNoPageOverflow(page);
 });
 
+test("server addresses sit below location and reveal ellipsized text on hover or focus", async ({
+  page,
+  baseURL,
+}) => {
+  await mockLayoutApi(page);
+  await signInFixture(page, baseURL!);
+  await page.goto("/dashboard/servers", { waitUntil: "domcontentloaded" });
+  const row = page.getByRole("row").filter({ hasText: servers[0]!.name });
+  const region = row.getByText("JP / Tokyo", { exact: true });
+  const address = row.getByText(servers[0]!.address, { exact: true });
+  const tooltip = page.getByRole("tooltip");
+  await expect(address).toBeVisible();
+
+  for (const width of [375, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    await address.scrollIntoViewIfNeeded();
+    const regionBounds = await region.boundingBox();
+    const addressBounds = await address.boundingBox();
+    expect(addressBounds!.y).toBeGreaterThanOrEqual(
+      regionBounds!.y + regionBounds!.height
+    );
+    expect(addressBounds!.x).toBeCloseTo(regionBounds!.x, 0);
+    const dimensions = await address.evaluate((node) => ({
+      client: node.clientWidth,
+      scroll: node.scrollWidth,
+    }));
+    expect(dimensions.scroll).toBeGreaterThan(dimensions.client);
+    await expect(address).toHaveCSS("text-overflow", "ellipsis");
+    await expect(address).toHaveCSS("overflow", "hidden");
+    await expect(address).toHaveCSS("white-space", "nowrap");
+    await address.hover();
+    await expect(tooltip).toHaveText(servers[0]!.address);
+    await region.hover();
+    await expect(tooltip).toHaveCount(0);
+    await expectNoPageOverflow(page);
+  }
+
+  await address.focus();
+  await expect(tooltip).toHaveText(servers[0]!.address);
+  await address.press("Tab");
+  await expect(tooltip).toHaveCount(0);
+});
+
 test("dashboard summary cards have consistent heights across grid rows", async ({
   page,
   baseURL,

@@ -135,6 +135,12 @@ The shared stylesheet disables only the tab indicator's shared-element transitio
 this keeps native indicator sizing correct through language changes and resizing,
 without changing HeroUI colors, tab interactions, or dependency files.
 
+Server management renders the address below the location in its address column.
+Each line truncates independently and reveals its full value on hover or keyboard
+focus only when clipped. This custom cell disables the table-level truncation
+wrapper so it does not clip both badges as one block. The admin layout regression
+checks this behavior at mobile and desktop widths.
+
 ### Payment portal
 
 The [payment portal](https://github.com/lolitia-connect/frontend/tree/main/apps/payment-portal) uses HeroUI v3 components directly,

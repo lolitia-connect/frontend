@@ -147,8 +147,23 @@ export default function Nodes() {
       {
         id: "protocol",
         header: ` ${t("protocol", "Protocol")}:${t("port", "Port")}`,
-        cell: ({ row }: { row: any }) =>
-          `${row.original.protocol}:${row.original.protocol_id || "—"}:${getProtocolPort(row.original.server_id, row.original.protocol, row.original.protocol_id)}`,
+        cell: ({ row }: { row: any }) => {
+          const protocol = row.original.protocol;
+          if (!protocol) return "—";
+          const instance = row.original.protocol_id || "—";
+          return (
+            <div className="flex flex-wrap items-center gap-2">
+              <Badge variant="secondary">{`${protocol}:${instance}`}</Badge>
+              <Badge variant="secondary">
+                {getProtocolPort(
+                  row.original.server_id,
+                  row.original.protocol,
+                  row.original.protocol_id
+                )}
+              </Badge>
+            </div>
+          );
+        },
       },
       {
         id: "tags",
@@ -193,7 +208,7 @@ export default function Nodes() {
                   (g) => String(g.id) === String(groupId)
                 );
                 return (
-                  <Badge key={groupId} variant="outline">
+                  <Badge key={groupId} variant="secondary">
                     {group?.name || String(groupId)}
                   </Badge>
                 );

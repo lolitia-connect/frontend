@@ -135,10 +135,13 @@ export default function CurrentCredentialFields({
           </TabsTrigger>
         </TabsList>
       </TabsListContainer>
-      <TabPanel id="password">
+      {/* Remove panel insets so credential fields align with the form. */}
+      <TabPanel className="px-0" id="password">
         {verifyBy === "password" ? fields : null}
       </TabPanel>
-      <TabPanel id="code">{verifyBy === "code" ? fields : null}</TabPanel>
+      <TabPanel className="px-0" id="code">
+        {verifyBy === "code" ? fields : null}
+      </TabPanel>
     </Tabs>
   );
 }

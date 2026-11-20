@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, type Locator, test } from "@playwright/test";
 import {
   documents,
   expectFullWidthSidebarLink,
@@ -45,6 +45,62 @@ test("payment bill and completed-order actions fit mobile widths", async ({
       }));
       expect(sizes.scroll).toBeLessThanOrEqual(sizes.client + 1);
     }
+  }
+});
+
+test("profile credential fields align with new password fields in both tabs", async ({
+  page,
+  baseURL,
+}) => {
+  await mockLayoutApi(page);
+  await signInFixture(page, baseURL!);
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/profile");
+
+  const form = page.locator("#password-form");
+  const passwordTab = form.getByRole("tab", {
+    name: "Current password",
+    exact: true,
+  });
+  const codeTab = form.getByRole("tab", {
+    name: "No password set",
+    exact: true,
+  });
+  const passwordInputs = form.locator('input[type="password"]');
+  const codeInput = form.getByLabel("Code sent to member@example.test", {
+    exact: true,
+  });
+  await expect(passwordTab).toBeVisible();
+
+  async function expectAligned(fields: Locator) {
+    await expect(async () => {
+      const bounds = await fields.evaluateAll((nodes) =>
+        nodes.map((node) => {
+          const { left, right, width } = node.getBoundingClientRect();
+          return { left, right, width };
+        })
+      );
+      expect(bounds).toHaveLength(3);
+      for (const bound of bounds) {
+        expect(bound.width).toBeGreaterThan(0);
+        expect(Math.abs(bound.left - bounds[0].left)).toBeLessThanOrEqual(1);
+        expect(Math.abs(bound.right - bounds[0].right)).toBeLessThanOrEqual(1);
+        expect(Math.abs(bound.width - bounds[0].width)).toBeLessThanOrEqual(1);
+      }
+    }).toPass({ timeout: 5000 });
+  }
+
+  for (const width of [320, 375, 768, 1440]) {
+    await test.step(`${width}px`, async () => {
+      await page.setViewportSize({ width, height: 900 });
+      await passwordTab.click();
+      await expect(form.locator('input[name="old_password"]')).toBeVisible();
+      await expectAligned(passwordInputs);
+      await codeTab.click();
+      await expect(codeInput).toBeVisible();
+      await expectAligned(passwordInputs.or(codeInput.locator("..")));
+      await expectNoPageOverflow(page);
+    });
   }
 });
 

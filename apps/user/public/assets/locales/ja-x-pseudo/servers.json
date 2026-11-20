@@ -1,0 +1,15 @@
+{
+  "serviceMonitoring": "服務監視",
+  "title": "服務監視",
+  "online": "接続中",
+  "offline": "切断中",
+  "noData": "利用可能服務機器無",
+  "pageTitle": "服務監視",
+  "name": "名称",
+  "status": "状態",
+  "location": "所在地",
+  "memory": "記憶領域",
+  "onlineUsers": "接続端末",
+  "ratio": "倍率",
+  "protocols": "通信規約"
+}

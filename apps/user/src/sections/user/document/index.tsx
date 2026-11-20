@@ -12,6 +12,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getV1PublicDocumentList as queryDocumentList } from "@workspace/ui/services/user/user";
 import { useTranslation } from "react-i18next";
 import { MainEmpty } from "@/components/main-empty";
+import { getContentLanguage } from "@/config/i18n";
 import { DocumentButton } from "@/sections/user/document/document-button";
 import { getTutorialList } from "@/sections/user/document/tutorial";
 import { TutorialButton } from "@/sections/user/document/tutorial-button";
@@ -19,7 +20,7 @@ import { useGlobalStore } from "@/stores/global";
 
 export default function Document() {
   const { t, i18n } = useTranslation("document");
-  const locale = i18n.language;
+  const locale = getContentLanguage(i18n.language);
   const { common } = useGlobalStore();
   const showTutorial = common.subscribe?.show_tutorial !== false;
 

@@ -79,6 +79,10 @@ bun dev
 - [开发指南](../../docs/zh/guide/frontend-development.md#用户端维护)：首页 UI、空状态约定、OAuth 回调和测试。
 - [共享环境与项目文档](../../README.zh-CN.md#-文档)。
 
+用户端语言菜单支持英语、简体中文、繁体中文（台湾／香港）、日语，以及「偽中国語」(`ja-x-pseudo`) 和纯 emoji (`en-x-emoji`，菜单显示 😀 Emoji)。语言选择会保存在浏览器中，刷新后继续生效；选择「系统默认」可恢复跟随浏览器。
+
+「偽中国語」采用日语汉字风格；emoji 模式的界面译文仅使用 emoji，账号、金额、站点名称等动态数据保留原值。下拉菜单的语言名称保持不变；「系统默认」标签跟随当前语言，emoji 模式下显示 💻🔄。两种语言覆盖全部命名空间，翻译位于 [语言资源目录](./public/assets/locales/)，须与英语资源保持相同的键和插值变量。外部教程、套餐内容及验证码服务分别使用日语和英语基础语言。
+
 ## 🚀 在 Vercel 上部署
 
 [![使用 Vercel 部署](https://vercel.com/button)](https://vercel.com/new/clone?demo-description=PPanel%20is%20a%20pure%2C%20professional%2C%20and%20perfect%20open-source%20proxy%20panel%20tool%2C%20designed%20to%20be%20your%20ideal%20choice%20for%20learning%20and%20practical%20use&demo-image=https%3A%2F%2Furlscan.io%2Fliveshot%2F%3Fwidth%3D1920%26height%3D1080%26url%3Dhttps%3A%2F%2Fuser.ppanel.dev&demo-title=PPanel%20User%20Web&demo-url=https%3A%2F%2Fuser.ppanel.dev%2F&from=.&project-name=ppanel-user-web&repository-name=ppanel-web&repository-url=https%3A%2F%2Fgithub.com%2Fperfect-panel%2Fppanel-web&root-directory=apps%2Fuser&skippable-integrations=1)

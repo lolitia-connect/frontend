@@ -1,0 +1,27 @@
+{
+  "stripe": {
+    "card": {
+      "loading": "決済読込中"
+    },
+    "card_name": "名義人氏名",
+    "card_number": "決済札番号",
+    "element_error": "決済札全情報入力願",
+    "error": "異常発生",
+    "expiry_date": "有効期限",
+    "loading": "決済読込中",
+    "name_placeholder": "決済札記載姓名",
+    "name_required": "名義人氏名必須",
+    "pay_button": "即時支払",
+    "payment_failed": "支払失敗",
+    "processing": "支払処理中",
+    "processing_button": "処理中",
+    "qrcode": {
+      "alipay": "支付宝走査支払",
+      "wechat_pay": "微信走査支払"
+    },
+    "secure_notice": "支払安全暗号化済",
+    "security_code": "安全符号",
+    "success_message": "御購入感謝、注文処理完了",
+    "success_title": "支払成功"
+  }
+}

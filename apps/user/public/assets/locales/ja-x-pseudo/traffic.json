@@ -1,0 +1,17 @@
+{
+  "sections": "区分",
+  "title": "通信量統計",
+  "selectSubscription": "契約選択",
+  "days7": "七日間",
+  "days30": "三十日間",
+  "totalTraffic": "総通信量",
+  "uploadTraffic": "送信通信量",
+  "downloadTraffic": "受信通信量",
+  "trafficTrend": "通信量推移",
+  "trafficRatio": "送受信比率",
+  "upload": "送信",
+  "download": "受信",
+  "noData": "通信量資料無",
+  "date": "日付",
+  "traffic": "通信量、百万字節"
+}

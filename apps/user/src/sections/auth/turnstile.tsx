@@ -4,6 +4,7 @@ import { useTheme } from "next-themes";
 import { type RefObject, useEffect, useImperativeHandle, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import Turnstile from "react-turnstile";
+import { getContentLanguage } from "@/config/i18n";
 import { useGlobalStore } from "@/stores/global";
 
 export type TurnstileRef = {
@@ -25,7 +26,7 @@ const CloudFlareTurnstile = function CloudFlareTurnstile({
   const { verify } = common;
   const { resolvedTheme } = useTheme();
   const { i18n } = useTranslation("auth");
-  const locale = i18n.language;
+  const locale = getContentLanguage(i18n.language);
   const widgetRef = useRef<{ reset: () => void } | null>(null);
 
   useImperativeHandle(

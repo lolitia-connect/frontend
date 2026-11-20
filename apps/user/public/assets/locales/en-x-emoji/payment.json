@@ -1,0 +1,27 @@
+{
+  "stripe": {
+    "card": {
+      "loading": "💳⏳"
+    },
+    "card_name": "💳👤",
+    "card_number": "💳🔢",
+    "element_error": "💳📋⌨️❗",
+    "error": "⚠️",
+    "expiry_date": "💳📅",
+    "loading": "💳⏳",
+    "name_placeholder": "💳👤⌨️",
+    "name_required": "💳👤❗",
+    "pay_button": "💳⚡",
+    "payment_failed": "💳❌",
+    "processing": "💳⚙️⏳",
+    "processing_button": "⚙️⏳",
+    "qrcode": {
+      "alipay": "🔵📱📷💳",
+      "wechat_pay": "🟢📱📷💳"
+    },
+    "secure_notice": "💳🔐🛡️",
+    "security_code": "💳🔒🔢",
+    "success_message": "🙏🛒🧾✅",
+    "success_title": "💳✅"
+  }
+}

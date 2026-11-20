@@ -1,0 +1,26 @@
+{
+  "cancel": "取消",
+  "check": "閲覧",
+  "close": "終了",
+  "closeSuccess": "終了成功",
+  "closeWarning": "此問合票終了、本当宜？",
+  "confirm": "確認",
+  "confirmClose": "終了確認",
+  "createSuccess": "作成成功",
+  "createTicket": "問合票作成",
+  "createTicketDescription": "貴方問題説明願",
+  "description": "説明",
+  "inputPlaceholder": "伝言入力",
+  "reply": "返信",
+  "status": {
+    "0": "状態",
+    "1": "窓口回答待機",
+    "2": "窓口回答済",
+    "3": "解決済",
+    "4": "終了"
+  },
+  "submit": "送信",
+  "ticketList": "問合票一覧",
+  "title": "題名",
+  "updatedAt": "更新日時"
+}

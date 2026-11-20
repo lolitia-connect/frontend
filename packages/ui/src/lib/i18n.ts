@@ -123,6 +123,8 @@ const FOLLOW_SYSTEM_LABELS: Record<string, string> = {
   "zh-TW": "系統預設",
   "zh-HK": "系統預設",
   "ja-JP": "システムの既定値",
+  "ja-x-pseudo": "端末設定追従",
+  "en-x-emoji": "💻🔄",
 };
 
 const FOLLOW_SYSTEM_FALLBACK = "System default";

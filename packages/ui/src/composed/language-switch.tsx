@@ -33,6 +33,16 @@ const allLanguages = [
     name: "日本語",
     flag: "🇯🇵",
   },
+  {
+    code: "ja-x-pseudo",
+    name: "偽中国語",
+    flag: "🀄",
+  },
+  {
+    code: "en-x-emoji",
+    name: "Emoji",
+    flag: "😀",
+  },
 ];
 
 export function LanguageSwitch() {
@@ -51,14 +61,7 @@ export function LanguageSwitch() {
 
   const currentLanguage = languages.find((lang) => lang.code === language);
 
-  // "System default", translated for the ACTIVE UI language.
-  //
-  // Deliberately not `theme.system` ("System" / 「系统」): that names the theme
-  // setting, and "System" alone is ambiguous in a list of language names. A
-  // catalog entry still wins when an app provides one, so this stays translatable.
-  const catalogLabel = t("language.followSystem", {
-    defaultValue: "",
-  });
+  const catalogLabel = t("language.followSystem", { defaultValue: "" });
   const systemLabel =
     catalogLabel && catalogLabel !== "language.followSystem"
       ? catalogLabel
@@ -93,7 +96,7 @@ export function LanguageSwitch() {
           Styled like ThemeSwitch's mode row — plain label, no leading
           icon, trailing check — so the two menus read consistently.
         */}
-          <Dropdown.Item onAction={followSystem}>
+          <Dropdown.Item onAction={followSystem} textValue={systemLabel}>
             {systemLabel}
             <Check
               className={cn("ms-auto", !isFollowingSystem && "hidden")}
@@ -102,8 +105,10 @@ export function LanguageSwitch() {
           </Dropdown.Item>
           {languages.map((language) => (
             <Dropdown.Item
+              id={language.code}
               key={language.code}
               onAction={() => changeLanguage(language.code)}
+              textValue={language.name}
             >
               <span lang={language.code}>
                 {language.flag} {language.name}

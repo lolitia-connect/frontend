@@ -4,6 +4,7 @@ import { getV1PublicPortalSubscribe as getSubscription } from "@workspace/ui/ser
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { getContentLanguage } from "@/config/i18n";
 
 const Content = dynamic(() =>
   import("./content").then((module) => module.Content)
@@ -11,6 +12,7 @@ const Content = dynamic(() =>
 
 export function ProductShowcase() {
   const { i18n } = useTranslation();
+  const locale = getContentLanguage(i18n.language);
   const [subscriptionList, setSubscriptionList] = useState<API.Subscribe[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -19,7 +21,7 @@ export function ProductShowcase() {
       try {
         const { data } = await getSubscription(
           {
-            language: i18n.language,
+            language: locale,
           },
           {
             skipErrorHandler: true,
@@ -34,7 +36,7 @@ export function ProductShowcase() {
     };
 
     fetchSubscriptions();
-  }, [i18n.language]);
+  }, [locale]);
 
   if (isLoading || subscriptionList.length === 0) return null;
 

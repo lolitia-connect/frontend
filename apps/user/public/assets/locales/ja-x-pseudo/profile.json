@@ -1,0 +1,52 @@
+{
+  "accountSettings": {
+    "accountSettings": "口座設定",
+    "newPassword": "新暗証",
+    "passwordMismatch": "暗証不一致",
+    "repeatNewPassword": "新暗証再入力",
+    "updatePassword": "暗証更新",
+    "updateSuccess": "暗証更新成功",
+    "newPasswordHint": "新暗証八文字以上",
+    "passwordLength": "暗証八〜百二十八文字必要"
+  },
+  "notify": {
+    "balanceChange": "残高変動通知",
+    "finance": "金融通知",
+    "login": "登入通知",
+    "notificationSettings": "通知設定",
+    "save": "保存",
+    "subscribe": "契約通知",
+    "updateSuccess": "通知設定更新成功"
+  },
+  "sections": "区分",
+  "thirdParty": {
+    "bind": "連携",
+    "bindFailed": "連携失敗",
+    "bindMobile": "電話連携",
+    "bindSuccess": "連携成功",
+    "confirm": "確認",
+    "save": "保存",
+    "title": "外部口座",
+    "unbind": "連携解除",
+    "update": "更新",
+    "updateSuccess": "更新成功",
+    "bindEmail": "電子郵便連携",
+    "newEmail": "新電子郵便",
+    "newCode": "新宛先確認符号送付済"
+  },
+  "currentCredential": {
+    "code": "{{email}}宛符号送付済",
+    "codeRequired": "確認符号入力",
+    "firstPassword": "初回暗証設定時空欄可",
+    "mobileNeedsPassword": "暗証未設定口座、電話変更前暗証設定必要",
+    "password": "現在暗証",
+    "passwordRequired": "現在暗証入力願",
+    "signInAgain": "更新済、再登入願",
+    "useCode": "暗証未設定？{{email}}宛符号使用確認願",
+    "usePassword": "現在暗証利用",
+    "verificationCode": "確認符号",
+    "required": "現在認証情報確認",
+    "noPassword": "暗証未設定",
+    "firstPasswordCode": "暗証未設定時限定符号確認可能、設定済時現在暗証入力願"
+  }
+}

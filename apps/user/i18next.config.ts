@@ -1,4 +1,5 @@
 import { defineConfig } from "i18next-cli";
+import { supportedLngs } from "./src/config/i18n";
 
 /**
  * i18next CLI configuration
@@ -10,7 +11,7 @@ import { defineConfig } from "i18next-cli";
  */
 export default defineConfig({
   // Use supported languages from shared config
-  locales: ["en-US", "zh-CN", "zh-TW", "zh-HK", "ja-JP"],
+  locales: [...supportedLngs],
 
   // Extraction configuration
   extract: {

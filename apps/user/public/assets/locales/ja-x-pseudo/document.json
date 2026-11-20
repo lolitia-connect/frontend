@@ -1,0 +1,10 @@
+{
+  "all": "全部",
+  "noSubscription": "先契約購入願",
+  "document": "説明書",
+  "read": "閲覧",
+  "sections": "区分",
+  "tutorial": "利用指南",
+  "loadingSubscriptionConfig": "契約設定読込中",
+  "subscriptionConfigUnavailable": "契約設定取得不能、再読込後再試行願"
+}

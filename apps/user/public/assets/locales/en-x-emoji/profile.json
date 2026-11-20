@@ -1,0 +1,52 @@
+{
+  "accountSettings": {
+    "accountSettings": "👤⚙️",
+    "newPassword": "🆕🔑",
+    "passwordMismatch": "🔑🔑❌",
+    "repeatNewPassword": "🆕🔑🔁",
+    "updatePassword": "🔑🔄",
+    "updateSuccess": "🔑🔄✅",
+    "newPasswordHint": "🆕🔑8️⃣➕",
+    "passwordLength": "🔑📏8️⃣↔️1️⃣2️⃣8️⃣"
+  },
+  "notify": {
+    "balanceChange": "👛🔄🔔",
+    "finance": "💰🔔",
+    "login": "🔑🚪🔔",
+    "notificationSettings": "🔔⚙️",
+    "save": "💾",
+    "subscribe": "📡🔔",
+    "updateSuccess": "🔔⚙️✅"
+  },
+  "sections": "🗂️",
+  "thirdParty": {
+    "bind": "🔗",
+    "bindFailed": "🔗❌",
+    "bindMobile": "📱🔗",
+    "bindSuccess": "🔗✅",
+    "confirm": "✅",
+    "save": "💾",
+    "title": "👤🔗",
+    "unbind": "🔗✂️",
+    "update": "🔄",
+    "updateSuccess": "🔄✅",
+    "bindEmail": "📧🔗",
+    "newEmail": "🆕📧",
+    "newCode": "🆕📧🔢📨✅"
+  },
+  "currentCredential": {
+    "code": "📨🔢{{email}}✅",
+    "codeRequired": "🔢⌨️",
+    "firstPassword": "🆕🔑⌨️➖",
+    "mobileNeedsPassword": "🔑❌➡️🔑⚙️➡️📱🔄",
+    "password": "🔑",
+    "passwordRequired": "🔑⌨️",
+    "signInAgain": "✅🔑🚪🔄",
+    "useCode": "🔑❌❓📨🔢{{email}}🛡️",
+    "usePassword": "🔑👈",
+    "verificationCode": "🔢🛡️",
+    "required": "🔑🛡️",
+    "noPassword": "🔑❌",
+    "firstPasswordCode": "🔑❌➡️🔢✅🔑✅➡️🔑⌨️"
+  }
+}

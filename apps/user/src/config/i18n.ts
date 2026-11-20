@@ -1,7 +1,21 @@
-// Pure constants only: this module is imported by i18n tooling that runs outside
-// the bundler, so it must stay free of runtime/env-dependent code.
+// Runtime-independent configuration: also imported by i18n tooling outside the bundler.
 export const fallbackLng = "en-US";
-export const supportedLngs = ["en-US", "zh-CN", "zh-TW", "zh-HK", "ja-JP"];
+export const supportedLngs = [
+  "en-US",
+  "zh-CN",
+  "zh-TW",
+  "zh-HK",
+  "ja-JP",
+  "ja-x-pseudo",
+  "en-x-emoji",
+];
+
+// External content and verification services use standard locales.
+export function getContentLanguage(language: string) {
+  if (language === "ja-x-pseudo") return "ja-JP";
+  if (language === "en-x-emoji") return "en-US";
+  return language;
+}
 
 // Shared translations needed by the application shell. Route-specific
 // namespaces are loaded only for the initial route (and on demand after

@@ -79,6 +79,10 @@ Open <http://localhost:3000> with your browser to see the result. Configure `NEX
 - [Development guide](../../docs/guide/frontend-development.md#user-app-maintenance): landing-page UI, empty-state conventions, OAuth callbacks, and testing.
 - [Shared setup and project documentation](../../README.md#-documentation).
 
+The user language menu supports English, Simplified Chinese, Traditional Chinese (Taiwan / Hong Kong), Japanese, 偽中国語 (`ja-x-pseudo`), and emoji (`en-x-emoji`, shown as 😀 Emoji). Explicit choices persist across reloads; selecting “System default” resumes following the browser language.
+
+The pseudo language uses Japanese-style Han characters. Emoji mode uses only emoji for translated interface text, while keeping dynamic account details, amounts, and site names intact. Language names in the menu stay unchanged; the system-default label follows the active language (💻🔄 in emoji mode). Both catalogs cover every namespace in the [locale resources](./public/assets/locales/) and must retain the English catalog's keys and interpolation variables. External tutorials, plan content, and verification services use Japanese and English base locales respectively.
+
 ## 🚀 Deploy on Vercel
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?demo-description=PPanel%20is%20a%20pure%2C%20professional%2C%20and%20perfect%20open-source%20proxy%20panel%20tool%2C%20designed%20to%20be%20your%20ideal%20choice%20for%20learning%20and%20practical%20use&demo-image=https%3A%2F%2Furlscan.io%2Fliveshot%2F%3Fwidth%3D1920%26height%3D1080%26url%3Dhttps%3A%2F%user.ppanel.dev&demo-title=PPanel%20User%20Web&demo-url=https%3A%2F%2Fuser.ppanel.dev%2F&from=.&project-name=ppanel-user-web&repository-name=ppanel-web&repository-url=https%3A%2F%2Fgithub.com%2Fperfect-panel%2Fppanel-web&root-directory=apps%user&skippable-integrations=1)

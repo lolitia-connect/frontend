@@ -1,0 +1,15 @@
+{
+  "serviceMonitoring": "🖥️📈",
+  "title": "🖥️📈",
+  "online": "🟢",
+  "offline": "🔴",
+  "noData": "🖥️📭",
+  "pageTitle": "🖥️📈",
+  "name": "🏷️",
+  "status": "🚦",
+  "location": "📍",
+  "memory": "🧠",
+  "onlineUsers": "🟢📱💻",
+  "ratio": "✖️",
+  "protocols": "🤝📡"
+}

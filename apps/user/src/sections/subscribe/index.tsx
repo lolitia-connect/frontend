@@ -14,6 +14,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Display } from "@/components/display";
 import { MainEmpty } from "@/components/main-empty";
+import { getContentLanguage } from "@/config/i18n";
 import { SubscribeDetail } from "./detail";
 import Purchase from "./purchase";
 import RedeemCode from "./redeem-code";
@@ -29,7 +30,7 @@ export default function Subscribe() {
     NoLimit: t("NoLimit", "No Limit"),
     Year: t("Year", "Year"),
   };
-  const locale = i18n.language;
+  const locale = getContentLanguage(i18n.language);
   const [subscribe, setSubscribe] = useState<API.Subscribe>();
   const [pendingPlan, setPendingPlan] = useState<API.Subscribe>();
 

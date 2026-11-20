@@ -17,6 +17,8 @@
 import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { supportedLngs } from "@/config/i18n";
+import { fallbackNamespaces } from "@/config/locale-resources";
 
 type I18nModule = typeof import("@workspace/ui/lib/i18n");
 
@@ -314,26 +316,26 @@ describe("default detection (nothing stored)", () => {
 });
 
 describe("explicit choice across a simulated reload", () => {
-  it("survives a reload: choose, then re-init with the browser preferring another", async () => {
+  it.each([
+    "ja-JP",
+    "ja-x-pseudo",
+    "en-x-emoji",
+  ])("restores %s after a reload with a different browser language", async (language) => {
     setNavigatorLanguage("zh-CN");
-    const first = await freshI18n();
+    const config = { fallbackLng: "en-US", supportedLngs: [...supportedLngs] };
+    const first = await freshI18n(config);
     await waitForInit(first.i18n);
 
-    await first.mod.setLanguagePreference("ja-JP");
-    expect(window.localStorage.getItem("language")).toBe("ja-JP");
+    await first.mod.setLanguagePreference(language);
+    expect(window.localStorage.getItem("language")).toBe(language);
 
-    // ---- simulated reload: fresh module + fresh i18next instance ----
-    const second = await freshI18n();
+    const second = await freshI18n(config);
     await waitForInit(second.i18n);
-
-    // Init is still pinned to the fallback (hydration determinism is intact).
     expect(second.i18n.options.lng).toBe("en-US");
-
-    // The post-mount detection step restores the saved choice, not the browser's.
-    expect(second.mod.applyDetectedLanguage()).toBe("ja-JP");
+    expect(second.mod.applyDetectedLanguage()).toBe(language);
     await flush();
-    expect(second.i18n.language).toBe("ja-JP");
-    expect(window.localStorage.getItem("language")).toBe("ja-JP");
+    expect(second.i18n.language).toBe(language);
+    expect(window.localStorage.getItem("language")).toBe(language);
   });
 
   it("does not leak the follow-system suppression onto the next explicit choice", async () => {
@@ -465,6 +467,8 @@ describe("follow system label", () => {
     expect(mod.getFollowSystemLabel("zh-TW")).toBe("系統預設");
     expect(mod.getFollowSystemLabel("zh-HK")).toBe("系統預設");
     expect(mod.getFollowSystemLabel("ja-JP")).toBe("システムの既定値");
+    expect(mod.getFollowSystemLabel("ja-x-pseudo")).toBe("端末設定追従");
+    expect(mod.getFollowSystemLabel("en-x-emoji")).toBe("💻🔄");
   });
 
   it("does not return the subject's bare '系统' for Chinese", async () => {
@@ -488,6 +492,82 @@ describe("follow system label", () => {
     expect(mod.getFollowSystemLabel("de-DE")).toBe("System default");
     expect(mod.getFollowSystemLabel(undefined)).toBe("System default");
     expect(mod.getFollowSystemLabel("")).toBe("System default");
+  });
+});
+
+describe("novelty locale catalogs", () => {
+  const localeDirectory = resolve(
+    import.meta.dirname,
+    "../../public/assets/locales"
+  );
+  const readCatalog = (language: string, namespace: string) =>
+    JSON.parse(
+      readFileSync(
+        resolve(localeDirectory, language, `${namespace}.json`),
+        "utf8"
+      )
+    );
+  const flatten = (
+    value: Record<string, unknown>,
+    prefix = ""
+  ): [string, string][] =>
+    Object.entries(value).flatMap(([key, entry]) => {
+      const name = prefix ? `${prefix}.${key}` : key;
+      if (typeof entry === "string") return [[name, entry]];
+      return flatten(entry as Record<string, unknown>, name);
+    });
+  const placeholders = (value: string) =>
+    (value.match(/\{\{[^}]+\}\}/g) ?? []).sort();
+  const emojiPattern = "^(?:\\p{RGI_Emoji}|\\s)+$";
+  const emojiOnly = new RegExp(emojiPattern, "v");
+
+  it.each([
+    "ja-x-pseudo",
+    "en-x-emoji",
+  ])("%s covers every fallback key without losing interpolation or leaking prose into emoji", (language) => {
+    for (const namespace of fallbackNamespaces) {
+      const source = new Map(flatten(readCatalog("en-US", namespace)));
+      const translated = new Map(flatten(readCatalog(language, namespace)));
+      expect([...translated.keys()].sort()).toEqual([...source.keys()].sort());
+      for (const [key, original] of source) {
+        const text = translated.get(key)!;
+        expect(text.trim(), `${namespace}.${key}`).not.toBe("");
+        expect(placeholders(text), `${namespace}.${key}`).toEqual(
+          placeholders(original)
+        );
+        if (language === "en-x-emoji") {
+          expect(
+            text.replace(/\{\{[^}]+\}\}/g, ""),
+            `${namespace}.${key}`
+          ).toMatch(emojiOnly);
+        }
+      }
+    }
+  });
+
+  it.each([
+    "ja-x-pseudo",
+    "en-x-emoji",
+  ])("uses %s resources for pluralization and interpolation", async (language) => {
+    const { default: createI18next } = await vi.importActual<{
+      default: typeof import("i18next")["default"];
+    }>("i18next");
+    const instance = createI18next.createInstance();
+    const catalog = readCatalog(language, "main");
+    await instance.init({
+      lng: language,
+      fallbackLng: "en-US",
+      supportedLngs: [...supportedLngs],
+      resources: { [language]: { main: catalog } },
+      defaultNS: "main",
+    });
+    expect(instance.resolvedLanguage).toBe(language);
+    expect(instance.t("welcome")).toBe(catalog.welcome);
+    for (const count of [1, 2]) {
+      expect(instance.t("more_features", { count })).toBe(
+        catalog.more_features_other.replace("{{count}}", String(count))
+      );
+    }
   });
 });
 

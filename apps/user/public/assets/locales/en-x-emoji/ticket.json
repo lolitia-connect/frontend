@@ -1,0 +1,26 @@
+{
+  "cancel": "❎",
+  "check": "🔍",
+  "close": "🔚",
+  "closeSuccess": "🔚✅",
+  "closeWarning": "🎫🔚❓",
+  "confirm": "✅",
+  "confirmClose": "🔚✅",
+  "createSuccess": "🆕✅",
+  "createTicket": "🎫➕",
+  "createTicketDescription": "🫵❓📝",
+  "description": "📝",
+  "inputPlaceholder": "💬⌨️",
+  "reply": "💬↩️",
+  "status": {
+    "0": "🚦",
+    "1": "🛟⏳",
+    "2": "🛟💬✅",
+    "3": "✅",
+    "4": "🔚"
+  },
+  "submit": "📤",
+  "ticketList": "🎫📋",
+  "title": "🏷️",
+  "updatedAt": "🔄📅"
+}

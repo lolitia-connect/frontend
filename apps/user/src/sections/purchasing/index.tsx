@@ -4,17 +4,19 @@ import { useQuery } from "@tanstack/react-query";
 import { useSearch } from "@workspace/ui/lib/router-compat";
 import { getSubscription } from "@workspace/ui/services/user/portal";
 import { useTranslation } from "react-i18next";
+import { getContentLanguage } from "@/config/i18n";
 import Content from "./content";
 
 export default function Purchasing() {
   const { id } = useSearch({ from: "/(main)/purchasing/" }) as { id: string };
   const { t, i18n } = useTranslation("components");
+  const locale = getContentLanguage(i18n.language);
   const { data } = useQuery({
-    queryKey: ["subscription", i18n.language],
+    queryKey: ["subscription", locale],
     queryFn: async () => {
       const { data } = await getSubscription(
         {
-          language: i18n.language,
+          language: locale,
         },
         {
           skipErrorHandler: true,

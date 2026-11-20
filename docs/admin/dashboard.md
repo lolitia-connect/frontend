@@ -205,10 +205,11 @@ Sponsoring helps PPanel continue releasing updates! Click sponsor cards to visit
 
 ### Chart Showing Empty?
 
-Possible causes:
-- No data in the time period
-- Data statistics service issue
-- Try refreshing the page
+Revenue and user statistics show an empty state for **Today** when every metric is zero, and for **Month** or **Total** when the API list is missing or empty. With data available, charts should render on desktop and mobile without a page refresh when switching time periods.
+
+If the bottom summary contains data but the chart area is completely blank (rather than showing the empty-state message), update the admin panel and refresh the page. Today's charts need explicit container dimensions to prevent them from collapsing to zero inside the card's column flex layout.
+
+If the empty state remains after updating, check whether the selected period contains data and whether the statistics service is working.
 
 ### Sponsors Not Showing?
 

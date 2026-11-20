@@ -4,6 +4,7 @@ import {
   expectFullWidthSidebarLink,
   expectNoPageOverflow,
   expectSingleRowTabs,
+  mockDashboardApi,
   mockLayoutApi,
   signInFixture,
 } from "../../../../tests/e2e/layout.fixtures";
@@ -181,6 +182,98 @@ for (const language of ["en-US", "zh-CN"]) {
     }
   });
 }
+
+test("dashboard animates platform changes without resetting subscription panels", async ({
+  page,
+  baseURL,
+}) => {
+  const errors: string[] = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  await mockLayoutApi(page);
+  await mockDashboardApi(page);
+  await signInFixture(page, baseURL!);
+  await page.goto("/dashboard");
+
+  await expect(
+    page.getByRole("heading", { name: "Dashboard plan" })
+  ).toBeVisible();
+  const lists = page.locator('[data-slot="dashboard-platform-content"]');
+  await expect(lists).toHaveCount(1);
+
+  await page.evaluate(() => {
+    const animations: string[] = [];
+    Object.assign(window, { __dashboardPlatformAnimations: animations });
+    document.addEventListener(
+      "animationstart",
+      (event) => {
+        if (
+          event.target instanceof HTMLElement &&
+          event.target.matches('[data-slot="dashboard-platform-content"]')
+        ) {
+          animations.push(event.animationName);
+        }
+      },
+      true
+    );
+  });
+
+  const deviceTabs = page.getByRole("tablist").first();
+  const iosTab = deviceTabs.getByRole("tab").nth(0);
+  const androidTab = deviceTabs.getByRole("tab").nth(1);
+  await expect(iosTab).toHaveAttribute("aria-selected", "true");
+  await expect(
+    page.getByRole("button", { name: /Subscription URL 1/ })
+  ).toHaveAttribute("aria-expanded", "true");
+
+  await androidTab.click();
+  await expect(androidTab).toHaveAttribute("aria-selected", "true");
+  await expect(lists).toHaveCount(1);
+  await expect(lists.first()).toContainText("android client");
+  await expect(
+    page.getByRole("button", { name: /Subscription URL 1/ })
+  ).toHaveAttribute("aria-expanded", "true");
+  await expect(
+    page.getByRole("heading", { name: /Dashboard plan/ })
+  ).toBeVisible();
+  const animationsAfterAndroid = await page.evaluate(
+    () => (window as any).__dashboardPlatformAnimations.length
+  );
+  expect(animationsAfterAndroid).toBeGreaterThan(0);
+
+  await iosTab.click();
+  await expect(iosTab).toHaveAttribute("aria-selected", "true");
+  await expect(lists.first()).toContainText("ios client");
+  await expect
+    .poll(() =>
+      page.evaluate(() => (window as any).__dashboardPlatformAnimations.length)
+    )
+    .toBeGreaterThan(animationsAfterAndroid);
+
+  const protocolTabs = page.getByRole("tablist").nth(1);
+  const animationsBeforeProtocol = await page.evaluate(
+    () => (window as any).__dashboardPlatformAnimations.length
+  );
+  await protocolTabs.getByRole("tab").nth(1).click();
+  await expect(lists.first()).toContainText("ios client");
+  await expect
+    .poll(() =>
+      page.evaluate(() => (window as any).__dashboardPlatformAnimations.length)
+    )
+    .toBeGreaterThan(animationsBeforeProtocol);
+
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  const animationsBeforeReducedMotion = await page.evaluate(
+    () => (window as any).__dashboardPlatformAnimations.length
+  );
+  await androidTab.click();
+  await expect(lists.first()).toContainText("android client");
+  await expect
+    .poll(() =>
+      page.evaluate(() => (window as any).__dashboardPlatformAnimations.length)
+    )
+    .toBe(animationsBeforeReducedMotion);
+  expect(errors).toEqual([]);
+});
 
 for (const language of ["en-US", "zh-CN", "zh-TW", "zh-HK", "ja-JP"]) {
   test(`user sidebar and document tabs remain usable in ${language}`, async ({

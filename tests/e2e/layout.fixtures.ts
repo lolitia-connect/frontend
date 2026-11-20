@@ -210,6 +210,68 @@ export async function mockLayoutApi(page: Page) {
   return writes;
 }
 
+export async function mockDashboardApi(page: Page) {
+  await page.route(
+    /\/v[12]\/(?:public\/user\/subscribe|common\/client|common\/site\/stat|common\/site\/config)(?:\?|$)/,
+    async (route) => {
+      const path = new URL(route.request().url()).pathname;
+      let data: unknown = {};
+
+      if (path.endsWith("/public/user/subscribe")) {
+        data = {
+          list: [
+            {
+              id: "dashboard-subscribe",
+              expire_time: 0,
+              reset_time: 0,
+              traffic_unlimited: false,
+              traffic: 1_000_000_000,
+              upload: 0,
+              download: 0,
+              status: 1,
+              short: "dashboard",
+              token: "dashboard-test-token",
+              subscribe: {
+                name: "Dashboard plan",
+                replacement: 0,
+                sell: false,
+                allow_deduction: false,
+              },
+            },
+          ],
+          total: 1,
+        };
+      } else if (path.endsWith("/common/client")) {
+        data = {
+          list: ["ios", "android"].map((platform) => ({
+            id: platform,
+            name: `${platform} client`,
+            scheme: "client://import?url=${url}",
+            is_default: false,
+            download_link: {
+              [platform]: `https://example.test/${platform}.apk`,
+            },
+          })),
+          total: 2,
+        };
+      } else if (path.endsWith("/common/site/stat")) {
+        data = { protocol: ["mieru", "vless"] };
+      } else if (path.endsWith("/common/site/config")) {
+        data = {
+          ...siteConfig,
+          subscribe: {
+            ...siteConfig.subscribe,
+            subscribe_domain: "subscribe.example.test",
+            subscribe_path: "/subscribe",
+          },
+        };
+      }
+
+      await route.fulfill({ json: { code: 200, msg: "success", data } });
+    }
+  );
+}
+
 export async function signInFixture(
   page: Page,
   baseURL: string,

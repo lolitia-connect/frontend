@@ -17,10 +17,8 @@ coverage
 test-artifacts
 test-results/
 playwright-report/
-.tmp-e2e/
-.tmp-vitest/
-.next-playwright/
-.next-debug/
+.tmp*/
+.next*/
 *.coverage
 *.cover
 

@@ -104,7 +104,7 @@ export function RevenueStatisticsCard() {
             {RevenueStatistics?.today.new_order_amount ||
             RevenueStatistics?.today.renewal_order_amount ? (
               <ChartContainer
-                className="mx-auto max-h-80"
+                className="mx-auto h-full max-h-80 w-full"
                 config={IncomeStatisticsConfig}
               >
                 <PieChart>

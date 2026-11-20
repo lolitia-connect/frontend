@@ -236,7 +236,10 @@ zero opacity hides already-rendered text while hydration occupies the main threa
 The shared theme script resolves the saved/system theme in the document head; do
 not hide the document behind a hydration-dependent overlay. Both apps' SSR E2E
 suites pause the animation with JavaScript disabled and verify the heading is
-uncovered and paintable.
+uncovered and paintable. On the user dashboard, changing device types applies the
+shared content fade only to the platform-specific application list and respects
+`prefers-reduced-motion`; updating that list must not remount subscription accordion
+panels, so their expanded state remains unchanged.
 
 ## Accessibility checks
 

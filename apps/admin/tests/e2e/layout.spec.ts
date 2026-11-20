@@ -195,6 +195,97 @@ test("dashboard summary cards have consistent heights across grid rows", async (
   }
 });
 
+for (const { title, endpoint, metrics } of [
+  {
+    title: "Revenue Statistics",
+    endpoint: "revenue",
+    metrics: {
+      new_order_amount: 12_000,
+      renewal_order_amount: 3000,
+      amount_total: 15_000,
+    },
+  },
+  {
+    title: "User Statistics",
+    endpoint: "user",
+    metrics: { register: 12, new_order_users: 6, renewal_order_users: 3 },
+  },
+]) {
+  test(`dashboard ${title} charts render across tabs and viewport sizes`, async ({
+    page,
+    baseURL,
+  }) => {
+    const errors: string[] = [];
+    page.on("pageerror", (error) => errors.push(error.message));
+    await mockLayoutApi(page);
+    await page.route(`**/admin/console/${endpoint}`, (route) =>
+      route.fulfill({
+        json: {
+          code: 200,
+          msg: "success",
+          data: {
+            today: metrics,
+            monthly: {
+              ...metrics,
+              list: [
+                { ...metrics, date: "2026-11-18" },
+                { ...metrics, date: "2026-11-19" },
+              ],
+            },
+            all: {
+              ...metrics,
+              list: [
+                { ...metrics, date: "2026-10" },
+                { ...metrics, date: "2026-11" },
+              ],
+            },
+          },
+        },
+      })
+    );
+    await signInFixture(page, baseURL!);
+    await page.goto("/dashboard", { waitUntil: "domcontentloaded" });
+    const card = page.locator(".card").filter({
+      has: page.getByRole("heading", { name: title, exact: true }),
+    });
+    await expect(card).toBeVisible({ timeout: 30_000 });
+
+    for (const width of [1280, 375, 768]) {
+      await page.setViewportSize({ width, height: 900 });
+      for (const { tab, shape } of [
+        { tab: "Today", shape: ".recharts-sector" },
+        { tab: "Month", shape: ".recharts-rectangle" },
+        { tab: "Total", shape: ".recharts-area-area" },
+        { tab: "Today", shape: ".recharts-sector" },
+      ]) {
+        await card.getByRole("tab", { name: tab, exact: true }).click();
+        const panel = card.getByRole("tabpanel", { name: tab, exact: true });
+        const chart = panel.locator('[data-slot="chart"]');
+        await expect(chart.locator("svg.recharts-surface")).toBeVisible();
+        await expect(chart.locator(shape).first()).toBeVisible();
+        await expect(chart.locator(".recharts-legend-wrapper")).toBeVisible();
+        await expect(async () => {
+          const chartBounds = await chart.boundingBox();
+          const contentBounds = await panel
+            .locator(".card__content")
+            .boundingBox();
+          expect(chartBounds!.width).toBeGreaterThan(0);
+          expect(chartBounds!.height).toBeGreaterThan(0);
+          expect(chartBounds!.x).toBeGreaterThanOrEqual(contentBounds!.x - 1);
+          expect(chartBounds!.x + chartBounds!.width).toBeLessThanOrEqual(
+            contentBounds!.x + contentBounds!.width + 1
+          );
+          expect(chartBounds!.y + chartBounds!.height).toBeLessThanOrEqual(
+            contentBounds!.y + contentBounds!.height + 1
+          );
+        }).toPass();
+      }
+      await expectNoPageOverflow(page);
+    }
+    expect(errors).toEqual([]);
+  });
+}
+
 test("sidebar toggle divider stays thin, short and centered", async ({
   page,
   baseURL,

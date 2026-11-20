@@ -477,7 +477,11 @@ export default function Content() {
                           </AccordionTrigger>
                         </AccordionHeading>
                         <AccordionContent>
-                          <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
+                          <div
+                            className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6"
+                            data-slot="dashboard-platform-content"
+                            key={platform}
+                          >
                             {applications
                               ?.filter(
                                 (application) =>

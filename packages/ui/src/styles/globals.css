@@ -110,13 +110,14 @@
     }
   }
 
-  /* Component-level swaps (tab panels, disclosure bodies, overlay content).
+  /* Component-level swaps (tab panels, disclosure bodies, dashboard platform lists, overlay content).
      HeroUI already animates overlays; this only smooths the content swap so
      toggling does not snap. */
   [data-slot="tabs-content"]:not([hidden]),
   [role="tabpanel"]:not([hidden]),
   .accordion__panel,
-  .disclosure__panel {
+  .disclosure__panel,
+  [data-slot="dashboard-platform-content"] {
     animation: surface-enter var(--motion-slow) var(--motion-ease-surface) both;
   }
 
@@ -147,7 +148,8 @@
     [data-slot="tabs-content"]:not([hidden]),
     [role="tabpanel"]:not([hidden]),
     .accordion__panel,
-    .disclosure__panel {
+    .disclosure__panel,
+    [data-slot="dashboard-platform-content"] {
       animation: none;
     }
 

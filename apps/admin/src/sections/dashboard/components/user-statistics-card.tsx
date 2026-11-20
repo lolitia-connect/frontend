@@ -104,7 +104,7 @@ export function UserStatisticsCard() {
             UserStatistics?.today.new_order_users ||
             UserStatistics?.today.renewal_order_users ? (
               <ChartContainer
-                className="mx-auto max-h-80"
+                className="mx-auto h-full max-h-80 w-full"
                 config={UserStatisticsConfig}
               >
                 <PieChart>

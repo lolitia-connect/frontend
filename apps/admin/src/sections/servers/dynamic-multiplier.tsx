@@ -56,12 +56,12 @@ export default function DynamicMultiplier() {
       <Sheet.Trigger>
         <SheetButton
           className="settings-option justify-between"
-          variant="tertiary"
+          variant="ghost"
         >
           <span className="flex items-center gap-3">
-            <span className="flex size-10 items-center justify-center rounded-lg bg-surface">
+            <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-50">
               <Icon
-                className="size-5 text-foreground"
+                className="h-5 w-5 text-primary-500"
                 icon="mdi:clock-time-eight"
               />
             </span>
@@ -77,7 +77,7 @@ export default function DynamicMultiplier() {
               </span>
             </span>
           </span>
-          <Icon className="size-6 text-muted" icon="mdi:chevron-right" />
+          <Icon className="size-6" icon="mdi:chevron-right" />
         </SheetButton>
       </Sheet.Trigger>
 

@@ -153,8 +153,8 @@ export default function Nodes() {
           const instance = row.original.protocol_id || "—";
           return (
             <div className="flex flex-wrap items-center gap-2">
-              <Badge variant="secondary">{`${protocol}:${instance}`}</Badge>
               <Badge variant="secondary">
+                {`${protocol}#${instance}`}:
                 {getProtocolPort(
                   row.original.server_id,
                   row.original.protocol,

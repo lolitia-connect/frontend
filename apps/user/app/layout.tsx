@@ -57,6 +57,19 @@ export default async function RootLayout({
     <html lang={initialLanguage} suppressHydrationWarning>
       <head>
         <ThemeScript />
+        {/* Establish the font-CDN connections and discover the stylesheet in
+            the document head, so font CSS loads in parallel with the app CSS
+            instead of waiting for a globals.css @import (improves FCP). */}
+        <link href="https://fonts.googleapis.com" rel="preconnect" />
+        <link
+          crossOrigin="anonymous"
+          href="https://fonts.gstatic.com"
+          rel="preconnect"
+        />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&family=Sen:wght@400..800&display=swap"
+          rel="stylesheet"
+        />
         <link href="/site.webmanifest" rel="manifest" />
       </head>
       <body className="bg-background text-foreground">

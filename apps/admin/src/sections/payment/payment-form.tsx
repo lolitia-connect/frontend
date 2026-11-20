@@ -165,7 +165,7 @@ export default function PaymentForm<T extends { platform?: string }>({
 
   const openPlatformUrl = () => {
     if (platformUrl) {
-      window.open(platformUrl, "_blank");
+      window.open(platformUrl, "_blank", "noopener,noreferrer");
     }
   };
 

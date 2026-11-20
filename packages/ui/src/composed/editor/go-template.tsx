@@ -966,21 +966,6 @@ export function GoTemplateEditor({
               wordForFiltering = currentWordTrimmed.slice(0, -1);
             }
 
-            if ((justTypedDot && activeRangeField) || isVarDot) {
-              console.log("Go Template Debug:", {
-                justTypedDot,
-                isVarDot,
-                varDotMatch,
-                activeRangeField,
-                rangeVariable,
-                currentWord,
-                currentWordTrimmed,
-                wordForFiltering,
-                textUntilPosition,
-                allCompletionsCount: allCompletions.length,
-              });
-            }
-
             if (isNestedField && schema) {
               let fieldPath = "";
 

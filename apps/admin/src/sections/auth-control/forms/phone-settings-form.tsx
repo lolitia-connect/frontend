@@ -307,7 +307,11 @@ export default function PhoneSettingsForm() {
                           </FormControl>
                           {platform_url && (
                             <Button asChild size="sm">
-                              <Link target="_blank" to={platform_url}>
+                              <Link
+                                rel="noopener noreferrer"
+                                target="_blank"
+                                to={platform_url}
+                              >
                                 {t("phone.applyPlatform", "Apply")}
                               </Link>
                             </Button>

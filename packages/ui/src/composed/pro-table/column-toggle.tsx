@@ -1,6 +1,6 @@
 "use client";
 
-import { buttonVariants, Dropdown, Tooltip } from "@heroui/react";
+import { Button, Dropdown, Tooltip } from "@heroui/react";
 import type { Table } from "@tanstack/react-table";
 import { ListTodoIcon } from "lucide-react";
 import type { ReactNode } from "react";
@@ -23,12 +23,9 @@ export function ColumnToggle<TData>({ table }: ColumnToggleProps<TData>) {
   return (
     <Dropdown>
       <Tooltip>
-        <Dropdown.Trigger
-          aria-label={label}
-          className={buttonVariants({ isIconOnly: true, variant: "outline" })}
-        >
+        <Button aria-label={label} isIconOnly variant="outline">
           <ListTodoIcon />
-        </Dropdown.Trigger>
+        </Button>
         <Tooltip.Content>{label}</Tooltip.Content>
       </Tooltip>
       <Dropdown.Popover placement="bottom end">

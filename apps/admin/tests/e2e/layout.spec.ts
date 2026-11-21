@@ -102,9 +102,23 @@ test("server table and editor stay within mobile viewport", async ({
       expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(width + 1);
     }
   }
+  const columnToggle = page.getByRole("button", { name: "Choose columns" });
   for (const width of [320, 375, 768, 1440]) {
     await page.setViewportSize({ width, height: 900 });
     await expectNoPageOverflow(page);
+    const insets = await columnToggle.evaluate((button) => {
+      const bounds = button.getBoundingClientRect();
+      const icon = button.querySelector("svg")!.getBoundingClientRect();
+      return {
+        left: icon.left - bounds.left,
+        right: bounds.right - icon.right,
+        top: icon.top - bounds.top,
+        bottom: bounds.bottom - icon.bottom,
+      };
+    });
+    expect(Math.min(...Object.values(insets))).toBeGreaterThanOrEqual(0);
+    expect(insets.left).toBeCloseTo(insets.right, 0);
+    expect(insets.top).toBeCloseTo(insets.bottom, 0);
     const scroller = grid.locator("..");
     const bounds = await scroller.boundingBox();
     expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(width + 1);

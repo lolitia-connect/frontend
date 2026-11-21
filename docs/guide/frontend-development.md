@@ -138,7 +138,9 @@ ports 3014 (admin, override with `ADMIN_E2E_PORT`) and 3010 (user, override with
 its test server. `NEXT_DIST_DIR` can select a separate test build directory for
 concurrent runs. It checks full-width sidebar links,
 keyboard-accessible scrolling tabs in the supported languages, and table
-column/action geometry at desktop and 320–375px viewport widths. Component tests
+column/action geometry at desktop and 320–375px viewport widths. The admin layout
+test checks that the ProTable column chooser icon stays centered inside its button
+at phone, tablet, and desktop widths. Component tests
 cover row selection identity, column visibility, filter/pagination payloads, and
 sidebar keyboard focus. Existing dev servers on ports 3000–3002 are not reused.
 

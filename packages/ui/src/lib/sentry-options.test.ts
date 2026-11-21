@@ -1,8 +1,4 @@
-import {
-  type Client,
-  eventFiltersIntegration,
-  type ReplayEnvelope,
-} from "@sentry/core";
+import type { ReplayEnvelope } from "@sentry/core";
 import { describe, expect, it, vi } from "vitest";
 import { sentryOptions } from "./sentry-options";
 import { scrubReplayEnvelope, sentryBrowserOptions } from "./sentry-replay";
@@ -36,52 +32,6 @@ describe("Sentry reporting", () => {
     expect(sentryOptions(undefined, "production", undefined).enabled).toBe(
       false
     );
-  });
-});
-
-describe("Netlify screenshot errors", () => {
-  const deployHost = "5f3b5efaeea0a8b06442b086--example.netlify.app";
-  const mismatch =
-    "Minified React error #418; visit https://react.dev/errors/418?args[]=HTML";
-
-  it.each([
-    [deployHost, "HeadlessChrome/131.0.0.0", mismatch, true],
-    ["lolitia.fyi", "HeadlessChrome/131.0.0.0", mismatch, false],
-    [
-      "deploy-preview-42--example.netlify.app",
-      "HeadlessChrome/131.0.0.0",
-      mismatch,
-      false,
-    ],
-    [deployHost, "Chrome/131.0.0.0", mismatch, false],
-    [
-      deployHost,
-      "HeadlessChrome/131.0.0.0",
-      "Minified React error #423",
-      false,
-    ],
-  ])("only drops React #418 from the screenshot signature (%s, %s, %s)", async (hostname, userAgent, value, drop) => {
-    vi.stubGlobal("window", {
-      location: { hostname },
-      navigator: { userAgent },
-    });
-    try {
-      const browser = sentryBrowserOptions(
-        sentryOptions(dsn, "production", undefined),
-        () => ({ name: "Replay" }),
-        vi.fn()
-      );
-      const event = { exception: { values: [{ type: "Error", value }] } };
-      const client = { getOptions: () => browser } as Client;
-      const result = await eventFiltersIntegration().processEvent?.(
-        event,
-        {},
-        client
-      );
-      expect(result).toBe(drop ? null : event);
-    } finally {
-      vi.unstubAllGlobals();
-    }
   });
 });
 

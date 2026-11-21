@@ -1,4 +1,39 @@
-import { type Browser, expect } from "@playwright/test";
+import { type Browser, expect, type Page } from "@playwright/test";
+
+export async function expectHydrationWithHostingComment(page: Page) {
+  const errors: string[] = [];
+  const record = (message: string) => {
+    if (/hydrat|Minified React error #418\b/i.test(message))
+      errors.push(message);
+  };
+  page.on("pageerror", (error) => record(error.message));
+  page.on("console", (message) => {
+    if (message.type() === "error") record(message.text());
+  });
+
+  await page.route("https://fonts.googleapis.com/**", (route) =>
+    route.fulfill({ contentType: "text/css", body: "" })
+  );
+  await page.addInitScript(() => {
+    // Reproduce the two DOM nodes Netlify inserts while parsing the head.
+    const observer = new MutationObserver(insertHostingComment);
+    function insertHostingComment() {
+      const charset = document.head?.querySelector("meta[charset]");
+      if (charset) {
+        observer.disconnect();
+        charset.after("\n", document.createComment("Hosting provider comment"));
+      }
+    }
+    observer.observe(document, { childList: true, subtree: true });
+    insertHostingComment();
+  });
+  await page.goto("/", { waitUntil: "domcontentloaded" });
+  await expect(page.locator("html")).toHaveClass(/\btheme-ready\b/);
+  expect(await page.locator("head").innerHTML()).toContain(
+    "\n<!--Hosting provider comment-->"
+  );
+  expect(errors).toEqual([]);
+}
 
 export async function expectInitialContentPaintable(
   browser: Browser,

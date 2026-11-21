@@ -1,5 +1,8 @@
 import { expect, test } from "@playwright/test";
-import { expectInitialContentPaintable } from "../../../../tests/e2e/first-paint";
+import {
+  expectHydrationWithHostingComment,
+  expectInitialContentPaintable,
+} from "../../../../tests/e2e/first-paint";
 import { mockLayoutApi } from "../../../../tests/e2e/layout.fixtures";
 
 test("keeps SSR content visible before hydration and the first animation frame", async ({
@@ -10,6 +13,13 @@ test("keeps SSR content visible before hydration and the first animation frame",
 });
 
 test.use({ locale: "zh-CN" });
+
+test("hydrates with a hosting comment after the charset declaration", async ({
+  page,
+}) => {
+  await mockLayoutApi(page);
+  await expectHydrationWithHostingComment(page);
+});
 
 test("renders supported request languages and falls back independently", async ({
   request,

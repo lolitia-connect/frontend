@@ -66,32 +66,40 @@ export default function NekoproxyNodeSettings({
         </p>
       ) : entry ? (
         binding ? (
-          <>
-            <dl className="grid min-w-0 grid-cols-[auto_1fr] gap-x-3 gap-y-1 break-all text-sm">
-              <dt>{t("np.apiURL", "API address")}</dt>
-              <dd>{binding.api_url}</dd>
-              <dt>{t("np.forward", "L4 forward")}</dt>
-              <dd>
-                {forward?.name ? `${forward.name} · ` : ""}
-                {binding.forward_id}
-              </dd>
-              <dt>{t("np.session", "Session ID")}</dt>
-              <dd>{binding.session_id}</dd>
-              <dt>{t("np.savedEntry", "Saved node entry")}</dt>
-              <dd>
-                {entry.address}:{entry.port}
-              </dd>
-              {forward && (
-                <>
-                  <dt>{t("np.target", "Forward target")}</dt>
-                  <dd>
-                    {forward.target_host}:{forward.target_port} ·{" "}
-                    {forward.protocol.toUpperCase()}
-                  </dd>
-                </>
-              )}
-            </dl>
-            <div className="flex flex-wrap gap-2">
+          <dl className="grid min-w-0 grid-cols-[auto_1fr] gap-x-3 gap-y-1 break-all text-sm">
+            <dt>{t("np.forward", "L4 forward")}</dt>
+            <dd>
+              {forward?.name ? `${forward.name} · ` : ""}
+              {binding.forward_id}
+            </dd>
+            <dt>{t("np.session", "Session ID")}</dt>
+            <dd>{binding.session_id}</dd>
+            <dt>{t("np.savedEntry", "Saved node entry")}</dt>
+            <dd>
+              {entry.address}:{entry.port}
+            </dd>
+            {forward && (
+              <>
+                <dt>{t("np.target", "Forward target")}</dt>
+                <dd>
+                  {forward.target_host}:{forward.target_port} ·{" "}
+                  {forward.protocol.toUpperCase()}
+                </dd>
+              </>
+            )}
+          </dl>
+        ) : (
+          <p className="text-muted text-sm">
+            {t("np.unbound", "This node is not bound to a Nekoproxy forward.")}
+          </p>
+        )
+      ) : (
+        <p role="status">{t("np.loading", "Loading Nekoproxy…")}</p>
+      )}
+      {entry && (
+        <div className="flex gap-2 *:h-auto *:min-h-9 *:py-1">
+          {binding && !isError && (
+            <>
               <Button
                 type="button"
                 size="sm"
@@ -134,39 +142,31 @@ export default function NekoproxyNodeSettings({
               >
                 {t("np.unbind", "Unbind")}
               </Button>
-            </div>
-          </>
-        ) : (
-          <p className="text-muted text-sm">
-            {t("np.unbound", "This node is not bound to a Nekoproxy forward.")}
-          </p>
-        )
-      ) : (
-        <p role="status">{t("np.loading", "Loading Nekoproxy…")}</p>
-      )}
-      {entry && (
-        <Button
-          type="button"
-          size="sm"
-          variant="outline"
-          disabled={disabled}
-          onClick={() =>
-            setChoice(
-              choice
-                ? null
-                : {
-                    forward_id: sameAPI && binding ? binding.forward_id : "",
-                    session_id: sameAPI && binding ? binding.session_id : "",
-                  }
-            )
-          }
-        >
-          {choice
-            ? t("cancel", "Cancel")
-            : binding
-              ? t("np.changeEntry", "Change bound entry")
-              : t("np.bindExisting", "Bind an existing forward")}
-        </Button>
+            </>
+          )}
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            disabled={disabled}
+            onClick={() =>
+              setChoice(
+                choice
+                  ? null
+                  : {
+                      forward_id: sameAPI && binding ? binding.forward_id : "",
+                      session_id: sameAPI && binding ? binding.session_id : "",
+                    }
+              )
+            }
+          >
+            {choice
+              ? t("cancel", "Cancel")
+              : binding
+                ? t("np.changeEntry", "Change bound entry")
+                : t("np.bindExisting", "Bind an existing forward")}
+          </Button>
+        </div>
       )}
       {choice && (
         <>

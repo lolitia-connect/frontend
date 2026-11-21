@@ -226,10 +226,30 @@ test("a node editor binds, syncs without losing its draft, and remembers opting 
       () => extraWrites.find((item) => item.path.endsWith("/binding"))?.body
     )
     .toEqual({ node_id: "1", forward_id: "l4s-1", session_id: "session-1" });
-  await expect(
-    dialog.getByRole("button", { name: "Unbind", exact: true })
-  ).toBeVisible();
-  await page.setViewportSize({ width: 375, height: 812 });
+  const details = dialog.getByRole("region", {
+    name: "Nekoproxy L4 forwarding",
+  });
+  const actions = ["Sync this node now", "Unbind", "Change bound entry"].map(
+    (name) => details.getByRole("button", { name, exact: true })
+  );
+  await expect(details.getByText("session-1", { exact: true })).toBeVisible();
+  await expect(details.getByText("API address", { exact: true })).toHaveCount(
+    0
+  );
+  await expect(details.getByText("https://np.example.test")).toHaveCount(0);
+  for (const width of [1280, 375]) {
+    await page.setViewportSize({ width, height: 812 });
+    await expect(async () => {
+      const boxes = await Promise.all(
+        actions.map((button) => button.boundingBox())
+      );
+      const [first, second, third] = boxes;
+      expect(second!.y).toBeCloseTo(first!.y, 0);
+      expect(third!.y).toBeCloseTo(first!.y, 0);
+      expect(second!.x).toBeGreaterThanOrEqual(first!.x + first!.width);
+      expect(third!.x).toBeGreaterThanOrEqual(second!.x + second!.width);
+    }).toPass({ timeout: 5000 });
+  }
   await expectNoPageOverflow(page);
   await expect(
     dialog.getByRole("switch", { name: "Sync when saving this node" })
@@ -297,6 +317,19 @@ test("node creation sends forwarding allocation settings without a guessed entry
   await expect(dialog.getByLabel("Target port", { exact: true })).toHaveValue(
     "443"
   );
+  const fields = dialog.locator('[data-slot="form-item"]').filter({
+    has: page.getByRole("switch", {
+      name: "Sync forwarding when creating this node",
+    }),
+  });
+  for (const width of [1280, 375]) {
+    await page.setViewportSize({ width, height: 812 });
+    const [formBox, fieldsBox] = await Promise.all([
+      dialog.locator("form").boundingBox(),
+      fields.boundingBox(),
+    ]);
+    expect(fieldsBox!.width).toBeCloseTo(formBox!.width, 0);
+  }
   await dialog.getByRole("button", { name: "Confirm", exact: true }).click();
   await expect(dialog).toHaveCount(0);
   await expect

@@ -59,7 +59,10 @@
       min-width: 0;
     }
 
-    form > [data-slot="form-item"]:has(input[type="number"]) {
+    form
+      > [data-slot="form-item"]:not(.admin-drawer-wide):has(
+        input[type="number"]
+      ) {
       max-width: 28rem;
     }
 

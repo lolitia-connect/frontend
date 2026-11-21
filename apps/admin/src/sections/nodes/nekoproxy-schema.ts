@@ -2,8 +2,11 @@ import type { TFunction } from "i18next";
 import { z } from "zod";
 
 export function nekoproxyOptionsSchema(t: TFunction) {
-  const required = t("np.required", "Complete the forwarding settings");
-  const portError = t("errors.portRange", "Port must be between 1 and 65535");
+  const required = t("nodes:np.required", "Complete the forwarding settings");
+  const portError = t(
+    "nodes:errors.portRange",
+    "Port must be between 1 and 65535"
+  );
   return z
     .union([
       z

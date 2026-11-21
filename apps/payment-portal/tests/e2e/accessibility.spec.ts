@@ -2,7 +2,14 @@ import {
   expectAccessible,
   expectSkipLink,
 } from "../../../../tests/e2e/accessibility";
+import { expectHydrationWithHostingComment } from "../../../../tests/e2e/first-paint";
 import { expect, signIn, test } from "./payment-portal.fixtures";
+
+test("hydrates with a hosting comment after the charset declaration", async ({
+  page,
+}) => {
+  await expectHydrationWithHostingComment(page);
+});
 
 for (const theme of ["light", "dark"] as const) {
   test(`${theme} login, recharge and confirmation are accessible`, async ({

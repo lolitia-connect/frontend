@@ -46,7 +46,6 @@ export default async function RootLayout({
   return (
     <html lang={initialLanguage} suppressHydrationWarning>
       <head>
-        <ThemeScript />
         {/* Establish the font-CDN connections and discover the stylesheet in
             the document head, so font CSS loads in parallel with the app CSS
             instead of waiting for a globals.css @import (improves FCP). */}
@@ -58,10 +57,12 @@ export default async function RootLayout({
         />
         <link
           href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&family=Sen:wght@400..800&display=swap"
+          precedence="fonts"
           rel="stylesheet"
         />
       </head>
       <body className="admin-shell bg-background text-foreground">
+        <ThemeScript />
         <Suspense fallback={null}>
           <Providers
             initialLanguage={initialLanguage}

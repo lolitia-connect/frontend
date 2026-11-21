@@ -669,7 +669,7 @@ netlify deploy --prod
 
 三个浏览器应用均使用同一个生产 DSN 条件来启用 Session Replay。发生错误时会保存缓冲的回放。页面文字和输入值会脱敏，媒体、原始 URL、控制台输出、网络详情和录制的样式表会被过滤。可在 Sentry 的错误详情里打开关联回放，查看页面结构和操作。
 
-当无头 Chrome 加载 Netlify 部署专属地址时，浏览器上报会过滤 React 水合错误 `#418`。这个规则针对 Netlify 截图服务使用的访问模式。[Netlify 截图服务说明](https://answers.netlify.com/t/user-agent-for-netlify-bots/21577)
+Netlify 子域名的 HTML 有时会在字符集声明后插入托管注释，注释前的换行会形成一个文本节点。React 水合时按 DOM 位置匹配普通的 `<head>` 元素。三个应用都用 React 管理字体样式表，并在 `<body>` 开头执行主题脚本，以便在显示内容前应用主题。Netlify 子域名和自定义域名上的水合错误都会上报到 Sentry。[Netlify 托管注释示例](https://answers.netlify.com/t/170697)
 
 要将生产堆栈还原到原始文件、行号和列号，请创建 [Sentry 组织 CI 令牌](https://docs.sentry.io/account/auth-tokens/)，并在每个已部署的 Netlify 站点中将 `SENTRY_AUTH_TOKEN` 设为 **Production → Builds** 的秘密变量。不要加 `NEXT_PUBLIC_` 前缀，也不要提交令牌。生产环境请留空开发默认登录变量 `NEXT_PUBLIC_USER_EMAIL` 和 `NEXT_PUBLIC_USER_PASSWORD`。构建使用应用对应的 Sentry 项目，并默认以部署的提交 SHA 作为版本标识，可用 `NEXT_PUBLIC_SENTRY_RELEASE` 覆盖。SDK 通过 Debug ID 将新事件与上传的构建产物关联，部署前会移除浏览器映射文件；开发和预览构建不会上传。上传的构建产物存储在 Sentry，可包含映射中的源码片段。映射只对部署后收到的新错误生效。
 

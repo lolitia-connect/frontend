@@ -8,7 +8,7 @@ import {
   waitFor,
   within,
 } from "@testing-library/react";
-import { createRef } from "react";
+import { createRef, useState } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { ProTable, type ProTableActions } from "./pro-table";
 
@@ -29,7 +29,59 @@ const columns = [
   { accessorKey: "address", header: "Address" },
 ];
 
+function StatefulEditor() {
+  const [open, setOpen] = useState(false);
+  const [draft, setDraft] = useState("");
+  return (
+    <>
+      <button onClick={() => setOpen(true)} type="button">
+        Edit row
+      </button>
+      {open && (
+        <div aria-label="Row editor" role="dialog">
+          <input
+            aria-label="Draft"
+            onChange={(event) => setDraft(event.target.value)}
+            value={draft}
+          />
+        </div>
+      )}
+    </>
+  );
+}
+
 describe("ProTable native collection", () => {
+  it("preserves an open row editor and its draft across parent updates and refreshes", async () => {
+    const action = createRef<ProTableActions>();
+    const request = vi.fn().mockResolvedValue({ list: rows, total: 2 });
+    const table = (label: string) => (
+      <ProTable
+        action={action}
+        actions={{ render: () => [<StatefulEditor key="edit" />] }}
+        aria-label="Servers"
+        columns={columns}
+        header={{ title: label }}
+        request={request}
+      />
+    );
+    const { rerender } = render(table("Initial"));
+    const tokyo = await screen.findByRole("row", { name: /Tokyo/ });
+    fireEvent.click(within(tokyo).getByRole("button", { name: "Edit row" }));
+    const input = screen.getByRole("textbox", { name: "Draft" });
+    fireEvent.change(input, {
+      target: { value: "unsaved subscription changes" },
+    });
+    rerender(table("Updated"));
+    expect(screen.getByRole("dialog", { name: "Row editor" })).not.toBeNull();
+    expect(screen.getByRole("textbox", { name: "Draft" })).toBe(input);
+    await act(async () => action.current?.refresh());
+    expect(screen.getByRole("textbox", { name: "Draft" })).toBe(input);
+    expect((input as HTMLInputElement).value).toBe(
+      "unsaved subscription changes"
+    );
+    expect(request).toHaveBeenCalledTimes(2);
+  });
+
   it("keeps selection attached to row identity when the refreshed order changes", async () => {
     const request = vi
       .fn()

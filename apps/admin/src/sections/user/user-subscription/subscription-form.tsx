@@ -96,8 +96,9 @@ export function SubscriptionForm({
         <Button
           onClick={() => {
             form.reset();
-            setOpen(true);
+            setUnlimitedTraffic(!!initialData?.traffic_unlimited);
           }}
+          type="button"
         >
           {trigger}
         </Button>
@@ -108,18 +109,18 @@ export function SubscriptionForm({
             <Sheet.Header>
               <Sheet.Heading>{title}</Sheet.Heading>
             </Sheet.Header>
-            <ScrollArea className="h-[calc(100dvh-48px-36px-36px-env(safe-area-inset-top))] px-4">
-              <div className="pr-4">
+            <ScrollArea className="px-6">
+              <div>
                 <Form {...form}>
                   <form
-                    className="mt-4 space-y-4"
+                    className="admin-drawer-form mt-4"
                     onSubmit={form.handleSubmit(handleSubmit)}
                   >
                     <FormField
                       control={form.control}
                       name="subscribe_id"
                       render={({ field }) => (
-                        <FormItem>
+                        <FormItem className="admin-drawer-wide">
                           <FormLabel>
                             {t("subscription", "Subscription")}
                           </FormLabel>

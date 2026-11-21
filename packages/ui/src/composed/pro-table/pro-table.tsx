@@ -3,6 +3,7 @@
 import { Table } from "@heroui/react";
 import {
   type Cell,
+  type CellContext,
   type ColumnDef,
   type ColumnFiltersState,
   flexRender,
@@ -137,6 +138,7 @@ export function ProTable<
 
   const table = useReactTable({
     data,
+    meta: { renderActions: actions?.render },
     getRowId: (row, index) => String(row.id ?? index),
     columns: [
       ...(onSort
@@ -163,13 +165,7 @@ export function ProTable<
             {
               id: "actions",
               header: texts?.actions || t("table.actions", "Actions"),
-              cell: ({ row }) => (
-                <div className="[&_.button]:wrap-normal flex w-max min-w-max items-center justify-end gap-2 whitespace-nowrap [&>*]:shrink-0 [&_.button]:whitespace-nowrap">
-                  {actions?.render?.(row.original).map((item, index) => (
-                    <Fragment key={index}>{item}</Fragment>
-                  ))}
-                </div>
-              ),
+              cell: TableActionsCell,
               enableSorting: false,
               enableHiding: false,
             },
@@ -430,6 +426,23 @@ function getTableHeaderClass(columnId: string) {
     "w-12": ["sortable", "selected"].includes(columnId),
     "text-end": columnId === "actions",
   });
+}
+
+// A stable cell type preserves open dialogs and input state across table updates.
+function TableActionsCell<TData, TValue>({
+  row,
+  table,
+}: CellContext<TData, TValue>) {
+  const meta = table.options.meta as {
+    renderActions?: (row: TData) => React.ReactNode[];
+  };
+  return (
+    <div className="[&_.button]:wrap-normal flex w-max min-w-max items-center justify-end gap-2 whitespace-nowrap [&>*]:shrink-0 [&_.button]:whitespace-nowrap">
+      {meta.renderActions?.(row.original).map((item, index) => (
+        <Fragment key={index}>{item}</Fragment>
+      ))}
+    </div>
+  );
 }
 
 function getTableCellClass(columnId: string) {

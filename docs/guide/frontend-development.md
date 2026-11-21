@@ -44,6 +44,21 @@ The shared router tests cover timing and excluded clicks. The admin layout E2E
 holds a sidebar destination response, verifies progress while the old page is
 still displayed, then releases it and verifies completion.
 
+## Subscription drawers
+
+The admin subscription form uses `admin-drawer-form`: the subscription selector
+spans both columns, the remaining fields share equal widths, and narrow drawers
+collapse to one column. Date picker triggers explicitly use `inline-flex` because
+HeroUI's popover trigger defaults to `inline-block`.
+
+`ProTable` uses a stable component type for its built-in actions cell. Read the
+current action renderer from the table metadata instead of defining a new cell
+component on every render: replacing that component unmounts open row dialogs
+and can interrupt focus and click handling. Subscription fields and the
+unlimited-traffic switch reset when the form opens.
+The admin `subscription-forms.spec.ts` browser tests cover responsive layout,
+continuous typing, calendar focus, cancellation, reopening and request payloads.
+
 ## Testing
 
 Unit and component tests run on [Vitest](https://vitest.dev); end-to-end flows

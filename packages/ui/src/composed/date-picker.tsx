@@ -45,7 +45,7 @@ export function DatePicker({
         className={buttonVariants({
           variant: "outline",
           class: cn(
-            "w-full justify-between font-normal",
+            "inline-flex w-full items-center justify-between gap-2 font-normal",
             !value && "text-muted"
           ),
         })}

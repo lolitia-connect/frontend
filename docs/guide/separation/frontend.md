@@ -669,6 +669,8 @@ The integration sends redacted errors and traces. It does not collect request bo
 
 Session Replay is enabled in the three browser apps under the same production DSN requirement. It saves a buffered replay when an error occurs. Text and input values are masked, and media, raw URLs, console output, network details, and recorded stylesheets are excluded. Open the replay linked to the error in Sentry to inspect page structure and interactions.
 
+Browser reporting filters React hydration error `#418` when Headless Chrome loads a Netlify deploy permalink. This targets the request pattern used by Netlify's [deployment screenshot service](https://answers.netlify.com/t/user-agent-for-netlify-bots/21577).
+
 To map production stack traces to the original file, line, and column, create a [Sentry organization CI token](https://docs.sentry.io/account/auth-tokens/) and set `SENTRY_AUTH_TOKEN` as a secret in each deployed Netlify site's **Production → Builds** environment. Do not prefix it with `NEXT_PUBLIC_` or commit it. Keep the development default login variables (`NEXT_PUBLIC_USER_EMAIL` and `NEXT_PUBLIC_USER_PASSWORD`) empty in production. The build uses the configured app's Sentry project and the deploy commit SHA unless `NEXT_PUBLIC_SENTRY_RELEASE` overrides it. The SDK links errors to uploaded artifacts by Debug ID, removes browser maps before deployment, and does not upload in development or deploy previews. Sentry stores the uploaded build artifacts, which can include original source snippets from the source maps. Only errors received after a mapped build is deployed will be symbolicated.
 
 ## Development and Production

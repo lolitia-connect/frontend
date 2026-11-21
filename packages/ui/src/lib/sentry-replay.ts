@@ -146,8 +146,20 @@ export function sentryBrowserOptions(
 ) {
   if (!options.enabled) return options;
 
+  // Netlify's dashboard screenshots load deploy permalinks in headless Chrome.
+  const isNetlifyScreenshot =
+    typeof window !== "undefined" &&
+    /^[\da-f]{24}--[a-z\d-]+\.netlify\.app$/i.test(window.location.hostname) &&
+    /\bHeadlessChrome\//.test(window.navigator.userAgent);
+
   return {
     ...options,
+    ...(isNetlifyScreenshot && {
+      ignoreErrors: [
+        ...(options.ignoreErrors ?? []),
+        /^Minified React error #418\b/,
+      ],
+    }),
     replaysSessionSampleRate: 0,
     replaysOnErrorSampleRate: 1,
     integrations: [

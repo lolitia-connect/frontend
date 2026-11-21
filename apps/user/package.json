@@ -21,6 +21,7 @@
     "@heroui/react": "3.2.7",
     "@heroui/styles": "3.2.7",
     "@lottiefiles/dotlottie-react": "^0.17.15",
+    "@sentry/nextjs": "^11.16.0",
     "@stripe/react-stripe-js": "^5.4.0",
     "@stripe/stripe-js": "^8.5.2",
     "@tailwindcss/postcss": "^4.2.2",

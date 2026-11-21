@@ -661,7 +661,9 @@ Configuration: Add tracking code in `index.html` or configure via environment va
 
 ### Error Tracking
 
-Frontend supports integrating Sentry for error tracking (needs code configuration).
+All three Next.js apps support optional Sentry monitoring. For local testing, set `NEXT_PUBLIC_SENTRY_DSN` in each app's ignored `.env` file. For apps deployed on Netlify, set the same variable to the corresponding project's public DSN on each site in the **Production** context, with the **Builds** scope. Monitoring is disabled when the DSN is unset or empty. Optionally set `NEXT_PUBLIC_SENTRY_RELEASE` at build time to the deployed commit SHA or release ID. Traces are sampled at 100% in development and 10% in production. Do not commit local environment files or store auth tokens in any `NEXT_PUBLIC_*` variable.
+
+The integration sends redacted errors and traces. It does not collect request bodies, headers, cookies, URL query values, or stack source snippets. Explicit Sentry logs are reduced to a generic message and severity; application console output is not forwarded. Session Replay and source-map uploads are disabled. Review replay masking on account and payment screens before enabling it, and get approval before uploading build artifacts that include application source.
 
 ## Development and Production
 

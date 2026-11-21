@@ -5,6 +5,7 @@
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "env": ["NEXT_PUBLIC_SENTRY_DSN", "NEXT_PUBLIC_SENTRY_RELEASE"],
       "outputs": [".next/**", "!.next/cache/**", "dist/**"]
     },
     "dev": {

@@ -77,6 +77,7 @@ bun install
 ## 📚 Documentation
 
 - [Frontend development guide](docs/guide/frontend-development.md): tests, typography, UI conventions, OAuth callbacks, and payment-portal maintenance.
+- [Sentry configuration](docs/guide/separation/frontend.md#error-tracking): per-app DSNs, sampling, and telemetry privacy.
 - Application quick starts: [User Web](apps/user/README.md) and [Admin Web](apps/admin/README.md).
 - Maintainer references: [customization and sync records](.ai/sync-diffs/README.md) and [development agent guidance](.ai/prompts/README.md).
 

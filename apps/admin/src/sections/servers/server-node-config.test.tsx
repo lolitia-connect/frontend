@@ -60,6 +60,8 @@ vi.mock("@workspace/ui/composed/dynamic-inputs", () => ({
   ArrayInput: () => <div>DNS editor</div>,
 }));
 
+vi.mock("@workspace/ui/composed/icon", () => ({ Icon: () => null }));
+
 vi.mock("./outbound-config-input", () => ({
   OutboundConfigInput: () => <div>Outbound editor</div>,
 }));

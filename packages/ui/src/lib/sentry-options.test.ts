@@ -1,5 +1,7 @@
-import { describe, expect, it } from "vitest";
+import type { ReplayEnvelope } from "@sentry/core";
+import { describe, expect, it, vi } from "vitest";
 import { sentryOptions } from "./sentry-options";
+import { scrubReplayEnvelope, sentryBrowserOptions } from "./sentry-replay";
 
 const dsn = "https://public@example.test/123";
 
@@ -30,6 +32,137 @@ describe("Sentry reporting", () => {
     expect(sentryOptions(undefined, "production", undefined).enabled).toBe(
       false
     );
+  });
+});
+
+describe("Sentry session replay", () => {
+  it.each([
+    "development",
+    "test",
+    "production",
+  ])("only initializes replay when %s has reporting enabled", (environment) => {
+    const replay = vi.fn(() => ({ name: "Replay" }));
+    const transport = vi.fn();
+    const options = sentryOptions(dsn, environment, undefined);
+    const browser = sentryBrowserOptions(options, replay, transport);
+    if (environment === "production") {
+      expect(browser).toMatchObject({
+        replaysSessionSampleRate: 0,
+        replaysOnErrorSampleRate: 1,
+      });
+      expect(replay).toHaveBeenCalledOnce();
+      expect(
+        sentryBrowserOptions(
+          sentryOptions(undefined, environment, undefined),
+          replay,
+          transport
+        )
+      ).not.toHaveProperty("integrations");
+      expect(replay).toHaveBeenCalledOnce();
+    } else {
+      expect(replay).not.toHaveBeenCalled();
+    }
+  });
+
+  it("keeps only the validated Replay link on an error", async () => {
+    const replayId = "9c75a8ec25aa48b4a97c4184ddec4662";
+    const result = await beforeSend(
+      { tags: { replayId, private: "secret" } },
+      {}
+    );
+    expect(result?.tags).toEqual({ replayId });
+    expect(
+      (await beforeSend({ tags: { replayId: "secret" } }, {}))?.tags
+    ).toBeUndefined();
+  });
+
+  it("scrubs Replay metadata, DOM attributes, and raw events before transport", () => {
+    const frames = [
+      { type: 4, data: { href: "https://example.test/orders/secret" } },
+      {
+        type: 2,
+        data: {
+          node: {
+            attributes: {
+              class: "layout",
+              "data-token": "secret",
+              href: "secret",
+              value: "****",
+            },
+          },
+        },
+      },
+      { type: 3, data: { source: 8, rule: "secret" } },
+      {
+        type: 5,
+        data: {
+          tag: "breadcrumb",
+          payload: { category: "console", message: "secret" },
+        },
+      },
+      {
+        type: 5,
+        data: {
+          tag: "breadcrumb",
+          payload: {
+            category: "replay.hydrate-error",
+            data: { url: "secret" },
+          },
+        },
+      },
+    ];
+    const envelope: ReplayEnvelope = [
+      {},
+      [
+        [
+          { type: "replay_event" },
+          {
+            type: "replay_event",
+            replay_id: "rec",
+            replay_type: "buffer",
+            segment_id: 0,
+            error_ids: ["err"],
+            trace_ids: [],
+            urls: ["secret"],
+            segment_names: ["secret"],
+            user: { email: "secret" },
+          },
+        ],
+        [
+          { type: "replay_recording", length: 0 },
+          `{"segment_id":0}\n${JSON.stringify(frames)}`,
+        ],
+      ],
+    ];
+    const scrubbed = scrubReplayEnvelope(envelope);
+    expect(scrubbed?.[1][0]?.[1]).toMatchObject({
+      replay_id: "rec",
+      error_ids: ["err"],
+    });
+    const body = scrubbed?.[1][1]?.[1];
+    expect(typeof body).toBe("string");
+    expect(String(body).split("\n")[1]).toBe(
+      JSON.stringify([
+        { type: 4, data: { href: "about:blank" } },
+        {
+          type: 2,
+          data: { node: { attributes: { class: "layout", value: "****" } } },
+        },
+        {
+          type: 5,
+          data: {
+            tag: "breadcrumb",
+            payload: {
+              category: "replay.hydrate-error",
+              data: { url: "about:blank" },
+            },
+          },
+        },
+      ])
+    );
+    expect(JSON.stringify(scrubbed)).not.toContain("secret");
+    envelope[1][1][1] = new Uint8Array([0, 1, 2]);
+    expect(scrubReplayEnvelope(envelope)).toBeNull();
   });
 });
 

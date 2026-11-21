@@ -179,6 +179,8 @@ After deployment, configure environment variables in Vercel console:
 
 ### Method 3: Deploy with Netlify
 
+Git-connected User Web and Admin Web deployments enable [Next.js skew protection](https://docs.netlify.com/build/frameworks/framework-setup-guides/nextjs/overview/#skew-protection) in their app configs. During a rollout, Netlify can route supported asset and navigation requests to the deploy the browser loaded. Turborepo forwards the deployment ID from the Netlify adapter and includes it in the build cache key. After a Git deploy, check the build log for `Setting up Next.js Skew Protection` and look for `?dpl=` on Next.js asset requests.
+
 #### 1. Install Netlify CLI
 
 ```bash
@@ -663,7 +665,9 @@ Configuration: Add tracking code in `index.html` or configure via environment va
 
 All three Next.js apps support optional Sentry monitoring. Development (`next dev`) and tests never send Sentry data, even when a local `.env` file contains a DSN. For apps deployed on Netlify, set `NEXT_PUBLIC_SENTRY_DSN` to the corresponding project's public DSN on each site in the **Production** context, with the **Builds** scope. Do not supply a DSN to deploy previews or branch deploys: they also use Next.js production builds. Reporting requires a production build and a nonempty DSN. Optionally set `NEXT_PUBLIC_SENTRY_RELEASE` at build time to the deployed commit SHA or release ID. Production traces are sampled at 10%. Do not commit local environment files or store auth tokens in any `NEXT_PUBLIC_*` variable.
 
-The integration sends redacted errors and traces. It does not collect request bodies, headers, cookies, URL query values, or stack source snippets from events. Explicit Sentry logs are reduced to a generic message and severity; application console output is not forwarded. Session Replay remains disabled.
+The integration sends redacted errors and traces. It does not collect request bodies, headers, cookies, URL query values, or stack source snippets from events. Explicit Sentry logs are reduced to a generic message and severity.
+
+Session Replay is enabled in the three browser apps under the same production DSN requirement. It saves a buffered replay when an error occurs. Text and input values are masked, and media, raw URLs, console output, network details, and recorded stylesheets are excluded. Open the replay linked to the error in Sentry to inspect page structure and interactions.
 
 To map production stack traces to the original file, line, and column, create a [Sentry organization CI token](https://docs.sentry.io/account/auth-tokens/) and set `SENTRY_AUTH_TOKEN` as a secret in each deployed Netlify site's **Production → Builds** environment. Do not prefix it with `NEXT_PUBLIC_` or commit it. Keep the development default login variables (`NEXT_PUBLIC_USER_EMAIL` and `NEXT_PUBLIC_USER_PASSWORD`) empty in production. The build uses the configured app's Sentry project and the deploy commit SHA unless `NEXT_PUBLIC_SENTRY_RELEASE` overrides it. The SDK links errors to uploaded artifacts by Debug ID, removes browser maps before deployment, and does not upload in development or deploy previews. Sentry stores the uploaded build artifacts, which can include original source snippets from the source maps. Only errors received after a mapped build is deployed will be symbolicated.
 

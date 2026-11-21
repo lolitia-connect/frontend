@@ -1,3 +1,5 @@
+"$schema" = "https://open-api.netlify.com/netlify.schema.json"
+
 # Netlify config for the PPanel admin web app (管理端).
 #
 # The build runs from the repository ROOT (Netlify's monorepo picker reads this
@@ -16,6 +18,7 @@
 
 [build.environment]
   NODE_VERSION = "26"
+  NETLIFY_NEXT_SKEW_PROTECTION = "true"
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"

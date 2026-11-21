@@ -8,6 +8,7 @@
       "env": [
         "COMMIT_REF",
         "CONTEXT",
+        "NEXT_DEPLOYMENT_ID",
         "NEXT_PUBLIC_SENTRY_DSN",
         "NEXT_PUBLIC_SENTRY_RELEASE",
         "NEXT_PUBLIC_USER_EMAIL",

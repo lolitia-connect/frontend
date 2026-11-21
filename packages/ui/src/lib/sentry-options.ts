@@ -77,6 +77,7 @@ export function sentryOptions(
     },
     beforeSend(event) {
       const trace = event.contexts?.trace;
+      const replayId = event.tags?.replayId;
       const images = scrubSourceMapImages(event.debug_meta?.images);
       const mappedFiles = new Set(images.map((image) => image.code_file));
       return {
@@ -105,6 +106,10 @@ export function sentryOptions(
         platform: event.platform,
         release: event.release,
         sdk: event.sdk,
+        ...(typeof replayId === "string" &&
+          /^[\da-f]{32}$/i.test(replayId) && {
+            tags: { replayId },
+          }),
         timestamp: event.timestamp,
       };
     },

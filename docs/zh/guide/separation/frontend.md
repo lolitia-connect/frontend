@@ -179,6 +179,8 @@ bun run serve  # 或 npm run serve
 
 ### 方式三：使用 Netlify 部署
 
+用户端和管理端的 Git 部署已在各自的配置中启用 [Next.js 部署版本保护](https://docs.netlify.com/build/frameworks/framework-setup-guides/nextjs/overview/#skew-protection)。发布新版本期间，Netlify 可以把受支持的资源和导航请求路由到浏览器正在使用的部署版本。Turborepo 会传递 Netlify 适配器设置的部署 ID，并将其纳入构建缓存键。Git 部署后，可在构建日志中查看 `Setting up Next.js Skew Protection`，并检查 Next.js 静态资源请求是否带有 `?dpl=`。
+
 #### 1. 安装 Netlify CLI
 
 ```bash
@@ -663,7 +665,9 @@ netlify deploy --prod
 
 三个 Next.js 应用均可选用 Sentry 监控。开发模式（`next dev`）和测试不会向 Sentry 发送数据，即使本地 `.env` 中已配置 DSN。在 Netlify 中，为每个已部署的站点设置 `NEXT_PUBLIC_SENTRY_DSN`，值为对应 Sentry 项目的公开 DSN，环境选 **Production**，作用范围选 **Builds**。不要在 Deploy Preview 或 Branch Deploy 中设置 DSN，因为这些环境也使用 Next.js 生产构建。只有生产构建且 DSN 非空时才会上报。可选在构建时设置 `NEXT_PUBLIC_SENTRY_RELEASE`，值为部署对应的提交 SHA 或发布标识。生产环境链路采样率为 10%。不要提交本地环境文件，也不要把认证令牌放进任何 `NEXT_PUBLIC_*` 变量。
 
-集成会发送已脱敏的错误和链路数据，不在错误事件中发送请求体、请求头、Cookie、URL 查询参数值或堆栈源码片段。显式发送到 Sentry 的日志只保留通用消息和级别，不转发应用控制台输出。会话回放仍停用。
+集成会发送已脱敏的错误和链路数据，不在错误事件中发送请求体、请求头、Cookie、URL 查询参数值或堆栈源码片段。显式发送到 Sentry 的日志只保留通用消息和级别。
+
+三个浏览器应用均使用同一个生产 DSN 条件来启用 Session Replay。发生错误时会保存缓冲的回放。页面文字和输入值会脱敏，媒体、原始 URL、控制台输出、网络详情和录制的样式表会被过滤。可在 Sentry 的错误详情里打开关联回放，查看页面结构和操作。
 
 要将生产堆栈还原到原始文件、行号和列号，请创建 [Sentry 组织 CI 令牌](https://docs.sentry.io/account/auth-tokens/)，并在每个已部署的 Netlify 站点中将 `SENTRY_AUTH_TOKEN` 设为 **Production → Builds** 的秘密变量。不要加 `NEXT_PUBLIC_` 前缀，也不要提交令牌。生产环境请留空开发默认登录变量 `NEXT_PUBLIC_USER_EMAIL` 和 `NEXT_PUBLIC_USER_PASSWORD`。构建使用应用对应的 Sentry 项目，并默认以部署的提交 SHA 作为版本标识，可用 `NEXT_PUBLIC_SENTRY_RELEASE` 覆盖。SDK 通过 Debug ID 将新事件与上传的构建产物关联，部署前会移除浏览器映射文件；开发和预览构建不会上传。上传的构建产物存储在 Sentry，可包含映射中的源码片段。映射只对部署后收到的新错误生效。
 

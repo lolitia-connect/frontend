@@ -76,6 +76,61 @@ describe("Sentry telemetry redaction", () => {
     ]);
   });
 
+  it("preserves matching browser and server Debug IDs without leaking URL or host paths", async () => {
+    const browserFile =
+      "https://user.example.test/_next/static/chunks/abc123.js?token=private";
+    const serverFile =
+      "C:\\Users\\operator\\.next\\server\\chunks\\ssr\\[root]__abc.js";
+    const externalFile = "https://example.test/private/script.js?token=private";
+    const id = "12345678-abcd-4321-abcd-123456789abc";
+    const result = await beforeSend(
+      {
+        type: undefined,
+        debug_meta: {
+          images: [browserFile, serverFile, externalFile].map((code_file) => ({
+            type: "sourcemap",
+            code_file,
+            debug_id: id,
+          })),
+        },
+        exception: {
+          values: [
+            {
+              stacktrace: {
+                frames: [
+                  { filename: browserFile, lineno: 3, colno: 41 },
+                  { filename: "page.js", abs_path: serverFile, lineno: 12 },
+                  { filename: externalFile },
+                  { filename: "app:///_next/static/chunks/unmapped.js" },
+                ],
+              },
+            },
+          ],
+        },
+      },
+      {}
+    );
+
+    const browserPath = "app:///_next/static/chunks/abc123.js";
+    const serverPath = "app:///_next/server/chunks/ssr/[root]__abc.js";
+    expect(result?.debug_meta?.images).toEqual(
+      [browserPath, serverPath].map((code_file) => ({
+        type: "sourcemap",
+        code_file,
+        debug_id: id,
+      }))
+    );
+    expect(result?.exception?.values?.[0]?.stacktrace?.frames).toMatchObject([
+      { filename: browserPath, abs_path: browserPath, lineno: 3, colno: 41 },
+      { filename: serverPath, abs_path: serverPath, lineno: 12 },
+      { filename: "script.js" },
+      { filename: "unmapped.js" },
+    ]);
+    expect(JSON.stringify(result)).not.toMatch(
+      /private|operator|example\.test/
+    );
+  });
+
   it("retains trace timing but removes request identifiers from spans", () => {
     const span = beforeSendSpan({
       attributes: {

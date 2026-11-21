@@ -5,7 +5,15 @@
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "env": ["NEXT_PUBLIC_SENTRY_DSN", "NEXT_PUBLIC_SENTRY_RELEASE"],
+      "env": [
+        "COMMIT_REF",
+        "CONTEXT",
+        "NEXT_PUBLIC_SENTRY_DSN",
+        "NEXT_PUBLIC_SENTRY_RELEASE",
+        "NEXT_PUBLIC_USER_EMAIL",
+        "NEXT_PUBLIC_USER_PASSWORD",
+        "SENTRY_AUTH_TOKEN"
+      ],
       "outputs": [".next/**", "!.next/cache/**", "dist/**"]
     },
     "dev": {

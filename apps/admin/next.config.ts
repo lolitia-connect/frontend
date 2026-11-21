@@ -1,4 +1,5 @@
 import { withSentryConfig } from "@sentry/nextjs/config";
+import { sentryBuildOptions } from "@workspace/ui/lib/sentry-build-options";
 import type { NextConfig } from "next";
 
 /**
@@ -22,8 +23,7 @@ const nextConfig: NextConfig = {
   allowedDevOrigins: ["100.98.240.8", "127.0.0.1"],
 };
 
-export default withSentryConfig(nextConfig, {
-  release: { create: false, finalize: false, setCommits: false },
-  sourcemaps: { disable: true },
-  telemetry: false,
-});
+export default withSentryConfig(
+  nextConfig,
+  sentryBuildOptions("lolitia-connect-admin")
+);

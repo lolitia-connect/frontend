@@ -1,11 +1,37 @@
 import { describe, expect, it } from "vitest";
 import { sentryOptions } from "./sentry-options";
 
+const dsn = "https://public@example.test/123";
+
 const { beforeSend, beforeSendSpan } = sentryOptions(
-  undefined,
-  "development",
+  dsn,
+  "production",
   undefined
 );
+
+describe("Sentry reporting", () => {
+  it.each([
+    "development",
+    "test",
+  ])("disables transport and tracing in %s even with a DSN", (environment) => {
+    const options = sentryOptions(dsn, environment, undefined);
+
+    expect(options.enabled).toBe(false);
+    expect(options.dsn).toBeUndefined();
+    expect(options.tracesSampleRate).toBe(0);
+  });
+
+  it("keeps reporting active in production when a DSN is configured", () => {
+    expect(sentryOptions(dsn, "production", undefined)).toMatchObject({
+      dsn,
+      enabled: true,
+      tracesSampleRate: 0.1,
+    });
+    expect(sentryOptions(undefined, "production", undefined).enabled).toBe(
+      false
+    );
+  });
+});
 
 describe("Sentry telemetry redaction", () => {
   it("removes request data, exception messages and source lines while retaining useful frames", async () => {

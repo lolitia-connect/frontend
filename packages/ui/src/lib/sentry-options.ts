@@ -25,12 +25,14 @@ export function sentryOptions(
   environment: string,
   release: string | undefined
 ): Options & Required<Pick<Options, "beforeSend" | "beforeSendSpan">> {
+  const enabled = environment === "production" && Boolean(dsn);
+
   return {
-    dsn,
-    enabled: Boolean(dsn),
+    dsn: enabled ? dsn : undefined,
+    enabled,
     environment,
     release,
-    tracesSampleRate: environment === "development" ? 1 : 0.1,
+    tracesSampleRate: enabled ? 0.1 : 0,
     tracePropagationTargets: [],
     maxBreadcrumbs: 0,
     sendClientReports: false,

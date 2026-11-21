@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Lolitia local backend",
-    "version": "dc46571fe94d2be00c9718ede28ce5c3914242c3"
+    "version": "6a80b61d50aab974d5928c294836eadfaa2dc1d8"
   },
   "paths": {
     "/v1/admin/ads/": {
@@ -4285,6 +4285,208 @@
                   }
                 }
               }
+            }
+          }
+        }
+      }
+    },
+    "/v1/admin/server/nekoproxy/binding": {
+      "delete": {
+        "tags": ["backend"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Local backend result envelope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": { "type": "integer" },
+                    "msg": { "type": "string" },
+                    "data": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UnbindNekoproxyRequest"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": ["backend"],
+        "parameters": [
+          {
+            "name": "node_id",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "integer", "format": "int64" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Local backend result envelope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": { "type": "integer" },
+                    "msg": { "type": "string" },
+                    "data": {
+                      "$ref": "#/components/schemas/NekoproxyNodeEntry"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["backend"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Local backend result envelope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": { "type": "integer" },
+                    "msg": { "type": "string" },
+                    "data": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/BindNekoproxyRequest" }
+            }
+          }
+        }
+      }
+    },
+    "/v1/admin/server/nekoproxy/config": {
+      "get": {
+        "tags": ["backend"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Local backend result envelope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": { "type": "integer" },
+                    "msg": { "type": "string" },
+                    "data": { "$ref": "#/components/schemas/NekoproxyConfig" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["backend"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Local backend result envelope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": { "type": "integer" },
+                    "msg": { "type": "string" },
+                    "data": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateNekoproxyConfigRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/admin/server/nekoproxy/state": {
+      "get": {
+        "tags": ["backend"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Local backend result envelope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": { "type": "integer" },
+                    "msg": { "type": "string" },
+                    "data": { "$ref": "#/components/schemas/NekoproxyState" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/admin/server/nekoproxy/sync": {
+      "post": {
+        "tags": ["backend"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Local backend result envelope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": { "type": "integer" },
+                    "msg": { "type": "string" },
+                    "data": {
+                      "$ref": "#/components/schemas/NekoproxySyncResponse"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/SyncNekoproxyRequest" }
             }
           }
         }
@@ -10498,6 +10700,15 @@
           "updated_at"
         ]
       },
+      "BindNekoproxyRequest": {
+        "type": "object",
+        "properties": {
+          "node_id": { "type": "string" },
+          "forward_id": { "type": "string" },
+          "session_id": { "type": "string" }
+        },
+        "required": ["node_id", "forward_id", "session_id"]
+      },
       "BindOAuthCallbackRequest": {
         "type": "object",
         "properties": { "method": { "type": "string" }, "callback": {} },
@@ -10737,6 +10948,25 @@
         },
         "required": ["title", "content"]
       },
+      "CreateNekoproxyForward": {
+        "type": "object",
+        "properties": {
+          "chain_id": { "type": "string" },
+          "entry_group_id": { "type": "string" },
+          "protocol": { "type": "string" },
+          "target_host": { "type": "string" },
+          "target_port": { "type": "integer", "format": "int64" },
+          "requested_port": { "type": "integer", "format": "int64" }
+        },
+        "required": [
+          "chain_id",
+          "entry_group_id",
+          "protocol",
+          "target_host",
+          "target_port",
+          "requested_port"
+        ]
+      },
       "CreateNodeGroupRequest": {
         "type": "object",
         "properties": {
@@ -10777,6 +11007,10 @@
       "CreateNodeRequest": {
         "type": "object",
         "properties": {
+          "nekoproxy": {
+            "$ref": "#/components/schemas/NekoproxyNodeOptions",
+            "nullable": true
+          },
           "name": { "type": "string" },
           "tags": { "type": "array", "items": { "type": "string" } },
           "port": { "type": "integer", "format": "int64" },
@@ -12149,6 +12383,11 @@
         },
         "required": ["total", "list"]
       },
+      "GetNekoproxyBindingRequest": {
+        "type": "object",
+        "properties": { "node_id": { "type": "integer", "format": "int64" } },
+        "required": ["node_id"]
+      },
       "GetNodeGroupListRequest": {
         "type": "object",
         "properties": {
@@ -13029,6 +13268,157 @@
           "service_version": { "type": "string" }
         },
         "required": ["secret", "service_name", "service_version"]
+      },
+      "NekoproxyBinding": {
+        "type": "object",
+        "properties": {
+          "sync_on_save": { "type": "boolean" },
+          "node_id": { "type": "string" },
+          "api_url": { "type": "string" },
+          "forward_id": { "type": "string" },
+          "session_id": { "type": "string" }
+        },
+        "required": [
+          "sync_on_save",
+          "node_id",
+          "api_url",
+          "forward_id",
+          "session_id"
+        ]
+      },
+      "NekoproxyChain": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" }
+        },
+        "required": ["id", "name"]
+      },
+      "NekoproxyConfig": {
+        "type": "object",
+        "properties": {
+          "api_url": { "type": "string" },
+          "has_api_token": { "type": "boolean" }
+        },
+        "required": ["api_url", "has_api_token"]
+      },
+      "NekoproxyEntryGroup": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "listen_host": { "type": "string" },
+          "port_start": { "type": "integer", "format": "int64" },
+          "port_end": { "type": "integer", "format": "int64" }
+        },
+        "required": ["id", "name", "listen_host", "port_start", "port_end"]
+      },
+      "NekoproxyForward": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "chain_id": { "type": "string" },
+          "chain_name": { "type": "string" },
+          "protocol": { "type": "string" },
+          "target_host": { "type": "string" },
+          "target_port": { "type": "integer", "format": "int64" },
+          "enabled": { "type": "boolean" },
+          "paused": { "type": "boolean" },
+          "sessions": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/NekoproxySession" }
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "chain_id",
+          "chain_name",
+          "protocol",
+          "target_host",
+          "target_port",
+          "enabled",
+          "paused",
+          "sessions"
+        ]
+      },
+      "NekoproxyNodeEntry": {
+        "type": "object",
+        "properties": {
+          "binding": {
+            "$ref": "#/components/schemas/NekoproxyBinding",
+            "nullable": true
+          },
+          "address": { "type": "string" },
+          "port": { "type": "integer", "format": "int64" }
+        },
+        "required": ["address", "port"]
+      },
+      "NekoproxyNodeOptions": {
+        "type": "object",
+        "properties": {
+          "forward_id": { "type": "string" },
+          "session_id": { "type": "string" },
+          "create": {
+            "$ref": "#/components/schemas/CreateNekoproxyForward",
+            "nullable": true
+          }
+        }
+      },
+      "NekoproxySession": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "address": { "type": "string" },
+          "port": { "type": "integer", "format": "int64" },
+          "status": { "type": "string" },
+          "group_id": { "type": "string" }
+        },
+        "required": ["id", "address", "port", "status", "group_id"]
+      },
+      "NekoproxyState": {
+        "type": "object",
+        "properties": {
+          "error": { "type": "string" },
+          "api_url": { "type": "string" },
+          "forwards": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/NekoproxyForward" }
+          },
+          "chains": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/NekoproxyChain" }
+          },
+          "groups": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/NekoproxyEntryGroup" }
+          },
+          "bindings": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/NekoproxyBinding" }
+          }
+        },
+        "required": ["api_url", "forwards", "chains", "groups", "bindings"]
+      },
+      "NekoproxySyncError": {
+        "type": "object",
+        "properties": {
+          "node_id": { "type": "string" },
+          "message": { "type": "string" }
+        },
+        "required": ["node_id", "message"]
+      },
+      "NekoproxySyncResponse": {
+        "type": "object",
+        "properties": {
+          "updated": { "type": "integer", "format": "int64" },
+          "errors": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/NekoproxySyncError" }
+          }
+        },
+        "required": ["updated", "errors"]
       },
       "Node": {
         "type": "object",
@@ -15172,6 +15562,10 @@
         },
         "required": ["subscribe_types"]
       },
+      "SyncNekoproxyRequest": {
+        "type": "object",
+        "properties": { "node_id": { "type": "string" } }
+      },
       "TelegramConfig": {
         "type": "object",
         "properties": {
@@ -15474,6 +15868,11 @@
         "properties": { "id": { "type": "string" } },
         "required": ["id"]
       },
+      "UnbindNekoproxyRequest": {
+        "type": "object",
+        "properties": { "node_id": { "type": "string" } },
+        "required": ["node_id"]
+      },
       "UnbindOAuthRequest": {
         "type": "object",
         "properties": { "method": { "type": "string" } },
@@ -15632,6 +16031,14 @@
         },
         "required": ["enabled", "mode", "config"]
       },
+      "UpdateNekoproxyConfigRequest": {
+        "type": "object",
+        "properties": {
+          "api_url": { "type": "string" },
+          "api_token": { "type": "string" }
+        },
+        "required": ["api_url"]
+      },
       "UpdateNodeGroupRequest": {
         "type": "object",
         "properties": {
@@ -15673,6 +16080,7 @@
       "UpdateNodeRequest": {
         "type": "object",
         "properties": {
+          "nekoproxy_sync_on_save": { "type": "boolean", "nullable": true },
           "id": { "type": "string" },
           "name": { "type": "string" },
           "tags": { "type": "array", "items": { "type": "string" } },

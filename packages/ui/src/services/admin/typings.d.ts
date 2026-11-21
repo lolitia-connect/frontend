@@ -195,6 +195,7 @@ declare namespace API {
   };
 
   type CreateNodeRequest = {
+    nekoproxy?: import("./nekoproxy").NekoproxyNodeOptions;
     name: string;
     tags?: string[];
     port: number;
@@ -1901,6 +1902,7 @@ declare namespace API {
   };
 
   type UpdateNodeRequest = {
+    nekoproxy_sync_on_save?: boolean;
     id: string;
     name: string;
     tags?: string[];

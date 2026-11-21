@@ -1953,6 +1953,122 @@ export async function getV1AdminServerList(
   });
 }
 
+export async function putV1AdminServerNekoproxyBinding(
+  body: BackendAPI.BindNekoproxyRequest,
+  options?: { [key: string]: any }
+) {
+  return request<{ code?: number; msg?: string; data?: any }>(
+    `${
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
+    }/v1/admin/server/nekoproxy/binding`,
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: body,
+      ...(options || {}),
+    }
+  );
+}
+
+export async function deleteV1AdminServerNekoproxyBinding(
+  body: BackendAPI.UnbindNekoproxyRequest,
+  options?: { [key: string]: any }
+) {
+  return request<{ code?: number; msg?: string; data?: any }>(
+    `${
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
+    }/v1/admin/server/nekoproxy/binding`,
+    {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: body,
+      ...(options || {}),
+    }
+  );
+}
+
+export async function getV1AdminServerNekoproxyConfig(options?: {
+  [key: string]: any;
+}) {
+  return request<{
+    code?: number;
+    msg?: string;
+    data?: BackendAPI.NekoproxyConfig;
+  }>(
+    `${
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
+    }/v1/admin/server/nekoproxy/config`,
+    {
+      method: "GET",
+      ...(options || {}),
+    }
+  );
+}
+
+export async function putV1AdminServerNekoproxyConfig(
+  body: BackendAPI.UpdateNekoproxyConfigRequest,
+  options?: { [key: string]: any }
+) {
+  return request<{ code?: number; msg?: string; data?: any }>(
+    `${
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
+    }/v1/admin/server/nekoproxy/config`,
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: body,
+      ...(options || {}),
+    }
+  );
+}
+
+export async function getV1AdminServerNekoproxyState(options?: {
+  [key: string]: any;
+}) {
+  return request<{
+    code?: number;
+    msg?: string;
+    data?: BackendAPI.NekoproxyState;
+  }>(
+    `${
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
+    }/v1/admin/server/nekoproxy/state`,
+    {
+      method: "GET",
+      ...(options || {}),
+    }
+  );
+}
+
+export async function postV1AdminServerNekoproxySync(
+  body: BackendAPI.SyncNekoproxyRequest,
+  options?: { [key: string]: any }
+) {
+  return request<{
+    code?: number;
+    msg?: string;
+    data?: BackendAPI.NekoproxySyncResponse;
+  }>(
+    `${
+      process.env.NEXT_PUBLIC_API_PREFIX || ""
+    }/v1/admin/server/nekoproxy/sync`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: body,
+      ...(options || {}),
+    }
+  );
+}
+
 export async function getV1AdminServerNodeConfig(
   params: BackendAPI.getV1AdminServerNodeConfigParams,
   options?: { [key: string]: any }

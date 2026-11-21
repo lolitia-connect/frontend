@@ -28,12 +28,14 @@ import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { useNode } from "@/stores/node";
 import { useServer } from "@/stores/server";
+import NekoproxyConnectionSheet from "./nekoproxy-connection-sheet";
 import NodeForm, { type NodeFormValues } from "./node-form";
 
 export default function Nodes() {
   const { t } = useTranslation("nodes");
   const ref = useRef<ProTableActions>(null);
   const [loading, setLoading] = useState(false);
+  const [editing, setEditing] = useState<API.Node | null>(null);
 
   // Use our zustand store for server data
   const { getServerName, getServerAddress, getProtocolPort, fetchServers } =
@@ -71,6 +73,10 @@ export default function Nodes() {
       node_type: values.node_type,
       is_hidden: values.is_hidden ?? false,
       node_group_ids: values.node_group_ids || [],
+      ...(row && values.nekoproxy_sync_on_save !== undefined
+        ? { nekoproxy_sync_on_save: values.nekoproxy_sync_on_save }
+        : {}),
+      ...(!row && values.nekoproxy ? { nekoproxy: values.nekoproxy } : {}),
     };
 
     if (isFrontNode) {
@@ -229,87 +235,50 @@ export default function Nodes() {
     getProtocolPort,
   ]);
 
+  function refreshNodes() {
+    ref.current?.refresh();
+    fetchNodes();
+    fetchTags();
+    fetchServers();
+  }
   return (
-    <ProTable<API.Node, { search: string; node_group_id?: string }>
-      action={ref}
-      actions={{
-        render: (row) => [
-          <NodeForm
-            initialValues={row as any}
-            key="edit"
-            loading={loading}
-            onSubmit={async (values) => {
-              setLoading(true);
-              try {
-                const body = buildNodePayload(
-                  values,
-                  row
-                ) as API.UpdateNodeRequest;
-                await updateNode(body);
-                toast.success(t("updated", "Updated"));
-                ref.current?.refresh();
-                fetchNodes();
-                fetchTags();
-                fetchServers();
-                setLoading(false);
-                return true;
-              } catch {
-                setLoading(false);
-                return false;
-              }
-            }}
-            title={t("drawerEditTitle", "Edit Node")}
-            trigger={t("edit", "Edit")}
-          />,
-          <ConfirmButton
-            cancelText={t("cancel", "Cancel")}
-            confirmText={t("confirm", "Confirm")}
-            description={t(
-              "confirmDeleteDesc",
-              "This action cannot be undone."
-            )}
-            key="delete"
-            onConfirm={async () => {
-              await deleteNode({ id: row.id } as any);
-              toast.success(t("deleted", "Deleted"));
-              ref.current?.refresh();
-              fetchNodes();
-              fetchTags();
-              fetchServers();
-            }}
-            title={t("confirmDeleteTitle", "Delete this node?")}
-            trigger={
-              <Button variant="destructive">{t("delete", "Delete")}</Button>
+    <div className="space-y-4">
+      <NekoproxyConnectionSheet />
+      {editing && (
+        <NodeForm
+          initialValues={editing as Partial<NodeFormValues>}
+          nodeID={String(editing.id)}
+          onClose={() => setEditing(null)}
+          onEntryChanged={refreshNodes}
+          key={editing.id}
+          loading={loading}
+          onSubmit={async (values) => {
+            setLoading(true);
+            try {
+              const body = buildNodePayload(
+                values,
+                editing
+              ) as API.UpdateNodeRequest;
+              await updateNode(body);
+              toast.success(t("updated", "Updated"));
+              refreshNodes();
+              setLoading(false);
+              return true;
+            } catch {
+              setLoading(false);
+              return false;
             }
-          />,
-          <Button
-            key="copy"
-            onClick={async () => {
-              const {
-                id: _id,
-                sort: _sort,
-                enabled: _enabled,
-                updated_at: _updated_at,
-                created_at: _created_at,
-                ...rest
-              } = row as any;
-              await createNode({
-                ...rest,
-                enabled: false,
-              });
-              toast.success(t("copied", "Copied"));
-              ref.current?.refresh();
-              fetchNodes();
-              fetchServers();
-              fetchTags();
-            }}
-            variant="outline"
-          >
-            {t("copy", "Copy")}
-          </Button>,
-        ],
-        batchRender(rows) {
-          return [
+          }}
+          title={t("drawerEditTitle", "Edit Node")}
+        />
+      )}
+      <ProTable<API.Node, { search: string; node_group_id?: string }>
+        action={ref}
+        actions={{
+          render: (row) => [
+            <Button key="edit" onClick={() => setEditing(row)}>
+              {t("edit", "Edit")}
+            </Button>,
             <ConfirmButton
               cancelText={t("cancel", "Cancel")}
               confirmText={t("confirm", "Confirm")}
@@ -319,158 +288,208 @@ export default function Nodes() {
               )}
               key="delete"
               onConfirm={async () => {
-                await Promise.all(
-                  rows.map((r) => deleteNode({ id: r.id } as any))
-                );
+                await deleteNode({ id: row.id } as any);
                 toast.success(t("deleted", "Deleted"));
                 ref.current?.refresh();
                 fetchNodes();
-                fetchServers();
                 fetchTags();
+                fetchServers();
               }}
               title={t("confirmDeleteTitle", "Delete this node?")}
               trigger={
                 <Button variant="destructive">{t("delete", "Delete")}</Button>
               }
             />,
-          ];
-        },
-      }}
-      columns={columns}
-      header={{
-        title: t("pageTitle", "Nodes"),
-        toolbar: (
-          <div className="flex gap-2">
             <Button
+              key="copy"
               onClick={async () => {
-                await sortNodeByName();
-                toast.success(t("sorted_success", "Sorted successfully"));
+                const {
+                  id: _id,
+                  sort: _sort,
+                  enabled: _enabled,
+                  updated_at: _updated_at,
+                  created_at: _created_at,
+                  ...rest
+                } = row as any;
+                await createNode({
+                  ...rest,
+                  enabled: false,
+                });
+                toast.success(t("copied", "Copied"));
                 ref.current?.refresh();
+                fetchNodes();
+                fetchServers();
+                fetchTags();
               }}
               variant="outline"
             >
-              <ArrowDownAZ className="mr-1 h-4 w-4" />
-              {t("sortByName", "Sort by Name")}
-            </Button>
-            <NodeForm
-              loading={loading}
-              onSubmit={async (values) => {
-                setLoading(true);
-                try {
-                  const body = buildNodePayload(
-                    values
-                  ) as API.CreateNodeRequest;
-                  await createNode(body);
-                  toast.success(t("created", "Created"));
+              {t("copy", "Copy")}
+            </Button>,
+          ],
+          batchRender(rows) {
+            return [
+              <ConfirmButton
+                cancelText={t("cancel", "Cancel")}
+                confirmText={t("confirm", "Confirm")}
+                description={t(
+                  "confirmDeleteDesc",
+                  "This action cannot be undone."
+                )}
+                key="delete"
+                onConfirm={async () => {
+                  await Promise.all(
+                    rows.map((r) => deleteNode({ id: r.id } as any))
+                  );
+                  toast.success(t("deleted", "Deleted"));
                   ref.current?.refresh();
                   fetchNodes();
                   fetchServers();
                   fetchTags();
-                  setLoading(false);
-                  return true;
-                } catch {
-                  setLoading(false);
-                  return false;
+                }}
+                title={t("confirmDeleteTitle", "Delete this node?")}
+                trigger={
+                  <Button variant="destructive">{t("delete", "Delete")}</Button>
                 }
-              }}
-              title={t("drawerCreateTitle", "Create Landing Node")}
-              trigger={t("create", "Create Landing Node")}
-            />
-          </div>
-        ),
-      }}
-      onSort={async (source, target, items) => {
-        // NOTE: `items` is the current page's items from ProTable.
-        // Avoid mutating it in-place, and persist sort changes reliably.
-        const sourceIndex = items.findIndex(
-          (item) => String(item.id) === source
-        );
-        const targetIndex = items.findIndex(
-          (item) => String(item.id) === target
-        );
+              />,
+            ];
+          },
+        }}
+        columns={columns}
+        header={{
+          title: t("pageTitle", "Nodes"),
+          toolbar: (
+            <div className="flex flex-wrap gap-2">
+              <Button
+                onClick={async () => {
+                  await sortNodeByName();
+                  toast.success(t("sorted_success", "Sorted successfully"));
+                  ref.current?.refresh();
+                }}
+                variant="outline"
+              >
+                <ArrowDownAZ className="mr-1 h-4 w-4" />
+                {t("sortByName", "Sort by Name")}
+              </Button>
+              <NodeForm
+                loading={loading}
+                onSubmit={async (values) => {
+                  setLoading(true);
+                  try {
+                    const body = buildNodePayload(
+                      values
+                    ) as API.CreateNodeRequest;
+                    await createNode(body);
+                    toast.success(t("created", "Created"));
+                    ref.current?.refresh();
+                    fetchNodes();
+                    fetchServers();
+                    fetchTags();
+                    setLoading(false);
+                    return true;
+                  } catch {
+                    setLoading(false);
+                    return false;
+                  }
+                }}
+                title={t("drawerCreateTitle", "Create Landing Node")}
+                trigger={t("create", "Create Landing Node")}
+              />
+            </div>
+          ),
+        }}
+        onSort={async (source, target, items) => {
+          // NOTE: `items` is the current page's items from ProTable.
+          // Avoid mutating it in-place, and persist sort changes reliably.
+          const sourceIndex = items.findIndex(
+            (item) => String(item.id) === source
+          );
+          const targetIndex = items.findIndex(
+            (item) => String(item.id) === target
+          );
 
-        if (sourceIndex === -1 || targetIndex === -1) return items;
+          if (sourceIndex === -1 || targetIndex === -1) return items;
 
-        const next = items.slice();
-        const [movedItem] = next.splice(sourceIndex, 1);
-        next.splice(targetIndex, 0, movedItem!);
-        // IMPORTANT:
-        // Some installations have duplicate / empty `sort` values (commonly 0 or null)
-        // which makes the order appear "random" after refresh and also makes
-        // "swap sort values" strategies a no-op.
-        //
-        // To make the ordering stable, we re-index the current page to a strictly
-        // increasing sequence.
-        const numericSorts = items
-          .map((it) => (typeof it.sort === "number" ? it.sort : Number.NaN))
-          .filter((v) => Number.isFinite(v)) as number[];
-        const baseSort = numericSorts.length ? Math.min(...numericSorts) : 0;
+          const next = items.slice();
+          const [movedItem] = next.splice(sourceIndex, 1);
+          next.splice(targetIndex, 0, movedItem!);
+          // IMPORTANT:
+          // Some installations have duplicate / empty `sort` values (commonly 0 or null)
+          // which makes the order appear "random" after refresh and also makes
+          // "swap sort values" strategies a no-op.
+          //
+          // To make the ordering stable, we re-index the current page to a strictly
+          // increasing sequence.
+          const numericSorts = items
+            .map((it) => (typeof it.sort === "number" ? it.sort : Number.NaN))
+            .filter((v) => Number.isFinite(v)) as number[];
+          const baseSort = numericSorts.length ? Math.min(...numericSorts) : 0;
 
-        const updatedItems = next.map((item, index) => ({
-          ...item,
-          sort: baseSort + index,
-        }));
+          const updatedItems = next.map((item, index) => ({
+            ...item,
+            sort: baseSort + index,
+          }));
 
-        // Send ALL items on the current page (not just changed ones) so the
-        // backend can re-index globally and avoid cross-page sort conflicts.
-        await resetSortWithNode({
-          sort: updatedItems.map((item) => ({
-            id: item.id,
-            sort: item.sort,
-          })) as API.SortItem[],
-        });
-        toast.success(t("sorted_success", "Sorted successfully"));
+          // Send ALL items on the current page (not just changed ones) so the
+          // backend can re-index globally and avoid cross-page sort conflicts.
+          await resetSortWithNode({
+            sort: updatedItems.map((item) => ({
+              id: item.id,
+              sort: item.sort,
+            })) as API.SortItem[],
+          });
+          toast.success(t("sorted_success", "Sorted successfully"));
 
-        // Re-fetch from backend to ensure frontend sort values match the
-        // globally re-indexed state. Without this, subsequent drag-sorts
-        // would use stale baseSort values and cause items to jump.
-        ref.current?.refresh();
-        return updatedItems;
-      }}
-      params={[
-        {
-          key: "search",
-        },
-        ...(isGroupEnabled
-          ? [
-              {
-                key: "node_group_id",
-                placeholder: t("nodeGroups", "Node Groups"),
-                options: [
-                  { label: t("all", "All"), value: "" },
-                  ...(nodeGroupsData?.map((item) => ({
-                    label: item.name,
-                    value: String(item.id),
-                  })) || []),
-                ],
-              },
-            ]
-          : []),
-      ]}
-      request={async (pagination, filter) => {
-        const filters = {
-          page: pagination.page,
-          size: pagination.size,
-          search: filter?.search || undefined,
-          node_group_id: filter?.node_group_id || undefined,
-        };
+          // Re-fetch from backend to ensure frontend sort values match the
+          // globally re-indexed state. Without this, subsequent drag-sorts
+          // would use stale baseSort values and cause items to jump.
+          ref.current?.refresh();
+          return updatedItems;
+        }}
+        params={[
+          {
+            key: "search",
+          },
+          ...(isGroupEnabled
+            ? [
+                {
+                  key: "node_group_id",
+                  placeholder: t("nodeGroups", "Node Groups"),
+                  options: [
+                    { label: t("all", "All"), value: "" },
+                    ...(nodeGroupsData?.map((item) => ({
+                      label: item.name,
+                      value: String(item.id),
+                    })) || []),
+                  ],
+                },
+              ]
+            : []),
+        ]}
+        request={async (pagination, filter) => {
+          const filters = {
+            page: pagination.page,
+            size: pagination.size,
+            search: filter?.search || undefined,
+            node_group_id: filter?.node_group_id || undefined,
+          };
 
-        const { data } = await filterNodeList(filters);
-        const rawList = (data?.data?.list || []) as API.Node[];
-        // Backend should ideally return nodes already sorted, but we also sort on the
-        // frontend to keep the UI stable (and avoid "random" order after refresh).
-        const list = rawList.slice().sort((a, b) => {
-          const as = a.sort;
-          const bs = b.sort;
-          const an = typeof as === "number" ? as : Number.POSITIVE_INFINITY;
-          const bn = typeof bs === "number" ? bs : Number.POSITIVE_INFINITY;
-          if (an !== bn) return an - bn;
-          // Tie-breaker to keep a stable order.
-          return Number(a.id) - Number(b.id);
-        });
-        const total = Number(data?.data?.total || list.length);
-        return { list, total };
-      }}
-    />
+          const { data } = await filterNodeList(filters);
+          const rawList = (data?.data?.list || []) as API.Node[];
+          // Backend should ideally return nodes already sorted, but we also sort on the
+          // frontend to keep the UI stable (and avoid "random" order after refresh).
+          const list = rawList.slice().sort((a, b) => {
+            const as = a.sort;
+            const bs = b.sort;
+            const an = typeof as === "number" ? as : Number.POSITIVE_INFINITY;
+            const bn = typeof bs === "number" ? bs : Number.POSITIVE_INFINITY;
+            if (an !== bn) return an - bn;
+            // Tie-breaker to keep a stable order.
+            return Number(a.id) - Number(b.id);
+          });
+          const total = Number(data?.data?.total || list.length);
+          return { list, total };
+        }}
+      />
+    </div>
   );
 }

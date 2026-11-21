@@ -2,7 +2,7 @@
 
 import { Sheet } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@workspace/ui/components/button";
 import { Checkbox } from "@workspace/ui/components/checkbox";
 import {
@@ -31,6 +31,15 @@ import { useTranslation } from "react-i18next";
 import { z } from "zod";
 import { useNode } from "@/stores/node";
 import { useServer } from "@/stores/server";
+import {
+  getNekoproxyBinding,
+  type NekoproxyNodeEntry,
+} from "@workspace/ui/services/admin/nekoproxy";
+import { toast } from "sonner";
+import NekoproxyFields from "./nekoproxy-fields";
+import NekoproxyNodeSettings from "./nekoproxy-node-settings";
+import { bindingKey, nekoproxyStateKey } from "./nekoproxy-queries";
+import { nekoproxyOptionsSchema } from "./nekoproxy-schema";
 
 export type ProtocolName =
   | "shadowsocks"
@@ -48,7 +57,7 @@ export type ProtocolName =
   | "socks"
   | "mieru";
 
-const buildSchema = (t: TFunction) =>
+export const buildSchema = (t: TFunction) =>
   z
     .object({
       name: z
@@ -58,19 +67,15 @@ const buildSchema = (t: TFunction) =>
       server_id: z.string().optional(),
       protocol: z.string().default(""),
       protocol_id: z.string().default(""),
-      address: z
-        .string()
-        .trim()
-        .min(
-          1,
-          t("errors.serverAddrRequired", "Please enter an entry address")
-        ),
+      address: z.string().trim(),
+      nekoproxy: nekoproxyOptionsSchema(t),
+      nekoproxy_sync_on_save: z.boolean().optional(),
       port: z
         .number({
           message: t("errors.portRange", "Port must be between 1 and 65535"),
         })
         .int()
-        .min(1, t("errors.portRange", "Port must be between 1 and 65535"))
+        .min(0, t("errors.portRange", "Port must be between 1 and 65535"))
         .max(65_535, t("errors.portRange", "Port must be between 1 and 65535")),
       tags: z.array(z.string()),
       node_group_ids: z.optional(z.array(z.string()).default([])),
@@ -78,6 +83,23 @@ const buildSchema = (t: TFunction) =>
       is_hidden: z.optional(z.boolean()).default(false),
     })
     .superRefine((values, ctx) => {
+      if (!values.nekoproxy) {
+        if (!values.address)
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: t(
+              "errors.serverAddrRequired",
+              "Please enter an entry address"
+            ),
+            path: ["address"],
+          });
+        if (values.port < 1)
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: t("errors.portRange", "Port must be between 1 and 65535"),
+            path: ["port"],
+          });
+      }
       if (values.node_type === "front") {
         return;
       }
@@ -111,21 +133,48 @@ export type NodeFormValues = z.infer<ReturnType<typeof buildSchema>>;
 
 function normalizeValues(v?: Partial<NodeFormValues>): Partial<NodeFormValues> {
   if (!v) return {};
-  return { ...v, tags: Array.isArray(v.tags) ? v.tags : [] };
+  return {
+    ...v,
+    tags: Array.isArray(v.tags) ? v.tags : [],
+    node_group_ids: v.node_group_ids?.map(String) ?? [],
+    node_type: v.node_type || "landing",
+    is_hidden: v.is_hidden ?? false,
+  };
 }
 
 export default function NodeForm(props: {
-  trigger: string;
+  trigger?: string;
+  onClose?: () => void;
   title: string;
   loading?: boolean;
+  nodeID?: string;
+  onEntryChanged?: () => void;
   initialValues?: Partial<NodeFormValues>;
   onSubmit: (values: NodeFormValues) => Promise<boolean> | boolean;
 }) {
-  const { trigger, title, loading, initialValues, onSubmit } = props;
+  const {
+    trigger,
+    title,
+    loading,
+    initialValues,
+    nodeID,
+    onEntryChanged,
+    onSubmit,
+  } = props;
   const { t } = useTranslation("nodes");
   const Scheme = useMemo(() => buildSchema(t), [t]);
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(Boolean(nodeID));
   const formId = useId();
+  const client = useQueryClient();
+  const [entryBusy, setEntryBusy] = useState(false);
+  const [preference, setPreference] = useState<boolean>();
+  const busy = Boolean(loading || entryBusy);
+  const nodeEntry = useQuery({
+    queryKey: bindingKey(nodeID || ""),
+    enabled: open && Boolean(nodeID),
+    queryFn: async () => (await getNekoproxyBinding(nodeID!)).data.data,
+    retry: false,
+  });
 
   const [autoFilledFields, setAutoFilledFields] = useState<Set<string>>(
     new Set()
@@ -156,13 +205,14 @@ export default function NodeForm(props: {
       node_group_ids: [],
       node_type: "landing",
       is_hidden: false,
-      ...initialValues,
+      ...normalizeValues(initialValues),
     } as NodeFormValues,
     mode: "onSubmit", // Only validate on form submission
   });
 
   const serverId = form.watch("server_id");
   const nodeType = form.watch("node_type");
+  const nekoproxy = form.watch("nekoproxy");
   const isFrontNode = nodeType === "front";
 
   const { servers, getAvailableProtocols } = useServer();
@@ -203,54 +253,6 @@ export default function NodeForm(props: {
     removeAutoFilledField("protocol");
     form.clearErrors(["server_id", "protocol"]);
   }, [form, isFrontNode]);
-
-  useEffect(() => {
-    if (initialValues) {
-      const resetValues: NodeFormValues = {
-        name: "",
-        server_id: undefined,
-        protocol: "",
-        protocol_id: "",
-        address: "",
-        port: 0,
-        tags: [],
-        node_group_ids: [],
-        node_type: "landing",
-        is_hidden: false,
-      };
-
-      // Copy only the values we need from initialValues
-      if (initialValues.name) resetValues.name = initialValues.name;
-      if (initialValues.server_id)
-        resetValues.server_id = initialValues.server_id;
-      if (initialValues.protocol) resetValues.protocol = initialValues.protocol;
-      if ((initialValues as any).protocol_id)
-        resetValues.protocol_id = (initialValues as any).protocol_id;
-      if (initialValues.address) resetValues.address = initialValues.address;
-      if (initialValues.port) resetValues.port = initialValues.port;
-      if (initialValues.tags) resetValues.tags = initialValues.tags;
-      if (initialValues.node_type)
-        resetValues.node_type = initialValues.node_type;
-      if (typeof initialValues.is_hidden === "boolean") {
-        resetValues.is_hidden = initialValues.is_hidden;
-      }
-
-      // Convert node_group_ids from number[] to string[], ensure it's always an array
-      if (
-        initialValues.node_group_ids &&
-        Array.isArray(initialValues.node_group_ids)
-      ) {
-        resetValues.node_group_ids = initialValues.node_group_ids.map(
-          (id: string | number) => String(id)
-        );
-      } else {
-        resetValues.node_group_ids = [];
-      }
-
-      form.reset(resetValues);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [initialValues]);
 
   function handleServerChange(nextId?: string | null) {
     const id = nextId ?? undefined;
@@ -346,7 +348,44 @@ export default function NodeForm(props: {
     }
   }
 
+  async function runEntryAction(
+    action: () => Promise<unknown>,
+    applyEndpoint: boolean
+  ) {
+    if (busy || !nodeID) return false;
+    setEntryBusy(true);
+    try {
+      await action();
+      const current: NekoproxyNodeEntry = (await getNekoproxyBinding(nodeID))
+        .data.data;
+      client.setQueryData(bindingKey(nodeID), current);
+      if (applyEndpoint) {
+        form.setValue("address", current.address);
+        form.setValue("port", current.port);
+      }
+      if (!current.binding) setPreference(undefined);
+      await client.invalidateQueries({ queryKey: nekoproxyStateKey });
+      onEntryChanged?.();
+      toast.success(
+        applyEndpoint
+          ? t("np.nodeSynced", "Node entry synchronized")
+          : t("np.unboundDone", "Binding removed")
+      );
+      return true;
+    } catch (error) {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : t("np.failed", "The operation failed. Please retry.")
+      );
+      return false;
+    } finally {
+      setEntryBusy(false);
+    }
+  }
+
   async function handleSubmit(values: NodeFormValues) {
+    if (busy) return;
     const normalizedValues =
       values.node_type === "front"
         ? {
@@ -357,35 +396,60 @@ export default function NodeForm(props: {
           }
         : values;
 
-    const result = await onSubmit(normalizedValues);
+    const result = await onSubmit({
+      ...normalizedValues,
+      ...(nodeID && nodeEntry.data?.binding && preference !== undefined
+        ? { nekoproxy_sync_on_save: preference }
+        : {}),
+    });
     if (result) {
+      if (nodeID)
+        await client.invalidateQueries({
+          queryKey: bindingKey(nodeID),
+          refetchType: "none",
+        });
+      if (values.nekoproxy || nodeEntry.data?.binding)
+        await client.invalidateQueries({
+          queryKey: nekoproxyStateKey,
+          refetchType: "none",
+        });
+      props.onClose?.();
       setOpen(false);
       setAutoFilledFields(new Set());
     }
   }
 
+  function changeOpen(value: boolean) {
+    if (busy || form.formState.isSubmitting) return;
+    if (!value) props.onClose?.();
+    setOpen(value);
+  }
+
   return (
-    <Sheet isOpen={open} onOpenChange={setOpen} placement="right">
-      <Sheet.Trigger>
-        <Button
-          onClick={() => {
-            form.reset({
-              name: "",
-              server_id: undefined,
-              protocol: "",
-              protocol_id: "",
-              address: "",
-              port: 0,
-              tags: [],
-              node_type: "landing",
-              ...normalizeValues(initialValues),
-            });
-            setAutoFilledFields(new Set());
-          }}
-        >
-          {trigger}
-        </Button>
-      </Sheet.Trigger>
+    <Sheet isOpen={open} onOpenChange={changeOpen} placement="right">
+      {trigger && (
+        <Sheet.Trigger>
+          <Button
+            onClick={() => {
+              setPreference(undefined);
+              form.reset({
+                name: "",
+                server_id: undefined,
+                protocol: "",
+                protocol_id: "",
+                address: "",
+                port: 0,
+                tags: [],
+                node_type: "landing",
+                ...normalizeValues(initialValues),
+              });
+              setAutoFilledFields(new Set());
+            }}
+          >
+            {trigger}
+          </Button>
+        </Sheet.Trigger>
+      )}
 
       <Sheet.Backdrop>
         <Sheet.Content>
@@ -508,47 +572,54 @@ export default function NodeForm(props: {
                     )}
                   />
 
-                  <FormField
-                    control={form.control}
-                    name="address"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{t("address", "Address")}</FormLabel>
-                        <FormControl>
-                          <EnhancedInput
-                            {...field}
-                            onValueChange={(v) =>
-                              handleManualFieldChange("address", v as string)
-                            }
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                  {!nekoproxy && (
+                    <>
+                      <FormField
+                        control={form.control}
+                        name="address"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>{t("address", "Address")}</FormLabel>
+                            <FormControl>
+                              <EnhancedInput
+                                {...field}
+                                onValueChange={(v) =>
+                                  handleManualFieldChange(
+                                    "address",
+                                    v as string
+                                  )
+                                }
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
 
-                  <FormField
-                    control={form.control}
-                    name="port"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{t("port", "Port")}</FormLabel>
-                        <FormControl>
-                          <EnhancedInput
-                            {...field}
-                            max={65_535}
-                            min={1}
-                            onValueChange={(v) =>
-                              handleManualFieldChange("port", Number(v))
-                            }
-                            placeholder="1-65535"
-                            type="number"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                      <FormField
+                        control={form.control}
+                        name="port"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>{t("port", "Port")}</FormLabel>
+                            <FormControl>
+                              <EnhancedInput
+                                {...field}
+                                max={65_535}
+                                min={1}
+                                onValueChange={(v) =>
+                                  handleManualFieldChange("port", Number(v))
+                                }
+                                placeholder="1-65535"
+                                type="number"
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </>
+                  )}
                   <FormField
                     control={form.control}
                     name="tags"
@@ -676,19 +747,71 @@ export default function NodeForm(props: {
                       </FormItem>
                     )}
                   />
+                  {!nodeID && (
+                    <FormField
+                      control={form.control}
+                      name="nekoproxy"
+                      render={({ field }) => (
+                        <FormItem className="admin-drawer-wide rounded-lg border p-4">
+                          <NekoproxyFields
+                            onChange={field.onChange}
+                            targetHost={
+                              servers.find(
+                                (server) =>
+                                  String(server.id) === String(serverId)
+                              )?.address || form.watch("address")
+                            }
+                            targetPort={
+                              availableProtocols.find(
+                                (protocol) =>
+                                  protocol.protocol ===
+                                    form.watch("protocol") &&
+                                  String(protocol.id) ===
+                                    form.watch("protocol_id")
+                              )?.port || form.watch("port")
+                            }
+                            value={field.value}
+                          />
+                          {form.formState.errors.nekoproxy && (
+                            <p className="text-danger text-sm" role="alert">
+                              {t(
+                                "np.required",
+                                "Complete the forwarding settings"
+                              )}
+                            </p>
+                          )}
+                        </FormItem>
+                      )}
+                    />
+                  )}
+                  {nodeID && (
+                    <NekoproxyNodeSettings
+                      nodeID={nodeID}
+                      entry={nodeEntry.data}
+                      isError={nodeEntry.isError}
+                      disabled={busy}
+                      preference={preference}
+                      onPreferenceChange={setPreference}
+                      onAction={runEntryAction}
+                    />
+                  )}
                 </form>
               </Form>
             </ScrollArea>
 
             <Sheet.Footer className="flex-row justify-end gap-2 pt-3">
               <Button
-                disabled={loading}
-                onClick={() => setOpen(false)}
+                disabled={busy}
+                onClick={() => changeOpen(false)}
                 variant="outline"
               >
                 {t("cancel", "Cancel")}
               </Button>
-              <Button disabled={loading} form={formId} type="submit">
+              <Button
+                disabled={busy || form.formState.isSubmitting}
+                form={formId}
+                type="submit"
+              >
                 {t("confirm", "Confirm")}
               </Button>
             </Sheet.Footer>

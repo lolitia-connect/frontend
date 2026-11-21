@@ -191,6 +191,12 @@ declare namespace BackendAPI {
     updated_at: number;
   };
 
+  type BindNekoproxyRequest = {
+    node_id: string;
+    forward_id: string;
+    session_id: string;
+  };
+
   type BindOAuthCallbackRequest = {
     method: string;
     callback: any;
@@ -342,6 +348,15 @@ declare namespace BackendAPI {
     show?: boolean;
   };
 
+  type CreateNekoproxyForward = {
+    chain_id: string;
+    entry_group_id: string;
+    protocol: string;
+    target_host: string;
+    target_port: number;
+    requested_port: number;
+  };
+
   type CreateNodeGroupRequest = {
     name: string;
     type?: string;
@@ -357,6 +372,7 @@ declare namespace BackendAPI {
   };
 
   type CreateNodeRequest = {
+    nekoproxy?: NekoproxyNodeOptions;
     name: string;
     tags?: string[];
     port: number;
@@ -2169,6 +2185,77 @@ declare namespace BackendAPI {
     service_version: string;
   };
 
+  type NekoproxyBinding = {
+    node_id: string;
+    api_url: string;
+    forward_id: string;
+    session_id: string;
+  };
+
+  type NekoproxyChain = {
+    id: string;
+    name: string;
+  };
+
+  type NekoproxyConfig = {
+    api_url: string;
+    has_api_token: boolean;
+  };
+
+  type NekoproxyEntryGroup = {
+    id: string;
+    name: string;
+    listen_host: string;
+    port_start: number;
+    port_end: number;
+  };
+
+  type NekoproxyForward = {
+    id: string;
+    name: string;
+    chain_id: string;
+    chain_name: string;
+    protocol: string;
+    target_host: string;
+    target_port: number;
+    enabled: boolean;
+    paused: boolean;
+    sessions: NekoproxySession[];
+  };
+
+  type NekoproxyNodeOptions = {
+    forward_id?: string;
+    session_id?: string;
+    create?: CreateNekoproxyForward;
+  };
+
+  type NekoproxySession = {
+    id: string;
+    address: string;
+    port: number;
+    status: string;
+    group_id: string;
+  };
+
+  type NekoproxyState = {
+    error?: string;
+    api_url: string;
+    forwards: NekoproxyForward[];
+    chains: NekoproxyChain[];
+    groups: NekoproxyEntryGroup[];
+    bindings: NekoproxyBinding[];
+  };
+
+  type NekoproxySyncError = {
+    node_id: string;
+    message: string;
+  };
+
+  type NekoproxySyncResponse = {
+    updated: number;
+    errors: NekoproxySyncError[];
+  };
+
   type Node = {
     id: string;
     name: string;
@@ -3388,6 +3475,10 @@ declare namespace BackendAPI {
     subscribe_types: string[];
   };
 
+  type SyncNekoproxyRequest = {
+    node_id?: string;
+  };
+
   type TelegramConfig = {
     telegram_bot_token: string;
     telegram_group_url: string;
@@ -3561,6 +3652,10 @@ declare namespace BackendAPI {
     id: string;
   };
 
+  type UnbindNekoproxyRequest = {
+    node_id: string;
+  };
+
   type UnbindOAuthRequest = {
     method: string;
   };
@@ -3657,6 +3752,11 @@ declare namespace BackendAPI {
     enabled: boolean;
     mode: string;
     config: Record<string, any>;
+  };
+
+  type UpdateNekoproxyConfigRequest = {
+    api_url: string;
+    api_token?: string;
   };
 
   type UpdateNodeGroupRequest = {

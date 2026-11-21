@@ -666,6 +666,23 @@
         "tag": "json:\"updated_at\""
       }
     ],
+    "BindNekoproxyRequest": [
+      {
+        "name": "NodeID",
+        "type": "int64",
+        "tag": "json:\"node_id,string\" validate:\"gt=0\""
+      },
+      {
+        "name": "ForwardID",
+        "type": "string",
+        "tag": "json:\"forward_id\" validate:\"required,max=128\""
+      },
+      {
+        "name": "SessionID",
+        "type": "string",
+        "tag": "json:\"session_id\" validate:\"required,max=128\""
+      }
+    ],
     "BindOAuthCallbackRequest": [
       {
         "name": "Method",
@@ -1120,6 +1137,38 @@
         "tag": "json:\"show\""
       }
     ],
+    "CreateNekoproxyForward": [
+      {
+        "name": "ChainID",
+        "type": "string",
+        "tag": "json:\"chain_id\" validate:\"required,max=128\""
+      },
+      {
+        "name": "EntryGroupID",
+        "type": "string",
+        "tag": "json:\"entry_group_id\" validate:\"required,max=128\""
+      },
+      {
+        "name": "Protocol",
+        "type": "string",
+        "tag": "json:\"protocol\" validate:\"oneof=tcp udp tcp_udp\""
+      },
+      {
+        "name": "TargetHost",
+        "type": "string",
+        "tag": "json:\"target_host\" validate:\"required,max=255\""
+      },
+      {
+        "name": "TargetPort",
+        "type": "int",
+        "tag": "json:\"target_port\" validate:\"gte=1,lte=65535\""
+      },
+      {
+        "name": "RequestedPort",
+        "type": "int",
+        "tag": "json:\"requested_port\" validate:\"gte=0,lte=65535\""
+      }
+    ],
     "CreateNodeGroupRequest": [
       {
         "name": "Name",
@@ -1178,6 +1227,11 @@
       }
     ],
     "CreateNodeRequest": [
+      {
+        "name": "Nekoproxy",
+        "type": "*NekoproxyNodeOptions",
+        "tag": "json:\"nekoproxy,omitempty\""
+      },
       {
         "name": "Name",
         "type": "string",
@@ -3390,6 +3444,13 @@
         "tag": "json:\"list\""
       }
     ],
+    "GetNekoproxyBindingRequest": [
+      {
+        "name": "NodeID",
+        "type": "int64",
+        "tag": "form:\"node_id\" validate:\"gt=0\""
+      }
+    ],
     "GetNodeGroupListRequest": [
       {
         "name": "Page",
@@ -4668,6 +4729,253 @@
         "name": "ServiceVersion",
         "type": "string",
         "tag": "json:\"service_version\""
+      }
+    ],
+    "NekoproxyBinding": [
+      {
+        "name": "SyncOnSave",
+        "type": "bool",
+        "tag": "json:\"sync_on_save\""
+      },
+      {
+        "name": "NodeID",
+        "type": "int64",
+        "tag": "json:\"node_id,string\""
+      },
+      {
+        "name": "APIURL",
+        "type": "string",
+        "tag": "json:\"api_url\""
+      },
+      {
+        "name": "ForwardID",
+        "type": "string",
+        "tag": "json:\"forward_id\""
+      },
+      {
+        "name": "SessionID",
+        "type": "string",
+        "tag": "json:\"session_id\""
+      }
+    ],
+    "NekoproxyChain": [
+      {
+        "name": "ID",
+        "type": "string",
+        "tag": "json:\"id\""
+      },
+      {
+        "name": "Name",
+        "type": "string",
+        "tag": "json:\"name\""
+      }
+    ],
+    "NekoproxyConfig": [
+      {
+        "name": "APIURL",
+        "type": "string",
+        "tag": "json:\"api_url\""
+      },
+      {
+        "name": "HasAPIToken",
+        "type": "bool",
+        "tag": "json:\"has_api_token\""
+      }
+    ],
+    "NekoproxyEntryGroup": [
+      {
+        "name": "ID",
+        "type": "string",
+        "tag": "json:\"id\""
+      },
+      {
+        "name": "Name",
+        "type": "string",
+        "tag": "json:\"name\""
+      },
+      {
+        "name": "ListenHost",
+        "type": "string",
+        "tag": "json:\"listen_host\""
+      },
+      {
+        "name": "PortStart",
+        "type": "int",
+        "tag": "json:\"port_start\""
+      },
+      {
+        "name": "PortEnd",
+        "type": "int",
+        "tag": "json:\"port_end\""
+      }
+    ],
+    "NekoproxyForward": [
+      {
+        "name": "ID",
+        "type": "string",
+        "tag": "json:\"id\""
+      },
+      {
+        "name": "Name",
+        "type": "string",
+        "tag": "json:\"name\""
+      },
+      {
+        "name": "ChainID",
+        "type": "string",
+        "tag": "json:\"chain_id\""
+      },
+      {
+        "name": "ChainName",
+        "type": "string",
+        "tag": "json:\"chain_name\""
+      },
+      {
+        "name": "Protocol",
+        "type": "string",
+        "tag": "json:\"protocol\""
+      },
+      {
+        "name": "TargetHost",
+        "type": "string",
+        "tag": "json:\"target_host\""
+      },
+      {
+        "name": "TargetPort",
+        "type": "int",
+        "tag": "json:\"target_port\""
+      },
+      {
+        "name": "Enabled",
+        "type": "bool",
+        "tag": "json:\"enabled\""
+      },
+      {
+        "name": "Paused",
+        "type": "bool",
+        "tag": "json:\"paused\""
+      },
+      {
+        "name": "Sessions",
+        "type": "[]NekoproxySession",
+        "tag": "json:\"sessions\""
+      }
+    ],
+    "NekoproxyNodeEntry": [
+      {
+        "name": "Binding",
+        "type": "*NekoproxyBinding",
+        "tag": "json:\"binding,omitempty\""
+      },
+      {
+        "name": "Address",
+        "type": "string",
+        "tag": "json:\"address\""
+      },
+      {
+        "name": "Port",
+        "type": "uint16",
+        "tag": "json:\"port\""
+      }
+    ],
+    "NekoproxyNodeOptions": [
+      {
+        "name": "ForwardID",
+        "type": "string",
+        "tag": "json:\"forward_id,omitempty\" validate:\"max=128\""
+      },
+      {
+        "name": "SessionID",
+        "type": "string",
+        "tag": "json:\"session_id,omitempty\" validate:\"max=128\""
+      },
+      {
+        "name": "Create",
+        "type": "*CreateNekoproxyForward",
+        "tag": "json:\"create,omitempty\""
+      }
+    ],
+    "NekoproxySession": [
+      {
+        "name": "ID",
+        "type": "string",
+        "tag": "json:\"id\""
+      },
+      {
+        "name": "Address",
+        "type": "string",
+        "tag": "json:\"address\""
+      },
+      {
+        "name": "Port",
+        "type": "int",
+        "tag": "json:\"port\""
+      },
+      {
+        "name": "Status",
+        "type": "string",
+        "tag": "json:\"status\""
+      },
+      {
+        "name": "GroupID",
+        "type": "string",
+        "tag": "json:\"group_id\""
+      }
+    ],
+    "NekoproxyState": [
+      {
+        "name": "Error",
+        "type": "string",
+        "tag": "json:\"error,omitempty\""
+      },
+      {
+        "name": "APIURL",
+        "type": "string",
+        "tag": "json:\"api_url\""
+      },
+      {
+        "name": "Forwards",
+        "type": "[]NekoproxyForward",
+        "tag": "json:\"forwards\""
+      },
+      {
+        "name": "Chains",
+        "type": "[]NekoproxyChain",
+        "tag": "json:\"chains\""
+      },
+      {
+        "name": "Groups",
+        "type": "[]NekoproxyEntryGroup",
+        "tag": "json:\"groups\""
+      },
+      {
+        "name": "Bindings",
+        "type": "[]NekoproxyBinding",
+        "tag": "json:\"bindings\""
+      }
+    ],
+    "NekoproxySyncError": [
+      {
+        "name": "NodeID",
+        "type": "int64",
+        "tag": "json:\"node_id,string\""
+      },
+      {
+        "name": "Message",
+        "type": "string",
+        "tag": "json:\"message\""
+      }
+    ],
+    "NekoproxySyncResponse": [
+      {
+        "name": "Updated",
+        "type": "int",
+        "tag": "json:\"updated\""
+      },
+      {
+        "name": "Errors",
+        "type": "[]NekoproxySyncError",
+        "tag": "json:\"errors\""
       }
     ],
     "Node": [
@@ -8603,6 +8911,13 @@
         "tag": "json:\"subscribe_types\""
       }
     ],
+    "SyncNekoproxyRequest": [
+      {
+        "name": "NodeID",
+        "type": "int64",
+        "tag": "json:\"node_id,string,omitempty\" validate:\"gte=0\""
+      }
+    ],
     "TelegramConfig": [
       {
         "name": "TelegramBotToken",
@@ -9169,6 +9484,13 @@
         "tag": "json:\"id,string\" validate:\"required\""
       }
     ],
+    "UnbindNekoproxyRequest": [
+      {
+        "name": "NodeID",
+        "type": "int64",
+        "tag": "json:\"node_id,string\" validate:\"gt=0\""
+      }
+    ],
     "UnbindOAuthRequest": [
       {
         "name": "Method",
@@ -9508,6 +9830,18 @@
         "tag": "json:\"config\""
       }
     ],
+    "UpdateNekoproxyConfigRequest": [
+      {
+        "name": "APIURL",
+        "type": "string",
+        "tag": "json:\"api_url\" validate:\"required,max=512\""
+      },
+      {
+        "name": "APIToken",
+        "type": "string",
+        "tag": "json:\"api_token,omitempty\" validate:\"max=512\""
+      }
+    ],
     "UpdateNodeGroupRequest": [
       {
         "name": "Id",
@@ -9571,6 +9905,11 @@
       }
     ],
     "UpdateNodeRequest": [
+      {
+        "name": "NekoproxySyncOnSave",
+        "type": "*bool",
+        "tag": "json:\"nekoproxy_sync_on_save,omitempty\""
+      },
       {
         "name": "Id",
         "type": "int64",
@@ -12231,6 +12570,43 @@
       "response": "FilterServerListResponse"
     },
     {
+      "method": "DELETE",
+      "path": "/v1/admin/server/nekoproxy/binding",
+      "request": "UnbindNekoproxyRequest"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/admin/server/nekoproxy/binding",
+      "request": "GetNekoproxyBindingRequest",
+      "response": "NekoproxyNodeEntry"
+    },
+    {
+      "method": "PUT",
+      "path": "/v1/admin/server/nekoproxy/binding",
+      "request": "BindNekoproxyRequest"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/admin/server/nekoproxy/config",
+      "response": "NekoproxyConfig"
+    },
+    {
+      "method": "PUT",
+      "path": "/v1/admin/server/nekoproxy/config",
+      "request": "UpdateNekoproxyConfigRequest"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/admin/server/nekoproxy/state",
+      "response": "NekoproxyState"
+    },
+    {
+      "method": "POST",
+      "path": "/v1/admin/server/nekoproxy/sync",
+      "request": "SyncNekoproxyRequest",
+      "response": "NekoproxySyncResponse"
+    },
+    {
       "method": "POST",
       "path": "/v1/admin/server/node/create",
       "request": "CreateNodeRequest"
@@ -13250,6 +13626,6 @@
       "path": "/v2/server/:server_id"
     }
   ],
-  "backendCommit": "dc46571fe94d2be00c9718ede28ce5c3914242c3",
-  "backendDirty": true
+  "backendCommit": "6a80b61d50aab974d5928c294836eadfaa2dc1d8",
+  "backendDirty": false
 }

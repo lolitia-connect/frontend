@@ -36,6 +36,15 @@ Display all node configuration information in table format.
 - **Delete**: Delete node
 - **Copy**: Copy node configuration to create new node (new node disabled by default)
 
+### Nekoproxy L4 forwarding sync
+
+Select the **Nekoproxy connection** card above the node list to open the settings drawer on the right. **Connect and save** closes the drawer on success; canceling or dismissing it discards your changes. PPanel never displays the stored token. Leave the token blank to keep it when saving the same URL.
+
+- **Create a node:** Turn on **Sync forwarding when creating this node** at the bottom of the form (off by default). Create a forward or choose an existing active entry. For a new forward, choose the chain, entry group, protocol and target; use entry port `0` for automatic allocation. If local creation fails, PPanel attempts to remove only the newly created remote forward.
+- **Edit a node:** The bottom of the form shows this node’s binding, forward/session IDs and saved entry. Bind an available forward here, change the entry, sync now, or unbind. Syncing now changes only this node’s entry and does not submit other unsaved edits.
+- **Sync when saving this node** defaults to on for new and existing bindings. The setting is saved per binding. With sync enabled, a failed remote lookup leaves the edit unsaved. Turn it off to save a manual endpoint even when Nekoproxy is offline; manual sync remains available. Unbinding or deleting a node preserves its remote forward.
+
+
 ## Node Form
 
 A sidebar form that opens when clicking "Create" or "Edit".

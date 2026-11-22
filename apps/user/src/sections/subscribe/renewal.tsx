@@ -56,6 +56,7 @@ export default function Renewal({
       params.payment,
       params.coupon,
     ],
+    ...(params.coupon ? { retry: false } : {}),
     queryFn: async () => {
       try {
         const { data } = await preCreateOrder({

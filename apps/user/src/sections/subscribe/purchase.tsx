@@ -51,6 +51,7 @@ export default function Purchase({
       params.payment,
       params.coupon,
     ],
+    ...(params.coupon ? { retry: false } : {}),
     queryFn: async () => {
       try {
         const { data } = await preCreateOrder({

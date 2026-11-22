@@ -63,6 +63,7 @@ export default function Content({
       params.quantity,
       params.payment,
     ],
+    ...(params.coupon ? { retry: false } : {}),
     queryFn: async () => {
       const { data } = await prePurchaseOrder({
         ...params,

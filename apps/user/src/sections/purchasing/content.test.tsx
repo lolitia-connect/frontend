@@ -8,11 +8,14 @@ import {
   waitFor,
 } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import Purchase from "@/sections/subscribe/purchase";
+import Renewal from "@/sections/subscribe/renewal";
 import Content from "./content";
 
 const mocks = vi.hoisted(() => ({
   create: vi.fn(),
   navigate: vi.fn(),
+  preview: vi.fn(),
   user: undefined as { id: string } | undefined,
 }));
 vi.mock("@workspace/ui/lib/router-compat", () => ({
@@ -34,7 +37,10 @@ vi.mock("@/stores/global", () => ({
   }),
 }));
 vi.mock("@workspace/ui/services/user/portal", () => ({
-  prePurchaseOrder: async () => ({ data: { data: {} } }),
+  prePurchaseOrder: mocks.preview,
+}));
+vi.mock("@workspace/ui/services/user/order", () => ({
+  preCreateOrder: mocks.preview,
 }));
 vi.mock("@/sections/subscribe/billing", () => ({
   SubscribeBilling: () => null,
@@ -43,7 +49,6 @@ vi.mock("@/sections/subscribe/detail", () => ({ SubscribeDetail: () => null }));
 vi.mock("@/sections/subscribe/duration-selector", () => ({
   default: () => null,
 }));
-vi.mock("@/sections/subscribe/coupon-input", () => ({ default: () => null }));
 vi.mock("@/sections/subscribe/payment-methods", () => ({
   default: ({ onChange }: { onChange: (value: string) => void }) => (
     <button onClick={() => onChange("2")} type="button">
@@ -55,28 +60,29 @@ vi.mock("react-i18next", () => ({
   useTranslation: () => ({ t: (_key: string, fallback: string) => fallback }),
 }));
 
+const subscription = {
+  id: "9007199254740993123",
+  name: "Plan",
+  description: "",
+  unit_time: "Month",
+  unit_price: 100,
+} as API.Subscribe;
+
 let client: QueryClient;
+function renderCheckout(checkout: React.ReactNode, retry: number | false) {
+  client = new QueryClient({
+    defaultOptions: { queries: { retry, retryDelay: 0 } },
+  });
+  render(<QueryClientProvider client={client}>{checkout}</QueryClientProvider>);
+}
+
 function renderPurchase() {
-  client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
-  render(
-    <QueryClientProvider client={client}>
-      <Content
-        subscription={
-          {
-            id: "9007199254740993123",
-            name: "Plan",
-            description: "",
-            unit_time: "Month",
-            unit_price: 100,
-          } as API.Subscribe
-        }
-      />
-    </QueryClientProvider>
-  );
+  renderCheckout(<Content subscription={subscription} />, false);
   fireEvent.click(screen.getByRole("button", { name: "Card" }));
 }
 beforeEach(() => {
   mocks.user = undefined;
+  mocks.preview.mockResolvedValue({ data: { data: {} } });
   mocks.create.mockResolvedValue({
     data: { data: { order: { order_no: "created-order" } } },
   });
@@ -86,6 +92,51 @@ afterEach(() => {
   client?.clear();
   localStorage.clear();
   vi.resetAllMocks();
+});
+
+describe("checkout coupon validation", () => {
+  it.each([
+    ["public purchase", () => <Content subscription={subscription} />],
+    [
+      "subscription purchase",
+      () => <Purchase setSubscribe={vi.fn()} subscribe={subscription} />,
+    ],
+    [
+      "subscription renewal",
+      () => <Renewal id="instance-1" subscribe={subscription} />,
+    ],
+  ])("shows an invalid coupon after one request in %s", async (name, checkout) => {
+    mocks.user = { id: "1" };
+    mocks.preview.mockImplementation(
+      async ({ coupon }: { coupon?: string }) => {
+        if (coupon === "INVALID") {
+          throw new Error("Coupon not found");
+        }
+        return { data: { data: {} } };
+      }
+    );
+
+    renderCheckout(checkout(), 3);
+    if (name === "subscription renewal") {
+      fireEvent.click(screen.getByRole("button", { name: "Renew" }));
+    }
+    const input = await screen.findByPlaceholderText("Enter Coupon Code");
+    fireEvent.change(input, { target: { value: "INVALID" } });
+    fireEvent.blur(input);
+
+    expect(await screen.findByText("Coupon code is invalid.")).toBeTruthy();
+    expect(input.getAttribute("aria-invalid")).toBe("true");
+    expect(
+      mocks.preview.mock.calls.filter(
+        ([request]) => request.coupon === "INVALID"
+      )
+    ).toHaveLength(1);
+
+    fireEvent.change(input, { target: { value: "VALID" } });
+    fireEvent.blur(input);
+    expect(await screen.findByText("Coupon code is valid.")).toBeTruthy();
+    expect(input.getAttribute("aria-invalid")).toBe("false");
+  });
 });
 
 describe("public purchase identity", () => {

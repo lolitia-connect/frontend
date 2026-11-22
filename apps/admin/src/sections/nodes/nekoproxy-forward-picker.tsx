@@ -36,12 +36,6 @@ export default function ForwardPicker({
       <div className="space-y-1">
         <Label>{t("np.forward", "L4 forward")}</Label>
         <Combobox
-          placeholder={t("np.chooseForward", "Choose an available forward")}
-          options={available.map((f) => ({
-            value: f.id,
-            label: `${f.name || f.id} · ${f.target_host}:${f.target_port}`,
-          }))}
-          value={value.forward_id}
           onChange={(id) => {
             const f = available.find((item) => item.id === id);
             onChange({
@@ -49,18 +43,24 @@ export default function ForwardPicker({
               session_id: f ? activeSessions(f)[0]?.id || "" : "",
             });
           }}
+          options={available.map((f) => ({
+            value: f.id,
+            label: `${f.name || f.id} · ${f.target_host}:${f.target_port}`,
+          }))}
+          placeholder={t("np.chooseForward", "Choose an available forward")}
+          value={value.forward_id}
         />
       </div>
       <div className="space-y-1">
         <Label>{t("np.entry", "Forward entry")}</Label>
         <Combobox
-          placeholder={t("np.chooseEntry", "Choose an active entry")}
+          onChange={(id) => onChange({ ...value, session_id: id })}
           options={sessions.map((s) => ({
             value: s.id,
             label: `${s.address}:${s.port} (${s.id})`,
           }))}
+          placeholder={t("np.chooseEntry", "Choose an active entry")}
           value={value.session_id}
-          onChange={(id) => onChange({ ...value, session_id: id })}
         />
       </div>
       {state && !state.error && !available.length && (

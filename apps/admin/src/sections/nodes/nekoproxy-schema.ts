@@ -1,6 +1,21 @@
 import type { TFunction } from "i18next";
 import { z } from "zod";
 
+export function nekoproxyBindingSchema(t: TFunction) {
+  const required = t("nodes:np.required", "Complete the forwarding settings");
+  return z
+    .discriminatedUnion("action", [
+      z.object({
+        action: z.literal("bind"),
+        forward_id: z.string().min(1, required).max(128, required),
+        session_id: z.string().min(1, required).max(128, required),
+      }),
+      z.object({ action: z.literal("unbind") }),
+      z.object({ action: z.literal("sync") }),
+    ])
+    .optional();
+}
+
 export function nekoproxyOptionsSchema(t: TFunction) {
   const required = t("nodes:np.required", "Complete the forwarding settings");
   const portError = t(

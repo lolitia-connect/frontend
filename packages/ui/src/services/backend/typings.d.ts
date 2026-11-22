@@ -2156,6 +2156,11 @@ declare namespace BackendAPI {
     auto_clear?: boolean;
     clear_days?: number;
     sentry_enabled?: boolean;
+    sentry_error_enabled?: boolean;
+    sentry_logs_enabled?: boolean;
+    sentry_tracing_enabled?: boolean;
+    sentry_metrics_enabled?: boolean;
+    sentry_trace_id_header_enabled?: boolean;
     sentry_dsn?: string;
   };
 
@@ -3778,6 +3783,11 @@ declare namespace BackendAPI {
   };
 
   type UpdateNodeRequest = {
+    nekoproxy_binding?: {
+      action: "bind" | "unbind" | "sync";
+      forward_id?: string;
+      session_id?: string;
+    };
     id: string;
     name: string;
     tags?: string[];

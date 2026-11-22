@@ -36,48 +36,60 @@ async function mockNekoproxy(page: Page, baseURL: string) {
   }[] = [];
   const extraWrites: { path: string; body: unknown }[] = [];
   const apiURL = "https://np.example.test";
+  let node = {
+    id: "1",
+    name: "Existing node",
+    address: "old.example.test",
+    port: 443,
+    server_id: "1",
+    protocol: "vless",
+    protocol_id: "10",
+    enabled: true,
+    tags: null,
+  };
   await page.route(
     /\/v1\/admin\/server\/(nekoproxy\/|node\/(list|update))/,
     async (route) => {
       const path = new URL(route.request().url()).pathname;
       if (route.request().method() !== "GET")
         extraWrites.push({ path, body: route.request().postDataJSON() });
-      if (path.endsWith("/binding") && route.request().method() === "PUT")
-        bindings.push({
-          ...route.request().postDataJSON(),
-          api_url: apiURL,
-          sync_on_save: true,
-        });
       let data: unknown = {};
       if (path.endsWith("/binding") && route.request().method() === "GET")
-        data = {
-          binding: bindings[0],
-          address: bindings.length ? "entry.example.test" : "old.example.test",
-          port: bindings.length ? 24_003 : 443,
-        };
-      if (path.endsWith("/sync")) data = { updated: 1, errors: [] };
-      if (path.endsWith("/node/update") && bindings[0]) {
-        bindings[0].sync_on_save =
-          route.request().postDataJSON().nekoproxy_sync_on_save ??
-          bindings[0].sync_on_save;
+        data = { binding: bindings[0], address: node.address, port: node.port };
+      if (path.endsWith("/node/update")) {
+        const {
+          nekoproxy_binding: change,
+          nekoproxy_sync_on_save: preference,
+          name,
+          address,
+          port,
+        } = route.request().postDataJSON();
+        node = { ...node, name, address, port };
+        if (change?.action === "bind") {
+          bindings[0] = {
+            node_id: node.id,
+            forward_id: change.forward_id,
+            session_id: change.session_id,
+            api_url: apiURL,
+            sync_on_save: bindings[0]?.sync_on_save ?? true,
+          };
+        } else if (change?.action === "unbind") {
+          bindings.length = 0;
+        }
+        if (bindings[0]) {
+          bindings[0].sync_on_save = preference ?? bindings[0].sync_on_save;
+          if (
+            bindings[0].sync_on_save ||
+            change?.action === "bind" ||
+            change?.action === "sync"
+          ) {
+            node.address = "entry.example.test";
+            node.port =
+              bindings[0].session_id === "session-2" ? 24_004 : 24_003;
+          }
+        }
       }
-      if (path.endsWith("/node/list"))
-        data = {
-          total: 1,
-          list: [
-            {
-              id: "1",
-              name: "Existing node",
-              address: "old.example.test",
-              port: 443,
-              server_id: "1",
-              protocol: "vless",
-              protocol_id: "10",
-              enabled: true,
-              tags: null,
-            },
-          ],
-        };
+      if (path.endsWith("/node/list")) data = { total: 1, list: [node] };
       if (path.endsWith("/config"))
         data = { api_url: apiURL, has_api_token: true };
       if (path.endsWith("/state"))
@@ -110,6 +122,13 @@ async function mockNekoproxy(page: Page, baseURL: string) {
                   id: "session-1",
                   address: "entry.example.test",
                   port: 24_003,
+                  status: "active",
+                  group_id: "group-1",
+                },
+                {
+                  id: "session-2",
+                  address: "entry.example.test",
+                  port: 24_004,
                   status: "active",
                   group_id: "group-1",
                 },
@@ -200,7 +219,7 @@ test("the single full-width settings card opens a right-hand connection sheet", 
   });
 });
 
-test("a node editor binds, syncs without losing its draft, and remembers opting out on save", async ({
+test("the node editor saves forwarding changes together with node fields and discards drafts on cancel", async ({
   page,
   baseURL,
 }) => {
@@ -208,82 +227,109 @@ test("a node editor binds, syncs without losing its draft, and remembers opting 
   await signInFixture(page, baseURL!);
   await page.goto("/dashboard/nodes", { waitUntil: "domcontentloaded" });
   const dialog = page.getByRole("dialog");
-  await page
-    .getByRole("row")
-    .filter({ hasText: "Existing node" })
-    .getByRole("button", { name: "Edit", exact: true })
-    .click();
-  await waitForDrawer(page);
-  await dialog
-    .getByRole("button", { name: "Bind an existing forward" })
-    .click();
-  await dialog
-    .getByRole("group", { name: "Choose an available forward" })
-    .click();
-  await page.getByRole("option", { name: /Available forward/ }).click();
-  await dialog.getByRole("button", { name: "Bind and sync entry" }).click();
-  await expect
-    .poll(
-      () => extraWrites.find((item) => item.path.endsWith("/binding"))?.body
-    )
-    .toEqual({ node_id: "1", forward_id: "l4s-1", session_id: "session-1" });
-  const details = dialog.getByRole("region", {
-    name: "Nekoproxy L4 forwarding",
+  const editNode = async (name: string) => {
+    await page
+      .getByRole("row")
+      .filter({ hasText: name })
+      .getByRole("button", { name: "Edit", exact: true })
+      .click();
+    await waitForDrawer(page);
+  };
+  const pickForward = async () => {
+    await dialog
+      .getByRole("group", { name: "Choose an available forward" })
+      .click();
+    await page.getByRole("option", { name: /Available forward/ }).click();
+  };
+  const save = async () => {
+    await dialog.getByRole("button", { name: "Save", exact: true }).click();
+    await expect(dialog).toHaveCount(0);
+  };
+  const cancel = async () => {
+    await dialog.getByRole("button", { name: "Cancel", exact: true }).click();
+    await expect(dialog).toHaveCount(0);
+  };
+  const name = dialog.locator('input[name="name"]');
+  const toggle = dialog.getByRole("switch", {
+    name: "Sync when saving this node",
   });
-  const actions = ["Sync this node now", "Unbind", "Change bound entry"].map(
-    (name) => details.getByRole("button", { name, exact: true })
-  );
-  await expect(details.getByText("session-1", { exact: true })).toBeVisible();
-  await expect(details.getByText("API address", { exact: true })).toHaveCount(
-    0
-  );
-  await expect(details.getByText("https://np.example.test")).toHaveCount(0);
-  for (const width of [1280, 375]) {
-    await page.setViewportSize({ width, height: 812 });
-    await expect(async () => {
-      const boxes = await Promise.all(
-        actions.map((button) => button.boundingBox())
-      );
-      const [first, second, third] = boxes;
-      expect(second!.y).toBeCloseTo(first!.y, 0);
-      expect(third!.y).toBeCloseTo(first!.y, 0);
-      expect(second!.x).toBeGreaterThanOrEqual(first!.x + first!.width);
-      expect(third!.x).toBeGreaterThanOrEqual(second!.x + second!.width);
-    }).toPass({ timeout: 5000 });
-  }
-  await expectNoPageOverflow(page);
+
+  await editNode("Existing node");
+  await pickForward();
   await expect(
-    dialog.getByRole("switch", { name: "Sync when saving this node" })
-  ).toBeChecked();
-  await dialog.locator('input[name="name"]').fill("Unsaved name");
-  await dialog.getByRole("button", { name: "Sync this node now" }).click();
-  await expect
-    .poll(() => extraWrites.find((x) => x.path.endsWith("/sync"))?.body)
-    .toEqual({ node_id: "1" });
-  await expect(dialog.locator('input[name="name"]')).toHaveValue(
-    "Unsaved name"
-  );
+    dialog.getByText(
+      "The selected forwarding entry will be used when you save."
+    )
+  ).toBeVisible();
+  await cancel();
+  expect(extraWrites).toHaveLength(0);
+
+  await editNode("Existing node");
   await expect(
-    dialog.getByRole("button", { name: "Sync this node now" })
-  ).toBeEnabled();
+    dialog.getByText("This node is not bound to a Nekoproxy forward.")
+  ).toBeVisible();
+  await name.fill("Bound node");
+  await pickForward();
+  await save();
+  expect(extraWrites[0]?.body).toMatchObject({
+    id: "1",
+    name: "Bound node",
+    nekoproxy_binding: {
+      action: "bind",
+      forward_id: "l4s-1",
+      session_id: "session-1",
+    },
+  });
+
+  await editNode("Bound node");
+  await expect(dialog.getByText("session-1", { exact: true })).toBeVisible();
+  await expect(toggle).toBeChecked();
+  await dialog.getByRole("group", { name: "Choose an active entry" }).click();
+  await page.getByRole("option", { name: /session-2/ }).click();
   await dialog.getByText("Sync when saving this node", { exact: true }).click();
-  await dialog.getByRole("button", { name: "Confirm", exact: true }).click();
-  await expect(dialog).toHaveCount(0);
-  await expect
-    .poll(() => extraWrites.find((x) => x.path.endsWith("/node/update"))?.body)
-    .toMatchObject({
-      id: "1",
-      name: "Unsaved name",
-      nekoproxy_sync_on_save: false,
-    });
-  await page
-    .getByRole("row")
-    .filter({ hasText: "Existing node" })
-    .getByRole("button", { name: "Edit", exact: true })
-    .click();
+  await save();
+  expect(extraWrites[1]?.body).toMatchObject({
+    id: "1",
+    nekoproxy_binding: {
+      action: "bind",
+      forward_id: "l4s-1",
+      session_id: "session-2",
+    },
+    nekoproxy_sync_on_save: false,
+  });
+
+  await editNode("Bound node");
+  await expect(dialog.getByText("session-2", { exact: true })).toBeVisible();
+  await expect(toggle).not.toBeChecked();
+  await dialog.getByRole("button", { name: "Sync entry on next save" }).click();
   await expect(
-    dialog.getByRole("switch", { name: "Sync when saving this node" })
-  ).not.toBeChecked();
+    dialog.getByText("The entry will be synchronized when you save.")
+  ).toBeVisible();
+  expect(extraWrites).toHaveLength(2);
+  await save();
+  expect(extraWrites[2]?.body).toMatchObject({
+    id: "1",
+    nekoproxy_binding: { action: "sync" },
+  });
+
+  await editNode("Bound node");
+  await dialog.getByRole("button", { name: "Unbind", exact: true }).click();
+  await expect(
+    dialog.getByText("The binding will be removed when you save.")
+  ).toBeVisible();
+  await cancel();
+  expect(extraWrites).toHaveLength(3);
+  await editNode("Bound node");
+  await expect(dialog.getByText("session-2", { exact: true })).toBeVisible();
+  await dialog.getByRole("button", { name: "Unbind", exact: true }).click();
+  await save();
+  expect(extraWrites[3]?.body).toMatchObject({
+    id: "1",
+    nekoproxy_binding: { action: "unbind" },
+  });
+  expect(extraWrites.map(({ path }) => path)).toEqual(
+    new Array<string>(4).fill("/v1/admin/server/node/update")
+  );
 });
 
 test("node creation sends forwarding allocation settings without a guessed entry port", async ({

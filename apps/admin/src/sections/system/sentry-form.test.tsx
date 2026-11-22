@@ -30,6 +30,11 @@ it("validates the project DSN and saves only Sentry settings", async () => {
         auto_clear: true,
         clear_days: 14,
         sentry_enabled: true,
+        sentry_error_enabled: true,
+        sentry_logs_enabled: false,
+        sentry_tracing_enabled: false,
+        sentry_metrics_enabled: false,
+        sentry_trace_id_header_enabled: false,
         sentry_dsn: "https://old@dsn.example/7",
       },
     },
@@ -49,6 +54,7 @@ it("validates the project DSN and saves only Sentry settings", async () => {
   expect(option).toBeTruthy();
   fireEvent.click(option);
   const input = await screen.findByDisplayValue("https://old@dsn.example/7");
+  expect(screen.getAllByRole("switch")).toHaveLength(5);
   fireEvent.change(input, {
     target: { value: "https://wrong-project.example" },
   });
@@ -59,7 +65,11 @@ it("validates the project DSN and saves only Sentry settings", async () => {
   fireEvent.click(screen.getByRole("button", { name: "common.save" }));
   await waitFor(() =>
     expect(save).toHaveBeenCalledWith({
-      sentry_enabled: true,
+      sentry_error_enabled: true,
+      sentry_logs_enabled: false,
+      sentry_tracing_enabled: false,
+      sentry_metrics_enabled: false,
+      sentry_trace_id_header_enabled: false,
       sentry_dsn: "https://new@dsn.example/8",
     })
   );

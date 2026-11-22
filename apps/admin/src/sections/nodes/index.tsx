@@ -79,7 +79,12 @@ export default function Nodes() {
       node_type: values.node_type,
       is_hidden: values.is_hidden ?? false,
       node_group_ids: values.node_group_ids || [],
-      ...(row && values.nekoproxy_sync_on_save !== undefined
+      ...(row && values.nekoproxy_binding
+        ? { nekoproxy_binding: values.nekoproxy_binding }
+        : {}),
+      ...(row &&
+      values.nekoproxy_binding?.action !== "unbind" &&
+      values.nekoproxy_sync_on_save !== undefined
         ? { nekoproxy_sync_on_save: values.nekoproxy_sync_on_save }
         : {}),
       ...(!row && values.nekoproxy ? { nekoproxy: values.nekoproxy } : {}),
@@ -275,7 +280,6 @@ export default function Nodes() {
           loading={loading}
           nodeID={String(editing.id)}
           onClose={() => setEditing(null)}
-          onEntryChanged={refreshNodes}
           onSubmit={async (values) => {
             setLoading(true);
             try {

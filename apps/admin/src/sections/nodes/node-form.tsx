@@ -24,22 +24,21 @@ import {
   getGroupConfig,
   getNodeGroupList,
 } from "@workspace/ui/services/admin/group";
-import {
-  getNekoproxyBinding,
-  type NekoproxyNodeEntry,
-} from "@workspace/ui/services/admin/nekoproxy";
+import { getNekoproxyBinding } from "@workspace/ui/services/admin/nekoproxy";
 import type { TFunction } from "i18next";
 import { useEffect, useId, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
 import { z } from "zod";
 import { useNode } from "@/stores/node";
 import { useServer } from "@/stores/server";
 import NekoproxyFields from "./nekoproxy-fields";
 import NekoproxyNodeSettings from "./nekoproxy-node-settings";
 import { bindingKey, nekoproxyStateKey } from "./nekoproxy-queries";
-import { nekoproxyOptionsSchema } from "./nekoproxy-schema";
+import {
+  nekoproxyBindingSchema,
+  nekoproxyOptionsSchema,
+} from "./nekoproxy-schema";
 
 export type ProtocolName =
   | "shadowsocks"
@@ -70,6 +69,7 @@ export const buildSchema = (t: TFunction) =>
       protocol_id: z.string().default(""),
       address: z.string().trim(),
       nekoproxy: nekoproxyOptionsSchema(t),
+      nekoproxy_binding: nekoproxyBindingSchema(t),
       nekoproxy_sync_on_save: z.boolean().optional(),
       port: z
         .number({
@@ -84,7 +84,11 @@ export const buildSchema = (t: TFunction) =>
       is_hidden: z.optional(z.boolean()).default(false),
     })
     .superRefine((values, ctx) => {
-      if (!values.nekoproxy) {
+      if (
+        !values.nekoproxy &&
+        values.nekoproxy_binding?.action !== "bind" &&
+        values.nekoproxy_binding?.action !== "sync"
+      ) {
         if (!values.address)
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
@@ -149,27 +153,15 @@ export default function NodeForm(props: {
   title: string;
   loading?: boolean;
   nodeID?: string;
-  onEntryChanged?: () => void;
   initialValues?: Partial<NodeFormValues>;
   onSubmit: (values: NodeFormValues) => Promise<boolean> | boolean;
 }) {
-  const {
-    trigger,
-    title,
-    loading,
-    initialValues,
-    nodeID,
-    onEntryChanged,
-    onSubmit,
-  } = props;
+  const { trigger, title, loading, initialValues, nodeID, onSubmit } = props;
   const { t } = useTranslation("nodes");
   const Scheme = useMemo(() => buildSchema(t), [t]);
   const [open, setOpen] = useState(Boolean(nodeID));
   const formId = useId();
   const client = useQueryClient();
-  const [entryBusy, setEntryBusy] = useState(false);
-  const [preference, setPreference] = useState<boolean>();
-  const busy = Boolean(loading || entryBusy);
   const nodeEntry = useQuery({
     queryKey: bindingKey(nodeID || ""),
     enabled: open && Boolean(nodeID),
@@ -215,6 +207,13 @@ export default function NodeForm(props: {
   const serverId = form.watch("server_id");
   const nodeType = form.watch("node_type");
   const nekoproxy = form.watch("nekoproxy");
+  const bindingDraft = form.watch("nekoproxy_binding");
+  const preference = form.watch("nekoproxy_sync_on_save");
+  const useForwardEntry =
+    nekoproxy ||
+    bindingDraft?.action === "bind" ||
+    bindingDraft?.action === "sync";
+  const busy = Boolean(loading || form.formState.isSubmitting);
   const isFrontNode = nodeType === "front";
 
   const { servers, getAvailableProtocols } = useServer();
@@ -350,44 +349,8 @@ export default function NodeForm(props: {
     }
   }
 
-  async function runEntryAction(
-    action: () => Promise<unknown>,
-    applyEndpoint: boolean
-  ) {
-    if (busy || !nodeID) return false;
-    setEntryBusy(true);
-    try {
-      await action();
-      const current: NekoproxyNodeEntry = (await getNekoproxyBinding(nodeID))
-        .data.data;
-      client.setQueryData(bindingKey(nodeID), current);
-      if (applyEndpoint) {
-        form.setValue("address", current.address);
-        form.setValue("port", current.port);
-      }
-      if (!current.binding) setPreference(undefined);
-      await client.invalidateQueries({ queryKey: nekoproxyStateKey });
-      onEntryChanged?.();
-      toast.success(
-        applyEndpoint
-          ? t("np.nodeSynced", "Node entry synchronized")
-          : t("np.unboundDone", "Binding removed")
-      );
-      return true;
-    } catch (error) {
-      toast.error(
-        error instanceof Error
-          ? error.message
-          : t("np.failed", "The operation failed. Please retry.")
-      );
-      return false;
-    } finally {
-      setEntryBusy(false);
-    }
-  }
-
   async function handleSubmit(values: NodeFormValues) {
-    if (busy) return;
+    if (loading) return;
     const normalizedValues =
       values.node_type === "front"
         ? {
@@ -398,19 +361,18 @@ export default function NodeForm(props: {
           }
         : values;
 
-    const result = await onSubmit({
-      ...normalizedValues,
-      ...(nodeID && nodeEntry.data?.binding && preference !== undefined
-        ? { nekoproxy_sync_on_save: preference }
-        : {}),
-    });
+    const result = await onSubmit(normalizedValues);
     if (result) {
       if (nodeID)
         await client.invalidateQueries({
           queryKey: bindingKey(nodeID),
           refetchType: "none",
         });
-      if (values.nekoproxy || nodeEntry.data?.binding)
+      if (
+        values.nekoproxy ||
+        values.nekoproxy_binding ||
+        nodeEntry.data?.binding
+      )
         await client.invalidateQueries({
           queryKey: nekoproxyStateKey,
           refetchType: "none",
@@ -422,7 +384,7 @@ export default function NodeForm(props: {
   }
 
   function changeOpen(value: boolean) {
-    if (busy || form.formState.isSubmitting) return;
+    if (busy) return;
     if (!value) props.onClose?.();
     setOpen(value);
   }
@@ -433,7 +395,6 @@ export default function NodeForm(props: {
         <Sheet.Trigger>
           <Button
             onClick={() => {
-              setPreference(undefined);
               form.reset({
                 name: "",
                 sort: 0,
@@ -595,7 +556,7 @@ export default function NodeForm(props: {
                       </FormItem>
                     )}
                   />
-                  {!nekoproxy && (
+                  {!useForwardEntry && (
                     <>
                       <FormField
                         control={form.control}
@@ -811,11 +772,22 @@ export default function NodeForm(props: {
                     <NekoproxyNodeSettings
                       disabled={busy}
                       entry={nodeEntry.data}
+                      invalid={Boolean(form.formState.errors.nekoproxy_binding)}
                       isError={nodeEntry.isError}
                       nodeID={nodeID}
-                      onAction={runEntryAction}
-                      onPreferenceChange={setPreference}
+                      onChange={(value) => {
+                        form.setValue("nekoproxy_binding", value, {
+                          shouldDirty: true,
+                        });
+                        form.clearErrors("nekoproxy_binding");
+                      }}
+                      onPreferenceChange={(value) =>
+                        form.setValue("nekoproxy_sync_on_save", value, {
+                          shouldDirty: true,
+                        })
+                      }
                       preference={preference}
+                      value={bindingDraft}
                     />
                   )}
                 </form>
@@ -830,12 +802,8 @@ export default function NodeForm(props: {
               >
                 {t("cancel", "Cancel")}
               </Button>
-              <Button
-                disabled={busy || form.formState.isSubmitting}
-                form={formId}
-                type="submit"
-              >
-                {t("confirm", "Confirm")}
+              <Button disabled={busy} form={formId} type="submit">
+                {nodeID ? t("save", "Save") : t("confirm", "Confirm")}
               </Button>
             </Sheet.Footer>
             <Sheet.CloseTrigger aria-label="Close" />

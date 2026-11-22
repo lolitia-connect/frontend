@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Lolitia local backend",
-    "version": "05dfea86d573a92f74635122a64874ff3c79df9e"
+    "version": "7e079783f94a2256002e15ffb557ed471b179b7e"
   },
   "paths": {
     "/v1/admin/ads/": {
@@ -13189,6 +13189,14 @@
           "auto_clear": { "type": "boolean", "nullable": true },
           "clear_days": { "type": "integer", "format": "int64" },
           "sentry_enabled": { "type": "boolean", "nullable": true },
+          "sentry_error_enabled": { "type": "boolean", "nullable": true },
+          "sentry_logs_enabled": { "type": "boolean", "nullable": true },
+          "sentry_tracing_enabled": { "type": "boolean", "nullable": true },
+          "sentry_metrics_enabled": { "type": "boolean", "nullable": true },
+          "sentry_trace_id_header_enabled": {
+            "type": "boolean",
+            "nullable": true
+          },
           "sentry_dsn": { "type": "string" }
         }
       },
@@ -13288,6 +13296,15 @@
           "forward_id",
           "session_id"
         ]
+      },
+      "NekoproxyBindingUpdate": {
+        "type": "object",
+        "properties": {
+          "action": { "type": "string" },
+          "forward_id": { "type": "string" },
+          "session_id": { "type": "string" }
+        },
+        "required": ["action"]
       },
       "NekoproxyChain": {
         "type": "object",
@@ -16084,6 +16101,10 @@
       "UpdateNodeRequest": {
         "type": "object",
         "properties": {
+          "nekoproxy_binding": {
+            "$ref": "#/components/schemas/NekoproxyBindingUpdate",
+            "nullable": true
+          },
           "nekoproxy_sync_on_save": { "type": "boolean", "nullable": true },
           "id": { "type": "string" },
           "name": { "type": "string" },

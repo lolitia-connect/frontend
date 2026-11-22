@@ -1084,6 +1084,11 @@ declare namespace API {
     auto_clear?: boolean;
     clear_days?: number;
     sentry_enabled?: boolean;
+    sentry_error_enabled?: boolean;
+    sentry_logs_enabled?: boolean;
+    sentry_tracing_enabled?: boolean;
+    sentry_metrics_enabled?: boolean;
+    sentry_trace_id_header_enabled?: boolean;
     sentry_dsn?: string;
   };
 
@@ -1904,6 +1909,11 @@ declare namespace API {
   };
 
   type UpdateNodeRequest = {
+    nekoproxy_binding?: {
+      action: "bind" | "unbind" | "sync";
+      forward_id?: string;
+      session_id?: string;
+    };
     nekoproxy_sync_on_save?: boolean;
     id: string;
     name: string;

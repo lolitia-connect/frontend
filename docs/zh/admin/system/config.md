@@ -271,7 +271,7 @@ Redis缓存设置:
 
 - **日志级别**: DEBUG/INFO/WARNING/ERROR
 - **日志渠道**: 文件/数据库/云服务
-- **Sentry**默认关闭。在管理端的「系统设置 → 日志设置 → Sentry」填写后端项目的公开 DSN，启用并保存即可生效。设置会在服务重启后恢复。后端会向该项目上报 Error Monitoring、Logging、Tracing 和 Application Metrics 数据，并包含版本与环境信息。兑换资格不足、无效 HTTP 请求等正常业务拒绝不会按错误上报。
+- **Sentry**默认关闭。在管理端的「系统设置 → 日志设置 → Sentry」填写后端项目的公开 DSN，并分别配置 Error Monitoring、Logging、Tracing、Application Metrics 和 Trace ID Response Header 五个开关，保存即可生效。启用 Trace ID Response Header 后，后端响应会增加 `X-Trace-Id`，值为 Sentry Trace ID。设置会在服务重启后恢复。后端会向该项目上报已启用的产品数据，并包含版本与环境信息。兑换资格不足、无效 HTTP 请求等正常业务拒绝不会按错误上报。
 - **日志保留**: 日志保留天数
 - **日志轮转**: 日志文件轮转策略
 

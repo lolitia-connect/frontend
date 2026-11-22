@@ -4594,6 +4594,31 @@
         "tag": "json:\"sentry_enabled,omitempty\""
       },
       {
+        "name": "SentryErrorEnabled",
+        "type": "*bool",
+        "tag": "json:\"sentry_error_enabled,omitempty\""
+      },
+      {
+        "name": "SentryLogsEnabled",
+        "type": "*bool",
+        "tag": "json:\"sentry_logs_enabled,omitempty\""
+      },
+      {
+        "name": "SentryTracingEnabled",
+        "type": "*bool",
+        "tag": "json:\"sentry_tracing_enabled,omitempty\""
+      },
+      {
+        "name": "SentryMetricsEnabled",
+        "type": "*bool",
+        "tag": "json:\"sentry_metrics_enabled,omitempty\""
+      },
+      {
+        "name": "SentryTraceIDHeaderEnabled",
+        "type": "*bool",
+        "tag": "json:\"sentry_trace_id_header_enabled,omitempty\""
+      },
+      {
         "name": "SentryDSN",
         "type": "string",
         "tag": "json:\"sentry_dsn,omitempty\""
@@ -4776,6 +4801,23 @@
         "name": "SessionID",
         "type": "string",
         "tag": "json:\"session_id\""
+      }
+    ],
+    "NekoproxyBindingUpdate": [
+      {
+        "name": "Action",
+        "type": "string",
+        "tag": "json:\"action\" validate:\"oneof=bind unbind sync\""
+      },
+      {
+        "name": "ForwardID",
+        "type": "string",
+        "tag": "json:\"forward_id,omitempty\" validate:\"max=128\""
+      },
+      {
+        "name": "SessionID",
+        "type": "string",
+        "tag": "json:\"session_id,omitempty\" validate:\"max=128\""
       }
     ],
     "NekoproxyChain": [
@@ -9926,6 +9968,11 @@
     ],
     "UpdateNodeRequest": [
       {
+        "name": "NekoproxyBinding",
+        "type": "*NekoproxyBindingUpdate",
+        "tag": "json:\"nekoproxy_binding,omitempty\""
+      },
+      {
         "name": "NekoproxySyncOnSave",
         "type": "*bool",
         "tag": "json:\"nekoproxy_sync_on_save,omitempty\""
@@ -13651,6 +13698,6 @@
       "path": "/v2/server/:server_id"
     }
   ],
-  "backendCommit": "05dfea86d573a92f74635122a64874ff3c79df9e",
+  "backendCommit": "7e079783f94a2256002e15ffb557ed471b179b7e",
   "backendDirty": true
 }

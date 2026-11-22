@@ -1,42 +1,41 @@
 import { Button } from "@workspace/ui/components/button";
 import { Label } from "@workspace/ui/components/label";
 import { Switch } from "@workspace/ui/components/switch";
-import {
-  bindNekoproxy,
-  type NekoproxyNodeEntry,
-  syncNekoproxy,
-  unbindNekoproxy,
-} from "@workspace/ui/services/admin/nekoproxy";
-import { useId, useState } from "react";
+import type { NekoproxyNodeEntry } from "@workspace/ui/services/admin/nekoproxy";
+import { useId } from "react";
 import { useTranslation } from "react-i18next";
-import ForwardPicker, { type EntryChoice } from "./nekoproxy-forward-picker";
+import ForwardPicker from "./nekoproxy-forward-picker";
 import { activeSessions, useForwardOptions } from "./nekoproxy-queries";
+import type { NodeFormValues } from "./node-form";
+
+type BindingDraft = NodeFormValues["nekoproxy_binding"];
+const emptyChoice = { forward_id: "", session_id: "" };
 
 export default function NekoproxyNodeSettings({
   nodeID,
   entry,
   isError,
   disabled,
+  invalid,
   preference,
   onPreferenceChange,
-  onAction,
+  onChange,
+  value,
 }: {
   nodeID: string;
   entry?: NekoproxyNodeEntry;
   isError: boolean;
   disabled: boolean;
+  invalid: boolean;
   preference?: boolean;
-  onPreferenceChange: (value: boolean) => void;
-  onAction: (
-    action: () => Promise<unknown>,
-    applyEndpoint: boolean
-  ) => Promise<boolean>;
+  onPreferenceChange: (value: boolean | undefined) => void;
+  onChange: (value: BindingDraft) => void;
+  value: BindingDraft;
 }) {
   const { t } = useTranslation("nodes");
   const id = useId();
   const binding = entry?.binding;
-  const [choice, setChoice] = useState<EntryChoice | null>(null);
-  const { config, state } = useForwardOptions(Boolean(binding || choice));
+  const { config, state } = useForwardOptions(Boolean(entry) && !isError);
   const sameAPI = binding?.api_url === state.data?.api_url;
   const forward = sameAPI
     ? state.data?.forwards.find((f) => f.id === binding?.forward_id)
@@ -44,14 +43,20 @@ export default function NekoproxyNodeSettings({
   const session =
     forward &&
     activeSessions(forward).find((s) => s.id === binding?.session_id);
-  const selected = state.data?.forwards.find(
-    (f) => f.id === choice?.forward_id
-  );
-  const canBind =
-    selected &&
-    !state.data?.error &&
-    activeSessions(selected).some((s) => s.id === choice?.session_id);
   const unavailable = binding && state.data && !session;
+  const choice =
+    value?.action === "bind"
+      ? value
+      : binding && session && value?.action !== "unbind"
+        ? binding
+        : emptyChoice;
+  const syncOnSave = preference ?? binding?.sync_on_save ?? true;
+
+  function undoChange() {
+    onChange(undefined);
+    if (!binding) onPreferenceChange(undefined);
+  }
+
   return (
     <section
       aria-labelledby={`${id}-title`}
@@ -96,82 +101,14 @@ export default function NekoproxyNodeSettings({
       ) : (
         <p role="status">{t("np.loading", "Loading Nekoproxy…")}</p>
       )}
-      {entry && (
-        <div className="flex gap-2 *:h-auto *:min-h-9 *:py-1">
-          {binding && !isError && (
-            <>
-              <Button
-                disabled={
-                  disabled ||
-                  (Boolean(config.data) &&
-                    config.data?.api_url !== binding.api_url)
-                }
-                onClick={() =>
-                  onAction(async () => {
-                    const result = (await syncNekoproxy({ node_id: nodeID }))
-                      .data.data;
-                    if (result?.updated !== 1 || result.errors.length)
-                      throw new Error(
-                        result?.errors[0]?.message ||
-                          t(
-                            "np.unavailable",
-                            "This forward is unavailable on the connected service."
-                          )
-                      );
-                  }, true)
-                }
-                size="sm"
-                type="button"
-              >
-                {t("np.syncNow", "Sync this node now")}
-              </Button>
-              <Button
-                disabled={disabled}
-                onClick={async () => {
-                  if (
-                    await onAction(
-                      () => unbindNekoproxy({ node_id: nodeID }),
-                      false
-                    )
-                  )
-                    setChoice(null);
-                }}
-                size="sm"
-                type="button"
-                variant="outline"
-              >
-                {t("np.unbind", "Unbind")}
-              </Button>
-            </>
-          )}
-          <Button
-            disabled={disabled}
-            onClick={() =>
-              setChoice(
-                choice
-                  ? null
-                  : {
-                      forward_id: sameAPI && binding ? binding.forward_id : "",
-                      session_id: sameAPI && binding ? binding.session_id : "",
-                    }
-              )
-            }
-            size="sm"
-            type="button"
-            variant="outline"
-          >
-            {choice
-              ? t("cancel", "Cancel")
-              : binding
-                ? t("np.changeEntry", "Change bound entry")
-                : t("np.bindExisting", "Bind an existing forward")}
-          </Button>
-        </div>
-      )}
-      {choice && (
+      {entry && !isError && (
         <>
-          {!(config.isLoading || config.data?.has_api_token) && (
-            <p>
+          {!(
+            config.isLoading ||
+            config.data?.has_api_token ||
+            config.isError
+          ) && (
+            <p className="text-muted text-sm">
               {t(
                 "np.configureFirst",
                 "Configure the Nekoproxy connection at the top of Node Management first."
@@ -182,30 +119,83 @@ export default function NekoproxyNodeSettings({
             <p role="status">{t("np.loading", "Loading Nekoproxy…")}</p>
           )}
           {config.data?.has_api_token && state.data && !state.data.error && (
+            <ForwardPicker
+              nodeID={nodeID}
+              onChange={(next) => {
+                if (disabled) return;
+                if (!next.forward_id) {
+                  if (value?.action === "bind") undoChange();
+                  return;
+                }
+                const isSaved =
+                  sameAPI &&
+                  next.forward_id === binding?.forward_id &&
+                  next.session_id === binding?.session_id;
+                onChange(isSaved ? undefined : { action: "bind", ...next });
+              }}
+              state={state.data}
+              value={choice}
+            />
+          )}
+          {binding &&
+            value?.action !== "sync" &&
+            value?.action !== "unbind" && (
+              <div className="flex flex-wrap gap-2">
+                {value?.action !== "bind" && session && (
+                  <Button
+                    disabled={disabled}
+                    onClick={() => onChange({ action: "sync" })}
+                    size="sm"
+                    type="button"
+                    variant="outline"
+                  >
+                    {t("np.syncNextSave", "Sync entry on next save")}
+                  </Button>
+                )}
+                <Button
+                  disabled={disabled}
+                  onClick={() => onChange({ action: "unbind" })}
+                  size="sm"
+                  type="button"
+                  variant="outline"
+                >
+                  {t("np.unbind", "Unbind")}
+                </Button>
+              </div>
+            )}
+          {value && (
             <>
-              <ForwardPicker
-                nodeID={nodeID}
-                onChange={setChoice}
-                state={state.data}
-                value={choice}
-              />
               <Button
-                disabled={disabled || !canBind || state.isFetching}
-                onClick={async () => {
-                  if (
-                    await onAction(
-                      () => bindNekoproxy({ node_id: nodeID, ...choice }),
-                      true
-                    )
-                  )
-                    setChoice(null);
-                }}
+                disabled={disabled}
+                onClick={undoChange}
                 size="sm"
                 type="button"
+                variant="outline"
               >
-                {t("np.bindSync", "Bind and sync entry")}
+                {t("np.undoChange", "Undo forwarding change")}
               </Button>
+              <p className="text-muted text-sm" role="status">
+                {value.action === "unbind"
+                  ? t(
+                      "np.pendingUnbind",
+                      "The binding will be removed when you save."
+                    )
+                  : value.action === "sync"
+                    ? t(
+                        "np.pendingSync",
+                        "The entry will be synchronized when you save."
+                      )
+                    : t(
+                        "np.pendingBind",
+                        "The selected forwarding entry will be used when you save."
+                      )}
+              </p>
             </>
+          )}
+          {invalid && (
+            <p className="text-danger text-sm" role="alert">
+              {t("np.required", "Complete the forwarding settings")}
+            </p>
           )}
         </>
       )}
@@ -221,7 +211,7 @@ export default function NekoproxyNodeSettings({
             )}
         </p>
       )}
-      {binding && (
+      {(binding || value?.action === "bind") && value?.action !== "unbind" && (
         <div className="flex items-center justify-between gap-3 border-t pt-3">
           <div>
             <Label htmlFor={`${id}-toggle`} id={`${id}-save`}>
@@ -236,7 +226,7 @@ export default function NekoproxyNodeSettings({
           </div>
           <Switch
             aria-labelledby={`${id}-save`}
-            checked={preference ?? binding.sync_on_save}
+            checked={syncOnSave}
             disabled={disabled}
             id={`${id}-toggle`}
             onCheckedChange={onPreferenceChange}

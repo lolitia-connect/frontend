@@ -54,14 +54,26 @@ function SentryEditor({
   const form = useForm({
     resetOptions: { keepDirtyValues: true },
     values: {
-      sentry_enabled: settings.sentry_enabled ?? false,
+      sentry_error_enabled:
+        settings.sentry_error_enabled ?? settings.sentry_enabled ?? false,
+      sentry_logs_enabled: settings.sentry_logs_enabled ?? false,
+      sentry_tracing_enabled: settings.sentry_tracing_enabled ?? false,
+      sentry_metrics_enabled: settings.sentry_metrics_enabled ?? false,
+      sentry_trace_id_header_enabled:
+        settings.sentry_trace_id_header_enabled ?? false,
       sentry_dsn: settings.sentry_dsn ?? "",
     },
   });
   const save = form.handleSubmit(async (values) => {
     const update = { ...values, sentry_dsn: values.sentry_dsn.trim() };
+    const anyEnabled =
+      update.sentry_error_enabled ||
+      update.sentry_logs_enabled ||
+      update.sentry_tracing_enabled ||
+      update.sentry_metrics_enabled ||
+      update.sentry_trace_id_header_enabled;
     if (
-      (update.sentry_enabled || update.sentry_dsn) &&
+      (anyEnabled || update.sentry_dsn) &&
       !publicProjectDsn(update.sentry_dsn)
     ) {
       form.setError("sentry_dsn", { message: t("sentry.invalidDsn") });
@@ -85,10 +97,10 @@ function SentryEditor({
         <Sheet.Body className="space-y-4 px-6">
           <FormField
             control={form.control}
-            name="sentry_enabled"
+            name="sentry_error_enabled"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("sentry.enable")}</FormLabel>
+                <FormLabel>{t("sentry.errorMonitoring")}</FormLabel>
                 <FormControl>
                   <Switch
                     checked={field.value}
@@ -96,7 +108,85 @@ function SentryEditor({
                     onCheckedChange={field.onChange}
                   />
                 </FormControl>
-                <FormDescription>{t("sentry.description")}</FormDescription>
+                <FormDescription>
+                  {t("sentry.errorMonitoringDescription")}
+                </FormDescription>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="sentry_logs_enabled"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("sentry.logging")}</FormLabel>
+                <FormControl>
+                  <Switch
+                    checked={field.value}
+                    className="float-end"
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+                <FormDescription>
+                  {t("sentry.loggingDescription")}
+                </FormDescription>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="sentry_tracing_enabled"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("sentry.tracing")}</FormLabel>
+                <FormControl>
+                  <Switch
+                    checked={field.value}
+                    className="float-end"
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+                <FormDescription>
+                  {t("sentry.tracingDescription")}
+                </FormDescription>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="sentry_metrics_enabled"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("sentry.applicationMetrics")}</FormLabel>
+                <FormControl>
+                  <Switch
+                    checked={field.value}
+                    className="float-end"
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+                <FormDescription>
+                  {t("sentry.applicationMetricsDescription")}
+                </FormDescription>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="sentry_trace_id_header_enabled"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("sentry.traceIDHeader")}</FormLabel>
+                <FormControl>
+                  <Switch
+                    checked={field.value}
+                    className="float-end"
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+                <FormDescription>
+                  {t("sentry.traceIDHeaderDescription")}
+                </FormDescription>
               </FormItem>
             )}
           />

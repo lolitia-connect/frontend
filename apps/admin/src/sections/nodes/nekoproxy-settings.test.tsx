@@ -16,6 +16,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import NekoproxyConnectionSheet from "./nekoproxy-connection-sheet";
 import NekoproxyFields from "./nekoproxy-fields";
 import NekoproxyNodeSettings from "./nekoproxy-node-settings";
+import type { NodeFormValues } from "./node-form";
 
 const mocks = vi.hoisted(() => ({
   useQuery: vi.fn(),
@@ -24,7 +25,6 @@ const mocks = vi.hoisted(() => ({
   bind: vi.fn(),
   unbind: vi.fn(),
   sync: vi.fn(),
-  changed: vi.fn(),
 }));
 vi.mock("@tanstack/react-query", () => ({
   useQuery: mocks.useQuery,
@@ -227,14 +227,9 @@ const binding = {
   session_id: "session-1",
   sync_on_save: false,
 };
-function settings(
-  bound: boolean,
-  action = async (fn: () => Promise<unknown>) => {
-    await fn();
-    return true;
-  }
-) {
-  render(
+function Settings({ bound }: { bound: boolean }) {
+  const [value, setValue] = useState<NodeFormValues["nekoproxy_binding"]>();
+  return (
     <NekoproxyNodeSettings
       disabled={false}
       entry={{
@@ -242,61 +237,45 @@ function settings(
         port: 443,
         binding: bound ? binding : undefined,
       }}
+      invalid={false}
       isError={false}
       nodeID="2"
-      onAction={action}
-      onPreferenceChange={mocks.changed}
+      onChange={setValue}
+      onPreferenceChange={vi.fn()}
+      value={value}
     />
   );
 }
+
 describe("per-node forwarding settings", () => {
-  it("binds the displayed node without asking for another node", async () => {
-    settings(false);
-    fireEvent.click(
-      screen.getByRole("button", { name: "Bind an existing forward" })
-    );
-    fireEvent.change(
-      screen.getByRole("combobox", { name: "Choose an available forward" }),
-      { target: { value: "l4s-1" } }
-    );
-    fireEvent.click(
-      screen.getByRole("button", { name: "Bind and sync entry" })
-    );
-    await waitFor(() =>
-      expect(mocks.bind).toHaveBeenCalledWith({
-        node_id: "2",
-        forward_id: "l4s-1",
-        session_id: "session-1",
-      })
-    );
-  });
-  it("manual sync targets only this node even with sync on save off", async () => {
-    mocks.sync.mockResolvedValue({
-      data: { data: { updated: 1, errors: [] } },
+  it("stages a selection immediately and lets the user undo it without writing", () => {
+    render(<Settings bound={false} />);
+    const picker = screen.getByRole("combobox", {
+      name: "Choose an available forward",
     });
-    settings(true);
-    const toggle = screen.getByRole("switch", {
-      name: "Sync when saving this node",
-    });
+    fireEvent.change(picker, { target: { value: "l4s-1" } });
     expect(
-      toggle.getAttribute("aria-checked") === "true" ||
-        (toggle as HTMLInputElement).checked
-    ).toBeFalsy();
-    fireEvent.click(screen.getByRole("button", { name: "Sync this node now" }));
-    await waitFor(() =>
-      expect(mocks.sync).toHaveBeenCalledWith({ node_id: "2" })
+      screen.getByText(
+        "The selected forwarding entry will be used when you save."
+      )
+    ).toBeTruthy();
+    expect(mocks.bind).not.toHaveBeenCalled();
+    fireEvent.click(
+      screen.getByRole("button", { name: "Undo forwarding change" })
     );
-    expect(mocks.changed).not.toHaveBeenCalled();
+    expect((picker as HTMLSelectElement).value).toBe("");
   });
-  it("retains local binding details and unbind when the remote is unavailable", async () => {
+
+  it("retains local binding details and stages an unbind when the remote is unavailable", () => {
     state.error = "Remote unavailable";
     state.forwards = [];
-    settings(true);
+    render(<Settings bound />);
     expect(screen.getByRole("alert").textContent).toBe("Remote unavailable");
     expect(screen.getByText("session-1")).toBeTruthy();
     fireEvent.click(screen.getByRole("button", { name: "Unbind" }));
-    await waitFor(() =>
-      expect(mocks.unbind).toHaveBeenCalledWith({ node_id: "2" })
-    );
+    expect(
+      screen.getByText("The binding will be removed when you save.")
+    ).toBeTruthy();
+    expect(mocks.unbind).not.toHaveBeenCalled();
   });
 });

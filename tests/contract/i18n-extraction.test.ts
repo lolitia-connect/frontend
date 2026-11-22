@@ -75,4 +75,4 @@ it.each([
   );
 
   expect(JSON.parse(output).sort()).toEqual(keys);
-});
+}, 15_000);

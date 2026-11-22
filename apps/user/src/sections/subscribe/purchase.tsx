@@ -38,7 +38,11 @@ export default function Purchase({
   const [loading, startTransition] = useTransition();
   const lastSuccessOrderRef = useRef<any>(null);
 
-  const { data: order } = useQuery({
+  const {
+    data: order,
+    error,
+    isFetching,
+  } = useQuery({
     enabled: !!subscribe?.id,
     queryKey: [
       "preCreateOrder",
@@ -59,6 +63,9 @@ export default function Purchase({
         }
         return result;
       } catch (error) {
+        if (params.coupon) {
+          throw error;
+        }
         if (lastSuccessOrderRef.current) {
           return lastSuccessOrderRef.current;
         }
@@ -67,6 +74,15 @@ export default function Purchase({
     },
   });
 
+  const couponStatus = params.coupon
+    ? isFetching
+      ? "checking"
+      : error
+        ? "invalid"
+        : order
+          ? "valid"
+          : "idle"
+    : "idle";
   useEffect(() => {
     if (subscribe) {
       const defaultQuantity =
@@ -160,6 +176,7 @@ export default function Purchase({
                 <CouponInput
                   coupon={params.coupon}
                   onChange={(value) => handleChange("coupon", value)}
+                  status={couponStatus}
                 />
                 <PaymentMethods
                   onChange={(value) => {

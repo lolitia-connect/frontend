@@ -85,6 +85,11 @@ export const test = base.extend<{ api: PortalApi }>({
         const url = new URL(route.request().url());
         const ok = (data: unknown) =>
           route.fulfill({ json: { code: 200, msg: "success", data } });
+        if (
+          url.origin === "https://fonts.googleapis.com" &&
+          url.pathname === "/css2"
+        )
+          return route.fulfill({ contentType: "text/css", body: "" });
         if (url.hostname === "payment.example.test")
           return route.fulfill({
             contentType: "text/html",
@@ -215,6 +220,7 @@ export { expect } from "@playwright/test";
 
 export async function signIn(page: Page) {
   await page.goto("/");
+  await expect(page.getByRole("link", { name: "LoliTia Pay" })).toBeVisible();
   await page.getByLabel("Account / Email").fill("member@portal.test");
   await page.getByLabel("Password", { exact: true }).fill("correct-password");
   await page.getByRole("button", { name: "Sign In", exact: true }).click();

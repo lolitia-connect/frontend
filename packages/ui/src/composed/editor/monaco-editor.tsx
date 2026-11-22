@@ -28,11 +28,21 @@ export interface MonacoEditorProps {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function debounce<T extends (...args: any[]) => void>(func: T, delay: number) {
-  let timeoutId: ReturnType<typeof setTimeout>;
-  return (...args: Parameters<T>) => {
-    clearTimeout(timeoutId);
-    timeoutId = setTimeout(() => func(...args), delay);
+  let timeoutId: ReturnType<typeof setTimeout> | undefined;
+  const debounced = (...args: Parameters<T>) => {
+    if (timeoutId) clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => {
+      timeoutId = undefined;
+      func(...args);
+    }, delay);
   };
+
+  debounced.cancel = () => {
+    if (timeoutId) clearTimeout(timeoutId);
+    timeoutId = undefined;
+  };
+
+  return debounced;
 }
 
 export function MonacoEditor({
@@ -53,6 +63,9 @@ export function MonacoEditor({
   const [internalValue, setInternalValue] = useState<string | undefined>(
     propValue
   );
+  const editorValueRef = useRef<string | undefined>(propValue);
+  const lastPropValueRef = useRef<string | undefined>(propValue);
+  const hasPendingLocalChangeRef = useRef(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isPreviewVisible, setIsPreviewVisible] = useState(false);
 
@@ -60,28 +73,41 @@ export function MonacoEditor({
   const size = useSize(ref);
 
   useEffect(() => {
-    // Only update internalValue if propValue has actually changed and is different from current value
-    if (propValue !== internalValue) {
+    // A controlled parent can briefly render its old value while the debounced
+    // change callback is pending. Only react to a genuinely new prop value.
+    if (propValue === lastPropValueRef.current) return;
+    lastPropValueRef.current = propValue;
+
+    if (
+      hasPendingLocalChangeRef.current &&
+      propValue === editorValueRef.current
+    ) {
+      hasPendingLocalChangeRef.current = false;
+      return;
+    }
+
+    hasPendingLocalChangeRef.current = false;
+    if (propValue !== editorValueRef.current) {
+      editorValueRef.current = propValue;
       setInternalValue(propValue);
     }
   }, [propValue]);
 
+  const onChangeRef = useRef(onChange);
+  useEffect(() => {
+    onChangeRef.current = onChange;
+  }, [onChange]);
+
   const debouncedOnChange = useRef(
     debounce((newValue: string | undefined) => {
-      if (onChange) {
-        onChange(newValue);
-      }
+      onChangeRef.current?.(newValue);
     }, 300)
   ).current;
 
+  useEffect(() => () => debouncedOnChange.cancel(), [debouncedOnChange]);
+
   const handleEditorDidMount: OnMount = (editor, monaco) => {
     if (onMount) onMount(editor, monaco);
-
-    editor.onDidChangeModelContent(() => {
-      const newValue = editor.getValue();
-      setInternalValue(newValue);
-      debouncedOnChange(newValue);
-    });
 
     editor.onDidBlurEditorWidget(() => {
       if (onBlur) {
@@ -159,6 +185,8 @@ export function MonacoEditor({
                 className=""
                 language={language}
                 onChange={(newValue) => {
+                  editorValueRef.current = newValue;
+                  hasPendingLocalChangeRef.current = true;
                   setInternalValue(newValue);
                   debouncedOnChange(newValue);
                 }}

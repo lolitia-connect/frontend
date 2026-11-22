@@ -1,3 +1,4 @@
+import { BrandFontLinks } from "@workspace/ui/lib/brand-font-links";
 import { getRequestLanguage } from "@workspace/ui/lib/request-language";
 import { ThemeScript } from "@workspace/ui/lib/theme-script";
 import type { Metadata, Viewport } from "next";
@@ -46,20 +47,7 @@ export default async function RootLayout({
   return (
     <html lang={initialLanguage} suppressHydrationWarning>
       <head>
-        {/* Establish the font-CDN connections and discover the stylesheet in
-            the document head, so font CSS loads in parallel with the app CSS
-            instead of waiting for a globals.css @import (improves FCP). */}
-        <link href="https://fonts.googleapis.com" rel="preconnect" />
-        <link
-          crossOrigin="anonymous"
-          href="https://fonts.gstatic.com"
-          rel="preconnect"
-        />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&family=Sen:wght@400..800&display=swap"
-          precedence="fonts"
-          rel="stylesheet"
-        />
+        <BrandFontLinks />
       </head>
       <body className="admin-shell bg-background text-foreground">
         <ThemeScript />

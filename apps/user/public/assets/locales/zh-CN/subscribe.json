@@ -15,6 +15,9 @@
   "buyNow": "立即购买",
   "buySubscription": "购买订阅",
   "coupon": "优惠券",
+  "couponChecking": "正在检查优惠码…",
+  "couponInvalid": "优惠码无效。",
+  "couponValid": "优惠码有效。",
   "Day": "天",
   "detail": {
     "availableTraffic": "可用流量",

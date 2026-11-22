@@ -43,7 +43,11 @@ export default function Renewal({
   const [loading, startTransition] = useTransition();
   const lastSuccessOrderRef = useRef<any>(null);
 
-  const { data: order } = useQuery({
+  const {
+    data: order,
+    error,
+    isFetching,
+  } = useQuery({
     enabled: !!subscribe.id && open,
     queryKey: [
       "preCreateOrder",
@@ -63,14 +67,27 @@ export default function Renewal({
           lastSuccessOrderRef.current = result;
         }
         return result;
-      } catch {
+      } catch (error) {
+        if (params.coupon) {
+          throw error;
+        }
         if (lastSuccessOrderRef.current) {
           return lastSuccessOrderRef.current;
         }
+        throw error;
       }
     },
   });
 
+  const couponStatus = params.coupon
+    ? isFetching
+      ? "checking"
+      : error
+        ? "invalid"
+        : order
+          ? "valid"
+          : "idle"
+    : "idle";
   useEffect(() => {
     if (subscribe.id && id) {
       const defaultQuantity =
@@ -165,6 +182,7 @@ export default function Renewal({
                   <CouponInput
                     coupon={params.coupon}
                     onChange={(value) => handleChange("coupon", value)}
+                    status={couponStatus}
                   />
                   <PaymentMethods
                     onChange={(value) => {

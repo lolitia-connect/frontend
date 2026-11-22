@@ -43,6 +43,15 @@
     "title": "日志清理设置"
   },
   "logSettings": "日志设置",
+  "sentry": {
+    "title": "Sentry",
+    "enable": "启用错误上报",
+    "description": "将服务故障的调用栈和版本发送到指定的 Sentry 项目",
+    "dsn": "后端项目的公开 DSN",
+    "invalidDsn": "请输入包含公钥和数字项目 ID 的 HTTP(S) DSN，并移除密码、查询参数或片段。",
+    "loading": "正在读取设置…",
+    "retry": "重新读取设置"
+  },
   "privacyPolicy": {
     "description": "编辑和管理隐私政策内容",
     "title": "隐私政策"

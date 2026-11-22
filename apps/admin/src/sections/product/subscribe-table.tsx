@@ -9,6 +9,11 @@ import {
   ProTable,
   type ProTableActions,
 } from "@workspace/ui/composed/pro-table/pro-table";
+import { SortIdCell } from "@workspace/ui/composed/pro-table/sort-id-cell";
+import {
+  reorderSortableItems,
+  sortSortableItems,
+} from "@workspace/ui/composed/pro-table/sort-utils";
 import {
   deleteSubscribeBatch as batchDeleteSubscribe,
   postSubscribe as createSubscribe,
@@ -184,6 +189,24 @@ export default function SubscribeTable() {
         ],
       }}
       columns={[
+        {
+          id: "sort",
+          accessorKey: "sort",
+          header: t("sort", "Sort ID"),
+          cell: ({ row }) => (
+            <SortIdCell
+              ariaLabel={t("sort", "Sort ID")}
+              onSave={async (sort) => {
+                await subscribeSort({
+                  sort: [{ id: row.original.id!, sort }],
+                });
+                toast.success(t("sortSuccess", "Sort completed successfully"));
+                await ref.current?.refresh();
+              }}
+              value={row.original.sort}
+            />
+          ),
+        },
         {
           accessorKey: "show",
           header: t("show"),
@@ -374,39 +397,17 @@ export default function SubscribeTable() {
         ),
       }}
       onSort={async (source, target, items) => {
-        const sourceIndex = items.findIndex(
-          (item) => String(item.id) === source
-        );
-        const targetIndex = items.findIndex(
-          (item) => String(item.id) === target
-        );
-
-        const originalSorts = items.map((item) => item.sort);
-
-        const [movedItem] = items.splice(sourceIndex, 1);
-        items.splice(targetIndex, 0, movedItem!);
-
-        const updatedItems = items.map((item, index) => {
-          const originalSort = originalSorts[index];
-          const newSort = originalSort === undefined ? item.sort : originalSort;
-          return { ...item, sort: newSort };
+        if (target == null) return null;
+        const updatedItems = reorderSortableItems(items, source, target);
+        await subscribeSort({
+          sort: updatedItems.map((item) => ({
+            id: item.id,
+            sort: item.sort,
+          })) as API.SortItem[],
         });
-
-        const changedItems = updatedItems.filter(
-          (item, index) => item.sort !== items[index]?.sort
-        );
-
-        if (changedItems.length > 0) {
-          await subscribeSort({
-            sort: changedItems.map((item) => ({
-              id: item.id,
-              sort: item.sort,
-            })) as API.SortItem[],
-          });
-          toast.success(t("sortSuccess", "Sort completed successfully"));
-        }
-
-        return updatedItems;
+        toast.success(t("sortSuccess", "Sort completed successfully"));
+        await ref.current?.refresh();
+        return null;
       }}
       params={[
         {
@@ -437,7 +438,9 @@ export default function SubscribeTable() {
 
         const { data } = await getSubscribeList(params);
         return {
-          list: data.data?.list || [],
+          list: sortSortableItems(
+            (data.data?.list || []) as API.SubscribeItem[]
+          ),
           total: data.data?.total || 0,
         };
       }}

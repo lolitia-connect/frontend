@@ -2,6 +2,7 @@ import { expect, type Page, test } from "@playwright/test";
 import {
   expectNoPageOverflow,
   mockLayoutApi,
+  servers,
   signInFixture,
 } from "../../../../tests/e2e/layout.fixtures";
 
@@ -290,6 +291,31 @@ test("node creation sends forwarding allocation settings without a guessed entry
   baseURL,
 }) => {
   const { writes } = await mockNekoproxy(page, baseURL!);
+  const server = servers[0]!;
+  await page.route(/\/v1\/admin\/server\/list(?:\?|$)/, (route) =>
+    route.fulfill({
+      json: {
+        code: 200,
+        data: {
+          total: 1,
+          list: [
+            {
+              ...server,
+              protocols: [
+                ...server.protocols,
+                {
+                  ...server.protocols[0],
+                  id: "11",
+                  name: "Second listener",
+                  port: 8443,
+                },
+              ],
+            },
+          ],
+        },
+      },
+    })
+  );
   await signInFixture(page, baseURL!);
   await page.goto("/dashboard/nodes", { waitUntil: "domcontentloaded" });
   await expect(
@@ -314,9 +340,11 @@ test("node creation sends forwarding allocation settings without a guessed entry
   await expect(dialog.getByLabel("Entry port (0 = automatic)")).toHaveValue(
     "0"
   );
-  await expect(dialog.getByLabel("Target port", { exact: true })).toHaveValue(
-    "443"
-  );
+  const targetPort = dialog.getByLabel("Target port", { exact: true });
+  await expect(targetPort).toHaveValue("443");
+  await dialog.getByRole("group", { name: /Select protocol/ }).click();
+  await page.getByRole("option", { name: /Second listener/ }).click();
+  await expect(targetPort).toHaveValue("8443");
   const fields = dialog.locator('[data-slot="form-item"]').filter({
     has: page.getByRole("switch", {
       name: "Sync forwarding when creating this node",
@@ -340,13 +368,13 @@ test("node creation sends forwarding allocation settings without a guessed entry
     .toMatchObject({
       server_id: "1",
       protocol: "vless",
-      protocol_id: "10",
+      protocol_id: "11",
       nekoproxy: {
         create: {
           chain_id: "chain-1",
           entry_group_id: "group-1",
           protocol: "tcp_udp",
-          target_port: 443,
+          target_port: 8443,
           requested_port: 0,
         },
       },

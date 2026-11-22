@@ -2,7 +2,10 @@ import { captureRequestError } from "@sentry/nextjs";
 import { sentryOptions } from "@workspace/ui/lib/sentry-options";
 
 export async function register() {
-  if (process.env.NEXT_PUBLIC_SENTRY_DSN) {
+  if (
+    process.env.NODE_ENV === "production" &&
+    process.env.NEXT_PUBLIC_SENTRY_DSN
+  ) {
     const { init } = await import("@sentry/nextjs");
     init(
       sentryOptions(

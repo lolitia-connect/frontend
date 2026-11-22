@@ -54,7 +54,7 @@ Quickly duplicates product to create new plan, automatically set to not showing 
 Deletes multiple selected products.
 
 ### Drag & Drop Sort
-Drag product rows to adjust display order, affects frontend display order.
+Drag product rows to adjust display order or edit the **Sort ID** directly; lower IDs appear first and the order is used after refresh.
 
 ## Product Form
 

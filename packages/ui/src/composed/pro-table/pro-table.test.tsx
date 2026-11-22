@@ -153,6 +153,52 @@ describe("ProTable native collection", () => {
     expect(edit).toHaveBeenCalledWith("a");
   });
 
+  it("keeps the newest filter result when requests resolve out of order", async () => {
+    const pending = new Map<
+      string,
+      (value: { list: typeof rows; total: number }) => void
+    >();
+    const request = vi.fn(
+      (_: { page: number; size: number }, filter: { search?: string }) => {
+        if (!filter.search) {
+          return Promise.resolve({ list: rows, total: rows.length });
+        }
+        return new Promise<{ list: typeof rows; total: number }>((resolve) => {
+          pending.set(filter.search ?? "", resolve);
+        });
+      }
+    );
+    render(
+      <ProTable
+        aria-label="Servers"
+        columns={columns}
+        params={[{ key: "search", placeholder: "Find a server" }]}
+        request={request}
+      />
+    );
+
+    const search = await screen.findByRole("textbox", {
+      name: "Find a server",
+    });
+    await screen.findByRole("rowheader", { name: "Tokyo" });
+    fireEvent.change(search, { target: { value: "T" } });
+    fireEvent.change(search, { target: { value: "Tokyo" } });
+
+    await waitFor(() =>
+      expect(request).toHaveBeenCalledWith(
+        { page: 1, size: 10 },
+        { search: "Tokyo" }
+      )
+    );
+    pending.get("Tokyo")?.({ list: [rows[0]!], total: 1 });
+    pending.get("T")?.({ list: [rows[1]!], total: 1 });
+
+    await waitFor(() =>
+      expect(screen.getByRole("row", { name: /Tokyo/ })).toBeTruthy()
+    );
+    expect(screen.queryByRole("row", { name: /Berlin/ })).toBeNull();
+  });
+
   it("retains the filter and paging payloads after the table is refactored", async () => {
     const request = vi.fn().mockResolvedValue({ list: rows, total: 25 });
     render(

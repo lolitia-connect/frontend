@@ -13,6 +13,7 @@ import {
   ProTable,
   type ProTableActions,
 } from "@workspace/ui/composed/pro-table/pro-table";
+import { sortSortableItems } from "@workspace/ui/composed/pro-table/sort-utils";
 import {
   postPayment as createPaymentMethod,
   deletePayment as deletePaymentMethod,
@@ -279,13 +280,9 @@ export default function PaymentTable() {
           ...pagination,
           ...filter,
         });
-        const list = ((data?.data?.list || []) as PaymentRow[]).sort((a, b) => {
-          const sortDiff = (a.sort ?? 0) - (b.sort ?? 0);
-          if (sortDiff !== 0) return sortDiff;
-          return String(a.id).localeCompare(String(b.id), undefined, {
-            numeric: true,
-          });
-        });
+        const list = sortSortableItems(
+          (data?.data?.list || []) as PaymentRow[]
+        );
         return {
           list,
           total: data?.data?.total || 0,

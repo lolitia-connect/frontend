@@ -43,6 +43,15 @@
     "title": "Log Cleanup Settings"
   },
   "logSettings": "Log Settings",
+  "sentry": {
+    "title": "Sentry",
+    "enable": "Enable error reporting",
+    "description": "Send stack traces and the server version to your Sentry project",
+    "dsn": "Public DSN for the backend project",
+    "invalidDsn": "Enter an HTTP(S) DSN with a public key and numeric project ID. Remove any password, query or fragment.",
+    "loading": "Loading settings…",
+    "retry": "Retry loading settings"
+  },
   "privacyPolicy": {
     "description": "Edit and manage privacy policy content",
     "title": "Privacy Policy"

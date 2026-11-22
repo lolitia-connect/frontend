@@ -27,6 +27,7 @@ export function nekoproxyOptionsSchema(t: TFunction) {
               .int()
               .min(1, portError)
               .max(65_535, portError),
+            target_port_manual: z.boolean().optional(),
             requested_port: z.number().int().min(0).max(65_535),
           }),
         })

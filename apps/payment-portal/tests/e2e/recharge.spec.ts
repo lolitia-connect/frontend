@@ -70,6 +70,7 @@ test("uses the shared responsive login shell without a mobile card and keeps for
   await expect(
     page.getByRole("heading", { name: "Sign in to continue" })
   ).toBeVisible();
+  await expect(page.getByRole("link", { name: "LoliTia Pay" })).toBeVisible();
   const panel = page.getByRole("main").locator(":scope > div");
   const desktop = await panel.boundingBox();
   if (!desktop) throw new Error("Missing login panel");
@@ -93,7 +94,7 @@ test("uses the shared responsive login shell without a mobile card and keeps for
     ).toBeLessThanOrEqual(width);
   }
   await page.getByRole("button", { name: "Toggle theme", exact: true }).click();
-  await page.getByRole("menuitemradio", { name: "Dark", exact: true }).click();
+  await page.getByRole("menuitem", { name: "Dark", exact: true }).click();
   await expect(page.locator("html")).toHaveClass(/dark/);
   await expect(page.getByLabel("Account / Email")).toBeVisible();
 });
@@ -376,7 +377,7 @@ test("persists native HeroUI theme/language choices and fits a 320px viewport", 
     await page
       .getByRole("button", { name: "Toggle theme", exact: true })
       .click();
-    await page.getByRole("menuitemradio", { name: theme, exact: true }).click();
+    await page.getByRole("menuitem", { name: theme, exact: true }).click();
     await expect(page.locator("html")).toHaveClass(
       new RegExp(theme.toLowerCase())
     );
@@ -396,9 +397,7 @@ test("persists native HeroUI theme/language choices and fits a 320px viewport", 
     expect(dimensions.root).toBeLessThanOrEqual(dimensions.width);
   }
   await page.getByRole("button", { name: /^Language:/ }).click();
-  await page
-    .getByRole("menuitemradio", { name: "简体中文", exact: true })
-    .click();
+  await page.getByRole("menuitem", { name: /简体中文/ }).click();
   await expect(page.locator("html")).toHaveAttribute("lang", "zh-CN");
   await page.reload();
   await expect(page.locator("html")).toHaveAttribute("lang", "zh-CN");
@@ -407,16 +406,14 @@ test("persists native HeroUI theme/language choices and fits a 320px viewport", 
     await page.evaluate(() => document.documentElement.scrollWidth)
   ).toBeLessThanOrEqual(320);
   await page.getByRole("button", { name: /简体中文/ }).click();
-  await page
-    .getByRole("menuitemradio", { name: "系统默认", exact: true })
-    .click();
+  await page.getByRole("menuitem", { name: "系统默认", exact: true }).click();
   await expect(page.locator("html")).toHaveAttribute("lang", "en-US");
   expect(
     await page.evaluate(() => localStorage.getItem("language"))
   ).toBeNull();
   await page.getByRole("button", { name: "Toggle theme", exact: true }).click();
   await page
-    .getByRole("menuitemradio", { name: "System default", exact: true })
+    .getByRole("menuitem", { name: "System default", exact: true })
     .click();
   expect(await page.evaluate(() => localStorage.getItem("theme"))).toBeNull();
 });

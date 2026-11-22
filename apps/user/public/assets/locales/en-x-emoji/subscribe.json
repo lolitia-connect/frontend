@@ -15,6 +15,9 @@
   "buyNow": "🛒⚡",
   "buySubscription": "📡🛒",
   "coupon": "🎟️",
+  "couponChecking": "🔎🎟️…",
+  "couponInvalid": "❌🎟️",
+  "couponValid": "✅🎟️",
   "Day": "☀️",
   "detail": {
     "availableTraffic": "📊🟢",

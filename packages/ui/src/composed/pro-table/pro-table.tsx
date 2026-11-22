@@ -72,7 +72,7 @@ export interface ProTableProps<TData, TValue> {
     sourceId: string | number,
     targetId: string | number | null,
     items: TData[]
-  ) => Promise<TData[]>;
+  ) => Promise<TData[] | null>;
   params?: IParams[];
   request: (
     pagination: {
@@ -93,8 +93,8 @@ export interface ProTableProps<TData, TValue> {
 }
 
 export interface ProTableActions {
-  refresh: () => void;
-  reset: () => void;
+  refresh: () => Promise<void>;
+  reset: () => Promise<void>;
 }
 
 export function ProTable<
@@ -133,7 +133,7 @@ export function ProTable<
     pageIndex: 0,
     pageSize: 10,
   });
-  const loadingRef = useRef(false);
+  const requestIdRef = useRef(0);
   const [isLoading, setIsLoading] = useState(false);
 
   const table = useReactTable({
@@ -202,8 +202,7 @@ export function ProTable<
   });
 
   const fetchData = async () => {
-    if (loadingRef.current) return;
-    loadingRef.current = true;
+    const requestId = ++requestIdRef.current;
     setIsLoading(true);
     try {
       const response = await request(
@@ -215,13 +214,17 @@ export function ProTable<
           columnFilters.map((item) => [item.id, item.value])
         ) as TValue
       );
+      if (requestId !== requestIdRef.current) return;
       setData(response.list);
       setRowCount(response.total);
     } catch (error) {
-      console.log("Fetch data error:", error);
+      if (requestId === requestIdRef.current) {
+        console.log("Fetch data error:", error);
+      }
     } finally {
-      loadingRef.current = false;
-      setIsLoading(false);
+      if (requestId === requestIdRef.current) {
+        setIsLoading(false);
+      }
     }
   };
   const reset = async () => {

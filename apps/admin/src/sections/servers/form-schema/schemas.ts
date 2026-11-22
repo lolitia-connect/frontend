@@ -360,6 +360,7 @@ export const protocolApiScheme = z
 
 export const formSchema = z.object({
   name: z.string().min(1),
+  sort: z.number().int().min(0).max(2_147_483_647).default(0),
   address: z.string().min(1),
   country: z.string().optional(),
   city: z.string().optional(),

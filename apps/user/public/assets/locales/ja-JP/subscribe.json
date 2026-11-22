@@ -15,6 +15,9 @@
   "buyNow": "今すぐ購入",
   "buySubscription": "サブスクリプションを購入",
   "coupon": "クーポン",
+  "couponChecking": "クーポンコードを確認中…",
+  "couponInvalid": "クーポンコードが無効です。",
+  "couponValid": "クーポンコードは有効です。",
   "Day": "日",
   "detail": {
     "availableTraffic": "利用可能なトラフィック",

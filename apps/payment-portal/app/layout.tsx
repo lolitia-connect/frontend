@@ -1,7 +1,8 @@
+import { BrandFontLinks } from "@workspace/ui/lib/brand-font-links";
 import { ThemeScript } from "@workspace/ui/lib/theme-script";
 import type { Metadata, Viewport } from "next";
 import { Providers } from "./providers";
-import "./globals.css";
+import "@workspace/ui/globals.css";
 
 export const metadata: Metadata = {
   description:
@@ -21,20 +22,7 @@ export default function RootLayout({
   return (
     <html lang="zh-CN" suppressHydrationWarning>
       <head>
-        {/* Establish the font-CDN connections and discover the stylesheet in
-            the document head, so font CSS loads in parallel with the app CSS
-            instead of waiting for a globals.css @import (improves FCP). */}
-        <link href="https://fonts.googleapis.com" rel="preconnect" />
-        <link
-          crossOrigin="anonymous"
-          href="https://fonts.gstatic.com"
-          rel="preconnect"
-        />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&family=Sen:wght@400..800&display=swap"
-          precedence="fonts"
-          rel="stylesheet"
-        />
+        <BrandFontLinks />
       </head>
       <body className="bg-background text-foreground">
         <ThemeScript />

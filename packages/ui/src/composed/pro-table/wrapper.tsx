@@ -24,7 +24,7 @@ export function ProTableWrapper<TData extends { id?: string | number }>({
     sourceId: string | number,
     targetId: string | number | null,
     items: TData[]
-  ) => Promise<TData[]>;
+  ) => Promise<TData[] | null>;
   data: TData[];
   setData: React.Dispatch<React.SetStateAction<TData[]>>;
 }) {
@@ -44,7 +44,7 @@ export function ProTableWrapper<TData extends { id?: string | number }>({
     if (String(active.id) === String(over.id)) return;
 
     const updatedData = await onSort(active.id, over.id, data);
-    setData(updatedData);
+    if (updatedData) setData(updatedData);
   };
   if (!onSort) return children;
   return (

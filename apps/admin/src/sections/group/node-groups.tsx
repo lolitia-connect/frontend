@@ -14,6 +14,7 @@ import {
   ProTable,
   type ProTableActions,
 } from "@workspace/ui/composed/pro-table/pro-table";
+import { sortSortableItems } from "@workspace/ui/composed/pro-table/sort-utils";
 import {
   createNodeGroup,
   deleteNodeGroup,
@@ -268,7 +269,7 @@ export default function NodeGroups() {
                 size: params.size || 10,
               });
               return {
-                list: data.data?.list || [],
+                list: sortSortableItems(data.data?.list || []),
                 total: data.data?.total || 0,
               };
             }}

@@ -13,6 +13,7 @@ Display all node configuration information in table format.
   - On: Node appears in subscriptions, users can connect
   - Off: Node is hidden, users cannot connect
   - Takes effect immediately without restart
+- **Sort ID**: Edit the persisted numeric order directly. Lower IDs appear first; duplicate or invalid values are normalized when saved.
 - **Name**: Node display name, shown in user's client
 - **Address:Port**: Entry address and port for user connections
 - **Server**: Shows associated server name and IP address
@@ -27,7 +28,7 @@ Display all node configuration information in table format.
 
 **Operation Features:**
 - **Search**: Quickly filter nodes by keyword
-- **Sorting**: Adjust node display order by dragging rows, affects node order in user subscriptions
+- **Sorting**: Drag rows to adjust order or edit the **Sort ID** directly; lower IDs appear first and the same order is used after refresh and in user subscriptions
 - **Pagination**: Support paging for large number of nodes
 - **Batch Delete**: Delete multiple selected nodes
 
@@ -42,7 +43,7 @@ Select the **Nekoproxy connection** card above the node list to open the setting
 
 - **Create a node:** Turn on **Sync forwarding when creating this node** at the bottom of the form (off by default). Create a forward or choose an existing active entry. For a new forward, choose the chain, entry group, protocol and target; use entry port `0` for automatic allocation. If local creation fails, PPanel attempts to remove only the newly created remote forward.
 - **Edit a node:** The bottom of the form shows the bound forward, session ID and saved entry. The API address is only shown in **Nekoproxy connection**. Bind an available forward here, or use the actions below the binding to sync, unbind or change the entry. Syncing now changes only this node’s entry and does not submit other unsaved edits.
-- **Sync when saving this node** defaults to on for new and existing bindings. The setting is saved per binding. With sync enabled, a failed remote lookup leaves the edit unsaved. Turn it off to save a manual endpoint even when Nekoproxy is offline; manual sync remains available. Unbinding or deleting a node preserves its remote forward.
+- **Sync when saving this node** defaults to on. Changing the selected server protocol updates a forward’s automatic **target** port without changing its allocated **entry** port. A manually entered target is kept, even when it matches a protocol default. For older bindings and attached forwards, the first protocol change adopts the target only if it still matches the previous protocol’s port. Turning sync off leaves the forward untouched and allows offline edits. A failed remote update does not save the local edit. Unbinding or deleting a node preserves the remote forward.
 
 
 ## Node Form

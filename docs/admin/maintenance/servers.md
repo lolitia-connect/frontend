@@ -76,7 +76,7 @@ The main body of the page displays all servers in a table format.
 
 **Operation Features:**
 - **Search**: Quickly filter servers by keyword
-- **Sorting**: Adjust server display order by dragging rows, sorting is saved to database
+- **Sorting**: Adjust server display order by dragging rows or editing the **Sort ID** directly; lower IDs appear first and sorting is saved to the database
 - **Pagination**: Support paging for large number of servers
 - **Batch Delete**: Delete multiple selected servers (servers referenced by nodes cannot be deleted)
 

@@ -7,9 +7,14 @@ import {
   screen,
   waitFor,
 } from "@testing-library/react";
-import type { NekoproxyState } from "@workspace/ui/services/admin/nekoproxy";
+import type {
+  NekoproxyNodeOptions,
+  NekoproxyState,
+} from "@workspace/ui/services/admin/nekoproxy";
+import { useState } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import NekoproxyConnectionSheet from "./nekoproxy-connection-sheet";
+import NekoproxyFields from "./nekoproxy-fields";
 import NekoproxyNodeSettings from "./nekoproxy-node-settings";
 
 const mocks = vi.hoisted(() => ({
@@ -185,6 +190,36 @@ describe("Nekoproxy connection sheet", () => {
   });
 });
 
+function CreateForward({ port }: { port: number }) {
+  const [value, setValue] = useState<NekoproxyNodeOptions>();
+  return (
+    <NekoproxyFields
+      onChange={setValue}
+      targetHost="target.example.test"
+      targetPort={port}
+      value={value}
+    />
+  );
+}
+
+it("tracks protocol ports until a manual override, and resets the override for a new forward", () => {
+  const { rerender } = render(<CreateForward port={443} />);
+  const toggle = screen.getByRole("switch");
+  fireEvent.click(toggle);
+  const target = screen.getByLabelText("Target port") as HTMLInputElement;
+  rerender(<CreateForward port={8443} />);
+  expect(target.value).toBe("8443");
+  fireEvent.change(target, { target: { value: "9443" } });
+  rerender(<CreateForward port={9443} />);
+  rerender(<CreateForward port={443} />);
+  expect(target.value).toBe("9443");
+  fireEvent.click(toggle);
+  fireEvent.click(toggle);
+  expect((screen.getByLabelText("Target port") as HTMLInputElement).value).toBe(
+    "443"
+  );
+});
+
 const binding = {
   node_id: "2",
   api_url: "https://np.example.com",
@@ -201,16 +236,16 @@ function settings(
 ) {
   render(
     <NekoproxyNodeSettings
-      nodeID="2"
+      disabled={false}
       entry={{
         address: "old.example.com",
         port: 443,
         binding: bound ? binding : undefined,
       }}
       isError={false}
-      disabled={false}
-      onPreferenceChange={mocks.changed}
+      nodeID="2"
       onAction={action}
+      onPreferenceChange={mocks.changed}
     />
   );
 }

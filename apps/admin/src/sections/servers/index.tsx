@@ -7,6 +7,11 @@ import {
   ProTable,
   type ProTableActions,
 } from "@workspace/ui/composed/pro-table/pro-table";
+import { SortIdCell } from "@workspace/ui/composed/pro-table/sort-id-cell";
+import {
+  reorderSortableItems,
+  sortSortableItems,
+} from "@workspace/ui/composed/pro-table/sort-utils";
 import { TruncatedCell } from "@workspace/ui/composed/pro-table/truncated-cell";
 import { cn } from "@workspace/ui/lib/utils";
 import {
@@ -223,6 +228,24 @@ export default function Servers() {
         }}
         columns={[
           {
+            id: "sort",
+            accessorKey: "sort",
+            header: t("sort", "Sort ID"),
+            cell: ({ row }) => (
+              <SortIdCell
+                ariaLabel={t("sort", "Sort ID")}
+                onSave={async (sort) => {
+                  await resetSortWithServer({
+                    sort: [{ id: row.original.id, sort }],
+                  });
+                  toast.success(t("sorted_success", "Sorted successfully"));
+                  await ref.current?.refresh();
+                }}
+                value={row.original.sort}
+              />
+            ),
+          },
+          {
             accessorKey: "id",
             header: t("id", "ID"),
             cell: ({ row }) => <Badge>{row.getValue("id")}</Badge>,
@@ -374,33 +397,8 @@ export default function Servers() {
           ),
         }}
         onSort={async (source, target, items) => {
-          const sourceIndex = items.findIndex(
-            (item) => String(item.id) === source
-          );
-          const targetIndex = items.findIndex(
-            (item) => String(item.id) === target
-          );
-
-          if (sourceIndex === -1 || targetIndex === -1) return items;
-
-          const next = items.slice();
-          const [movedItem] = next.splice(sourceIndex, 1);
-          next.splice(targetIndex, 0, movedItem!);
-
-          // Re-index to a strictly increasing sequence to avoid duplicate
-          // sort values that cause random ordering after page refresh.
-          const numericSorts = items
-            .map((it) => (typeof it.sort === "number" ? it.sort : Number.NaN))
-            .filter((v) => Number.isFinite(v)) as number[];
-          const baseSort = numericSorts.length ? Math.min(...numericSorts) : 0;
-
-          const updatedItems = next.map((item, index) => ({
-            ...item,
-            sort: baseSort + index,
-          }));
-
-          // Send ALL items on the current page so the backend can re-index
-          // globally and avoid cross-page sort value conflicts.
+          if (target == null) return null;
+          const updatedItems = reorderSortableItems(items, source, target);
           await resetSortWithServer({
             sort: updatedItems.map((item) => ({
               id: item.id,
@@ -408,13 +406,8 @@ export default function Servers() {
             })) as API.SortItem[],
           });
           toast.success(t("sorted_success", "Sorted successfully"));
-
-          // Re-fetch from backend to ensure frontend sort values match the
-          // globally re-indexed state. Without this, subsequent drag-sorts
-          // would use stale baseSort values and cause items to jump.
-          ref.current?.refresh();
-
-          return updatedItems;
+          await ref.current?.refresh();
+          return null;
         }}
         params={[{ key: "search" }]}
         request={async (pagination, filter) => {
@@ -423,7 +416,10 @@ export default function Servers() {
             size: pagination.size,
             search: filter?.search || undefined,
           });
-          const list = (data?.data?.list || []) as API.Server[];
+          const list = sortSortableItems(
+            (data?.data?.list || []) as API.Server[]
+          );
+
           const total = (data?.data?.total ?? list.length) as number;
           return { list, total };
         }}

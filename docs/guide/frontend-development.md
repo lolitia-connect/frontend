@@ -7,8 +7,7 @@ This guide contains durable maintenance conventions, not task logs or acceptance
 ## Typography
 
 All three apps share the CJK font configuration in `packages/ui/src/styles/`.
-Latin text keeps the existing Fredoka / Sen stack in the user and admin apps,
-and the existing system-font stack in the payment portal. CJK text uses self-hosted
+All three load Fredoka / Sen through the shared font links. CJK text uses self-hosted
 [Swei Gothic](https://github.com/max32002/swei-gothic) WOFF2 fonts selected by the
 page or element's `lang`: `ja` / `ja-JP` → JP, `zh-CN` / `zh-Hans` → SC, and
 `zh-TW` / `zh-HK` / `zh-MO` / `zh-Hant` → TC. Unmarked CJK text defaults to SC.
@@ -161,14 +160,11 @@ checks this behavior at mobile and desktop widths.
 ### Payment portal
 
 The [payment portal](https://github.com/lolitia-connect/frontend/tree/main/apps/payment-portal) uses HeroUI v3 components directly,
-with an [app-local stylesheet](https://github.com/lolitia-connect/frontend/blob/main/apps/payment-portal/app/globals.css) importing
-Tailwind v4, HeroUI, and the [shared semantic theme](https://github.com/lolitia-connect/frontend/blob/main/packages/ui/src/styles/theme.css).
+with the [shared stylesheet](https://github.com/lolitia-connect/frontend/blob/main/packages/ui/src/styles/globals.css).
 All three applications use the same HeroUI accent, surface, field, radius, and
 light/dark tokens. The [shared auth shell](https://github.com/lolitia-connect/frontend/blob/main/packages/ui/src/composed/auth-shell.tsx)
 also keeps their login panel width, responsive spacing, and mobile presentation
-in sync. The portal does not use compatibility UI wrappers or import the shared
-component overrides. Language/theme persistence and backend services remain
-shared; API error notifications are rendered by HeroUI rather than the shared
+in sync. The portal uses the same language and theme pickers as the user app. Backend services remain shared; API error notifications are rendered by HeroUI rather than the shared
 Sonner toaster.
 
 `NEXT_PUBLIC_PAYMENT_PORTAL_AMOUNTS` uses the following configuration rule:

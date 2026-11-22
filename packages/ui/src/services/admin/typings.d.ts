@@ -1081,8 +1081,10 @@ declare namespace API {
   };
 
   type LogSetting = {
-    auto_clear: boolean;
-    clear_days: number;
+    auto_clear?: boolean;
+    clear_days?: number;
+    sentry_enabled?: boolean;
+    sentry_dsn?: string;
   };
 
   type MessageLog = {
@@ -1117,7 +1119,7 @@ declare namespace API {
     enabled: boolean;
     node_type?: string;
     is_hidden?: boolean;
-    sort?: number;
+    sort: number;
     node_group_id?: string;
     node_group_ids?: string[];
     created_at: number;

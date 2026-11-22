@@ -470,6 +470,7 @@ export default function ServerForm(props: {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
+      sort: 0,
       address: "",
       country: "",
       city: "",
@@ -509,6 +510,7 @@ export default function ServerForm(props: {
     if (initialValues) {
       form.reset({
         name: "",
+        sort: 0,
         address: "",
         country: "",
         city: "",
@@ -653,6 +655,7 @@ export default function ServerForm(props: {
             if (!initialValues) {
               form.reset({
                 name: "",
+                sort: 0,
                 address: "",
                 country: "",
                 city: "",
@@ -685,6 +688,27 @@ export default function ServerForm(props: {
                             <EnhancedInput
                               {...field}
                               onValueChange={(v) => field.onChange(v)}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={control}
+                      name="sort"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{t("sort", "Sort ID")}</FormLabel>
+                          <FormControl>
+                            <EnhancedInput
+                              {...field}
+                              inputMode="numeric"
+                              min={0}
+                              onValueChange={(v) =>
+                                field.onChange(Number(v) || 0)
+                              }
+                              type="number"
                             />
                           </FormControl>
                           <FormMessage />

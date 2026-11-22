@@ -354,6 +354,7 @@ declare namespace BackendAPI {
     protocol: string;
     target_host: string;
     target_port: number;
+    target_port_manual?: boolean;
     requested_port: number;
   };
 
@@ -2153,7 +2154,9 @@ declare namespace BackendAPI {
 
   type LogSetting = {
     auto_clear?: boolean;
-    clear_days: number;
+    clear_days?: number;
+    sentry_enabled?: boolean;
+    sentry_dsn?: string;
   };
 
   type MessageLog = {

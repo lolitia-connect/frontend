@@ -3,9 +3,9 @@ import { Label } from "@workspace/ui/components/label";
 import { Switch } from "@workspace/ui/components/switch";
 import {
   bindNekoproxy,
+  type NekoproxyNodeEntry,
   syncNekoproxy,
   unbindNekoproxy,
-  type NekoproxyNodeEntry,
 } from "@workspace/ui/services/admin/nekoproxy";
 import { useId, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -101,8 +101,6 @@ export default function NekoproxyNodeSettings({
           {binding && !isError && (
             <>
               <Button
-                type="button"
-                size="sm"
                 disabled={
                   disabled ||
                   (Boolean(config.data) &&
@@ -122,13 +120,12 @@ export default function NekoproxyNodeSettings({
                       );
                   }, true)
                 }
+                size="sm"
+                type="button"
               >
                 {t("np.syncNow", "Sync this node now")}
               </Button>
               <Button
-                type="button"
-                size="sm"
-                variant="outline"
                 disabled={disabled}
                 onClick={async () => {
                   if (
@@ -139,15 +136,15 @@ export default function NekoproxyNodeSettings({
                   )
                     setChoice(null);
                 }}
+                size="sm"
+                type="button"
+                variant="outline"
               >
                 {t("np.unbind", "Unbind")}
               </Button>
             </>
           )}
           <Button
-            type="button"
-            size="sm"
-            variant="outline"
             disabled={disabled}
             onClick={() =>
               setChoice(
@@ -159,6 +156,9 @@ export default function NekoproxyNodeSettings({
                     }
               )
             }
+            size="sm"
+            type="button"
+            variant="outline"
           >
             {choice
               ? t("cancel", "Cancel")
@@ -184,14 +184,12 @@ export default function NekoproxyNodeSettings({
           {config.data?.has_api_token && state.data && !state.data.error && (
             <>
               <ForwardPicker
+                nodeID={nodeID}
+                onChange={setChoice}
                 state={state.data}
                 value={choice}
-                onChange={setChoice}
-                nodeID={nodeID}
               />
               <Button
-                type="button"
-                size="sm"
                 disabled={disabled || !canBind || state.isFetching}
                 onClick={async () => {
                   if (
@@ -202,6 +200,8 @@ export default function NekoproxyNodeSettings({
                   )
                     setChoice(null);
                 }}
+                size="sm"
+                type="button"
               >
                 {t("np.bindSync", "Bind and sync entry")}
               </Button>
@@ -230,15 +230,15 @@ export default function NekoproxyNodeSettings({
             <p className="text-muted text-xs">
               {t(
                 "np.syncOnSaveHint",
-                "Use the bound entry address and port. Turn this off to keep manual edits."
+                "Use the bound entry when saving. Switching the node protocol also updates an automatic forward target port; manual target ports are kept."
               )}
             </p>
           </div>
           <Switch
             aria-labelledby={`${id}-save`}
-            id={`${id}-toggle`}
             checked={preference ?? binding.sync_on_save}
             disabled={disabled}
+            id={`${id}-toggle`}
             onCheckedChange={onPreferenceChange}
           />
         </div>

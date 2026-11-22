@@ -24,18 +24,18 @@ import {
   getGroupConfig,
   getNodeGroupList,
 } from "@workspace/ui/services/admin/group";
-import type { TFunction } from "i18next";
-import { useEffect, useId, useMemo, useState } from "react";
-import { useForm } from "react-hook-form";
-import { useTranslation } from "react-i18next";
-import { z } from "zod";
-import { useNode } from "@/stores/node";
-import { useServer } from "@/stores/server";
 import {
   getNekoproxyBinding,
   type NekoproxyNodeEntry,
 } from "@workspace/ui/services/admin/nekoproxy";
+import type { TFunction } from "i18next";
+import { useEffect, useId, useMemo, useState } from "react";
+import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
+import { z } from "zod";
+import { useNode } from "@/stores/node";
+import { useServer } from "@/stores/server";
 import NekoproxyFields from "./nekoproxy-fields";
 import NekoproxyNodeSettings from "./nekoproxy-node-settings";
 import { bindingKey, nekoproxyStateKey } from "./nekoproxy-queries";
@@ -64,6 +64,7 @@ export const buildSchema = (t: TFunction) =>
         .string()
         .trim()
         .min(1, t("errors.nameRequired", "Please enter a name")),
+      sort: z.number().int().min(0).max(2_147_483_647).default(0),
       server_id: z.string().optional(),
       protocol: z.string().default(""),
       protocol_id: z.string().default(""),
@@ -196,6 +197,7 @@ export default function NodeForm(props: {
     resolver: zodResolver(Scheme),
     defaultValues: {
       name: "",
+      sort: 0,
       server_id: undefined,
       protocol: "",
       protocol_id: "",
@@ -434,6 +436,7 @@ export default function NodeForm(props: {
               setPreference(undefined);
               form.reset({
                 name: "",
+                sort: 0,
                 server_id: undefined,
                 protocol: "",
                 protocol_id: "",
@@ -571,7 +574,27 @@ export default function NodeForm(props: {
                       </FormItem>
                     )}
                   />
-
+                  <FormField
+                    control={form.control}
+                    name="sort"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{t("sort", "Sort ID")}</FormLabel>
+                        <FormControl>
+                          <EnhancedInput
+                            {...field}
+                            inputMode="numeric"
+                            min={0}
+                            onValueChange={(v) =>
+                              field.onChange(Number(v) || 0)
+                            }
+                            type="number"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                   {!nekoproxy && (
                     <>
                       <FormField
@@ -786,13 +809,13 @@ export default function NodeForm(props: {
                   )}
                   {nodeID && (
                     <NekoproxyNodeSettings
-                      nodeID={nodeID}
+                      disabled={busy}
                       entry={nodeEntry.data}
                       isError={nodeEntry.isError}
-                      disabled={busy}
-                      preference={preference}
-                      onPreferenceChange={setPreference}
+                      nodeID={nodeID}
                       onAction={runEntryAction}
+                      onPreferenceChange={setPreference}
+                      preference={preference}
                     />
                   )}
                 </form>

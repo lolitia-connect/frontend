@@ -37,6 +37,10 @@ describe("node forwarding form validation", () => {
     expect(
       buildSchema(t).safeParse({ ...base, nekoproxy: { create } }).success
     ).toBe(true);
+    const manual = { create: { ...create, target_port_manual: true } };
+    expect(
+      buildSchema(t).parse({ ...base, nekoproxy: manual }).nekoproxy
+    ).toEqual(manual);
     expect(
       buildSchema(t).safeParse({
         ...base,

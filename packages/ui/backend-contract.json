@@ -1164,6 +1164,11 @@
         "tag": "json:\"target_port\" validate:\"gte=1,lte=65535\""
       },
       {
+        "name": "TargetPortManual",
+        "type": "bool",
+        "tag": "json:\"target_port_manual,omitempty\""
+      },
+      {
         "name": "RequestedPort",
         "type": "int",
         "tag": "json:\"requested_port\" validate:\"gte=0,lte=65535\""
@@ -1281,6 +1286,11 @@
         "name": "IsHidden",
         "type": "*bool",
         "tag": "json:\"is_hidden,omitempty\""
+      },
+      {
+        "name": "Sort",
+        "type": "*int",
+        "tag": "json:\"sort,omitempty\" validate:\"omitempty,gte=0\""
       },
       {
         "name": "NodeGroupIds",
@@ -4571,12 +4581,22 @@
       {
         "name": "AutoClear",
         "type": "*bool",
-        "tag": "json:\"auto_clear\""
+        "tag": "json:\"auto_clear,omitempty\""
       },
       {
         "name": "ClearDays",
         "type": "int64",
-        "tag": "json:\"clear_days\""
+        "tag": "json:\"clear_days,omitempty\""
+      },
+      {
+        "name": "SentryEnabled",
+        "type": "*bool",
+        "tag": "json:\"sentry_enabled,omitempty\""
+      },
+      {
+        "name": "SentryDSN",
+        "type": "string",
+        "tag": "json:\"sentry_dsn,omitempty\""
       }
     ],
     "LoginLog": [
@@ -5037,7 +5057,7 @@
       {
         "name": "Sort",
         "type": "int",
-        "tag": "json:\"sort,omitempty\""
+        "tag": "json:\"sort\""
       },
       {
         "name": "NodeGroupId",
@@ -8468,7 +8488,7 @@
       {
         "name": "Sort",
         "type": "int64",
-        "tag": "json:\"sort\" validate:\"required\""
+        "tag": "json:\"sort\" validate:\"gte=0,lte=2147483647\""
       }
     ],
     "StopBatchSendEmailTaskRequest": [
@@ -9865,8 +9885,8 @@
       },
       {
         "name": "Sort",
-        "type": "int",
-        "tag": "json:\"sort\""
+        "type": "*int",
+        "tag": "json:\"sort,omitempty\" validate:\"omitempty,gte=0\""
       },
       {
         "name": "ForCalculation",
@@ -9966,6 +9986,11 @@
         "tag": "json:\"is_hidden,omitempty\""
       },
       {
+        "name": "Sort",
+        "type": "*int",
+        "tag": "json:\"sort,omitempty\" validate:\"omitempty,gte=0\""
+      },
+      {
         "name": "NodeGroupIds",
         "type": "[]string",
         "tag": "json:\"node_group_ids,omitempty\""
@@ -10046,8 +10071,8 @@
       },
       {
         "name": "Sort",
-        "type": "int64",
-        "tag": "json:\"sort,omitempty\""
+        "type": "*int64",
+        "tag": "json:\"sort,omitempty\" validate:\"omitempty,gte=0\""
       },
       {
         "name": "Enable",
@@ -10142,8 +10167,8 @@
       },
       {
         "name": "Sort",
-        "type": "int",
-        "tag": "json:\"sort,omitempty\""
+        "type": "*int",
+        "tag": "json:\"sort,omitempty\" validate:\"omitempty,gte=0\""
       },
       {
         "name": "Protocols",
@@ -13626,6 +13651,6 @@
       "path": "/v2/server/:server_id"
     }
   ],
-  "backendCommit": "6a80b61d50aab974d5928c294836eadfaa2dc1d8",
-  "backendDirty": false
+  "backendCommit": "05dfea86d573a92f74635122a64874ff3c79df9e",
+  "backendDirty": true
 }

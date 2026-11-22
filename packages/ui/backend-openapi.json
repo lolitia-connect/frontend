@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Lolitia local backend",
-    "version": "6a80b61d50aab974d5928c294836eadfaa2dc1d8"
+    "version": "05dfea86d573a92f74635122a64874ff3c79df9e"
   },
   "paths": {
     "/v1/admin/ads/": {
@@ -10956,6 +10956,7 @@
           "protocol": { "type": "string" },
           "target_host": { "type": "string" },
           "target_port": { "type": "integer", "format": "int64" },
+          "target_port_manual": { "type": "boolean" },
           "requested_port": { "type": "integer", "format": "int64" }
         },
         "required": [
@@ -11021,6 +11022,7 @@
           "enabled": { "type": "boolean", "nullable": true },
           "node_type": { "type": "string" },
           "is_hidden": { "type": "boolean", "nullable": true },
+          "sort": { "type": "integer", "format": "int64", "nullable": true },
           "node_group_ids": { "type": "array", "items": { "type": "string" } }
         },
         "required": [
@@ -13185,9 +13187,10 @@
         "type": "object",
         "properties": {
           "auto_clear": { "type": "boolean", "nullable": true },
-          "clear_days": { "type": "integer", "format": "int64" }
-        },
-        "required": ["clear_days"]
+          "clear_days": { "type": "integer", "format": "int64" },
+          "sentry_enabled": { "type": "boolean", "nullable": true },
+          "sentry_dsn": { "type": "string" }
+        }
       },
       "LoginLog": {
         "type": "object",
@@ -13450,6 +13453,7 @@
           "protocol",
           "protocol_id",
           "node_type",
+          "sort",
           "created_at",
           "updated_at"
         ]
@@ -16046,7 +16050,7 @@
           "name": { "type": "string" },
           "type": { "type": "string" },
           "description": { "type": "string" },
-          "sort": { "type": "integer", "format": "int64" },
+          "sort": { "type": "integer", "format": "int64", "nullable": true },
           "for_calculation": { "type": "boolean", "nullable": true },
           "is_expired_group": { "type": "boolean", "nullable": true },
           "expired_days_limit": {
@@ -16075,7 +16079,7 @@
             "nullable": true
           }
         },
-        "required": ["id", "name", "description", "sort"]
+        "required": ["id", "name", "description"]
       },
       "UpdateNodeRequest": {
         "type": "object",
@@ -16092,6 +16096,7 @@
           "enabled": { "type": "boolean", "nullable": true },
           "node_type": { "type": "string" },
           "is_hidden": { "type": "boolean", "nullable": true },
+          "sort": { "type": "integer", "format": "int64", "nullable": true },
           "node_group_ids": { "type": "array", "items": { "type": "string" } }
         },
         "required": [
@@ -16127,7 +16132,7 @@
           "fee_mode": { "type": "integer", "format": "int64" },
           "fee_percent": { "type": "integer", "format": "int64" },
           "fee_amount": { "type": "integer", "format": "int64" },
-          "sort": { "type": "integer", "format": "int64" },
+          "sort": { "type": "integer", "format": "int64", "nullable": true },
           "enable": { "type": "boolean", "nullable": true },
           "currency_unit": { "type": "string" },
           "exchange_rate": { "type": "number" },
@@ -16193,7 +16198,7 @@
           "country": { "type": "string" },
           "city": { "type": "string" },
           "address": { "type": "string" },
-          "sort": { "type": "integer", "format": "int64" },
+          "sort": { "type": "integer", "format": "int64", "nullable": true },
           "protocols": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/Protocol" }

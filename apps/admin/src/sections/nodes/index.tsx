@@ -9,6 +9,11 @@ import {
   ProTable,
   type ProTableActions,
 } from "@workspace/ui/composed/pro-table/pro-table";
+import { SortIdCell } from "@workspace/ui/composed/pro-table/sort-id-cell";
+import {
+  reorderSortableItems,
+  sortSortableItems,
+} from "@workspace/ui/composed/pro-table/sort-utils";
 import {
   getGroupConfig,
   getNodeGroupList,
@@ -67,6 +72,7 @@ export default function Nodes() {
     const payload: Record<string, any> = {
       ...(row || {}),
       name: values.name,
+      sort: values.sort,
       address: values.address,
       port: Number(values.port),
       tags: values.tags || [],
@@ -111,6 +117,24 @@ export default function Nodes() {
               fetchTags();
               fetchServers();
             }}
+          />
+        ),
+      },
+      {
+        id: "sort",
+        accessorKey: "sort",
+        header: t("sort", "Sort ID"),
+        cell: ({ row }: { row: any }) => (
+          <SortIdCell
+            ariaLabel={t("sort", "Sort ID")}
+            onSave={async (sort) => {
+              await resetSortWithNode({
+                sort: [{ id: row.original.id, sort }],
+              });
+              toast.success(t("sorted_success", "Sorted successfully"));
+              await ref.current?.refresh();
+            }}
+            value={row.original.sort}
           />
         ),
       },
@@ -247,11 +271,11 @@ export default function Nodes() {
       {editing && (
         <NodeForm
           initialValues={editing as Partial<NodeFormValues>}
+          key={editing.id}
+          loading={loading}
           nodeID={String(editing.id)}
           onClose={() => setEditing(null)}
           onEntryChanged={refreshNodes}
-          key={editing.id}
-          loading={loading}
           onSubmit={async (values) => {
             setLoading(true);
             try {
@@ -398,39 +422,8 @@ export default function Nodes() {
           ),
         }}
         onSort={async (source, target, items) => {
-          // NOTE: `items` is the current page's items from ProTable.
-          // Avoid mutating it in-place, and persist sort changes reliably.
-          const sourceIndex = items.findIndex(
-            (item) => String(item.id) === source
-          );
-          const targetIndex = items.findIndex(
-            (item) => String(item.id) === target
-          );
-
-          if (sourceIndex === -1 || targetIndex === -1) return items;
-
-          const next = items.slice();
-          const [movedItem] = next.splice(sourceIndex, 1);
-          next.splice(targetIndex, 0, movedItem!);
-          // IMPORTANT:
-          // Some installations have duplicate / empty `sort` values (commonly 0 or null)
-          // which makes the order appear "random" after refresh and also makes
-          // "swap sort values" strategies a no-op.
-          //
-          // To make the ordering stable, we re-index the current page to a strictly
-          // increasing sequence.
-          const numericSorts = items
-            .map((it) => (typeof it.sort === "number" ? it.sort : Number.NaN))
-            .filter((v) => Number.isFinite(v)) as number[];
-          const baseSort = numericSorts.length ? Math.min(...numericSorts) : 0;
-
-          const updatedItems = next.map((item, index) => ({
-            ...item,
-            sort: baseSort + index,
-          }));
-
-          // Send ALL items on the current page (not just changed ones) so the
-          // backend can re-index globally and avoid cross-page sort conflicts.
+          if (target == null) return null;
+          const updatedItems = reorderSortableItems(items, source, target);
           await resetSortWithNode({
             sort: updatedItems.map((item) => ({
               id: item.id,
@@ -438,12 +431,8 @@ export default function Nodes() {
             })) as API.SortItem[],
           });
           toast.success(t("sorted_success", "Sorted successfully"));
-
-          // Re-fetch from backend to ensure frontend sort values match the
-          // globally re-indexed state. Without this, subsequent drag-sorts
-          // would use stale baseSort values and cause items to jump.
-          ref.current?.refresh();
-          return updatedItems;
+          await ref.current?.refresh();
+          return null;
         }}
         params={[
           {
@@ -475,17 +464,7 @@ export default function Nodes() {
 
           const { data } = await filterNodeList(filters);
           const rawList = (data?.data?.list || []) as API.Node[];
-          // Backend should ideally return nodes already sorted, but we also sort on the
-          // frontend to keep the UI stable (and avoid "random" order after refresh).
-          const list = rawList.slice().sort((a, b) => {
-            const as = a.sort;
-            const bs = b.sort;
-            const an = typeof as === "number" ? as : Number.POSITIVE_INFINITY;
-            const bn = typeof bs === "number" ? bs : Number.POSITIVE_INFINITY;
-            if (an !== bn) return an - bn;
-            // Tie-breaker to keep a stable order.
-            return Number(a.id) - Number(b.id);
-          });
+          const list = sortSortableItems(rawList);
           const total = Number(data?.data?.total || list.length);
           return { list, total };
         }}

@@ -6,8 +6,7 @@
 
 ## 字体
 
-三个应用共用 `packages/ui/src/styles/` 中的 CJK 字体配置。用户端和管理端的英文保留现有
-Fredoka / Sen 字体栈，支付门户的英文保留其原有系统字体栈；CJK 使用本地托管的
+三个应用共用 `packages/ui/src/styles/` 中的 CJK 字体配置。三端通过共享组件加载 Fredoka / Sen 英文字体。CJK 使用本地托管的
 [Swei Gothic（獅尾圓體）](https://github.com/max32002/swei-gothic)
 WOFF2 字体，按页面或元素的 `lang` 选择版本：`ja` / `ja-JP` 使用 JP，
 `zh-CN` / `zh-Hans` 使用 SC，`zh-TW` / `zh-HK` / `zh-MO` / `zh-Hant` 使用 TC。
@@ -101,7 +100,7 @@ Bun 命令在载入配置前设置 `PLAYWRIGHT_TRANSFORM_CACHE_DIR`，避免 Win
 
 ## 支付门户维护
 
-支付门户直接使用 HeroUI v3，独立样式导入 Tailwind v4、HeroUI 和共享语义主题；三端共享 accent、surface、field、圆角与明暗 token。[共享认证壳](https://github.com/lolitia-connect/frontend/blob/main/packages/ui/src/composed/auth-shell.tsx)统一登录面板宽度和响应式间距。门户不导入共享组件的覆盖样式，语言/主题持久化和后端服务仍共享，API 错误提示使用 HeroUI。
+支付门户直接使用 HeroUI v3，通过与主站相同的全局样式加载 Tailwind v4、HeroUI 和共享语义主题；三端共享 accent、surface、field、圆角与明暗 token。[共享认证壳](https://github.com/lolitia-connect/frontend/blob/main/packages/ui/src/composed/auth-shell.tsx)统一登录面板宽度和响应式间距。门户与主站共用语言和主题切换组件以及后端服务，API 错误提示使用 HeroUI。
 
 - `NEXT_PUBLIC_PAYMENT_PORTAL_AMOUNTS` 中小于 `10000` 的预设按主要货币单位解释，旧式 `>=10000` 预设按分归一化一次；UI 使用主要单位，向后端提交时避免重复换算。
 - `NEXT_PUBLIC_PAYMENT_PORTAL_MIN_CUSTOM_AMOUNT` 是自定义输入下限，默认 1，配置不能低于 1；输入步进 0.01，可清空，非空值小于下限时立即抬升。预设金额不受自定义输入下限限制。

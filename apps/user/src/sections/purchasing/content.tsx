@@ -51,7 +51,11 @@ export default function Content({
     message: "",
   });
 
-  const { data: order } = useQuery({
+  const {
+    data: order,
+    error,
+    isFetching,
+  } = useQuery({
     enabled: !!subscription?.id && !!params.payment,
     queryKey: [
       "preCreateOrder",
@@ -68,6 +72,15 @@ export default function Content({
     },
   });
 
+  const couponStatus = params.coupon
+    ? isFetching
+      ? "checking"
+      : error
+        ? "invalid"
+        : order
+          ? "valid"
+          : "idle"
+    : "idle";
   useEffect(() => {
     if (subscription) {
       setParams((prev) => ({
@@ -337,6 +350,7 @@ export default function Content({
               <CouponInput
                 coupon={params.coupon}
                 onChange={(value: string) => handleChange("coupon", value)}
+                status={couponStatus}
               />
             </section>
             <Separator />

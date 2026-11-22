@@ -271,6 +271,7 @@ Configure system logs:
 
 - **Log Level**: DEBUG/INFO/WARNING/ERROR
 - **Log Channel**: File/Database/Cloud
+- **Backend Sentry error reporting** is off by default. In **System Settings → Log Settings → Backend Sentry error reporting**, enter the backend project's public DSN, enable reporting and save. Changes take effect immediately and persist across restarts. Reports include the release, environment and stack trace. Expected rejections such as ineligible redemptions and malformed HTTP requests stay in local logs.
 - **Retention**: Log retention days
 - **Rotation**: Log file rotation policy
 

@@ -6,6 +6,7 @@ import PrivacyPolicyForm from "./basic-settings/privacy-policy-form";
 import SiteForm from "./basic-settings/site-form";
 import TosForm from "./basic-settings/tos-form";
 import LogCleanupForm from "./log-cleanup/log-cleanup-form";
+import SentryForm from "./sentry-form";
 import InviteForm from "./user-security/invite-form";
 import RegisterForm from "./user-security/register-form";
 import VerifyCodeForm from "./user-security/verify-code-form";
@@ -35,7 +36,7 @@ export default function System() {
     },
     {
       title: t("logSettings", "Log Settings"),
-      forms: [{ component: LogCleanupForm }],
+      forms: [{ component: LogCleanupForm }, { component: SentryForm }],
     },
   ];
 

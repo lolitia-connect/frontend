@@ -9,6 +9,18 @@ test("hydrates with a hosting comment after the charset declaration", async ({
   page,
 }) => {
   await expectHydrationWithHostingComment(page);
+  expect(
+    await page
+      .locator("body")
+      .evaluate((body) => getComputedStyle(body).fontFamily)
+  ).toContain("Fredoka");
+});
+
+test("marks native language names in the login menu", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.getByRole("link", { name: "LoliTia Pay" })).toBeVisible();
+  await page.getByRole("button", { name: /^Language:/ }).press("Enter");
+  await expect(page.getByText(/日本語/)).toHaveAttribute("lang", "ja-JP");
 });
 
 for (const theme of ["light", "dark"] as const) {

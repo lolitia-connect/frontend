@@ -80,7 +80,7 @@ export function LoginScreen({
             {t("login.accountLabel", "账号 / 邮箱")}
           </Label>
           <Input
-            className="w-full"
+            className="h-10 w-full"
             placeholder={t(
               "login.accountPlaceholder",
               "请输入现有系统账号或邮箱"
@@ -96,7 +96,7 @@ export function LoginScreen({
         >
           <Label className="sr-only">{t("login.passwordLabel", "密码")}</Label>
           <Input
-            className="w-full"
+            className="h-10 w-full"
             placeholder={t("login.passwordPlaceholder", "请输入密码")}
           />
         </TextField>

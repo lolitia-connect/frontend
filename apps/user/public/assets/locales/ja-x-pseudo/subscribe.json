@@ -15,6 +15,9 @@
   "buyNow": "即時購入",
   "buySubscription": "契約購入",
   "coupon": "割引券",
+  "couponChecking": "［クーポンコードを確認中…］",
+  "couponInvalid": "［クーポンコードが無効です。］",
+  "couponValid": "［クーポンコードは有効です。］",
   "Day": "日",
   "detail": {
     "availableTraffic": "利用可能通信量",

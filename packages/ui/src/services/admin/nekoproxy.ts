@@ -24,15 +24,15 @@ export interface NekoproxyForward {
   target_port: number;
 }
 export interface NekoproxyBinding {
-  sync_on_save: boolean;
   api_url: string;
   forward_id: string;
   node_id: string;
   session_id: string;
+  sync_on_save: boolean;
 }
 export interface NekoproxyNodeEntry {
-  binding?: NekoproxyBinding;
   address: string;
+  binding?: NekoproxyBinding;
   port: number;
 }
 export interface NekoproxyState {
@@ -56,6 +56,7 @@ export interface CreateNekoproxyForward {
   requested_port: number;
   target_host: string;
   target_port: number;
+  target_port_manual?: boolean;
 }
 export interface NekoproxyNodeOptions {
   create?: CreateNekoproxyForward;

@@ -59,14 +59,17 @@ export default function LogCleanupForm() {
 
   useEffect(() => {
     if (data) {
-      form.reset(data);
+      form.reset({
+        auto_clear: data.auto_clear ?? false,
+        clear_days: data.clear_days ?? 30,
+      });
     }
   }, [data, form]);
 
   async function onSubmit(values: LogCleanupFormData) {
     setLoading(true);
     try {
-      await updateLogSetting(values as API.LogSetting);
+      await updateLogSetting(values);
       toast.success(t("common.saveSuccess", "Save Successful"));
       refetch();
       setOpen(false);

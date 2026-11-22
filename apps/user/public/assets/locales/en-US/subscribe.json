@@ -15,6 +15,9 @@
   "buyNow": "Buy Now",
   "buySubscription": "Buy Subscription",
   "coupon": "Coupon",
+  "couponChecking": "Checking coupon code...",
+  "couponInvalid": "Coupon code is invalid.",
+  "couponValid": "Coupon code is valid.",
   "Day": "Day",
   "detail": {
     "availableTraffic": "Available Traffic",

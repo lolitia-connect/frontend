@@ -1,8 +1,8 @@
 "use client";
 
-import { Switch } from "@workspace/ui/components/switch";
 import { Button } from "@workspace/ui/components/button";
 import { Label } from "@workspace/ui/components/label";
+import { Switch } from "@workspace/ui/components/switch";
 import { Combobox } from "@workspace/ui/composed/combobox";
 import { EnhancedInput } from "@workspace/ui/composed/enhanced-input";
 import type { NekoproxyNodeOptions } from "@workspace/ui/services/admin/nekoproxy";
@@ -44,18 +44,11 @@ export default function NekoproxyFields({
     if (create) onChange({ create: { ...create, ...patch } });
   };
   useEffect(() => {
-    if (
-      create &&
-      ((!create.target_host && targetHost) ||
-        (!create.target_port && targetPort))
-    ) {
-      onChange({
-        create: {
-          ...create,
-          target_host: create.target_host || targetHost,
-          target_port: create.target_port || targetPort,
-        },
-      });
+    if (!create) return;
+    const host = create.target_host || targetHost;
+    const port = create.target_port_manual ? create.target_port : targetPort;
+    if (host !== create.target_host || port !== create.target_port) {
+      onChange({ create: { ...create, target_host: host, target_port: port } });
     }
   }, [create, onChange, targetHost, targetPort]);
 
@@ -67,8 +60,8 @@ export default function NekoproxyFields({
         </Label>
         <Switch
           aria-labelledby={id}
-          id={`${id}-toggle`}
           checked={Boolean(value)}
+          id={`${id}-toggle`}
           onCheckedChange={(checked) =>
             onChange(checked ? newForward() : undefined)
           }
@@ -102,7 +95,7 @@ export default function NekoproxyFields({
           <p className="text-muted text-sm">
             {t(
               "np.createHint",
-              "The node address and port will use the selected or newly allocated forwarding entry."
+              "The node uses the forwarding entry. A new forward targets the selected protocol port unless you enter a port manually."
             )}
           </p>
           {!(config.isLoading || config.data?.has_api_token) && (
@@ -137,12 +130,12 @@ export default function NekoproxyFields({
       )}
       {mode === "existing" && ready && (
         <ForwardPicker
+          onChange={onChange}
           state={state.data}
           value={{
             forward_id: value?.forward_id || "",
             session_id: value?.session_id || "",
           }}
-          onChange={onChange}
         />
       )}
       {create && ready && (
@@ -219,7 +212,12 @@ export default function NekoproxyFields({
               id={`${id}-target-port`}
               max={65_535}
               min={1}
-              onValueChange={(port) => setCreate({ target_port: Number(port) })}
+              onValueChange={(port) =>
+                setCreate({
+                  target_port: Number(port),
+                  target_port_manual: true,
+                })
+              }
               type="number"
               value={create.target_port}
             />

@@ -1,8 +1,7 @@
 "use client";
 
-import { Sheet, Button as SheetButton } from "@heroui/react";
+import { Sheet, Button as SheetButton, toast } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQuery } from "@tanstack/react-query";
 import { Button } from "@workspace/ui/components/button";
 import {
   Form,
@@ -14,11 +13,11 @@ import {
   FormMessage,
 } from "@workspace/ui/components/form";
 import { ScrollArea } from "@workspace/ui/components/scroll-area";
-
 import { Switch } from "@workspace/ui/components/switch";
 import { Textarea } from "@workspace/ui/components/textarea";
 import { EnhancedInput } from "@workspace/ui/composed/enhanced-input";
 import { Icon } from "@workspace/ui/composed/icon";
+import { useQuery } from "@workspace/ui/hooks/query";
 import {
   getSystemSubscribeConfig as getSubscribeConfig,
   putSystemSubscribeConfig as updateSubscribeConfig,
@@ -26,7 +25,6 @@ import {
 import { useEffect, useState } from "react";
 import { type Resolver, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
 import { z } from "zod";
 
 const subscribeConfigSchema = z.object({
@@ -88,7 +86,7 @@ export default function ConfigForm() {
       refetch();
       setOpen(false);
     } catch {
-      toast.error(t("config.updateError", "Update failed"));
+      toast.danger(t("config.updateError", "Update failed"));
     } finally {
       setLoading(false);
     }

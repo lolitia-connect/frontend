@@ -1,8 +1,8 @@
 "use client";
 
 import { Tooltip } from "@heroui/react";
-import { useQuery } from "@tanstack/react-query";
 import { Button } from "@workspace/ui/components/button";
+import { useQuery } from "@workspace/ui/hooks/query";
 import { Link } from "@workspace/ui/lib/router-compat";
 
 import {

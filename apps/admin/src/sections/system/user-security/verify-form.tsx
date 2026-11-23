@@ -10,9 +10,9 @@ import {
   SelectValue,
   Sheet,
   Button as SheetButton,
+  toast,
 } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQuery } from "@tanstack/react-query";
 import { Button } from "@workspace/ui/components/button";
 import {
   Form,
@@ -24,10 +24,10 @@ import {
   FormMessage,
 } from "@workspace/ui/components/form";
 import { ScrollArea } from "@workspace/ui/components/scroll-area";
-
 import { Switch } from "@workspace/ui/components/switch";
 import { EnhancedInput } from "@workspace/ui/composed/enhanced-input";
 import { Icon } from "@workspace/ui/composed/icon";
+import { useQuery } from "@workspace/ui/hooks/query";
 import {
   getSystemVerifyConfig as getVerifyConfig,
   putSystemVerifyConfig as updateVerifyConfig,
@@ -35,7 +35,6 @@ import {
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
 import { z } from "zod";
 
 const verifySchema = z.object({
@@ -91,7 +90,7 @@ export default function VerifyConfig() {
       refetch();
       setOpen(false);
     } catch {
-      toast.error(t("verify.saveFailed", "Save Failed"));
+      toast.danger(t("verify.saveFailed", "Save Failed"));
     } finally {
       setLoading(false);
     }

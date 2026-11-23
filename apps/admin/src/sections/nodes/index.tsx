@@ -1,6 +1,6 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+import { toast } from "@heroui/react";
 import { Badge } from "@workspace/ui/components/badge";
 import { Button } from "@workspace/ui/components/button";
 import { Switch } from "@workspace/ui/components/switch";
@@ -14,6 +14,7 @@ import {
   reorderSortableItems,
   sortSortableItems,
 } from "@workspace/ui/composed/pro-table/sort-utils";
+import { useQuery } from "@workspace/ui/hooks/query";
 import {
   getGroupConfig,
   getNodeGroupList,
@@ -30,7 +31,6 @@ import {
 import { ArrowDownAZ } from "lucide-react";
 import { useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
 import { useNode } from "@/stores/node";
 import { useServer } from "@/stores/server";
 import NekoproxyConnectionSheet from "./nekoproxy-connection-sheet";

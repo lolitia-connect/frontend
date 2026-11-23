@@ -1,6 +1,6 @@
 "use client";
 
-import { buttonVariants, Dropdown } from "@heroui/react";
+import { buttonVariants, Dropdown, toast } from "@heroui/react";
 import { Badge } from "@workspace/ui/components/badge";
 import { Button } from "@workspace/ui/components/button";
 import { ConfirmButton } from "@workspace/ui/composed/confirm-button";
@@ -20,7 +20,6 @@ import {
 import { copyText } from "@workspace/ui/utils/clipboard";
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
 import { Display } from "@/components/display";
 import { useGlobalStore } from "@/stores/global";
 import { formatDate } from "@/utils/common";
@@ -283,7 +282,7 @@ function RowMoreActions({
                   );
                   toast.success(t("copySuccess", "Copied successfully"));
                 } catch {
-                  toast.error(t("copyFailed", "Copy failed"));
+                  toast.danger(t("copyFailed", "Copy failed"));
                 }
               }}
             >

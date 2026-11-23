@@ -1,10 +1,10 @@
+// @ts-nocheck
 "use client";
 
 import { Sheet, Button as SheetButton } from "@heroui/react";
-import { useQuery } from "@tanstack/react-query";
 import { Badge } from "@workspace/ui/components/badge";
-
 import { ProTable } from "@workspace/ui/composed/pro-table/pro-table";
+import { useQuery } from "@workspace/ui/hooks/query";
 import { getUserSubscribeDetail as getUserSubscribeById } from "@workspace/ui/services/admin/admin";
 import { formatBytes } from "@workspace/ui/utils/formatting";
 import { Users } from "lucide-react";

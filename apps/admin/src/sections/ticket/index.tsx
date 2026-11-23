@@ -1,9 +1,7 @@
 "use client";
 
-import { Drawer } from "@heroui/react";
-import { useQuery } from "@tanstack/react-query";
+import { Drawer, toast } from "@heroui/react";
 import { Button } from "@workspace/ui/components/button";
-
 import { Input } from "@workspace/ui/components/input";
 import { Label } from "@workspace/ui/components/label";
 import { ScrollArea } from "@workspace/ui/components/scroll-area";
@@ -13,6 +11,7 @@ import {
   ProTable,
   type ProTableActions,
 } from "@workspace/ui/composed/pro-table/pro-table";
+import { useQuery } from "@workspace/ui/hooks/query";
 import { cn } from "@workspace/ui/lib/utils";
 import {
   postTicketFollow as createTicketFollow,
@@ -22,7 +21,6 @@ import {
 } from "@workspace/ui/services/admin/admin";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
 import { formatDate } from "@/utils/common";
 import { UserDetail } from "../user/user-detail";
 

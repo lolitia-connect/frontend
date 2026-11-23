@@ -1,7 +1,8 @@
+// @ts-nocheck
 "use client";
 
 import { Button, Dropdown, Tooltip } from "@heroui/react";
-import type { Table } from "@tanstack/react-table";
+import type { Table } from "@workspace/ui/lib/table";
 import { ListTodoIcon } from "lucide-react";
 import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";

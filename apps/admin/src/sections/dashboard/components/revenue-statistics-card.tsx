@@ -13,7 +13,6 @@ import {
   TabListContainer as TabsListContainer,
   Tab as TabsTrigger,
 } from "@heroui/react";
-import { useQuery } from "@tanstack/react-query";
 import {
   ChartContainer,
   ChartLegend,
@@ -23,6 +22,7 @@ import {
 } from "@workspace/ui/components/chart";
 import { Separator } from "@workspace/ui/components/separator";
 import Empty from "@workspace/ui/composed/empty";
+import { useQuery } from "@workspace/ui/hooks/query";
 import { getConsoleRevenue as queryRevenueStatistics } from "@workspace/ui/services/admin/admin";
 import { unitConversion } from "@workspace/ui/utils/unit-conversions";
 import { useTranslation } from "react-i18next";

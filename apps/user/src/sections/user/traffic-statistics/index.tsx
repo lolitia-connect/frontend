@@ -12,9 +12,9 @@ import {
   ToggleButton,
   ToggleButtonGroup,
 } from "@heroui/react";
-import { useQuery } from "@tanstack/react-query";
 import { BlockLoading } from "@workspace/ui/composed/block-loading";
 import { Icon } from "@workspace/ui/composed/icon";
+import { useQuery } from "@workspace/ui/hooks/query";
 import { getUserTrafficStats } from "@workspace/ui/services/user/traffic";
 import { queryUserSubscribe } from "@workspace/ui/services/user/user";
 import { useState } from "react";

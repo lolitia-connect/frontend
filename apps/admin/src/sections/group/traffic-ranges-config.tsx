@@ -1,10 +1,10 @@
 "use client";
 
+import { toast } from "@heroui/react";
 import { Input } from "@workspace/ui/components/input";
 import { Spinner } from "@workspace/ui/components/spinner";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
 
 interface NodeGroup {
   id: string;
@@ -153,7 +153,7 @@ export default function TrafficRangeConfig({
       currentMax
     );
     if (!validation.valid) {
-      toast.error(
+      toast.danger(
         validation.error || t("validationFailed", "Validation failed")
       );
       return;

@@ -31,7 +31,7 @@ PPanel frontend includes two independent applications:
 - **Runtime**: Bun (recommended) / Node.js 20+
 - **Build Tool**: Vite 6
 - **Framework**: React 19 + TypeScript
-- **Router**: TanStack Router
+- **Router**: Next.js App Router
 - **Styling**: TailwindCSS 4
 - **State Management**: Zustand
 - **i18n**: i18next

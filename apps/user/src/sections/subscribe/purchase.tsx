@@ -1,9 +1,9 @@
 "use client";
 
 import { Card, Modal } from "@heroui/react";
-import { useQuery } from "@tanstack/react-query";
 import { Button } from "@workspace/ui/components/button";
 import { Separator } from "@workspace/ui/components/separator";
+import { useQuery } from "@workspace/ui/hooks/query";
 import { useNavigate } from "@workspace/ui/lib/router-compat";
 import { preCreateOrder } from "@workspace/ui/services/user/order";
 import { useCallback, useEffect, useRef, useState, useTransition } from "react";

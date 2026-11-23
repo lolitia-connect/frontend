@@ -10,7 +10,7 @@ import { useCallback } from "react";
 /**
  * Sync the table's filter state into the URL query string.
  *
- * Migrated off the TanStack `router.history` object: the Next.js compat shim
+ * Migrated off the legacy `router.history` object: the Next.js compat shim
  * exposes `next/navigation`'s router, so we read the current location from
  * `usePathname()` / `useSearchParams()` and write it back with `router.replace`.
  */

@@ -32,7 +32,10 @@ vi.mock("react-i18next", () => ({
       fallback.replace("{{email}}", values?.email ?? ""),
   }),
 }));
-vi.mock("sonner", () => ({ toast: { success: vi.fn() } }));
+vi.mock("@heroui/react", async (importOriginal) => {
+  const heroui = await importOriginal<typeof import("@heroui/react")>();
+  return { ...heroui, toast: { ...heroui.toast, success: vi.fn() } };
+});
 beforeEach(() => {
   mocks.update.mockResolvedValue({});
 });

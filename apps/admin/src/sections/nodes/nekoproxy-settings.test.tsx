@@ -26,7 +26,7 @@ const mocks = vi.hoisted(() => ({
   unbind: vi.fn(),
   sync: vi.fn(),
 }));
-vi.mock("@tanstack/react-query", () => ({
+vi.mock("@workspace/ui/hooks/query", () => ({
   useQuery: mocks.useQuery,
   useQueryClient: () => ({ invalidateQueries: mocks.invalidate }),
 }));

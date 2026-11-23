@@ -1,11 +1,11 @@
 "use client";
 
 import { Card } from "@heroui/react";
-import { useMutation, useQuery } from "@tanstack/react-query";
 import { Badge } from "@workspace/ui/components/badge";
 import { Button } from "@workspace/ui/components/button";
 import { Separator } from "@workspace/ui/components/separator";
 import { Icon } from "@workspace/ui/composed/icon";
+import { useMutation, useQuery } from "@workspace/ui/hooks/query";
 import { Link, useSearch } from "@workspace/ui/lib/router-compat";
 import {
   checkoutV2Order,

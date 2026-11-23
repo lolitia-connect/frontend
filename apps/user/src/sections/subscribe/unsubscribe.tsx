@@ -1,8 +1,8 @@
 "use client";
 
-import { Description, Modal } from "@heroui/react";
-import { useQuery } from "@tanstack/react-query";
+import { Description, Modal, toast } from "@heroui/react";
 import { Button } from "@workspace/ui/components/button";
+import { useQuery } from "@workspace/ui/hooks/query";
 
 import {
   postV1PublicUserUnsubscribePre as preUnsubscribe,
@@ -10,7 +10,6 @@ import {
 } from "@workspace/ui/services/user/user";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
 import { Display } from "@/components/display";
 import { useGlobalStore } from "@/stores/global";
 
@@ -56,7 +55,7 @@ export default function Unsubscribe({
       onSuccess?.();
       setOpen(false);
     } catch {
-      toast.error(t("unsubscribe.failed", "Unsubscribe failed"));
+      toast.danger(t("unsubscribe.failed", "Unsubscribe failed"));
     } finally {
       setSubmitting(false);
     }

@@ -1,8 +1,8 @@
 /// <reference path="../typings.d.ts" />
+import { toast } from "@heroui/react";
 import { getCookie } from "@workspace/ui/lib/cookies";
 import { isBrowser } from "@workspace/ui/utils/index";
 import axios, { type InternalAxiosRequestConfig } from "axios";
-import { toast } from "sonner";
 
 function handleError(response: {
   data?: { code?: number; msg?: string; message?: string };
@@ -356,7 +356,7 @@ function handleError(response: {
 
   if (response?.config?.skipErrorHandler) return message;
 
-  toast.error(message);
+  toast.danger(message);
   return message;
 }
 

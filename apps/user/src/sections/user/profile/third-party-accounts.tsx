@@ -1,6 +1,6 @@
 "use client";
 
-import { Card, Modal } from "@heroui/react";
+import { Card, Modal, toast } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@workspace/ui/components/button";
 
@@ -23,7 +23,6 @@ import {
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
 import { z } from "zod";
 import SendCode from "@/sections/auth/send-code";
 import { useGlobalStore } from "@/stores/global";
@@ -447,7 +446,7 @@ export default function ThirdPartyAccounts() {
       }
     } catch {
       closePopup(telegramPopup);
-      toast.error(t("thirdParty.bindFailed", "Failed to connect"));
+      toast.danger(t("thirdParty.bindFailed", "Failed to connect"));
     } finally {
       setActionLoading(null);
     }

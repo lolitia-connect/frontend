@@ -1,6 +1,6 @@
 "use client";
 
-import { Description, Modal } from "@heroui/react";
+import { Description, Modal, toast } from "@heroui/react";
 import { Badge } from "@workspace/ui/components/badge";
 import { Button } from "@workspace/ui/components/button";
 import { Textarea } from "@workspace/ui/components/textarea";
@@ -16,7 +16,6 @@ import {
 } from "@workspace/ui/services/admin/admin";
 import { type FormEvent, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
 import { Display } from "@/components/display";
 import { UserDetail } from "@/sections/user/user-detail";
 import { formatDate } from "@/utils/common";

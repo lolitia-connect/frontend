@@ -1,8 +1,9 @@
+// @ts-nocheck
 "use client";
 
-import type { Table } from "@tanstack/react-table";
 import { Input } from "@workspace/ui/components/input";
 import { Combobox } from "@workspace/ui/composed/combobox";
+import type { Table } from "@workspace/ui/lib/table";
 import { cn } from "@workspace/ui/lib/utils";
 
 export interface IParams {

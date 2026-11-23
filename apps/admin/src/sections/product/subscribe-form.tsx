@@ -15,9 +15,9 @@ import {
   TabList as TabsList,
   TabListContainer as TabsListContainer,
   Tab as TabsTrigger,
+  toast,
 } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQuery } from "@tanstack/react-query";
 import { Badge } from "@workspace/ui/components/badge";
 import { Button } from "@workspace/ui/components/button";
 import { Checkbox } from "@workspace/ui/components/checkbox";
@@ -38,6 +38,7 @@ import { ArrayInput } from "@workspace/ui/composed/dynamic-inputs";
 import { JSONEditor } from "@workspace/ui/composed/editor/index";
 import { EnhancedInput } from "@workspace/ui/composed/enhanced-input";
 import { Icon } from "@workspace/ui/composed/icon";
+import { useQuery } from "@workspace/ui/hooks/query";
 import {
   getGroupConfig,
   getNodeGroupList,
@@ -51,7 +52,6 @@ import { assign, shake } from "radash";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
 import { z } from "zod";
 import { useGlobalStore } from "@/stores/global";
 import { useNode } from "@/stores/node";
@@ -1904,7 +1904,7 @@ export default function SubscribeForm<T extends Record<string, any>>({
                     const error = (errors as Record<string, unknown>)[key];
                     const errorMessage =
                       getFirstValidationMessage(error) || "Validation failed";
-                    toast.error(
+                    toast.danger(
                       `${t(`form.${formattedKey}`)}: ${errorMessage}`
                     );
                     return false;

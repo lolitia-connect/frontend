@@ -1,6 +1,5 @@
 // @vitest-environment jsdom
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   cleanup,
   fireEvent,
@@ -9,6 +8,7 @@ import {
   waitFor,
   within,
 } from "@testing-library/react";
+import { QueryClient, QueryClientProvider } from "@workspace/ui/hooks/query";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { RevenueStatisticsCard } from "./revenue-statistics-card";
 import { UserStatisticsCard } from "./user-statistics-card";

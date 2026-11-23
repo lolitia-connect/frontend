@@ -9,11 +9,10 @@ import {
   AccordionTrigger,
   Modal,
 } from "@heroui/react";
-import { useQuery } from "@tanstack/react-query";
 import { Button } from "@workspace/ui/components/button";
-
 import { ScrollArea } from "@workspace/ui/components/scroll-area";
 import { Icon } from "@workspace/ui/composed/icon";
+import { useQuery } from "@workspace/ui/hooks/query";
 import { getToolLog as getSystemLog } from "@workspace/ui/services/admin/admin";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";

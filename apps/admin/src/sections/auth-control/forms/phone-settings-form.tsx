@@ -10,9 +10,9 @@ import {
   SelectValue,
   Sheet,
   Button as SheetButton,
+  toast,
 } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQuery } from "@tanstack/react-query";
 import { Button } from "@workspace/ui/components/button";
 import {
   Form,
@@ -30,6 +30,7 @@ import { AreaCodeSelect } from "@workspace/ui/composed/area-code-select";
 import { EnhancedInput } from "@workspace/ui/composed/enhanced-input";
 import { Icon } from "@workspace/ui/composed/icon";
 import TagInput from "@workspace/ui/composed/tag-input";
+import { useQuery } from "@workspace/ui/hooks/query";
 import { Link } from "@workspace/ui/lib/router-compat";
 import {
   getAuthMethodConfig,
@@ -40,7 +41,6 @@ import {
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
 import { z } from "zod";
 
 const phoneSettingsSchema = z.object({
@@ -141,7 +141,7 @@ export default function PhoneSettingsForm() {
       refetch();
       setOpen(false);
     } catch {
-      toast.error(t("common.saveFailed", "Save failed"));
+      toast.danger(t("common.saveFailed", "Save failed"));
     } finally {
       setLoading(false);
     }
@@ -640,7 +640,7 @@ export default function PhoneSettingsForm() {
                                 t("phone.sendSuccess", "SMS sent successfully")
                               );
                             } catch {
-                              toast.error(
+                              toast.danger(
                                 t("phone.sendFailed", "SMS send failed")
                               );
                             }

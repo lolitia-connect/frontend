@@ -12,18 +12,17 @@ import {
   TabList as TabsList,
   TabListContainer as TabsListContainer,
   Tab as TabsTrigger,
+  toast,
 } from "@heroui/react";
-import { useQuery } from "@tanstack/react-query";
 import { Badge } from "@workspace/ui/components/badge";
 import { Button } from "@workspace/ui/components/button";
-
 import { ScrollArea } from "@workspace/ui/components/scroll-area";
-
 import { ConfirmButton } from "@workspace/ui/composed/confirm-button";
 import {
   ProTable,
   type ProTableActions,
 } from "@workspace/ui/composed/pro-table/pro-table";
+import { useQuery } from "@workspace/ui/hooks/query";
 import { buildHref, useSearch } from "@workspace/ui/lib/router-compat";
 import {
   // getUserGroupList,
@@ -37,7 +36,6 @@ import {
 } from "@workspace/ui/services/admin/user";
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
 import { Display } from "@/components/display";
 import { useSubscribe } from "@/stores/subscribe";
 import { formatDate } from "@/utils/common";

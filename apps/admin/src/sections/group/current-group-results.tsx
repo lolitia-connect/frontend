@@ -7,8 +7,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@heroui/react";
-import { useQuery } from "@tanstack/react-query";
 import { Spinner } from "@workspace/ui/components/spinner";
+import { useQuery } from "@workspace/ui/hooks/query";
 import {
   getGroupHistory,
   getGroupHistoryDetail,

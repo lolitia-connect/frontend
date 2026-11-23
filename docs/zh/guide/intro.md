@@ -48,7 +48,7 @@ PPanel 采用 Monorepo 架构，便于统一管理和维护：
 
 ### 技术栈
 - **框架**: React 19 + TypeScript
-- **路由**: TanStack Router
+- **路由**: Next.js App Router
 - **状态管理**: Zustand
 - **样式**: TailwindCSS 4.0
 - **UI 组件**: shadcn/ui

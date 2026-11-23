@@ -1,5 +1,6 @@
 "use client";
 
+import { toast } from "@heroui/react";
 import { useNavigate } from "@workspace/ui/lib/router-compat";
 import {
   adminLogin,
@@ -9,7 +10,6 @@ import { userRegister } from "@workspace/ui/services/common/auth";
 import type { ReactNode } from "react";
 import { useState, useTransition } from "react";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
 import { USER_EMAIL, USER_PASSWORD } from "@/config";
 import { useGlobalStore } from "@/stores/global";
 import { getRedirectUrl, setAuthorization } from "@/utils/common";

@@ -65,6 +65,7 @@ export default function App({
     common,
   } = usePortalStore();
 
+  const [loginError, setLoginError] = useState("");
   const [account, setAccount] = useState("");
   const [password, setPassword] = useState("");
   const [configLoading, setConfigLoading] = useState(true);
@@ -206,72 +207,76 @@ export default function App({
     completedOrderNoticeRef.current = "";
   }, [reset, setCustomAmountEnabled, setCustomAmountInput, setActiveOrder]);
 
-  const handleLogin = useCallback(() => {
-    if (!(account.trim() && password.trim())) {
-      toast.danger(
-        t("errors.missingCredentials", "请输入账号和密码后再继续登录。")
-      );
-      return;
-    }
-
-    if (configLoading) return;
-
-    if (captchaEnabled) {
-      if (!captchaValue.trim()) {
-        toast.danger(t("errors.missingCaptcha", "请先完成验证码验证。"));
+  const handleLogin = useCallback(
+    (account: string, password: string) => {
+      setLoginError("");
+      if (!(account.trim() && password.trim())) {
+        toast.danger(
+          t("errors.missingCredentials", "请输入账号和密码后再继续登录。")
+        );
         return;
       }
-      if (captchaType === "local" && !captchaId) {
-        toast.danger(t("errors.missingCaptcha", "请先完成验证码验证。"));
-        return;
-      }
-    }
 
-    startLoginTransition(async () => {
-      try {
-        const payload: Record<string, string> = {
-          email: account.trim(),
-          password,
-        };
+      if (configLoading) return;
 
-        if (captchaEnabled) {
-          if (captchaType === "turnstile") {
-            payload.cf_token = captchaValue;
-          } else if (captchaType === "local") {
-            payload.captcha_code = captchaValue;
-            payload.captcha_id = captchaId;
-          } else if (captchaType === "slider") {
-            payload.slider_token = captchaValue;
-          }
-        }
-
-        const response = await userLogin(payload as any);
-        const token = response.data.data?.token;
-        if (!token) {
-          toast.danger(t("errors.loginFailed", "登录失败，请稍后重试。"));
+      if (captchaEnabled) {
+        if (!captchaValue.trim()) {
+          setLoginError(t("errors.missingCaptcha", "请先完成验证码验证。"));
           return;
         }
-
-        setAuthorization(String(token));
-        portalBootstrappedRef.current = true;
-        await refreshPortal();
-        setAuthenticated(true);
-        toast.success(t("login.success", "登录成功"));
-      } catch {
-        resetCaptcha();
+        if (captchaType === "local" && !captchaId) {
+          setLoginError(t("errors.missingCaptcha", "请先完成验证码验证。"));
+          return;
+        }
       }
-    });
-  }, [
-    account,
-    password,
-    configLoading,
-    captchaEnabled,
-    captchaValue,
-    captchaType,
-    captchaId,
-    t,
-    refreshPortal,
-  ]);
+
+      startLoginTransition(async () => {
+        try {
+          const payload: Record<string, string> = {
+            email: account.trim(),
+            password,
+          };
+
+          if (captchaEnabled) {
+            if (captchaType === "turnstile") {
+              payload.cf_token = captchaValue;
+            } else if (captchaType === "local") {
+              payload.captcha_code = captchaValue;
+              payload.captcha_id = captchaId;
+            } else if (captchaType === "slider") {
+              payload.slider_token = captchaValue;
+            }
+          }
+
+          const response = await userLogin(payload as any);
+          const token = response.data.data?.token;
+          if (!token) {
+            toast.danger(t("errors.loginFailed", "登录失败，请稍后重试。"));
+            return;
+          }
+
+          setAuthorization(String(token));
+          portalBootstrappedRef.current = true;
+          await refreshPortal();
+          setAuthenticated(true);
+          toast.success(t("login.success", "登录成功"));
+        } catch {
+          resetCaptcha();
+        }
+      });
+    },
+    [
+      account,
+      password,
+      configLoading,
+      captchaEnabled,
+      captchaValue,
+      captchaType,
+      captchaId,
+      t,
+      refreshPortal,
+    ]
+  );
 
   const handleOpenConfirm = useCallback(() => {
     if (isCurrentSelectionPendingOrder) {
@@ -570,6 +575,7 @@ export default function App({
         account={account}
         captchaSlot={captchaSlot}
         configLoading={configLoading}
+        error={loginError}
         loading={loginPending}
         onAccountChange={setAccount}
         onPasswordChange={setPassword}

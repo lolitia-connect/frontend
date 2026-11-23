@@ -1,10 +1,9 @@
 "use client";
 import { Card, Modal } from "@heroui/react";
-import { useQuery } from "@tanstack/react-query";
-
 import Empty from "@workspace/ui/composed/empty";
 import { Icon } from "@workspace/ui/composed/icon";
 import { Markdown } from "@workspace/ui/composed/markdown";
+import { useQuery } from "@workspace/ui/hooks/query";
 import { getV1PublicAnnouncementList as queryAnnouncement } from "@workspace/ui/services/user/user";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";

@@ -85,7 +85,7 @@ export function Logout() {
   removeCookie("Authorization");
 
   // The App Router routes on the pathname; `location.hash` is no longer a route
-  // (the pre-migration app used TanStack hash history). The former second branch
+  // (the pre-migration app used legacy hash history). The former second branch
   // therefore both mis-detected the current page and sent the user to the
   // now-dead `/#/auth` URL, so the redirect target is the real `/auth` route and
   // only the pathname is consulted.

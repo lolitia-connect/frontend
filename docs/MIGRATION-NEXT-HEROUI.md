@@ -1,4 +1,4 @@
-# Migration Playbook: Vite + TanStack Router → Next.js App Router + HeroUI v3
+# Migration Playbook: Vite + legacy router → Next.js App Router + HeroUI v3
 
 Applies to `apps/user`, `apps/admin` (merged into `main`). `apps/payment-portal` is
 already migrated and serves as the reference implementation.
@@ -25,7 +25,7 @@ These ran repo-wide, so app code is already converted:
 
 1. **Env vars**: `import.meta.env.VITE_X` → `process.env.NEXT_PUBLIC_X`
    (847 sites, 45 files). `.env` keys renamed too.
-2. **Router imports**: `@tanstack/react-router` runtime hooks → the compat shim
+2. **Router imports**: legacy runtime hooks → the compat shim
    `@workspace/ui/lib/router-compat` (58 files).
 3. **Design tokens**: colliding shadcn utilities retargeted to HeroUI semantics
    (`bg-accent`→`bg-default`, `bg-muted`→`bg-default`,
@@ -44,10 +44,10 @@ These ran repo-wide, so app code is already converted:
 
 ## The router shim
 
-`@workspace/ui/lib/router-compat` re-implements the slice of the TanStack API the
+`@workspace/ui/lib/router-compat` re-implements the slice of the legacy API the
 apps use, on top of `next/link` + `next/navigation`:
 
-| TanStack | Shim behaviour |
+| legacy | Shim behaviour |
 | --- | --- |
 | `<Link to search params />` | maps to `next/link`; `to`→`href`, object `search`→query string |
 | `useSearch({ strict: false })` | `useSearchParams()` as a plain object |
@@ -62,12 +62,12 @@ apps use, on top of `next/link` + `next/navigation`:
 
 ## Per-app migration recipe
 
-### 1. Route map (TanStack file route → App Router)
+### 1. Route map (legacy file route → App Router)
 
-TanStack path groups `(main)`, `(user)` do **not** appear in URLs. Convert to real
+legacy path groups `(main)`, `(user)` do **not** appear in URLs. Convert to real
 folders:
 
-| TanStack | App Router |
+| legacy | App Router |
 | --- | --- |
 | `routes/__root.tsx` | `app/layout.tsx` (+ `app/providers.tsx`) |
 | `routes/(main)/route.lazy.tsx` | `app/(main)/layout.tsx` |
@@ -92,7 +92,7 @@ Layouts return `{children}` instead of `<Outlet />`.
 ### 2. Files to delete
 
 `index.html`, `vite.config.ts`, `src/main.tsx`, `src/routeTree.gen.ts`,
-`src/routes/**`, `.tanstack/`, `dist/`, `components.json`, `netlify.toml`.
+`src/routes/**`, `dist/`, `components.json`, `netlify.toml`.
 Move `public/` assets if needed; the locale tree must stay at
 `public/assets/locales/...` to match i18next's `loadPath`.
 
@@ -122,12 +122,11 @@ Order matters — it mirrors the old `main.tsx` nesting:
 
 ```tsx
 "use client";
-// i18n init (guarded, SSR-safe) -> QueryClientProvider -> LanguageProvider
-// -> ThemeProvider -> {children} + <Toaster />
+// i18n init (guarded, SSR-safe) -> SWRConfig -> LanguageProvider
+// -> ThemeProvider -> {children} + <Toast.Provider />
 ```
 
-Wrap the query client in `useState(() => TanStackQueryContext())` so it is created
-once per browser session, not per render.
+The user and admin apps scope their SWR cache to the mounted provider. The payment portal only needs the language and theme providers.
 
 ### 5. `"use client"` boundary
 
@@ -154,11 +153,9 @@ components.
 }
 ```
 
-Remove: `vite`, `@vitejs/plugin-react`, `@tailwindcss/vite`, `@tanstack/react-router`,
-`@tanstack/router-plugin`, `@tanstack/react-router-devtools`, `@tanstack/devtools-vite`.
+Remove the Vite build and file-router plugins.
 Add: `next`, `@tailwindcss/postcss`, `@types/node`.
-Keep `@tanstack/react-query` (still used for client caching) and
-`@tanstack/react-table` / `react-form` (library, not router).
+Use SWR for interactive Client Component requests.
 
 ### 7. `tsconfig.json`
 
@@ -415,7 +412,7 @@ package that is not the TypeScript compiler and reports nothing useful.
 
 ## Post-migration logic parity (hash routing → App Router)
 
-`main` ran TanStack **hash** history (`createHashHistory()` in each app's
+`main` ran legacy **hash** history (`createHashHistory()` in each app's
 `src/main.tsx`), so a `#/...` fragment *was* a route and code freely wrote
 `window.location.hash = "/x"`. Under the App Router a fragment is not a route.
 Everything that still assumed hash routing was a silent breakage, because the URL

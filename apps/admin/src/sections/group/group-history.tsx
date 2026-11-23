@@ -9,7 +9,6 @@ import {
   Description,
   Modal,
 } from "@heroui/react";
-import { useQuery } from "@tanstack/react-query";
 import { Badge } from "@workspace/ui/components/badge";
 import { Button } from "@workspace/ui/components/button";
 import { Spinner } from "@workspace/ui/components/spinner";
@@ -17,6 +16,7 @@ import {
   ProTable,
   type ProTableActions,
 } from "@workspace/ui/composed/pro-table/pro-table";
+import { useQuery } from "@workspace/ui/hooks/query";
 import {
   getGroupHistory,
   getGroupHistoryDetail,

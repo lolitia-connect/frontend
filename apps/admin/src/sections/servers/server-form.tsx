@@ -17,6 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
   Sheet,
+  toast,
 } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Badge } from "@workspace/ui/components/badge";
@@ -40,7 +41,6 @@ import { cn } from "@workspace/ui/lib/utils";
 import { useEffect, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
 import { useNode } from "@/stores/node";
 import {
   type FieldConfig,
@@ -1085,7 +1085,7 @@ export default function ServerForm(props: {
                       );
                     }
                   }
-                  toast.error(
+                  toast.danger(
                     error?.message ||
                       t(
                         "validation.invalidForm",

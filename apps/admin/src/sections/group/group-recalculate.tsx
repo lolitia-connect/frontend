@@ -6,6 +6,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+  toast,
 } from "@heroui/react";
 import { Badge } from "@workspace/ui/components/badge";
 import { Button } from "@workspace/ui/components/button";
@@ -16,7 +17,6 @@ import {
 } from "@workspace/ui/services/admin/group";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
 
 export default function GroupRecalculate() {
   const { t } = useTranslation("group");
@@ -64,7 +64,7 @@ export default function GroupRecalculate() {
       loadStatus();
     } catch (error) {
       console.error("Failed to start recalculation:", error);
-      toast.error(t("recalculationFailed", "Failed to start recalculation"));
+      toast.danger(t("recalculationFailed", "Failed to start recalculation"));
     } finally {
       setRecalculating(null);
     }

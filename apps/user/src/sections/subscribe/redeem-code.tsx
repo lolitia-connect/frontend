@@ -1,14 +1,13 @@
 "use client";
 
-import { Card } from "@heroui/react";
-import { useMutation } from "@tanstack/react-query";
+import { Card, toast } from "@heroui/react";
 import { Button } from "@workspace/ui/components/button";
 import { Input } from "@workspace/ui/components/input";
 import { Label } from "@workspace/ui/components/label";
+import { useMutation } from "@workspace/ui/hooks/query";
 import { redeemCode } from "@workspace/ui/services/user/user";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
 
 interface RedeemCodeProps {
   onSuccess?: () => void;
@@ -31,14 +30,14 @@ export default function RedeemCode({ onSuccess }: RedeemCodeProps) {
     onError: (error: any) => {
       const errorMessage =
         error?.response?.data?.message || t("redeemFailed", "兑换失败");
-      toast.error(errorMessage);
+      toast.danger(errorMessage);
     },
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!code.trim()) {
-      toast.error(t("enterRedemptionCode", "请输入兑换码"));
+      toast.danger(t("enterRedemptionCode", "请输入兑换码"));
       return;
     }
     redeemMutation.mutate(code.trim());

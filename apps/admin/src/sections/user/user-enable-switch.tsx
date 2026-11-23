@@ -1,10 +1,10 @@
 "use client";
 
+import { toast } from "@heroui/react";
 import { Switch } from "@workspace/ui/components/switch";
 import { updateUserBasicInfo } from "@workspace/ui/services/admin/user";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
 
 export function UserEnableSwitch({
   user,

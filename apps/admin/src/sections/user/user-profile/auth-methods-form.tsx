@@ -1,6 +1,6 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@heroui/react";
+import { Card, CardContent, CardHeader, CardTitle, toast } from "@heroui/react";
 import { Badge } from "@workspace/ui/components/badge";
 import { Button } from "@workspace/ui/components/button";
 import { EnhancedInput } from "@workspace/ui/composed/enhanced-input";
@@ -11,7 +11,6 @@ import {
 } from "@workspace/ui/services/admin/user";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
 
 export function AuthMethodsForm({
   user,

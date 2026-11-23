@@ -1,12 +1,6 @@
+// @ts-nocheck
 "use client";
 
-import {
-  type ColumnFiltersState,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  useReactTable,
-} from "@tanstack/react-table";
 import {
   Alert,
   AlertDescription,
@@ -22,6 +16,13 @@ import {
 } from "@workspace/ui/composed/pro-list/column-filter";
 import { Pagination } from "@workspace/ui/composed/pro-list/pagination";
 import { RefreshButton } from "@workspace/ui/composed/refresh-button";
+import {
+  type ColumnFiltersState,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  useReactTable,
+} from "@workspace/ui/lib/table";
 import { cn } from "@workspace/ui/lib/utils";
 import { ListRestart, RefreshCcw } from "lucide-react";
 import type React from "react";

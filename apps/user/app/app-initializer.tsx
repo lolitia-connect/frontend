@@ -1,8 +1,8 @@
 "use client";
 
+import { toast } from "@heroui/react";
 import { getCookie } from "@workspace/ui/lib/cookies";
 import { useEffect, useRef } from "react";
-import { toast } from "sonner";
 import { useGlobalStore } from "@/stores/global";
 import { fetchInitialConfig } from "@/utils/bootstrap";
 import { Logout } from "@/utils/common";
@@ -38,7 +38,7 @@ export function AppInitializer() {
         setCommonError(
           error instanceof Error ? error.message : "Unknown configuration error"
         );
-        toast.error(
+        toast.danger(
           "Failed to load site configuration. Please refresh and try again."
         );
       }

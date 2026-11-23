@@ -1,6 +1,6 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@heroui/react";
+import { Card, CardContent, CardHeader, CardTitle, toast } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@workspace/ui/components/button";
 import {
@@ -14,7 +14,6 @@ import { Switch } from "@workspace/ui/components/switch";
 import { putUserNotify as updateUserNotifySetting } from "@workspace/ui/services/admin/admin";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
 import * as z from "zod";
 
 const notifySettingsSchema = z.object({

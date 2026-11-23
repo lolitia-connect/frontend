@@ -41,7 +41,7 @@ const config: API.GetServerNodeConfigResponse = {
   },
 };
 
-vi.mock("@tanstack/react-query", () => ({
+vi.mock("@workspace/ui/hooks/query", () => ({
   useQuery: mocks.useQuery,
 }));
 

@@ -1,8 +1,8 @@
 {
   "ts": "2026-11-18T04:00:00+08:00",
   "kind": "delivery",
-  "title": "frontend: Vite+TanStack -> Next.js App Router + HeroUI v3, then 12 UI/i18n fixes",
-  "task_summary": "Migrated frontend/ (apps/user, apps/admin, apps/payment-portal) from Vite + TanStack Router to Next.js 16 App Router + HeroUI v3 preserving the pink theme. Then delivered 12 follow-up fixes across tables, dropdowns, sidebar, headers, breadcrumb, dashboard cards, legacy-token control, app transitions, i18n language/theme behaviour, button overflow, and the auth page.",
+  "title": "frontend: Vite+legacy -> Next.js App Router + HeroUI v3, then 12 UI/i18n fixes",
+  "task_summary": "Migrated frontend/ (apps/user, apps/admin, apps/payment-portal) from Vite + legacy router to Next.js 16 App Router + HeroUI v3 preserving the pink theme. Then delivered 12 follow-up fixes across tables, dropdowns, sidebar, headers, breadcrumb, dashboard cards, legacy-token control, app transitions, i18n language/theme behaviour, button overflow, and the auth page.",
   "records": [
     {
       "batch": 1,

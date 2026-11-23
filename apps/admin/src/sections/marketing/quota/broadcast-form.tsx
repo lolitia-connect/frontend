@@ -1,6 +1,6 @@
 "use client";
 
-import { Sheet, Button as SheetButton } from "@heroui/react";
+import { Sheet, Button as SheetButton, toast } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@workspace/ui/components/button";
 import {
@@ -31,7 +31,6 @@ import { unitConversion } from "@workspace/ui/utils/unit-conversions";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
 import { z } from "zod";
 import { Display } from "@/components/display";
 import { useSubscribe } from "@/stores/subscribe";
@@ -105,7 +104,7 @@ export default function QuotaBroadcastForm() {
       }
     } catch (error) {
       console.error("Failed to calculate recipients:", error);
-      toast.error(
+      toast.danger(
         t("failedToCalculateRecipients", "Failed to calculate recipients")
       );
       setRecipients(0);
@@ -167,7 +166,7 @@ export default function QuotaBroadcastForm() {
       setOpen(false); // Close the sheet after successful submission
     } catch (error) {
       console.error("Failed to create quota task:", error);
-      toast.error(t("failedToCreateQuotaTask", "Failed to create quota task"));
+      toast.danger(t("failedToCreateQuotaTask", "Failed to create quota task"));
     } finally {
       setIsSubmitting(false);
     }

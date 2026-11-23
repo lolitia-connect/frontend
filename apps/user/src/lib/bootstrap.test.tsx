@@ -22,7 +22,10 @@ const mocks = vi.hoisted(() => ({
 vi.mock("@workspace/ui/lib/cookies", () => ({ getCookie: mocks.cookie }));
 vi.mock("@/utils/bootstrap", () => ({ fetchInitialConfig: mocks.config }));
 vi.mock("@/utils/common", () => ({ Logout: mocks.logout }));
-vi.mock("sonner", () => ({ toast: { error: mocks.errorToast } }));
+vi.mock("@heroui/react", async (importOriginal) => {
+  const heroui = await importOriginal<typeof import("@heroui/react")>();
+  return { ...heroui, toast: { ...heroui.toast, danger: mocks.errorToast } };
+});
 vi.mock("@/stores/global", () => ({
   useGlobalStore: (selector: (state: typeof mocks.store) => unknown) =>
     selector(mocks.store),

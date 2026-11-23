@@ -1,5 +1,6 @@
 "use client";
 
+import { toast } from "@heroui/react";
 import { Button } from "@workspace/ui/components/button";
 import { Switch } from "@workspace/ui/components/switch";
 import { ConfirmButton } from "@workspace/ui/composed/confirm-button";
@@ -17,7 +18,6 @@ import {
 } from "@workspace/ui/services/admin/redemption";
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
 import { useSubscribe } from "@/stores/subscribe";
 import RedemptionForm from "./redemption-form";
 import RedemptionRecords from "./redemption-records";

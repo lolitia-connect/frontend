@@ -9,9 +9,9 @@ import {
   TabList as TabsList,
   TabListContainer as TabsListContainer,
   Tab as TabsTrigger,
+  toast,
 } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQuery } from "@tanstack/react-query";
 import { Button } from "@workspace/ui/components/button";
 import {
   Form,
@@ -28,6 +28,7 @@ import { Textarea } from "@workspace/ui/components/textarea";
 import { HTMLEditor } from "@workspace/ui/composed/editor/html";
 import { EnhancedInput } from "@workspace/ui/composed/enhanced-input";
 import { Icon } from "@workspace/ui/composed/icon";
+import { useQuery } from "@workspace/ui/hooks/query";
 import {
   getAuthMethodConfig,
   postAuthMethodTestEmailSend as testEmailSend,
@@ -36,7 +37,6 @@ import {
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
 import {
   type EmailSettingsFormData,
   emailSettingsSchema,
@@ -111,7 +111,7 @@ export default function EmailSettingsForm() {
       refetch();
       setOpen(false);
     } catch {
-      toast.error(t("common.saveFailed", "Save failed"));
+      toast.danger(t("common.saveFailed", "Save failed"));
     } finally {
       setLoading(false);
     }
@@ -165,7 +165,28 @@ export default function EmailSettingsForm() {
                     className="min-w-0 max-w-full space-y-2"
                     defaultSelectedKey="basic"
                   >
-                    <TabsListContainer className="min-w-0 max-w-full">
+                    <TabsListContainer
+                      className="min-w-0 max-w-full"
+                      onKeyDownCapture={(event) => {
+                        if (event.key !== "End" && event.key !== "Home") return;
+                        const tabs = Array.from(
+                          event.currentTarget.querySelectorAll<HTMLElement>(
+                            '[role="tab"]'
+                          )
+                        );
+                        const target =
+                          event.key === "End" ? tabs.at(-1) : tabs[0];
+                        if (!target) return;
+                        event.preventDefault();
+                        event.stopPropagation();
+                        target.focus();
+                        target.click();
+                        target.scrollIntoView({
+                          block: "nearest",
+                          inline: "nearest",
+                        });
+                      }}
+                    >
                       <TabsList aria-label={t("sections", "Sections")}>
                         <TabsTrigger
                           className="w-auto flex-1 whitespace-nowrap"
@@ -566,7 +587,7 @@ export default function EmailSettingsForm() {
                                   )
                                 );
                               } catch {
-                                toast.error(
+                                toast.danger(
                                   t("email.sendFailure", "Email send failed")
                                 );
                               }

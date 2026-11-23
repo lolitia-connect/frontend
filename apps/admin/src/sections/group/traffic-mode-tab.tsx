@@ -6,11 +6,12 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+  toast,
 } from "@heroui/react";
-import { useQuery } from "@tanstack/react-query";
 import { Badge } from "@workspace/ui/components/badge";
 import { Button } from "@workspace/ui/components/button";
 import { Spinner } from "@workspace/ui/components/spinner";
+import { useQuery } from "@workspace/ui/hooks/query";
 import {
   getNodeGroupList,
   getRecalculationStatus,
@@ -19,7 +20,6 @@ import {
 } from "@workspace/ui/services/admin/group";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
 import TrafficRangeConfig from "./traffic-ranges-config";
 
 export default function TrafficModeTab() {
@@ -74,7 +74,7 @@ export default function TrafficModeTab() {
       refetchNodeGroups();
     } catch (error) {
       console.error("Failed to update node group:", error);
-      toast.error(t("saveFailed", "Failed to save configuration"));
+      toast.danger(t("saveFailed", "Failed to save configuration"));
     }
   };
 
@@ -86,7 +86,7 @@ export default function TrafficModeTab() {
       loadStatus();
     } catch (error) {
       console.error("Failed to start recalculation:", error);
-      toast.error(t("recalculationFailed", "Failed to start recalculation"));
+      toast.danger(t("recalculationFailed", "Failed to start recalculation"));
     } finally {
       setRecalculating(false);
     }

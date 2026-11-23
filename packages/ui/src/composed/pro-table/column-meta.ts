@@ -1,18 +1,3 @@
-import type { RowData } from "@tanstack/react-table";
-
-/**
- * Per-column ProTable presentation options, carried on TanStack's `ColumnMeta`.
- *
- * `ColumnMeta` is an empty interface in `@tanstack/table-core` published exactly
- * as an extension point, so it is augmented here rather than adding a parallel
- * `Record<columnId, ...>` prop: the option stays colocated with the column that
- * uses it and is type-checked against that column.
- *
- * The augmentation is purely additive and optional — `meta.proTable` may be
- * omitted everywhere, and every existing column definition keeps its current
- * behaviour. No exported name or prop type of `ProTable` / `Table` / `Select`
- * changes.
- */
 export interface ProTableColumnMeta {
   /**
    * Cap this column at `maxWidth` px and reveal the hidden remainder in a hover
@@ -27,14 +12,6 @@ export interface ProTableColumnMeta {
    * when its id/accessorKey looks like a network address.
    */
   truncate?: boolean;
-}
-
-declare module "@tanstack/react-table" {
-  // The type parameter names/constraints must match the original declaration
-  // for interface merging to apply.
-  interface ColumnMeta<TData extends RowData, TValue> {
-    proTable?: ProTableColumnMeta;
-  }
 }
 
 /**
@@ -81,7 +58,7 @@ function tokenize(value: string): string[] {
     .filter(Boolean);
 }
 
-/** Minimal structural view of the TanStack column this module needs. */
+/** Minimal structural view of the column this module needs. */
 interface ColumnLike {
   columnDef: {
     accessorKey?: unknown;

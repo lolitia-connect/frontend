@@ -31,8 +31,8 @@ afterEach(() => {
 /**
  * Logic-parity guard for the router shim.
  *
- * `packages/ui/src/lib/router-compat.tsx` stands in for the TanStack Router slice
- * the apps used. `main` ran on TanStack *hash* history (`createHashHistory()` in
+ * `packages/ui/src/lib/router-compat.tsx` stands in for the legacy router slice
+ * the apps used. `main` ran on legacy *hash* history (`createHashHistory()` in
  * each app's `src/main.tsx`); the migrated apps route on the App Router pathname.
  * A shim bug here silently changes navigation for every call site, so the
  * documented contract is pinned rather than assumed:

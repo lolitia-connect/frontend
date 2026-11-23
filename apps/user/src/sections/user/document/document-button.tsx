@@ -1,9 +1,9 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
 import { Avatar, AvatarFallback } from "@workspace/ui/components/avatar";
 import { buttonVariants } from "@workspace/ui/components/button";
 import { Markdown } from "@workspace/ui/composed/markdown";
+import { useQuery } from "@workspace/ui/hooks/query";
 import { useOutsideClick } from "@workspace/ui/hooks/use-outside-click";
 import { cn } from "@workspace/ui/lib/utils";
 import {

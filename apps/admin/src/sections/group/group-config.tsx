@@ -10,6 +10,7 @@ import {
   RadioGroup,
   Spinner,
   Switch,
+  toast,
 } from "@heroui/react";
 import {
   getGroupConfig,
@@ -18,7 +19,6 @@ import {
 } from "@workspace/ui/services/admin/group";
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
 
 export default function GroupConfig() {
   const { t } = useTranslation("group");
@@ -40,7 +40,7 @@ export default function GroupConfig() {
       }
     } catch (error) {
       console.error("Failed to load group config:", error);
-      toast.error(t("loadFailed", "Failed to load configuration"));
+      toast.danger(t("loadFailed", "Failed to load configuration"));
     } finally {
       setLoading(false);
     }
@@ -58,7 +58,7 @@ export default function GroupConfig() {
       toast.success(t("saved", "Configuration saved successfully"));
     } catch (error) {
       console.error("Failed to update group config:", error);
-      toast.error(t("saveFailed", "Failed to save configuration"));
+      toast.danger(t("saveFailed", "Failed to save configuration"));
     } finally {
       setSaving(false);
     }
@@ -76,7 +76,7 @@ export default function GroupConfig() {
       await loadConfig();
     } catch (error) {
       console.error("Failed to reset groups:", error);
-      toast.error(t("resetFailed", "Failed to reset groups"));
+      toast.danger(t("resetFailed", "Failed to reset groups"));
     } finally {
       setResetting(false);
     }

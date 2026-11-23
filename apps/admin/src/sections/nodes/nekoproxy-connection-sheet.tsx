@@ -1,16 +1,20 @@
 "use client";
 
-import { Description, Sheet, Button as SheetButton } from "@heroui/react";
-import { useQueryClient } from "@tanstack/react-query";
+import {
+  Description,
+  Sheet,
+  Button as SheetButton,
+  toast,
+} from "@heroui/react";
 import { Button } from "@workspace/ui/components/button";
 import { Label } from "@workspace/ui/components/label";
 import { ScrollArea } from "@workspace/ui/components/scroll-area";
 import { EnhancedInput } from "@workspace/ui/composed/enhanced-input";
 import { Icon } from "@workspace/ui/composed/icon";
+import { useQueryClient } from "@workspace/ui/hooks/query";
 import { updateNekoproxyConfig } from "@workspace/ui/services/admin/nekoproxy";
 import { type FormEvent, useId, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
 
 import {
   nekoproxyConfigKey,

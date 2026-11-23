@@ -7,7 +7,7 @@
  * `sections/user/sidebar-right.tsx` — and those are visible to `useSearch()`.
  *
  * The hash form (`https://<site>/#/auth?invite=<code>`) is the *pre-migration*
- * shape: the old app used TanStack hash history, so links in that form were
+ * shape: the old app used legacy hash history, so links in that form were
  * shared, bookmarked, and are still in circulation, and `useSearch()` only reads
  * `window.location.search`, so an invite delivered in the fragment is invisible
  * to it.

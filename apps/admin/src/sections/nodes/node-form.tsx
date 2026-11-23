@@ -2,7 +2,6 @@
 
 import { Sheet } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@workspace/ui/components/button";
 import { Checkbox } from "@workspace/ui/components/checkbox";
 import {
@@ -16,10 +15,10 @@ import {
 } from "@workspace/ui/components/form";
 import { Label } from "@workspace/ui/components/label";
 import { ScrollArea } from "@workspace/ui/components/scroll-area";
-
 import { Combobox } from "@workspace/ui/composed/combobox";
 import { EnhancedInput } from "@workspace/ui/composed/enhanced-input";
 import TagInput from "@workspace/ui/composed/tag-input";
+import { useQuery, useQueryClient } from "@workspace/ui/hooks/query";
 import {
   getGroupConfig,
   getNodeGroupList,

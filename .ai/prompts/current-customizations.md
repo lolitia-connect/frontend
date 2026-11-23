@@ -19,8 +19,8 @@
 
 ## 架构边界
 
-- 三端已是 Next.js 16 App Router + React 19 + HeroUI v3/Tailwind v4。新路由写入 app，业务 section 维持当前分层；不要恢复 Vite entry、TanStack route tree 或旧静态桥接页。
-- [router-compat](../../packages/ui/src/lib/router-compat.tsx)底层是真实 Next navigation，仍有生产调用。TanStack Query/Table/Form 也仍有用，不应整包清理。
+- 三端已是 Next.js 16 App Router + React 19 + HeroUI v3/Tailwind v4。新路由写入 app，业务 section 维持当前分层；不要恢复 Vite entry、legacy route tree 或旧静态桥接页。
+- [router-compat](../../packages/ui/src/lib/router-compat.tsx)底层是真实 Next navigation，仍有生产调用。客户端请求使用 SWR。
 - 页面结构可 SSR；API bootstrap、cookie/storage 恢复和 WebGL 副作用在适当客户端边界运行。admin 页面直接导入 section，不再对整个可见页面额外动态导入。不要把整页改成 `ssr:false`；导航进度、装饰性地球和视口触发图表是明确的局部 client-only 例外。
 - user/admin 公共配置与会话恢复并行；配置缓慢/失败不阻塞用户鉴权或访客识别，保留 StrictMode 用户请求去重、卸载保护和提前注册的 `window.logout`。
 - 地球等待配置/用户识别结束、绘制与 idle 后加载，并清理调度；管理端摘要立即显示，图表临近视口才挂载且首次显示后保持状态。保留图表占位、无 IntersectionObserver 降级、流量卡稳定组件与共享日期；不要恢复急加载所有图表/详情，也不要延迟所有摘要请求。

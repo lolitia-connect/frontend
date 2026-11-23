@@ -1,12 +1,11 @@
-﻿"use client";
+"use client";
 
 import { Sheet } from "@heroui/react";
-import { useQuery } from "@tanstack/react-query";
 import { Button } from "@workspace/ui/components/button";
-
 import { Spinner } from "@workspace/ui/components/spinner";
 import { MonacoEditor } from "@workspace/ui/composed/editor/monaco-editor";
 import { Icon } from "@workspace/ui/composed/icon";
+import { useQuery } from "@workspace/ui/hooks/query";
 import { getApplicationPreview as previewSubscribeTemplate } from "@workspace/ui/services/admin/admin";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";

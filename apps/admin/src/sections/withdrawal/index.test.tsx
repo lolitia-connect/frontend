@@ -33,7 +33,10 @@ vi.mock("@workspace/ui/composed/confirm-button", () => ({
 vi.mock("react-i18next", () => ({
   useTranslation: () => ({ t: (_key: string, fallback: string) => fallback }),
 }));
-vi.mock("sonner", () => ({ toast: { success: vi.fn() } }));
+vi.mock("@heroui/react", async (importOriginal) => {
+  const heroui = await importOriginal<typeof import("@heroui/react")>();
+  return { ...heroui, toast: { ...heroui.toast, success: vi.fn() } };
+});
 const withdrawal = {
   id: 123,
   user_id: 1,

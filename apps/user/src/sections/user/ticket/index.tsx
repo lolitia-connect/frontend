@@ -1,9 +1,7 @@
 "use client";
 
-import { Card, Description, Drawer, Modal } from "@heroui/react";
-import { useQuery } from "@tanstack/react-query";
+import { Card, Description, Drawer, Modal, toast } from "@heroui/react";
 import { Button } from "@workspace/ui/components/button";
-
 import { Input } from "@workspace/ui/components/input";
 import { Label } from "@workspace/ui/components/label";
 import { ScrollArea } from "@workspace/ui/components/scroll-area";
@@ -15,6 +13,7 @@ import {
   ProList,
   type ProListActions,
 } from "@workspace/ui/composed/pro-list/pro-list";
+import { useQuery } from "@workspace/ui/hooks/query";
 import { cn } from "@workspace/ui/lib/utils";
 import {
   postV1PublicTicket as createUserTicket,
@@ -26,7 +25,6 @@ import {
 import { formatDate } from "@workspace/ui/utils/formatting";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
 
 export default function Ticket() {
   const { t } = useTranslation("ticket");

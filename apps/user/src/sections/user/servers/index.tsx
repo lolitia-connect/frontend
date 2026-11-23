@@ -1,11 +1,11 @@
 "use client";
 
 import { Card } from "@heroui/react";
-import { useQuery } from "@tanstack/react-query";
 import { Badge } from "@workspace/ui/components/badge";
 import { Progress } from "@workspace/ui/components/progress";
 import { Spinner } from "@workspace/ui/components/spinner";
 import { Icon } from "@workspace/ui/composed/icon";
+import { useQuery } from "@workspace/ui/hooks/query";
 import { queryPublicServerList } from "@workspace/ui/services/user/server";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";

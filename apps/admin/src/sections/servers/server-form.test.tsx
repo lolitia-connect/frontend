@@ -12,7 +12,10 @@ import ServerForm from "./server-form";
 
 const mocks = vi.hoisted(() => ({ error: vi.fn() }));
 
-vi.mock("sonner", () => ({ toast: { error: mocks.error } }));
+vi.mock("@heroui/react", async (importOriginal) => {
+  const heroui = await importOriginal<typeof import("@heroui/react")>();
+  return { ...heroui, toast: { ...heroui.toast, danger: mocks.error } };
+});
 vi.mock("@/stores/node", () => ({
   useNode: () => ({ isProtocolUsedInNodes: () => false }),
 }));

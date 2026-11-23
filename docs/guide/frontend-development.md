@@ -164,8 +164,7 @@ with the [shared stylesheet](https://github.com/lolitia-connect/frontend/blob/ma
 All three applications use the same HeroUI accent, surface, field, radius, and
 light/dark tokens. The [shared auth shell](https://github.com/lolitia-connect/frontend/blob/main/packages/ui/src/composed/auth-shell.tsx)
 also keeps their login panel width, responsive spacing, and mobile presentation
-in sync. The portal uses the same language and theme pickers as the user app. Backend services remain shared; API error notifications are rendered by HeroUI rather than the shared
-Sonner toaster.
+in sync. The portal uses the same language and theme pickers as the user app.
 
 `NEXT_PUBLIC_PAYMENT_PORTAL_AMOUNTS` uses the following configuration rule:
 values below `10000` are major currency units (`10` means $10 with USD),
@@ -192,6 +191,13 @@ checkout/status refresh, captcha, and mobile theme/language behavior. Install th
 Playwright Chromium browser once with `bun x playwright install chromium` if it
 is missing. Run `bun --cwd apps/payment-portal typecheck` and
 `bun --cwd apps/payment-portal lint` for the scoped static checks.
+
+## Toast notifications
+
+Each app mounts HeroUI's `Toast.Provider` inside its theme provider. Import
+`toast` from `@heroui/react` and use `toast.success` for success and
+`toast.danger` for errors. Shared API errors use the same queue. The shared
+stylesheet loads `@heroui/styles` for toast surfaces, variants, and theme colors.
 
 ## Responsive layout checks
 

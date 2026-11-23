@@ -1,11 +1,11 @@
 "use client";
 
 import { Card } from "@heroui/react";
-import { useQuery } from "@tanstack/react-query";
 import { Button } from "@workspace/ui/components/button";
 import { Separator } from "@workspace/ui/components/separator";
 import { EnhancedInput } from "@workspace/ui/composed/enhanced-input";
 import { Icon } from "@workspace/ui/composed/icon";
+import { useQuery } from "@workspace/ui/hooks/query";
 import { useNavigate } from "@workspace/ui/lib/router-compat";
 import { cn } from "@workspace/ui/lib/utils";
 import { prePurchaseOrder } from "@workspace/ui/services/user/portal";

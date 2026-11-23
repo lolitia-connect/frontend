@@ -10,18 +10,18 @@ import {
   ListBoxItem as SelectItem,
   SelectTrigger,
   SelectValue,
+  toast,
 } from "@heroui/react";
-import { useQuery } from "@tanstack/react-query";
 import { Button } from "@workspace/ui/components/button";
 import { Label } from "@workspace/ui/components/label";
 import { Spinner } from "@workspace/ui/components/spinner";
+import { useQuery } from "@workspace/ui/hooks/query";
 import {
   bindNodeGroups,
   getNodeGroupList,
 } from "@workspace/ui/services/admin/group";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
 
 interface BindNodeGroupsDialogProps {
   onOpenChange?: (open: boolean) => void;
@@ -66,7 +66,7 @@ export default function BindNodeGroupsDialog({
 
   const handleBind = async () => {
     if (selectedNodeGroupId === undefined) {
-      toast.error(t("selectNodeGroupRequired", "Please select a node group"));
+      toast.danger(t("selectNodeGroupRequired", "Please select a node group"));
       return;
     }
 
@@ -89,7 +89,7 @@ export default function BindNodeGroupsDialog({
       onSuccess?.();
     } catch (error) {
       console.error("Failed to bind node group:", error);
-      toast.error(t("bindFailed", "Failed to bind node group"));
+      toast.danger(t("bindFailed", "Failed to bind node group"));
     } finally {
       setSaving(false);
     }

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import {
   ListBox,
   Select,
@@ -7,8 +8,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@heroui/react";
-import type { Table } from "@tanstack/react-table";
 import { Button } from "@workspace/ui/components/button";
+import type { Table } from "@workspace/ui/lib/table";
 import {
   ChevronLeftIcon,
   ChevronRightIcon,

@@ -6,13 +6,14 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+  toast,
 } from "@heroui/react";
-import { useQuery } from "@tanstack/react-query";
 import { Badge } from "@workspace/ui/components/badge";
 import { Button } from "@workspace/ui/components/button";
 import { Input } from "@workspace/ui/components/input";
 import { Label } from "@workspace/ui/components/label";
 import { Spinner } from "@workspace/ui/components/spinner";
+import { useQuery } from "@workspace/ui/hooks/query";
 import {
   getGroupConfig,
   getNodeGroupList,
@@ -21,7 +22,6 @@ import {
 } from "@workspace/ui/services/admin/group";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
 
 export default function AverageModeTab() {
   const { t } = useTranslation("group");
@@ -57,7 +57,7 @@ export default function AverageModeTab() {
       hasLoadedConfig.current = true;
     } catch (error) {
       console.error("Failed to load group config:", error);
-      toast.error(t("loadFailed", "Failed to load configuration"));
+      toast.danger(t("loadFailed", "Failed to load configuration"));
     }
   };
 
@@ -110,7 +110,7 @@ export default function AverageModeTab() {
       loadStatus();
     } catch (error) {
       console.error("Failed to start recalculation:", error);
-      toast.error(t("recalculationFailed", "Failed to start recalculation"));
+      toast.danger(t("recalculationFailed", "Failed to start recalculation"));
     } finally {
       setRecalculating(false);
     }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+import { useQuery } from "@workspace/ui/hooks/query";
 import { useSearch } from "@workspace/ui/lib/router-compat";
 import { getSubscription } from "@workspace/ui/services/user/portal";
 import { useTranslation } from "react-i18next";

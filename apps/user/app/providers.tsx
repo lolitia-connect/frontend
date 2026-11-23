@@ -1,18 +1,15 @@
 "use client";
 
-import { Toaster } from "@workspace/ui/components/sonner";
+import { Toast } from "@heroui/react";
 import { SkipLink } from "@workspace/ui/composed/skip-link";
 import { LanguageProvider } from "@workspace/ui/integrations/language";
-import {
-  TanStackQueryContext,
-  TanStackQueryProvider,
-} from "@workspace/ui/integrations/tanstack-query";
 import { ThemeProvider } from "@workspace/ui/integrations/theme";
 import { createI18nInstance } from "@workspace/ui/lib/i18n";
 import type { Resource } from "i18next";
 import dynamic from "next/dynamic";
 import { useState } from "react";
 import { I18nextProvider } from "react-i18next";
+import { SWRConfig } from "swr";
 import {
   fallbackLng,
   fallbackResources,
@@ -20,6 +17,8 @@ import {
   supportedLngs,
 } from "@/config";
 import { AppInitializer } from "./app-initializer";
+
+const clientCache = { dedupingInterval: 30_000 };
 
 /**
  * Route-change progress bar.
@@ -54,7 +53,6 @@ export function Providers({
   initialLanguage: string;
   initialTranslations: Resource;
 }) {
-  const [queryContext] = useState(() => TanStackQueryContext());
   const [i18n] = useState(() =>
     createI18nInstance({
       fallbackLng,
@@ -69,7 +67,7 @@ export function Providers({
 
   return (
     <I18nextProvider i18n={i18n}>
-      <TanStackQueryProvider {...queryContext}>
+      <SWRConfig value={clientCache}>
         <LanguageProvider
           defaultLanguage={initialLanguage}
           supportedLanguages={supportedLngs}
@@ -79,10 +77,10 @@ export function Providers({
             <AppInitializer />
             <NavigationProgress />
             {children}
-            <Toaster closeButton richColors />
+            <Toast.Provider placement="bottom end" />
           </ThemeProvider>
         </LanguageProvider>
-      </TanStackQueryProvider>
+      </SWRConfig>
     </I18nextProvider>
   );
 }

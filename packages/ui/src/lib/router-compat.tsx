@@ -1,9 +1,9 @@
 /**
- * Next.js App Router compatibility shim for the former TanStack Router API.
+ * Next.js App Router compatibility shim for the former legacy router API.
  *
- * The apps migrated from TanStack Router (Vite, hash history) to Next.js App
+ * The apps migrated from legacy router (Vite, hash history) to Next.js App
  * Router. Section/feature components referenced a small, well-defined slice of
- * the TanStack API. Instead of rewriting every call site — which would also
+ * the legacy API. Instead of rewriting every call site — which would also
  * duplicate search-param handling per app — this module re-implements that slice
  * on top of `next/link` and `next/navigation`, preserving the original call
  * signatures (`useSearch({ strict: false })`, `<Link to=... search=...>`, ...).
@@ -63,14 +63,14 @@ export interface LinkProps
   /** Plain Next.js destination. */
   href?: string;
   params?: Record<string, unknown>;
-  /** TanStack-style search object or raw query string. */
+  /** search object or raw query string. */
   search?: SearchRecord | string | URLSearchParams;
-  /** TanStack-style destination path. */
+  /** destination path. */
   to?: string;
 }
 
 /**
- * Builds a destination string from a TanStack-style path + search object, for
+ * Builds a destination string from a path + search object, for
  * native HeroUI components (e.g. `Dropdown.Item`) that take a plain `href`.
  */
 export function buildHref(
@@ -82,7 +82,7 @@ export function buildHref(
 }
 
 /**
- * `<Link>` with TanStack-compatible `to` / `params` / `search` props.
+ * `<Link>` with legacy-compatible `to` / `params` / `search` props.
  * Falls back to a plain `href` when provided, so both idioms work.
  */
 export function Link({
@@ -122,8 +122,8 @@ export interface NavigateOptions {
 }
 
 /**
- * TanStack `useRouter()` — returns a facade that satisfies BOTH idioms:
- * the TanStack object form (`navigate({ to, params, search })`) and the plain
+ * legacy `useRouter()` — returns a facade that satisfies BOTH idioms:
+ * the legacy object form (`navigate({ to, params, search })`) and the plain
  * Next.js string form (`push` / `replace` / `back` / `refresh` / `prefetch`).
  *
  * Note: this intentionally shadows `next/navigation`'s `useRouter` for callers
@@ -176,15 +176,15 @@ export function useRouter() {
 /** Explicit alias for the facade, for call sites that prefer a distinct name. */
 export const useAppRouter = useRouter;
 
-/** TanStack `useNavigate()` — returns the navigation function directly. */
+/** legacy `useNavigate()` — returns the navigation function directly. */
 export function useNavigate() {
   return useRouter().navigate;
 }
 
 /**
- * TanStack `useSearch()` — returns the current query string as a plain object.
+ * legacy `useSearch()` — returns the current query string as a plain object.
  *
- * The options bag accepts (and ignores) the TanStack Router keys that call sites
+ * The options bag accepts (and ignores) the legacy router keys that call sites
  * still pass, so retargeted components keep type-checking unchanged.
  */
 export function useSearch<T = Record<string, string>>(_options?: {
@@ -201,7 +201,7 @@ export function useSearch<T = Record<string, string>>(_options?: {
   }, [searchParams]);
 }
 
-/** TanStack `useLocation()` shape. */
+/** legacy `useLocation()` shape. */
 export function useLocation() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -218,13 +218,13 @@ export function useLocation() {
   );
 }
 
-/** TanStack `useParams()`. */
+/** legacy `useParams()`. */
 export function useParams<T = Record<string, string>>(_options?: unknown): T {
   return useNextParams() as T;
 }
 
 /**
- * TanStack `useRouterState()` — the parts the apps relied on (pending status and
+ * legacy `useRouterState()` — the parts the apps relied on (pending status and
  * current location). Next exposes no global navigation-pending flag, so `status`
  * is always "idle". `NavigationProgress` instead observes navigation intent from
  * this module's Link/navigate/push/replace and completion via location changes.
@@ -238,14 +238,14 @@ export function useRouterState(): {
 }
 
 /**
- * TanStack `getRouteApi()` — reads params/search without a route context.
+ * legacy `getRouteApi()` — reads params/search without a route context.
  */
 export function getRouteApi(_id?: string) {
   return { useParams, useSearch };
 }
 
 /**
- * TanStack `<Outlet />` rendered the matched child route of a layout.
+ * legacy `<Outlet />` rendered the matched child route of a layout.
  *
  * In the App Router a layout receives its children as props, so a component
  * that used `<Outlet />` should normally be given `children`. This passthrough

@@ -1,19 +1,22 @@
 "use client";
 
-import { Description, Sheet, Button as SheetButton } from "@heroui/react";
-import { useQuery } from "@tanstack/react-query";
+import {
+  Description,
+  Sheet,
+  Button as SheetButton,
+  toast,
+} from "@heroui/react";
 import { Button } from "@workspace/ui/components/button";
 import { ScrollArea } from "@workspace/ui/components/scroll-area";
-
 import { ArrayInput } from "@workspace/ui/composed/dynamic-inputs";
 import { Icon } from "@workspace/ui/composed/icon";
+import { useQuery } from "@workspace/ui/hooks/query";
 import {
   getSystemGetNodeMultiplier as getNodeMultiplier,
   postSystemSetNodeMultiplier as setNodeMultiplier,
 } from "@workspace/ui/services/admin/admin";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
 
 export default function DynamicMultiplier() {
   const { t } = useTranslation("servers");

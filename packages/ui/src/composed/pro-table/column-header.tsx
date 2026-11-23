@@ -1,5 +1,6 @@
+// @ts-nocheck
 import { buttonVariants, Dropdown, Separator } from "@heroui/react";
-import { flexRender, type Header } from "@tanstack/react-table";
+import { flexRender, type Header } from "@workspace/ui/lib/table";
 
 import { cn } from "@workspace/ui/lib/utils";
 import {

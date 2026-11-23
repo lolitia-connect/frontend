@@ -8,10 +8,10 @@ import {
   CardTitle,
   Description,
 } from "@heroui/react";
-import { useQuery } from "@tanstack/react-query";
 import { Badge } from "@workspace/ui/components/badge";
 import { Button } from "@workspace/ui/components/button";
 import { Icon } from "@workspace/ui/composed/icon";
+import { useQuery } from "@workspace/ui/hooks/query";
 import {
   getToolVersion as getServerVersion,
   postToolRestart as restartSystem,

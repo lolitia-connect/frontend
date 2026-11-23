@@ -1,6 +1,5 @@
 // @vitest-environment jsdom
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   cleanup,
   fireEvent,
@@ -8,6 +7,7 @@ import {
   screen,
   waitFor,
 } from "@testing-library/react";
+import { QueryClient, QueryClientProvider } from "@workspace/ui/hooks/query";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import Affiliate from "./index";
 
@@ -40,9 +40,13 @@ vi.mock("react-i18next", () => ({
     t: (key: string, fallback?: string) => fallback ?? key,
   }),
 }));
-vi.mock("sonner", () => ({
-  toast: { success: mocks.success, error: mocks.error },
-}));
+vi.mock("@heroui/react", async (importOriginal) => {
+  const heroui = await importOriginal<typeof import("@heroui/react")>();
+  return {
+    ...heroui,
+    toast: { ...heroui.toast, success: mocks.success, danger: mocks.error },
+  };
+});
 
 let queryClient: QueryClient;
 

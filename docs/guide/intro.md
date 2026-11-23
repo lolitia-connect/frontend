@@ -48,7 +48,7 @@ PPanel uses Monorepo architecture for unified management and maintenance:
 
 ### Tech Stack
 - **Framework**: React 19 + TypeScript
-- **Router**: TanStack Router
+- **Router**: Next.js App Router
 - **State Management**: Zustand
 - **Styling**: TailwindCSS 4.0
 - **UI Components**: shadcn/ui

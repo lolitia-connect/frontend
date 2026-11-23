@@ -1,7 +1,6 @@
 "use client";
 
-import { Sheet, Button as SheetButton } from "@heroui/react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Sheet, Button as SheetButton, toast } from "@heroui/react";
 import { Button } from "@workspace/ui/components/button";
 import {
   Form,
@@ -15,6 +14,7 @@ import {
 import { Switch } from "@workspace/ui/components/switch";
 import { EnhancedInput } from "@workspace/ui/composed/enhanced-input";
 import { Icon } from "@workspace/ui/composed/icon";
+import { useQuery, useQueryClient } from "@workspace/ui/hooks/query";
 import {
   getLogSetting,
   postLogSetting,
@@ -22,7 +22,6 @@ import {
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
 
 const queryKey = ["getLogSetting"];
 const projectPath = /\/\d+$/;
@@ -88,7 +87,7 @@ function SentryEditor({
       toast.success(t("common.saveSuccess"));
       close();
     } catch {
-      toast.error(t("common.saveFailed"));
+      toast.danger(t("common.saveFailed"));
     }
   });
   return (

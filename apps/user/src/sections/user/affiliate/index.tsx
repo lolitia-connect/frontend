@@ -1,12 +1,11 @@
 "use client";
 
-import { Card, Description, Modal } from "@heroui/react";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { Card, Description, Modal, toast } from "@heroui/react";
 import { Button } from "@workspace/ui/components/button";
-
 import { Input } from "@workspace/ui/components/input";
 import { Textarea } from "@workspace/ui/components/textarea";
 import { ProList } from "@workspace/ui/composed/pro-list/pro-list";
+import { useMutation, useQuery } from "@workspace/ui/hooks/query";
 import {
   postV1PublicUserCommissionWithdraw as commissionWithdraw,
   getV1PublicUserAffiliateCount as queryUserAffiliate,
@@ -18,7 +17,6 @@ import { Copy } from "lucide-react";
 import { type FormEvent, useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
 import { Display } from "@/components/display";
 import { useGlobalStore } from "@/stores/global";
 
@@ -46,7 +44,7 @@ export default function Affiliate() {
       await Promise.all([refetch(), getUserInfo()]);
     },
     onError: () => {
-      toast.error(t("withdrawFailed", "Failed to submit withdrawal request"));
+      toast.danger(t("withdrawFailed", "Failed to submit withdrawal request"));
     },
   });
 
@@ -62,19 +60,21 @@ export default function Affiliate() {
       ) ||
       amount <= 0
     ) {
-      toast.error(t("invalidWithdrawAmount", "Please enter a valid amount"));
+      toast.danger(t("invalidWithdrawAmount", "Please enter a valid amount"));
       return;
     }
 
     if (amount > availableCommission) {
-      toast.error(
+      toast.danger(
         t("withdrawAmountExceeds", "Amount exceeds available commission")
       );
       return;
     }
 
     if (!content) {
-      toast.error(t("withdrawContentRequired", "Please enter withdrawal info"));
+      toast.danger(
+        t("withdrawContentRequired", "Please enter withdrawal info")
+      );
       return;
     }
 

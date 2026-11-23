@@ -1,6 +1,6 @@
 "use client";
 
-import { Modal, Sheet, Button as SheetButton } from "@heroui/react";
+import { Modal, Sheet, Button as SheetButton, toast } from "@heroui/react";
 import { Badge } from "@workspace/ui/components/badge";
 import { Button } from "@workspace/ui/components/button";
 
@@ -17,7 +17,6 @@ import {
 } from "@workspace/ui/services/admin/admin";
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
 import { formatDate } from "@/utils/common";
 
 export default function EmailTaskManager() {
@@ -37,7 +36,7 @@ export default function EmailTaskManager() {
       ref.current?.refresh();
     } catch (error) {
       console.error("Failed to stop task:", error);
-      toast.error(t("failedToStopTask", "Failed to stop task"));
+      toast.danger(t("failedToStopTask", "Failed to stop task"));
     }
   };
 

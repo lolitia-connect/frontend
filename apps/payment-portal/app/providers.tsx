@@ -1,15 +1,10 @@
 "use client";
 
+import { Toast } from "@heroui/react";
 import { SkipLink } from "@workspace/ui/composed/skip-link";
 import { LanguageProvider } from "@workspace/ui/integrations/language";
-import {
-  TanStackQueryContext,
-  TanStackQueryProvider,
-} from "@workspace/ui/integrations/tanstack-query";
 import { ThemeProvider } from "@workspace/ui/integrations/theme";
 import { initializeI18n } from "@workspace/ui/lib/i18n";
-import { useState } from "react";
-import { Notifications } from "@/components/notifications";
 import { fallbackLng, supportedLngs } from "@/config";
 import { fallbackResources } from "@/config/locale-resources";
 import { clearAuthorization } from "@/lib/auth";
@@ -44,20 +39,15 @@ function ensureI18n() {
 }
 
 export function Providers({ children }: { children: React.ReactNode }) {
-  // Lazy state keeps a single QueryClient per browser session (mirrors the
-  // previous module-level `TanStackQueryContext()` call in main.tsx).
-  const [queryContext] = useState(() => TanStackQueryContext());
   ensureI18n();
 
   return (
-    <TanStackQueryProvider {...queryContext}>
-      <LanguageProvider supportedLanguages={supportedLngs}>
-        <ThemeProvider>
-          <SkipLink />
-          {children}
-          <Notifications />
-        </ThemeProvider>
-      </LanguageProvider>
-    </TanStackQueryProvider>
+    <LanguageProvider supportedLanguages={supportedLngs}>
+      <ThemeProvider>
+        <SkipLink />
+        {children}
+        <Toast.Provider placement="top end" />
+      </ThemeProvider>
+    </LanguageProvider>
   );
 }

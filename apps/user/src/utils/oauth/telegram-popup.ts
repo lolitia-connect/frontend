@@ -350,7 +350,7 @@ export function navigateToTelegramCallbackRoute(
   }
 
   // Navigate to the real pathname route, not a hash fragment. The pre-migration
-  // app used TanStack *hash* history (`createHashHistory()` in `src/main.tsx`),
+  // app used legacy *hash* history (`createHashHistory()` in `src/main.tsx`),
   // so assigning `location.hash` performed a route change. Under the App Router
   // a fragment is not a route, so assigning `location.hash` changes the URL
   // without ever mounting `/oauth/telegram` (or `/bind/telegram`) — the

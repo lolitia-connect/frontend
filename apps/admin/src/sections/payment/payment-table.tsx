@@ -1,5 +1,6 @@
 "use client";
 
+import { toast } from "@heroui/react";
 import {
   Avatar,
   AvatarFallback,
@@ -22,7 +23,6 @@ import {
 } from "@workspace/ui/services/admin/admin";
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
 import { Display } from "@/components/display";
 import PaymentForm, { type PaymentFormValues } from "./payment-form";
 

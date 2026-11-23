@@ -1,23 +1,22 @@
 "use client";
 
+import { Toast } from "@heroui/react";
 import { SkipLink } from "@workspace/ui/composed/skip-link";
 import { LanguageProvider } from "@workspace/ui/integrations/language";
-import {
-  TanStackQueryContext,
-  TanStackQueryProvider,
-} from "@workspace/ui/integrations/tanstack-query";
 import { ThemeProvider } from "@workspace/ui/integrations/theme";
 import { createI18nInstance } from "@workspace/ui/lib/i18n";
 import type { Resource } from "i18next";
 import { useState } from "react";
 import { I18nextProvider } from "react-i18next";
-import { Toaster } from "sonner";
+import { SWRConfig } from "swr";
 import {
   fallbackLng,
   fallbackResources,
   getInitialI18nNamespaces,
   supportedLngs,
 } from "@/config";
+
+const clientCache = { dedupingInterval: 30_000 };
 
 export function Providers({
   children,
@@ -28,7 +27,6 @@ export function Providers({
   initialLanguage: string;
   initialTranslations: Resource;
 }) {
-  const [queryContext] = useState(() => TanStackQueryContext());
   const [i18n] = useState(() =>
     createI18nInstance({
       defaultNS: "components",
@@ -45,7 +43,7 @@ export function Providers({
 
   return (
     <I18nextProvider i18n={i18n}>
-      <TanStackQueryProvider {...queryContext}>
+      <SWRConfig value={clientCache}>
         <LanguageProvider
           defaultLanguage={initialLanguage}
           supportedLanguages={supportedLngs}
@@ -53,10 +51,10 @@ export function Providers({
           <ThemeProvider>
             <SkipLink />
             {children}
-            <Toaster closeButton position="top-right" richColors />
+            <Toast.Provider placement="top end" />
           </ThemeProvider>
         </LanguageProvider>
-      </TanStackQueryProvider>
+      </SWRConfig>
     </I18nextProvider>
   );
 }

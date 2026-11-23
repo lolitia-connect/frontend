@@ -31,7 +31,7 @@ PPanel 前端包含两个独立应用：
 - **运行时**: Bun (推荐) / Node.js 20+
 - **构建工具**: Vite 6
 - **框架**: React 19 + TypeScript
-- **路由**: TanStack Router
+- **路由**: Next.js App Router
 - **样式**: TailwindCSS 4
 - **状态管理**: Zustand
 - **国际化**: i18next

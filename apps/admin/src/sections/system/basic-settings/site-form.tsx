@@ -1,8 +1,7 @@
 "use client";
 
-import { Sheet, Button as SheetButton } from "@heroui/react";
+import { Sheet, Button as SheetButton, toast } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQuery } from "@tanstack/react-query";
 import { Button } from "@workspace/ui/components/button";
 import {
   Form,
@@ -14,12 +13,12 @@ import {
   FormMessage,
 } from "@workspace/ui/components/form";
 import { ScrollArea } from "@workspace/ui/components/scroll-area";
-
 import { Textarea } from "@workspace/ui/components/textarea";
 import { JSONEditor } from "@workspace/ui/composed/editor/json";
 import { EnhancedInput } from "@workspace/ui/composed/enhanced-input";
 import { Icon } from "@workspace/ui/composed/icon";
 import { UploadImage } from "@workspace/ui/composed/upload-image";
+import { useQuery } from "@workspace/ui/hooks/query";
 import {
   getSystemSiteConfig as getSiteConfig,
   putSystemSiteConfig as updateSiteConfig,
@@ -27,7 +26,6 @@ import {
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
 import { z } from "zod";
 
 const siteSchema = z.object({
@@ -83,7 +81,7 @@ export default function SiteConfig() {
       refetch();
       setOpen(false);
     } catch {
-      toast.error(t("common.saveFailed", "Save Failed"));
+      toast.danger(t("common.saveFailed", "Save Failed"));
     } finally {
       setLoading(false);
     }

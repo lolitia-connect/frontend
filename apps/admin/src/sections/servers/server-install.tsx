@@ -1,11 +1,10 @@
 "use client";
 
-import { Modal } from "@heroui/react";
-import { useQuery } from "@tanstack/react-query";
+import { Modal, toast } from "@heroui/react";
 import { Button } from "@workspace/ui/components/button";
-
 import { Input } from "@workspace/ui/components/input";
 import { Label } from "@workspace/ui/components/label";
+import { useQuery } from "@workspace/ui/hooks/query";
 import { getSystemNodeConfig as getNodeConfig } from "@workspace/ui/services/admin/admin";
 import {
   type ChangeEvent,
@@ -16,7 +15,6 @@ import {
   useState,
 } from "react";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
 
 type Props = {
   server: API.Server;
@@ -65,7 +63,7 @@ export default function ServerInstall({ server, trigger }: Props) {
       toast.success(t("copied", "Copied"));
       setOpen(false);
     } catch {
-      toast.error(t("copyFailed", "Copy failed"));
+      toast.danger(t("copyFailed", "Copy failed"));
     }
   }
 

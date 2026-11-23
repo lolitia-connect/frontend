@@ -1,6 +1,6 @@
 "use client";
 
-import { Sheet } from "@heroui/react";
+import { Sheet, toast } from "@heroui/react";
 import { Badge } from "@workspace/ui/components/badge";
 import { Button } from "@workspace/ui/components/button";
 
@@ -13,7 +13,6 @@ import {
 } from "@workspace/ui/services/admin/user";
 import { type ReactElement, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
 import { IpLink } from "@/components/ip-link";
 import { formatDate } from "@/utils/common";
 

@@ -1,8 +1,8 @@
 "use client";
 
 import { Card, CardContent } from "@heroui/react";
-import { useQuery } from "@tanstack/react-query";
 import { Icon } from "@workspace/ui/composed/icon";
+import { useQuery } from "@workspace/ui/hooks/query";
 import { Link } from "@workspace/ui/lib/router-compat";
 import {
   getConsoleServer as queryServerTotalData,

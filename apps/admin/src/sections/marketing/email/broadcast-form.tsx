@@ -16,6 +16,7 @@ import {
   TabList as TabsList,
   TabListContainer as TabsListContainer,
   Tab as TabsTrigger,
+  toast,
 } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@workspace/ui/components/button";
@@ -41,7 +42,6 @@ import {
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
 import { z } from "zod";
 
 export default function EmailBroadcastForm() {
@@ -218,7 +218,7 @@ export default function EmailBroadcastForm() {
         const scheduledDate = new Date(data.scheduled);
         const now = new Date();
         if (scheduledDate <= now) {
-          toast.error(
+          toast.danger(
             t(
               "scheduledSendTimeMustBeLater",
               "Scheduled send time must be later than current time"
@@ -277,7 +277,7 @@ export default function EmailBroadcastForm() {
       setOpen(false);
     } catch (error) {
       console.error("Email broadcast failed:", error);
-      toast.error(t("sendFailed", "Send failed, please try again"));
+      toast.danger(t("sendFailed", "Send failed, please try again"));
     } finally {
       setLoading(false);
     }

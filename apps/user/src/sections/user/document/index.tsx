@@ -8,7 +8,7 @@ import {
   TabListContainer as TabsListContainer,
   Tab as TabsTrigger,
 } from "@heroui/react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery } from "@workspace/ui/hooks/query";
 import { getV1PublicDocumentList as queryDocumentList } from "@workspace/ui/services/user/user";
 import { useTranslation } from "react-i18next";
 import { MainEmpty } from "@/components/main-empty";

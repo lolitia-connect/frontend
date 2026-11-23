@@ -2,7 +2,7 @@ import { Button, Form, Input, Label, Spinner, TextField } from "@heroui/react";
 import { AuthShell } from "@workspace/ui/composed/auth-shell";
 import Image from "next/image";
 import Link from "next/link";
-import type { ReactNode } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Preferences } from "@/components/preferences";
 
@@ -10,10 +10,11 @@ interface LoginScreenProps {
   account: string;
   captchaSlot?: ReactNode;
   configLoading: boolean;
+  error?: string;
   loading: boolean;
   onAccountChange: (value: string) => void;
   onPasswordChange: (value: string) => void;
-  onSubmit: () => void;
+  onSubmit: (account: string, password: string) => void;
   password: string;
   siteLogo?: string;
   siteName?: string;
@@ -27,10 +28,13 @@ export function LoginScreen({
   siteLogo,
   siteName,
   captchaSlot,
+  error,
   onAccountChange,
   onPasswordChange,
   onSubmit,
 }: Readonly<LoginScreenProps>) {
+  const [interactive, setInteractive] = useState(false);
+  useEffect(() => setInteractive(true), []);
   const { t } = useTranslation("app");
 
   return (
@@ -67,11 +71,13 @@ export function LoginScreen({
         className="grid gap-6"
         onSubmit={(event) => {
           event.preventDefault();
-          if (!(loading || configLoading)) onSubmit();
+          if (loading || configLoading) return;
+          onSubmit(account, password);
         }}
       >
         <TextField
           autoComplete="username"
+          isDisabled={!interactive}
           name="account"
           onChange={onAccountChange}
           value={account}
@@ -89,6 +95,7 @@ export function LoginScreen({
         </TextField>
         <TextField
           autoComplete="current-password"
+          isDisabled={!interactive}
           name="password"
           onChange={onPasswordChange}
           type="password"
@@ -100,6 +107,7 @@ export function LoginScreen({
             placeholder={t("login.passwordPlaceholder", "请输入密码")}
           />
         </TextField>
+        {error && <p role="alert">{error}</p>}
         {captchaSlot}
         <Button isDisabled={loading || configLoading} type="submit">
           {(loading || configLoading) && (

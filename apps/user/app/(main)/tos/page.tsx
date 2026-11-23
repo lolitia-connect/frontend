@@ -1,7 +1,7 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
 import { Markdown } from "@workspace/ui/composed/markdown";
+import { useQuery } from "@workspace/ui/hooks/query";
 import { getTos } from "@workspace/ui/services/common/common";
 import { useTranslation } from "react-i18next";
 

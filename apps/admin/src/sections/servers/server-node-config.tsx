@@ -16,9 +16,9 @@ import {
   TabList as TabsList,
   TabListContainer as TabsListContainer,
   Tab as TabsTrigger,
+  toast,
 } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQuery } from "@tanstack/react-query";
 import {
   Alert,
   AlertDescription,
@@ -40,6 +40,7 @@ import { Switch } from "@workspace/ui/components/switch";
 import { Textarea } from "@workspace/ui/components/textarea";
 import { ArrayInput } from "@workspace/ui/composed/dynamic-inputs";
 import { Icon } from "@workspace/ui/composed/icon";
+import { useQuery } from "@workspace/ui/hooks/query";
 import { cn } from "@workspace/ui/lib/utils";
 import {
   getServerNodeConfig,
@@ -48,7 +49,6 @@ import {
 import { useEffect, useState } from "react";
 import { type Control, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
 import { z } from "zod";
 import {
   normalizeOutboundConfig,

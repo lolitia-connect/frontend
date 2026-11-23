@@ -184,6 +184,14 @@
     @apply shadow-surface;
   }
 
+  .settings-option:is(:hover, [data-hovered="true"]) {
+    background-color: var(--default-hover);
+  }
+
+  .settings-option[data-pressed="true"] {
+    transform: scale(0.98);
+  }
+
   .settings-option > span {
     flex: 1;
     min-width: 0;

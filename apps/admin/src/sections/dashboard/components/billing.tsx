@@ -1,12 +1,12 @@
 "use client";
 
 import { Card, CardDescription, CardHeader, CardTitle } from "@heroui/react";
-import { useQuery } from "@tanstack/react-query";
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
 } from "@workspace/ui/components/avatar";
+import { useQuery } from "@workspace/ui/hooks/query";
 import { useTranslation } from "react-i18next";
 
 interface BillingProps {

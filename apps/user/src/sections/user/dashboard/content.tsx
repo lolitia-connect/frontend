@@ -15,12 +15,13 @@ import {
   TabList as TabsList,
   TabListContainer as TabsListContainer,
   Tab as TabsTrigger,
+  toast,
 } from "@heroui/react";
-import { useQuery } from "@tanstack/react-query";
 import { Button } from "@workspace/ui/components/button";
 import { Separator } from "@workspace/ui/components/separator";
 import { Icon } from "@workspace/ui/composed/icon";
 import { RefreshButton } from "@workspace/ui/composed/refresh-button";
+import { useQuery } from "@workspace/ui/hooks/query";
 import { useThemeColor } from "@workspace/ui/hooks/use-theme-color";
 import { Link } from "@workspace/ui/lib/router-compat";
 import { cn } from "@workspace/ui/lib/utils";
@@ -35,7 +36,6 @@ import { QRCodeCanvas } from "qrcode.react";
 import React, { useState } from "react";
 import CopyToClipboard from "react-copy-to-clipboard";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
 import { Display } from "@/components/display";
 import { useGlobalStore } from "@/stores/global";
 import { getPlatform } from "@/utils/common";

@@ -3,7 +3,7 @@
  * Regression guard for `utils/common.ts` redirect handling after the App Router
  * migration.
  *
- * `main` routed on TanStack *hash* history (`createHashHistory()`), so
+ * `main` routed on legacy *hash* history (`createHashHistory()`), so
  * `getRedirectUrl()` read the `redirect` from the query string OR the hash query,
  * and `Logout()` sent the user to `/#/auth`. Under the App Router a fragment is
  * not a route, so:

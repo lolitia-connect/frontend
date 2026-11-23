@@ -16,7 +16,7 @@ import ResetSubscribeLogPage from "./reset-subscribe";
 import SubscribeLogPage from "./subscribe";
 
 // The log pages read their filters through the Next.js router shim. Mock the
-// shim itself (not the removed `@tanstack/react-router` package) so `useSearch`
+// shim itself (not the removed legacy router package) so `useSearch`
 // returns an empty object instead of touching `next/navigation`, which has no
 // router context in a jsdom test.
 vi.mock("@workspace/ui/lib/router-compat", () => ({

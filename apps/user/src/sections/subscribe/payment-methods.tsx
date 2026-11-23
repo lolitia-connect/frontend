@@ -1,7 +1,7 @@
 "use client";
 
 import { Chip, Label, Radio, RadioGroup } from "@heroui/react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery } from "@workspace/ui/hooks/query";
 import { getAvailablePaymentMethods } from "@workspace/ui/services/user/portal";
 import type React from "react";
 import { memo, useEffect } from "react";

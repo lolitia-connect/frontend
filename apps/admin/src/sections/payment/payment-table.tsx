@@ -9,6 +9,7 @@ import {
 import { Badge } from "@workspace/ui/components/badge";
 import { Button } from "@workspace/ui/components/button";
 import { Switch } from "@workspace/ui/components/switch";
+import { AsyncButton } from "@workspace/ui/composed/async-button";
 import { ConfirmButton } from "@workspace/ui/composed/confirm-button";
 import {
   ProTable,
@@ -101,10 +102,9 @@ export default function PaymentTable() {
               <Button variant="destructive">{t("delete", "Delete")}</Button>
             }
           />,
-          <Button
+          <AsyncButton
             key="copy"
-            onClick={async () => {
-              setLoading(true);
+            onAction={async () => {
               try {
                 const { id: _id, ...params } = row;
                 await createPaymentMethod({
@@ -113,17 +113,15 @@ export default function PaymentTable() {
                 } as API.CreatePaymentMethodRequest);
                 toast.success(t("copySuccess", "Copied successfully"));
                 ref.current?.refresh();
-                setLoading(false);
                 return true;
               } catch {
-                setLoading(false);
                 return false;
               }
             }}
             variant="outline"
           >
             {t("copy", "Copy")}
-          </Button>,
+          </AsyncButton>,
         ],
         batchRender(rows) {
           return [

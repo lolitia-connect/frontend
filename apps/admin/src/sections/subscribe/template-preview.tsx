@@ -2,7 +2,7 @@
 
 import { Sheet } from "@heroui/react";
 import { Button } from "@workspace/ui/components/button";
-import { Spinner } from "@workspace/ui/components/spinner";
+import { BlockLoading } from "@workspace/ui/composed/block-loading";
 import { MonacoEditor } from "@workspace/ui/composed/editor/monaco-editor";
 import { Icon } from "@workspace/ui/composed/icon";
 import { useQuery } from "@workspace/ui/hooks/query";
@@ -97,12 +97,7 @@ export function TemplatePreview({
             </Sheet.Header>
             <div className="admin-drawer-body px-6">
               {isLoading ? (
-                <div className="flex items-center justify-center">
-                  <Spinner className="size-6" />
-                  <span className="ml-2">
-                    {t("templatePreview.loading", "Loading...")}
-                  </span>
-                </div>
+                <BlockLoading minHeight="8rem" surface={false} />
               ) : (
                 <MonacoEditor
                   language={mapLanguage(output_format)}

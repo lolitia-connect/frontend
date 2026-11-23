@@ -1066,7 +1066,7 @@ export default function ServerForm(props: {
             </ScrollArea>
             <Sheet.Footer className="flex-row justify-end gap-2 pt-3">
               <Button
-                loading={loading}
+                disabled={loading}
                 onClick={() => setOpen(false)}
                 variant="outline"
               >

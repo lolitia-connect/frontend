@@ -4,6 +4,7 @@ import { toast } from "@heroui/react";
 import { Badge } from "@workspace/ui/components/badge";
 import { Button } from "@workspace/ui/components/button";
 import { Switch } from "@workspace/ui/components/switch";
+import { AsyncButton } from "@workspace/ui/composed/async-button";
 import { ConfirmButton } from "@workspace/ui/composed/confirm-button";
 import {
   ProTable,
@@ -328,9 +329,9 @@ export default function Nodes() {
                 <Button variant="destructive">{t("delete", "Delete")}</Button>
               }
             />,
-            <Button
+            <AsyncButton
               key="copy"
-              onClick={async () => {
+              onAction={async () => {
                 const {
                   id: _id,
                   sort: _sort,
@@ -352,7 +353,7 @@ export default function Nodes() {
               variant="outline"
             >
               {t("copy", "Copy")}
-            </Button>,
+            </AsyncButton>,
           ],
           batchRender(rows) {
             return [
@@ -387,17 +388,17 @@ export default function Nodes() {
           title: t("pageTitle", "Nodes"),
           toolbar: (
             <div className="flex flex-wrap gap-2">
-              <Button
-                onClick={async () => {
+              <AsyncButton
+                icon={<ArrowDownAZ className="h-4 w-4" />}
+                onAction={async () => {
                   await sortNodeByName();
                   toast.success(t("sorted_success", "Sorted successfully"));
                   ref.current?.refresh();
                 }}
                 variant="outline"
               >
-                <ArrowDownAZ className="mr-1 h-4 w-4" />
                 {t("sortByName", "Sort by Name")}
-              </Button>
+              </AsyncButton>
               <NodeForm
                 loading={loading}
                 onSubmit={async (values) => {

@@ -7,9 +7,7 @@ import {
   AccordionIndicator,
   AccordionItem,
   AccordionTrigger,
-  AlertDialog,
   Card,
-  Description,
   TabIndicator,
   Tabs,
   TabList as TabsList,
@@ -21,6 +19,7 @@ import { Button } from "@workspace/ui/components/button";
 import { Separator } from "@workspace/ui/components/separator";
 import { Spinner } from "@workspace/ui/components/spinner";
 import { BlockLoading } from "@workspace/ui/composed/block-loading";
+import { ConfirmButton } from "@workspace/ui/composed/confirm-button";
 import { Icon } from "@workspace/ui/composed/icon";
 import { RefreshButton } from "@workspace/ui/composed/refresh-button";
 import { useQuery } from "@workspace/ui/hooks/query";
@@ -316,51 +315,30 @@ export default function Content() {
                     <div className="flex flex-wrap gap-2">
                       {!isActuallyExpired && (
                         <>
-                          <AlertDialog>
-                            <Button size="sm" variant="destructive">
-                              {t("resetSubscription", "Reset Subscription")}
-                            </Button>
-
-                            <AlertDialog.Backdrop>
-                              <AlertDialog.Container>
-                                <AlertDialog.Dialog>
-                                  <AlertDialog.Header>
-                                    <AlertDialog.Heading>
-                                      {t(
-                                        "resetSubscriptionTitle",
-                                        "After resetting, re-add your subscription in every app"
-                                      )}
-                                    </AlertDialog.Heading>
-                                    <Description>
-                                      {t(
-                                        "resetSubscriptionDescription",
-                                        "The old link and imported nodes stop working. Delete the old subscription in every app, then add the new link. Your plan, expiry date and used traffic are not affected."
-                                      )}
-                                    </Description>
-                                  </AlertDialog.Header>
-                                  <AlertDialog.Footer>
-                                    <Button slot="close" variant="secondary">
-                                      {t("cancel", "Cancel")}
-                                    </Button>
-                                    <Button
-                                      onClick={async () => {
-                                        await resetUserSubscribeToken({
-                                          user_subscribe_id: item.id,
-                                        });
-                                        await refetch();
-                                        toast.success(
-                                          t("resetSuccess", "Reset Success")
-                                        );
-                                      }}
-                                      slot="close"
-                                    >
-                                      {t("confirm", "Confirm")}
-                                    </Button>
-                                  </AlertDialog.Footer>
-                                </AlertDialog.Dialog>
-                              </AlertDialog.Container>
-                            </AlertDialog.Backdrop>
-                          </AlertDialog>
+                          <ConfirmButton
+                            cancelText={t("cancel", "Cancel")}
+                            confirmText={t("confirm", "Confirm")}
+                            description={t(
+                              "resetSubscriptionDescription",
+                              "The old link and imported nodes stop working. Delete the old subscription in every app, then add the new link. Your plan, expiry date and used traffic are not affected."
+                            )}
+                            onConfirm={async () => {
+                              await resetUserSubscribeToken({
+                                user_subscribe_id: item.id,
+                              });
+                              await refetch();
+                              toast.success(t("resetSuccess", "Reset Success"));
+                            }}
+                            title={t(
+                              "resetSubscriptionTitle",
+                              "After resetting, re-add your subscription in every app"
+                            )}
+                            trigger={
+                              <Button size="sm" variant="destructive">
+                                {t("resetSubscription", "Reset Subscription")}
+                              </Button>
+                            }
+                          />
                           <ResetTraffic
                             id={item.id}
                             replacement={item.subscribe.replacement}

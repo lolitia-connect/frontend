@@ -527,11 +527,11 @@ export default function QuotaBroadcastForm() {
               </Button>
               <Button
                 disabled={
-                  isSubmitting ||
                   !form.formState.isValid ||
                   form.watch("subscribers").length === 0
                 }
                 form="quota-broadcast-form"
+                loading={isSubmitting}
                 type="submit"
               >
                 {t("createQuotaTask", "Create Quota Task")}

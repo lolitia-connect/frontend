@@ -181,9 +181,22 @@ function Button({
           : undefined
       ),
       "data-slot": "button",
-      children: loading ? <Spinner /> : childProps.children,
     };
-    if (typeof childClick === "function" && typeof slotClick === "function") {
+    if (loading) {
+      mergedProps["aria-busy"] = true;
+      mergedProps["aria-disabled"] = true;
+      mergedProps.children = (
+        <>
+          <Spinner aria-hidden="true" />
+          {childProps.children as React.ReactNode}
+        </>
+      );
+      mergedProps.onClick = (event: React.MouseEvent) => event.preventDefault();
+      if (child.type === "button") mergedProps.disabled = true;
+    } else if (
+      typeof childClick === "function" &&
+      typeof slotClick === "function"
+    ) {
       mergedProps.onClick = (...args: unknown[]) => {
         (childClick as (...eventArgs: unknown[]) => void)(...args);
         (slotClick as (...eventArgs: unknown[]) => void)(...args);

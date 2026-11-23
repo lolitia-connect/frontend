@@ -18,7 +18,7 @@ import { Display } from "@/components/display";
 
 export default function Order() {
   const { t } = useTranslation("order");
-  const [cancelLoading, setCancelLoading] = useState(false);
+  const [cancelingOrder, setCancelingOrder] = useState<string>();
   const statusMap: Record<number, string> = {
     0: t("status.0", "Status"),
     1: t("status.1", "Pending"),
@@ -58,16 +58,17 @@ export default function Order() {
                     {t("payment", "Payment")}
                   </Link>
                   <Button
-                    disabled={cancelLoading}
+                    disabled={cancelingOrder !== undefined}
                     key="cancel"
+                    loading={cancelingOrder === item.order_no}
                     onClick={async () => {
-                      if (cancelLoading) return;
-                      setCancelLoading(true);
+                      if (cancelingOrder !== undefined) return;
+                      setCancelingOrder(item.order_no);
                       try {
                         await closeOrder({ orderNo: item.order_no });
                         ref.current?.refresh();
                       } finally {
-                        setCancelLoading(false);
+                        setCancelingOrder(undefined);
                       }
                     }}
                     size="sm"

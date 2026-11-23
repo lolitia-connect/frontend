@@ -1,5 +1,5 @@
 /** @vitest-environment jsdom */
-import { cleanup, render } from "@testing-library/react";
+import { cleanup, fireEvent, render } from "@testing-library/react";
 import { createRef } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { Badge } from "./badge";
@@ -83,6 +83,28 @@ describe("asChild slot projection", () => {
 
     expect(childClick).toHaveBeenCalledTimes(1);
     expect(slotClick).toHaveBeenCalledTimes(1);
+  });
+
+  it("keeps a pending link named and prevents activation until it is ready", () => {
+    const onClick = vi.fn((event: React.MouseEvent) => event.preventDefault());
+    const link = (
+      <a href="/details" onClick={onClick}>
+        Details
+      </a>
+    );
+    const view = render(
+      <Button asChild loading>
+        {link}
+      </Button>
+    );
+    const target = view.getByRole("link", { name: "Details" });
+
+    expect(fireEvent.click(target)).toBe(false);
+    expect(onClick).not.toHaveBeenCalled();
+
+    view.rerender(<Button asChild>{link}</Button>);
+    fireEvent.click(target);
+    expect(onClick).toHaveBeenCalledOnce();
   });
 
   it("forwards a ref to the caller's element", () => {

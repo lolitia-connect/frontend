@@ -295,6 +295,7 @@ export function RechargeScreen({
                   methods.length === 0 ||
                   selectedMethodId == null
                 }
+                isPending={submitting}
                 onPress={onOpenConfirm}
               >
                 {submitting && (
@@ -340,14 +341,18 @@ export function RechargeScreen({
                       <Alert.Indicator />
                       <Alert.Content>
                         <Alert.Title>
-                          {t("dashboard.paymentSuccessTitle", "支付已完成")}
+                          {Number(activeOrder.status) === 2
+                            ? t("dashboard.creditPending", "已收款，余额入账中")
+                            : t("dashboard.paymentSuccessTitle", "支付已完成")}
                         </Alert.Title>
-                        <Alert.Description>
-                          {t(
-                            "dashboard.paymentSuccessHint",
-                            "当前订单已支付成功，系统会同步刷新余额和充值记录。"
-                          )}
-                        </Alert.Description>
+                        {Number(activeOrder.status) === 5 && (
+                          <Alert.Description>
+                            {t(
+                              "dashboard.paymentSuccessHint",
+                              "系统会同步刷新余额和充值记录。"
+                            )}
+                          </Alert.Description>
+                        )}
                       </Alert.Content>
                     </Alert>
                   )}

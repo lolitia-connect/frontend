@@ -132,7 +132,7 @@ export function ProTable<
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
   const [data, setData] = useState<TData[]>([]);
-  const [rowCount, setRowCount] = useState<number>(0);
+  const [rowCount, setRowCount] = useState<number>();
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 10,
@@ -358,7 +358,7 @@ export function ProTable<
                 </Table.Header>
                 <Table.Body
                   renderEmptyState={() =>
-                    isLoading ? (
+                    isLoading && rowCount === undefined ? (
                       <BlockLoading minHeight="8rem" surface={false} />
                     ) : (
                       empty || <Empty />
@@ -397,11 +397,11 @@ export function ProTable<
           </Table>
         </ProTableWrapper>
 
-        {isLoading && data.length > 0 && (
+        {isLoading && rowCount !== undefined && (
           <LoadingBar className="absolute inset-x-0 top-0 z-20" />
         )}
       </div>
-      {rowCount > 0 && <Pagination table={table} />}
+      {(rowCount ?? 0) > 0 && <Pagination table={table} />}
     </div>
   );
 }

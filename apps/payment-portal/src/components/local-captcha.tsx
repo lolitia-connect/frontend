@@ -20,7 +20,7 @@ export function LocalCaptcha({
 }: Readonly<LocalCaptchaProps>) {
   const { t } = useTranslation("app");
   const [captchaImage, setCaptchaImage] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const fetchCaptcha = async () => {
     setLoading(true);
@@ -58,12 +58,13 @@ export function LocalCaptcha({
         <Button
           aria-label={t("captcha.local.refresh", "刷新验证码")}
           isDisabled={loading}
+          isPending={loading}
           onPress={fetchCaptcha}
           type="button"
           variant="outline"
         >
           {loading ? (
-            <Spinner color="current" size="sm" />
+            <Spinner aria-hidden="true" color="current" size="sm" />
           ) : captchaImage ? (
             <Image
               alt="captcha"

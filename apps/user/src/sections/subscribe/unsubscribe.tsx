@@ -95,7 +95,7 @@ export default function Unsubscribe({
             </p>
             <Modal.Footer>
               <Button
-                loading={submitting}
+                disabled={submitting}
                 onClick={() => setOpen(false)}
                 variant="outline"
               >

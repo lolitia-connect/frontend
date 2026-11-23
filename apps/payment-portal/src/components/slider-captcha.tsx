@@ -1,4 +1,5 @@
 import { Button, Modal, Spinner } from "@heroui/react";
+import { LoadingBar } from "@workspace/ui/components/progress";
 import {
   generateCaptcha,
   verifyCaptchaSlider,
@@ -43,7 +44,9 @@ export function SliderCaptcha({
   const [blockImage, setBlockImage] = useState("");
   const [loading, setLoading] = useState(false);
   const [verified, setVerified] = useState(Boolean(value));
-  const [status, setStatus] = useState<"idle" | "success" | "fail">("idle");
+  const [status, setStatus] = useState<
+    "idle" | "verifying" | "success" | "fail"
+  >("idle");
   const [blockPos, setBlockPos] = useState({ x: 0, y: 50 });
 
   const getContainerSize = () => {
@@ -94,7 +97,7 @@ export function SliderCaptcha({
   };
 
   const onPointerDown = (event: React.PointerEvent) => {
-    if (status === "success" || loading) return;
+    if (status !== "idle" || loading) return;
     dragging.current = true;
     dragStartTime.current = Date.now();
     trail.current = [];
@@ -162,6 +165,7 @@ export function SliderCaptcha({
       t: Date.now() - dragStartTime.current,
     });
 
+    setStatus("verifying");
     try {
       const response = await verifyCaptchaSlider({
         id: captchaId,
@@ -266,7 +270,10 @@ export function SliderCaptcha({
                           width={100}
                         />
                       ) : null}
-                      {status !== "idle" && (
+                      {status === "verifying" && (
+                        <LoadingBar className="absolute inset-x-0 top-0" />
+                      )}
+                      {(status === "success" || status === "fail") && (
                         <div
                           className={`absolute inset-0 flex items-center justify-center font-medium text-sm ${
                             status === "success"
@@ -291,7 +298,7 @@ export function SliderCaptcha({
             <Modal.Footer>
               <Button
                 className="w-full"
-                isDisabled={loading}
+                isDisabled={loading || status !== "idle"}
                 onPress={fetchCaptcha}
                 type="button"
                 variant="outline"

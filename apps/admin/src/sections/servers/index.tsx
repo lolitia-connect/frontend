@@ -4,6 +4,7 @@
 import { toast } from "@heroui/react";
 import { Badge } from "@workspace/ui/components/badge";
 import { Button } from "@workspace/ui/components/button";
+import { AsyncButton } from "@workspace/ui/composed/async-button";
 import { ConfirmButton } from "@workspace/ui/composed/confirm-button";
 import {
   ProTable,
@@ -166,10 +167,9 @@ export default function Servers() {
                 </Button>
               }
             />,
-            <Button
+            <AsyncButton
               key="copy"
-              onClick={async () => {
-                setLoading(true);
+              onAction={async () => {
                 const {
                   id: _id,
                   created_at: _created_at,
@@ -189,12 +189,11 @@ export default function Servers() {
                 toast.success(t("copied", "Copied"));
                 ref.current?.refresh();
                 fetchServers();
-                setLoading(false);
               }}
               variant="outline"
             >
               {t("copy", "Copy")}
-            </Button>,
+            </AsyncButton>,
           ],
           batchRender(rows) {
             const hasReferencedServers = rows.some((row) =>
@@ -362,17 +361,17 @@ export default function Servers() {
           title: t("pageTitle", "Servers"),
           toolbar: (
             <div className="flex min-w-0 max-w-full flex-wrap justify-end gap-2 [&>*]:shrink-0">
-              <Button
-                onClick={async () => {
+              <AsyncButton
+                icon={<ArrowDownAZ className="h-4 w-4" />}
+                onAction={async () => {
                   await sortServerByName();
                   toast.success(t("sorted_success", "Sorted successfully"));
                   ref.current?.refresh();
                 }}
                 variant="outline"
               >
-                <ArrowDownAZ className="mr-1 h-4 w-4" />
                 {t("sortByName", "Sort by Name")}
-              </Button>
+              </AsyncButton>
               <ServerForm
                 loading={loading}
                 onSubmit={async (values) => {

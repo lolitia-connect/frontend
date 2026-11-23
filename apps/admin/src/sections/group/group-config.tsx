@@ -12,6 +12,8 @@ import {
   Switch,
   toast,
 } from "@heroui/react";
+import { LoadingBar } from "@workspace/ui/components/progress";
+import { BlockLoading } from "@workspace/ui/composed/block-loading";
 import {
   getGroupConfig,
   resetGroups,
@@ -26,6 +28,7 @@ export default function GroupConfig() {
   const [resetting, setResetting] = useState(false);
   const [showResetDialog, setShowResetDialog] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [initialized, setInitialized] = useState(false);
   const [config, setConfig] = useState({ enabled: false, mode: "average" });
 
   const loadConfig = useCallback(async () => {
@@ -42,6 +45,7 @@ export default function GroupConfig() {
       console.error("Failed to load group config:", error);
       toast.danger(t("loadFailed", "Failed to load configuration"));
     } finally {
+      setInitialized(true);
       setLoading(false);
     }
   }, [t]);
@@ -110,6 +114,8 @@ export default function GroupConfig() {
     },
   ];
 
+  if (!initialized) return <BlockLoading minHeight="10rem" surface={false} />;
+
   return (
     <Card>
       <Card.Header>
@@ -121,7 +127,13 @@ export default function GroupConfig() {
           )}
         </Card.Description>
       </Card.Header>
-      <Card.Content className="space-y-5">
+      <Card.Content
+        aria-busy={loading || saving}
+        className="relative space-y-5"
+      >
+        {(loading || saving) && (
+          <LoadingBar className="absolute inset-x-0 top-0" />
+        )}
         <Switch
           className="w-full rounded-xl bg-default/50 p-4"
           isDisabled={busy}
@@ -201,11 +213,13 @@ export default function GroupConfig() {
                     {t("cancel", "Cancel")}
                   </Button>
                   <Button
-                    isDisabled={resetting}
+                    isPending={resetting}
                     onPress={handleResetGroups}
                     variant="danger"
                   >
-                    {resetting && <Spinner color="current" size="sm" />}
+                    {resetting && (
+                      <Spinner aria-hidden="true" color="current" size="sm" />
+                    )}
                     {t("confirm", "Confirm")}
                   </Button>
                 </AlertDialog.Footer>

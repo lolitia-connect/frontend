@@ -108,8 +108,8 @@ export default function ChangePassword() {
         >
           {t("accountSettings.accountSettings", "Password Settings")}
           <Button
-            disabled={loading}
             form="password-form"
+            loading={loading}
             size="sm"
             type="submit"
           >

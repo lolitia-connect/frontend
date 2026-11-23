@@ -11,7 +11,7 @@ import {
 } from "@heroui/react";
 import { Badge } from "@workspace/ui/components/badge";
 import { Button } from "@workspace/ui/components/button";
-import { Spinner } from "@workspace/ui/components/spinner";
+import { BlockLoading } from "@workspace/ui/composed/block-loading";
 import {
   ProTable,
   type ProTableActions,
@@ -316,12 +316,7 @@ export default function GroupHistory() {
                   {t("groupDetails", "Group Details")}
                 </div>
                 {detailLoading ? (
-                  <div className="flex items-center justify-center py-8">
-                    <Spinner className="size-6 text-muted" />
-                    <span className="ml-2 text-muted text-sm">
-                      {t("loading", "Loading...")}
-                    </span>
-                  </div>
+                  <BlockLoading minHeight="8rem" surface={false} />
                 ) : details.length > 0 ? (
                   <div className="space-y-4">
                     <GroupDetailStats details={details} />

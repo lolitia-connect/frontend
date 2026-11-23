@@ -62,11 +62,18 @@ describe("ProTable native collection", () => {
         resolve = done;
       });
     const empty = <span>No matching servers</span>;
+    const action = createRef<ProTableActions>();
     render(
       kind === "table" ? (
-        <ProTable columns={columns} empty={empty} request={request} />
+        <ProTable
+          action={action}
+          columns={columns}
+          empty={empty}
+          request={request}
+        />
       ) : (
         <ProList
+          action={action}
           empty={empty}
           renderItem={(row) => row.name}
           request={request}
@@ -78,6 +85,15 @@ describe("ProTable native collection", () => {
     await act(async () => resolve({ list: [], total: 0 }));
     expect(await screen.findByText("No matching servers")).toBeTruthy();
     expect(screen.queryByRole("status", { name: "Loading" })).toBeNull();
+
+    act(() => {
+      action.current?.refresh();
+    });
+    expect(screen.getByText("No matching servers")).toBeTruthy();
+    expect(screen.getByRole("progressbar", { name: "Loading" })).toBeTruthy();
+    await act(async () => resolve({ list: rows, total: rows.length }));
+    expect(await screen.findByText("Tokyo")).toBeTruthy();
+    expect(screen.queryByRole("progressbar", { name: "Loading" })).toBeNull();
   });
 
   it("preserves an open row editor and its draft across parent updates and refreshes", async () => {

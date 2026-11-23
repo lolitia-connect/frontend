@@ -3,6 +3,7 @@
 import { Modal } from "@heroui/react";
 import { Button } from "@workspace/ui/components/button";
 
+import { LoadingBar } from "@workspace/ui/components/progress";
 import { Spinner } from "@workspace/ui/components/spinner";
 import { Icon } from "@workspace/ui/composed/icon";
 import {
@@ -49,7 +50,9 @@ const SliderCaptcha = ({
   const [blockImage, setBlockImage] = useState("");
   const [loading, setLoading] = useState(false);
   const [verified, setVerified] = useState(false);
-  const [status, setStatus] = useState<"idle" | "success" | "fail">("idle");
+  const [status, setStatus] = useState<
+    "idle" | "verifying" | "success" | "fail"
+  >("idle");
   const [blockPos, setBlockPos] = useState({ x: 0, y: 50 });
   const [shaking, setShaking] = useState(false);
 
@@ -101,7 +104,7 @@ const SliderCaptcha = ({
   }));
 
   const onPointerDown = (e: React.PointerEvent) => {
-    if (status === "success" || loading) return;
+    if (status !== "idle" || loading) return;
     dragging.current = true;
     dragStartTime.current = Date.now();
     trail.current = [];
@@ -169,6 +172,7 @@ const SliderCaptcha = ({
       t: Date.now() - dragStartTime.current,
     });
 
+    setStatus("verifying");
     try {
       const res = await verifyCaptchaSlider({
         id: captchaId,
@@ -309,7 +313,10 @@ const SliderCaptcha = ({
                         }}
                       />
                     )}
-                    {status !== "idle" && (
+                    {status === "verifying" && (
+                      <LoadingBar className="absolute inset-x-0 top-0" />
+                    )}
+                    {(status === "success" || status === "fail") && (
                       <div
                         className={`absolute inset-0 flex items-center justify-center font-medium text-sm ${
                           status === "success"
@@ -333,7 +340,7 @@ const SliderCaptcha = ({
 
             <Button
               className="w-full"
-              disabled={loading}
+              disabled={loading || status !== "idle"}
               onClick={fetchCaptcha}
               size="sm"
               type="button"

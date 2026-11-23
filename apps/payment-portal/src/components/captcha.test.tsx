@@ -53,6 +53,36 @@ it("labels the captcha input and clears the old answer when a challenge is refre
   expect(onChange).toHaveBeenLastCalledWith("");
 });
 
+it("keeps the puzzle visible and prevents refreshing while the answer is being verified", async () => {
+  let finish!: (response: { data: { data: { token?: string } } }) => void;
+  api.generate.mockResolvedValue({
+    data: { data: { id: "slider", image, block_image: image } },
+  });
+  api.verify.mockImplementation(
+    () =>
+      new Promise((resolve) => {
+        finish = resolve;
+      })
+  );
+  render(<SliderCaptcha onChange={vi.fn()} resetKey={0} value="" />);
+  fireEvent.click(screen.getByRole("button", { name: "点击完成滑块验证" }));
+  const piece = await screen.findByAltText("captcha block");
+  Object.defineProperty(piece, "setPointerCapture", { value: vi.fn() });
+  fireEvent.pointerDown(piece, { pointerId: 1, clientX: 20, clientY: 20 });
+  fireEvent.pointerUp(piece, { pointerId: 1, clientX: 60, clientY: 20 });
+
+  expect(screen.getByRole("progressbar", { name: "Loading" })).toBeTruthy();
+  expect(screen.getByAltText("captcha background")).toBeTruthy();
+  fireEvent.click(screen.getByRole("button", { name: "刷新验证" }));
+  expect(api.generate).toHaveBeenCalledOnce();
+  finish({ data: { data: {} } });
+  await screen.findByText("请重试");
+  expect(screen.queryByRole("progressbar")).toBeNull();
+  await waitFor(() => expect(api.generate).toHaveBeenCalledTimes(2), {
+    timeout: 3000,
+  });
+});
+
 it("opens and dismisses the controlled slider dialog without starting verification", async () => {
   api.generate.mockResolvedValue({
     data: { data: { id: "slider", image, block_image: image } },

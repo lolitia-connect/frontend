@@ -12,9 +12,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@heroui/react";
+import { Button } from "@workspace/ui/components/button";
 import { Input } from "@workspace/ui/components/input";
 import { Label } from "@workspace/ui/components/label";
-import { Spinner } from "@workspace/ui/components/spinner";
 import { Switch } from "@workspace/ui/components/switch";
 import { Textarea } from "@workspace/ui/components/textarea";
 import { AlertCircle } from "lucide-react";
@@ -550,22 +550,21 @@ const NodeGroupForm = ({
               )}
 
               <div className="flex justify-end gap-2">
-                <button
-                  className="rounded-md border px-4 py-2 text-sm"
+                <Button
                   disabled={submitting || loading}
                   onClick={() => setOpen(false)}
                   type="button"
+                  variant="outline"
                 >
                   {t("cancel", "Cancel")}
-                </button>
-                <button
-                  className="flex items-center gap-2 rounded-md bg-accent px-4 py-2 text-accent-foreground text-sm disabled:opacity-50"
-                  disabled={submitting || loading || !!conflictError}
+                </Button>
+                <Button
+                  disabled={loading || !!conflictError}
+                  loading={submitting}
                   type="submit"
                 >
-                  {submitting && <Spinner className="size-4" />}
                   {t("save", "Save")}
-                </button>
+                </Button>
               </div>
             </form>
             <Modal.CloseTrigger aria-label="Close" />

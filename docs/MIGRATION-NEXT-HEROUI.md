@@ -236,7 +236,9 @@ route commits. Use `PageLoading` for a route boundary, `BlockLoading` for the
 first request in a section, and `Skeleton` to reserve space for known content.
 Show an empty state after the request settles. Lists and tables keep their rows
 during a refresh and show a thin progress bar. Pending actions use HeroUI buttons
-with a spinner, including sign-in and checkout in the payment portal.
+with a spinner, including sign-in and checkout in the payment portal. Keep the
+button's accessible name during the request. Place section spinners directly on
+the existing surface so they need no extra circular background.
 
 ## Hydration: the i18n rule (read this before touching i18n)
 

@@ -74,7 +74,7 @@ export function ProList<TData, TValue extends Record<string, unknown>>({
     {}
   );
   const [data, setData] = useState<TData[]>([]);
-  const [rowCount, setRowCount] = useState<number>(0);
+  const [rowCount, setRowCount] = useState<number>();
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 10,
@@ -231,7 +231,7 @@ export function ProList<TData, TValue extends Record<string, unknown>>({
 
               return <div key={index}>{renderItem(item, checkbox)}</div>;
             })
-          ) : loading ? (
+          ) : loading && rowCount === undefined ? (
             <BlockLoading minHeight="12rem" surface={false} />
           ) : (
             <div className="flex items-center justify-center py-24">
@@ -240,11 +240,11 @@ export function ProList<TData, TValue extends Record<string, unknown>>({
           )}
         </div>
 
-        {loading && data.length > 0 && (
+        {loading && rowCount !== undefined && (
           <LoadingBar className="absolute inset-x-0 top-0 z-20" />
         )}
       </div>
-      {rowCount > 0 && <Pagination table={table} />}
+      {(rowCount ?? 0) > 0 && <Pagination table={table} />}
     </div>
   );
 }

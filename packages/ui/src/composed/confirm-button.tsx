@@ -27,11 +27,19 @@ export const ConfirmButton: React.FC<ConfirmationButtonProps> = ({
   cancelText = "Cancel",
   confirmText = "Confirm",
 }) => {
+  const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>();
 
   return (
-    <AlertDialog>
+    <AlertDialog
+      isOpen={open}
+      onOpenChange={(next) => {
+        if (loading) return;
+        if (next) setError(undefined);
+        setOpen(next);
+      }}
+    >
       {trigger}
       <AlertDialog.Backdrop>
         <AlertDialog.Container>
@@ -53,6 +61,7 @@ export const ConfirmButton: React.FC<ConfirmationButtonProps> = ({
                   setError(undefined);
                   try {
                     await onConfirm();
+                    setOpen(false);
                   } catch (error) {
                     setError(
                       error instanceof Error ? error.message : String(error)
@@ -62,7 +71,9 @@ export const ConfirmButton: React.FC<ConfirmationButtonProps> = ({
                   }
                 }}
               >
-                {loading && <Spinner size="sm" />}
+                {loading && (
+                  <Spinner aria-hidden="true" color="current" size="sm" />
+                )}
                 {confirmText}
               </Button>
             </AlertDialog.Footer>

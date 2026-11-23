@@ -4,6 +4,7 @@ import { toast } from "@heroui/react";
 import { Badge } from "@workspace/ui/components/badge";
 import { Button } from "@workspace/ui/components/button";
 import { Switch } from "@workspace/ui/components/switch";
+import { AsyncButton } from "@workspace/ui/composed/async-button";
 import { ConfirmButton } from "@workspace/ui/composed/confirm-button";
 import {
   ProTable,
@@ -133,10 +134,9 @@ export default function SubscribeTable() {
             title={t("confirmDelete")}
             trigger={<Button variant="destructive">{t("delete")}</Button>}
           />,
-          <Button
+          <AsyncButton
             key="copy"
-            onClick={async () => {
-              setLoading(true);
+            onAction={async () => {
               try {
                 const {
                   id: _id,
@@ -154,17 +154,15 @@ export default function SubscribeTable() {
                 toast.success(t("copySuccess"));
                 ref.current?.refresh();
                 fetchSubscribes();
-                setLoading(false);
                 return true;
               } catch {
-                setLoading(false);
                 return false;
               }
             }}
             variant="secondary"
           >
             {t("copy")}
-          </Button>,
+          </AsyncButton>,
         ],
         batchRender: (rows) => [
           <ConfirmButton

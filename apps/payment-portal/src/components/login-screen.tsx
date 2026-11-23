@@ -109,7 +109,11 @@ export function LoginScreen({
         </TextField>
         {error && <p role="alert">{error}</p>}
         {captchaSlot}
-        <Button isDisabled={loading || configLoading} type="submit">
+        <Button
+          isDisabled={loading || configLoading}
+          isPending={loading || configLoading}
+          type="submit"
+        >
           {(loading || configLoading) && (
             <Spinner aria-hidden="true" color="current" size="sm" />
           )}

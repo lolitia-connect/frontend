@@ -31,7 +31,7 @@ const LocalCaptcha = ({
 }: LocalCaptchaProps & { ref?: RefObject<LocalCaptchaRef | null> }) => {
   const { t } = useTranslation("auth");
   const [captchaImage, setCaptchaImage] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const fetchCaptcha = async () => {
     setLoading(true);

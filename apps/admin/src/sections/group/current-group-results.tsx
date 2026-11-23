@@ -7,7 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@heroui/react";
-import { Spinner } from "@workspace/ui/components/spinner";
+import { BlockLoading } from "@workspace/ui/composed/block-loading";
 import { useQuery } from "@workspace/ui/hooks/query";
 import {
   getGroupHistory,
@@ -87,9 +87,7 @@ export default function CurrentGroupResults() {
           <CardTitle>
             {t("currentGroupingResult", "Current Grouping Result")}
           </CardTitle>
-          <CardDescription>
-            <Spinner aria-label={t("loading", "Loading...")} />
-          </CardDescription>
+          <BlockLoading minHeight="6rem" surface={false} />
         </CardHeader>
       </Card>
     );
@@ -210,12 +208,7 @@ export default function CurrentGroupResults() {
             </div>
 
             {detailsLoading ? (
-              <div className="flex items-center justify-center py-8">
-                <Spinner className="size-6 text-muted" />
-                <span className="ml-2 text-muted text-sm">
-                  {t("loading", "Loading...")}
-                </span>
-              </div>
+              <BlockLoading minHeight="8rem" surface={false} />
             ) : latestDetails.length > 0 ? (
               <GroupDetailTable
                 details={latestDetails}

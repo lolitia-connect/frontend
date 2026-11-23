@@ -1,6 +1,7 @@
 "use client";
 
 import { Input } from "@workspace/ui/components/input";
+import { Spinner } from "@workspace/ui/components/spinner";
 import type React from "react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -59,6 +60,9 @@ const CouponInput: React.FC<CouponInputProps> = ({
               : "text-muted text-xs"
           }
         >
+          {displayStatus === "checking" && (
+            <Spinner aria-hidden="true" className="me-1 align-middle" />
+          )}
           {statusMessage}
         </p>
       )}

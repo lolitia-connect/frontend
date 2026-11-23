@@ -229,6 +229,15 @@ utility wins, so level (B) is additive rather than a full visual takeover.
 Making HeroUI fully dominant requires deleting those legacy utility classes — a
 separate, visually-verifiable change.
 
+### Loading feedback
+
+User Web and Admin Web show a HeroUI progress bar from navigation intent until the
+route commits. Use `PageLoading` for a route boundary, `BlockLoading` for the
+first request in a section, and `Skeleton` to reserve space for known content.
+Show an empty state after the request settles. Lists and tables keep their rows
+during a refresh and show a thin progress bar. Pending actions use HeroUI buttons
+with a spinner, including sign-in and checkout in the payment portal.
+
 ## Hydration: the i18n rule (read this before touching i18n)
 
 React hydration compares the server HTML against the client's **first** render.

@@ -12,7 +12,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@workspace/ui/components/form";
-import { ScrollArea } from "@workspace/ui/components/scroll-area";
 import { Switch } from "@workspace/ui/components/switch";
 import { EnhancedInput } from "@workspace/ui/composed/enhanced-input";
 import { Icon } from "@workspace/ui/composed/icon";
@@ -25,6 +24,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
+import { SettingsFormBody } from "@/components/settings-form-body";
 
 const telegramSchema = z.object({
   enabled: z.boolean(),
@@ -48,7 +48,11 @@ export default function TelegramForm() {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const { data, refetch } = useQuery({
+  const {
+    data,
+    refetch,
+    isLoading: loadingConfig,
+  } = useQuery({
     queryKey: ["getAuthMethodConfig", "telegram"],
     queryFn: async () => {
       const { data } = await getAuthMethodConfig({
@@ -141,7 +145,10 @@ export default function TelegramForm() {
                 {t("telegram.title", "Telegram Sign-In")}
               </Sheet.Heading>
             </Sheet.Header>
-            <ScrollArea className="h-[calc(100dvh-48px-36px-36px-24px-env(safe-area-inset-top))] px-6">
+            <SettingsFormBody
+              className="h-[calc(100dvh-48px-36px-36px-24px-env(safe-area-inset-top))] px-6"
+              isLoading={loadingConfig}
+            >
               <Form {...form}>
                 <form
                   className="space-y-2 pt-4"
@@ -278,16 +285,21 @@ export default function TelegramForm() {
                   />
                 </form>
               </Form>
-            </ScrollArea>
+            </SettingsFormBody>
             <Sheet.Footer className="flex-row justify-end gap-2 pt-3">
               <Button
-                loading={loading}
+                disabled={loading}
                 onClick={() => setOpen(false)}
                 variant="outline"
               >
                 {t("common.cancel", "Cancel")}
               </Button>
-              <Button form="telegram-form" loading={loading} type="submit">
+              <Button
+                disabled={loadingConfig}
+                form="telegram-form"
+                loading={loading}
+                type="submit"
+              >
                 {t("common.save", "Save")}
               </Button>
             </Sheet.Footer>

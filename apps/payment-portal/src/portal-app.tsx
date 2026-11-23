@@ -399,7 +399,7 @@ export default function App({
     checkoutRequestedRef.current = activeOrder.orderNo;
 
     // Request checkout (will only call API if not already done for this order)
-    refreshActiveOrder(activeOrder.orderNo, {
+    return refreshActiveOrder(activeOrder.orderNo, {
       requestCheckout: true,
     })
       .then(() => {
@@ -433,7 +433,7 @@ export default function App({
     // Reset checkout flag and request fresh checkout
     checkoutRequestedRef.current = null;
     resetCheckoutFlag();
-    refreshActiveOrder(activeOrder.orderNo, {
+    return refreshActiveOrder(activeOrder.orderNo, {
       requestCheckout: true,
     })
       .then(() => {
@@ -614,7 +614,7 @@ export default function App({
         onRefreshCheckout={handleRefreshCheckout}
         onRefreshOrder={() => {
           if (activeOrder?.orderNo)
-            refreshActiveOrder(activeOrder.orderNo).catch(
+            return refreshActiveOrder(activeOrder.orderNo).catch(
               handleReportedRequestError
             );
         }}

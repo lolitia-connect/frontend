@@ -5,6 +5,7 @@ import { Button } from "@workspace/ui/components/button";
 import { Input } from "@workspace/ui/components/input";
 import { Label } from "@workspace/ui/components/label";
 import { ScrollArea } from "@workspace/ui/components/scroll-area";
+import { BlockLoading } from "@workspace/ui/composed/block-loading";
 import { ConfirmButton } from "@workspace/ui/composed/confirm-button";
 import { Icon } from "@workspace/ui/composed/icon";
 import {
@@ -39,7 +40,11 @@ export default function Page() {
   const [message, setMessage] = useState("");
   const [followLoading, setFollowLoading] = useState(false);
 
-  const { data: ticket, refetch: refetchTicket } = useQuery({
+  const {
+    data: ticket,
+    refetch: refetchTicket,
+    isLoading: loadingTicket,
+  } = useQuery({
     queryKey: ["getTicket", ticketId],
     queryFn: async () => {
       const { data } = await getTicket({
@@ -230,6 +235,7 @@ export default function Page() {
                 ref={scrollRef}
               >
                 <div className="flex min-w-0 flex-col gap-4 p-4">
+                  {loadingTicket && <BlockLoading surface={false} />}
                   {/* 显示工单描述作为第一条用户消息 */}
                   {ticket?.description && (
                     <div className="flex min-w-0 items-center gap-4">
@@ -289,7 +295,7 @@ export default function Page() {
                   ))}
                 </div>
               </ScrollArea>
-              {ticket?.status !== 4 && (
+              {ticket && ticket.status !== 4 && (
                 <Drawer.Footer className="shrink-0 pt-4">
                   <form
                     className="flex w-full min-w-0 flex-row flex-wrap items-center gap-2"
@@ -393,11 +399,13 @@ export default function Page() {
                       value={message}
                     />
                     <Button
+                      aria-label={t("reply", "Reply")}
                       className="shrink-0"
-                      disabled={!message || followLoading}
+                      disabled={!message}
+                      loading={followLoading}
                       type="submit"
                     >
-                      <Icon icon="uil:navigator" />
+                      {!followLoading && <Icon icon="uil:navigator" />}
                     </Button>
                   </form>
                 </Drawer.Footer>

@@ -38,6 +38,7 @@ import {
   XAxis,
 } from "recharts";
 import { Display } from "@/components/display";
+import { ChartPlaceholder } from "./deferred-chart";
 
 export function RevenueStatisticsCard() {
   const { t, i18n } = useTranslation("dashboard");
@@ -58,13 +59,15 @@ export function RevenueStatisticsCard() {
     },
   };
 
-  const { data: RevenueStatistics } = useQuery({
+  const { data: RevenueStatistics, isLoading } = useQuery({
     queryKey: ["queryRevenueStatistics"],
     queryFn: async () => {
       const { data } = await queryRevenueStatistics();
       return data.data;
     },
   });
+
+  if (isLoading) return <ChartPlaceholder tall />;
 
   return (
     <Tabs className="min-w-0 max-w-full" defaultSelectedKey="today">

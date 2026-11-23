@@ -106,6 +106,7 @@ export function OAuthMethods() {
                 Boolean(loadingMethod) || (requiresVerification && !challenge)
               }
               key={method}
+              loading={loadingMethod === method}
               onClick={async () => {
                 if (searchParams.redirect?.startsWith("/")) {
                   setRedirectUrl(searchParams.redirect);
@@ -173,10 +174,12 @@ export function OAuthMethods() {
               type="button"
               variant="ghost"
             >
-              <Icon
-                className="size-8"
-                icon={icons[method as keyof typeof icons]}
-              />
+              {loadingMethod !== method && (
+                <Icon
+                  className="size-8"
+                  icon={icons[method as keyof typeof icons]}
+                />
+              )}
             </Button>
           ))}
         </div>

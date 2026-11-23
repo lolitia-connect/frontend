@@ -6,6 +6,7 @@ import { Input } from "@workspace/ui/components/input";
 import { Label } from "@workspace/ui/components/label";
 import { ScrollArea } from "@workspace/ui/components/scroll-area";
 import { Textarea } from "@workspace/ui/components/textarea";
+import { BlockLoading } from "@workspace/ui/composed/block-loading";
 import { ConfirmButton } from "@workspace/ui/composed/confirm-button";
 import Empty from "@workspace/ui/composed/empty";
 import { Icon } from "@workspace/ui/composed/icon";
@@ -39,7 +40,11 @@ export default function Ticket() {
   const [ticketId, setTicketId] = useState<any>(null);
   const [message, setMessage] = useState("");
 
-  const { data: ticket, refetch: refetchTicket } = useQuery({
+  const {
+    data: ticket,
+    refetch: refetchTicket,
+    isLoading: loadingTicket,
+  } = useQuery({
     queryKey: ["getUserTicketDetails", ticketId],
     queryFn: async () => {
       const { data } = await getUserTicketDetails({ id: ticketId });
@@ -117,10 +122,8 @@ export default function Ticket() {
                     </div>
                     <Modal.Footer>
                       <Button
-                        disabled={
-                          !(create?.title && create?.description) ||
-                          createLoading
-                        }
+                        disabled={!(create?.title && create?.description)}
+                        loading={createLoading}
                         onClick={async () => {
                           if (createLoading) return;
                           setCreateLoading(true);
@@ -284,6 +287,7 @@ export default function Ticket() {
               </Drawer.Header>
               <ScrollArea className="h-full overflow-hidden" ref={scrollRef}>
                 <div className="flex flex-col gap-4 p-4">
+                  {loadingTicket && <BlockLoading surface={false} />}
                   {ticket?.follow?.map((item) => (
                     <div
                       className={cn("flex items-center gap-4", {
@@ -325,7 +329,7 @@ export default function Ticket() {
                   ))}
                 </div>
               </ScrollArea>
-              {ticket?.status !== 4 && (
+              {ticket && ticket.status !== 4 && (
                 <Drawer.Footer>
                   <form
                     className="flex w-full flex-row items-center gap-2"
@@ -420,8 +424,13 @@ export default function Ticket() {
                       placeholder={t("inputPlaceholder", "Input Placeholder")}
                       value={message}
                     />
-                    <Button disabled={!message || followLoading} type="submit">
-                      <Icon icon="uil:navigator" />
+                    <Button
+                      aria-label={t("submit", "Submit")}
+                      disabled={!message}
+                      loading={followLoading}
+                      type="submit"
+                    >
+                      {!followLoading && <Icon icon="uil:navigator" />}
                     </Button>
                   </form>
                 </Drawer.Footer>

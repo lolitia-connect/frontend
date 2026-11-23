@@ -2,6 +2,7 @@
 
 import { Editor, type Monaco, type OnMount } from "@monaco-editor/react";
 import { Button } from "@workspace/ui/components/button";
+import { Spinner } from "@workspace/ui/components/spinner";
 import { cn } from "@workspace/ui/lib/utils";
 import { useSize } from "ahooks";
 import { EyeIcon, EyeOff, FullscreenIcon, MinimizeIcon } from "lucide-react";
@@ -182,8 +183,8 @@ export function MonacoEditor({
                     beforeMount(monaco);
                   }
                 }}
-                className=""
                 language={language}
+                loading={<Spinner size="md" />}
                 onChange={(newValue) => {
                   editorValueRef.current = newValue;
                   hasPendingLocalChangeRef.current = true;

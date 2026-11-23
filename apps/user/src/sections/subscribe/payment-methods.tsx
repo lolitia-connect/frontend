@@ -1,6 +1,6 @@
 "use client";
 
-import { Chip, Label, Radio, RadioGroup } from "@heroui/react";
+import { Chip, Label, Radio, RadioGroup, Skeleton } from "@heroui/react";
 import { useQuery } from "@workspace/ui/hooks/query";
 import { getAvailablePaymentMethods } from "@workspace/ui/services/user/portal";
 import type React from "react";
@@ -9,7 +9,7 @@ import { useTranslation } from "react-i18next";
 
 interface PaymentMethodsProps {
   balance?: boolean;
-  onAvailableMethodsChange?: (count: number) => void;
+  onAvailableMethodsChange?: (count: number | undefined) => void;
   onChange: (value: string) => void;
   value: string;
 }
@@ -22,7 +22,7 @@ const PaymentMethods: React.FC<PaymentMethodsProps> = ({
 }) => {
   const { t } = useTranslation("subscribe");
 
-  const { data } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ["getAvailablePaymentMethods", { balance }],
     queryFn: async () => {
       const { data } = await getAvailablePaymentMethods();
@@ -44,8 +44,8 @@ const PaymentMethods: React.FC<PaymentMethodsProps> = ({
   }, [data, onChange, value]);
 
   useEffect(() => {
-    onAvailableMethodsChange?.(data?.length ?? 0);
-  }, [data, onAvailableMethodsChange]);
+    onAvailableMethodsChange?.(isLoading ? undefined : (data?.length ?? 0));
+  }, [data, isLoading, onAvailableMethodsChange]);
 
   return (
     <>
@@ -58,6 +58,7 @@ const PaymentMethods: React.FC<PaymentMethodsProps> = ({
         value={String(value)}
       >
         <div className="grid auto-rows-fr grid-cols-[repeat(auto-fit,minmax(min(100%,14rem),1fr))] gap-3">
+          {isLoading && <Skeleton className="h-16 rounded-field" />}
           {data?.map((item) => (
             <Radio
               className="h-full min-w-0"

@@ -6,6 +6,7 @@ import {
   AvatarImage,
 } from "@workspace/ui/components/avatar";
 import { buttonVariants } from "@workspace/ui/components/button";
+import { Spinner } from "@workspace/ui/components/spinner";
 import { Markdown } from "@workspace/ui/composed/markdown";
 import { useQuery } from "@workspace/ui/hooks/query";
 import { useOutsideClick } from "@workspace/ui/hooks/use-outside-click";
@@ -30,7 +31,7 @@ export function TutorialButton({ items }: { items: Item[] }) {
   const id = useId();
   const ref = useRef<HTMLDivElement>(null);
 
-  const { data } = useQuery({
+  const { data, isLoading } = useQuery({
     enabled: !!(active as Item)?.path,
     queryKey: ["getTutorial", (active as Item)?.path],
     queryFn: async () => {
@@ -98,22 +99,26 @@ export function TutorialButton({ items }: { items: Item[] }) {
               layoutId={`card-${active.title}-${id}`}
               ref={ref}
             >
-              <Markdown
-                components={{
-                  img: ({ node, className, ...props }: any) => (
-                    // biome-ignore lint/performance/noImgElement: image rendered from user markdown content
-                    <img
-                      {...props}
-                      alt=""
-                      className="my-4 inline-block size-auto max-h-96"
-                      height={384}
-                      width={800}
-                    />
-                  ),
-                }}
-              >
-                {data?.content || ""}
-              </Markdown>
+              {isLoading ? (
+                <Spinner className="m-auto" size="lg" />
+              ) : (
+                <Markdown
+                  components={{
+                    img: ({ node, className, ...props }: any) => (
+                      // biome-ignore lint/performance/noImgElement: image rendered from user markdown content
+                      <img
+                        {...props}
+                        alt=""
+                        className="my-4 inline-block size-auto max-h-96"
+                        height={384}
+                        width={800}
+                      />
+                    ),
+                  }}
+                >
+                  {data?.content || ""}
+                </Markdown>
+              )}
             </motion.div>
           </div>
         ) : null}

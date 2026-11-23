@@ -1,12 +1,13 @@
 "use client";
 
+import { Skeleton } from "@workspace/ui/components/skeleton";
 import { type ReactNode, useEffect, useRef, useState } from "react";
 
 export function ChartPlaceholder({ tall = false }: { tall?: boolean }) {
   return (
-    <div
+    <Skeleton
       aria-hidden="true"
-      className={`${tall ? "h-[28rem]" : "h-[25rem]"} rounded-xl bg-default/30`}
+      className={`${tall ? "h-[28rem]" : "h-[25rem]"} rounded-xl`}
     />
   );
 }

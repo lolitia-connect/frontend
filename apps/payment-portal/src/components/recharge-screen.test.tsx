@@ -76,6 +76,17 @@ afterEach(() => {
 });
 
 describe("RechargeScreen (HeroUI)", () => {
+  it("shows the initial wait without reporting empty records, and keeps loaded values during refresh", () => {
+    renderScreen({ loadingData: true, userBalance: null, methods: [] });
+    expect(screen.queryByText("暂无充值记录")).toBeNull();
+    expect(screen.queryByText("$0.00")).toBeNull();
+    cleanup();
+    renderScreen({ loadingData: true });
+    expect(screen.getByText("$25.00")).toBeTruthy();
+    expect(screen.getByText("Alipay")).toBeTruthy();
+    expect(screen.getByText("暂无充值记录")).toBeTruthy();
+  });
+
   it("renders the balance, email and available method count", () => {
     renderScreen();
 

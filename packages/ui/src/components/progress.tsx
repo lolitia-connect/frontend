@@ -101,4 +101,19 @@ function Progress({
   );
 }
 
-export { Progress };
+function LoadingBar({ className }: { className?: string }) {
+  const { t } = useTranslation("components", { useSuspense: false });
+  return (
+    <ProgressBar
+      aria-label={t("spinner.label", "Loading")}
+      className={cn("pointer-events-none gap-0", className)}
+      isIndeterminate
+    >
+      <ProgressBar.Track className="h-0.5 rounded-none bg-transparent">
+        <ProgressBar.Fill />
+      </ProgressBar.Track>
+    </ProgressBar>
+  );
+}
+
+export { LoadingBar, Progress };

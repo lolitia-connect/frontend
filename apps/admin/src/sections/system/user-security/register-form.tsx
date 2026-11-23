@@ -12,7 +12,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@workspace/ui/components/form";
-import { ScrollArea } from "@workspace/ui/components/scroll-area";
 import { Switch } from "@workspace/ui/components/switch";
 import { Combobox } from "@workspace/ui/composed/combobox";
 import { EnhancedInput } from "@workspace/ui/composed/enhanced-input";
@@ -26,6 +25,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
+import { SettingsFormBody } from "@/components/settings-form-body";
 import { useSubscribe } from "@/stores/subscribe";
 
 const registerSchema = z.object({
@@ -47,7 +47,11 @@ export default function RegisterConfig() {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const { data, refetch } = useQuery({
+  const {
+    data,
+    refetch,
+    isLoading: loadingConfig,
+  } = useQuery({
     queryKey: ["getRegisterConfig"],
     queryFn: async () => {
       const { data } = await getRegisterConfig();
@@ -130,7 +134,10 @@ export default function RegisterConfig() {
                 {t("register.title", "Registration Settings")}
               </Sheet.Heading>
             </Sheet.Header>
-            <ScrollArea className="h-[calc(100dvh-48px-36px-36px-24px-env(safe-area-inset-top))] px-6">
+            <SettingsFormBody
+              className="h-[calc(100dvh-48px-36px-36px-24px-env(safe-area-inset-top))] px-6"
+              isLoading={loadingConfig}
+            >
               <Form {...form}>
                 <form
                   className="space-y-2 pt-4"
@@ -452,16 +459,21 @@ export default function RegisterConfig() {
                   )}
                 </form>
               </Form>
-            </ScrollArea>
+            </SettingsFormBody>
             <Sheet.Footer className="flex-row justify-end gap-2 pt-3">
               <Button
-                loading={loading}
+                disabled={loading}
                 onClick={() => setOpen(false)}
                 variant="outline"
               >
                 {t("common.cancel", "Cancel")}
               </Button>
-              <Button form="register-form" loading={loading} type="submit">
+              <Button
+                disabled={loadingConfig}
+                form="register-form"
+                loading={loading}
+                type="submit"
+              >
                 {t("common.save", "Save Settings")}
               </Button>
             </Sheet.Footer>

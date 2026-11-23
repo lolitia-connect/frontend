@@ -3,12 +3,6 @@ import { cn } from "@workspace/ui/lib/utils";
 
 type SpinnerSize = "sm" | "md" | "lg";
 
-const sizeMap: Record<SpinnerSize, string> = {
-  sm: "size-4",
-  md: "size-6",
-  lg: "size-8",
-};
-
 interface BlockLoadingProps {
   className?: string;
   /** Minimum height of the loading container */
@@ -38,9 +32,7 @@ export function BlockLoading({
       )}
       style={{ minHeight }}
     >
-      <div className="rounded-full border bg-background p-3 shadow-sm">
-        <Spinner className={cn(sizeMap[size], "text-muted")} />
-      </div>
+      <Spinner className="text-muted" size={size} />
     </div>
   );
 }

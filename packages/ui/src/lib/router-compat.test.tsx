@@ -8,7 +8,7 @@ import {
 } from "@testing-library/react";
 import { RouterContext } from "next/dist/shared/lib/router-context.shared-runtime";
 import type { NextRouter } from "next/router";
-import { type ReactNode, type Ref, useImperativeHandle } from "react";
+import type { ReactNode } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   completeNavigationProgress,
@@ -54,7 +54,8 @@ const nav = vi.hoisted(() => ({
 }));
 
 const route = vi.hoisted(() => ({ pathname: "/dashboard", search: "" }));
-const bar = vi.hoisted(() => ({ continuousStart: vi.fn(), complete: vi.fn() }));
+const progressBar = () =>
+  screen.queryByRole("progressbar", { name: "Loading" });
 
 vi.mock("next/navigation", () => ({
   useRouter: () => nav,
@@ -63,13 +64,9 @@ vi.mock("next/navigation", () => ({
   useSearchParams: () => new URLSearchParams(route.search),
 }));
 
-vi.mock("react-top-loading-bar", () => {
-  function LoadingBar({ ref }: { ref: Ref<typeof bar> }) {
-    useImperativeHandle(ref, () => bar);
-    return null;
-  }
-  return { default: LoadingBar };
-});
+vi.mock("react-i18next", () => ({
+  useTranslation: () => ({ t: (_key: string, fallback: string) => fallback }),
+}));
 
 const { NavigationProgress } = await import("../composed/navigation-progress");
 const {
@@ -217,14 +214,13 @@ describe("router-compat: navigation progress", () => {
         </Link>
       </Navigation>
     );
-    expect(bar.continuousStart).not.toHaveBeenCalled();
-    expect(bar.complete).not.toHaveBeenCalled();
+    expect(progressBar()).toBeNull();
 
     fireEvent.click(screen.getByRole("link"));
     expect(nav.push).toHaveBeenCalled();
-    expect(bar.continuousStart).toHaveBeenCalledOnce();
+    expect(progressBar()).not.toBeNull();
     act(() => vi.advanceTimersByTime(2000));
-    expect(bar.complete).not.toHaveBeenCalled();
+    expect(progressBar()).not.toBeNull();
 
     route.pathname = "/dashboard/servers";
     route.search = "";
@@ -233,8 +229,8 @@ describe("router-compat: navigation progress", () => {
         <span>Servers loaded</span>
       </Navigation>
     );
-    expect(bar.complete).toHaveBeenCalledOnce();
-    expect(bar.continuousStart).toHaveBeenCalledOnce();
+    expect(progressBar()).toBeNull();
+    expect(getNavigationProgress()?.pending).toBe(false);
   });
 
   it.each([
@@ -263,15 +259,14 @@ describe("router-compat: navigation progress", () => {
       </Navigation>
     );
     fireEvent.click(screen.getByRole("button"));
-    expect(bar.continuousStart).toHaveBeenCalledOnce();
-    expect(bar.complete).not.toHaveBeenCalled();
+    expect(progressBar()).not.toBeNull();
     route.search = "tab=billing";
     view.rerender(
       <Navigation>
         <Probe />
       </Navigation>
     );
-    expect(bar.complete).toHaveBeenCalledOnce();
+    expect(progressBar()).toBeNull();
   });
 
   it("retains navigation intent until the lazy progress component mounts", () => {
@@ -284,8 +279,7 @@ describe("router-compat: navigation progress", () => {
     );
     fireEvent.click(screen.getByRole("link"));
     view.rerender(<NavigationProgress />);
-    expect(bar.continuousStart).toHaveBeenCalledOnce();
-    expect(bar.complete).not.toHaveBeenCalled();
+    expect(progressBar()).not.toBeNull();
   });
 
   it("replaces the completion timeout when a newer navigation starts", () => {
@@ -304,16 +298,16 @@ describe("router-compat: navigation progress", () => {
     act(() => vi.advanceTimersByTime(20_000));
     fireEvent.click(screen.getByRole("link", { name: "Nodes" }));
     act(() => vi.advanceTimersByTime(20_000));
-    expect(bar.complete).not.toHaveBeenCalled();
+    expect(progressBar()).not.toBeNull();
     route.pathname = "/dashboard/nodes";
     view.rerender(
       <Navigation>
         <span>Nodes loaded</span>
       </Navigation>
     );
-    expect(bar.complete).toHaveBeenCalledOnce();
+    expect(progressBar()).toBeNull();
     act(() => vi.advanceTimersByTime(30_000));
-    expect(bar.complete).toHaveBeenCalledOnce();
+    expect(progressBar()).toBeNull();
   });
 
   it("clears a navigation that never commits instead of leaving the bar stuck", () => {
@@ -326,16 +320,16 @@ describe("router-compat: navigation progress", () => {
       </Navigation>
     );
     fireEvent.click(screen.getByRole("link"));
+    expect(progressBar()).not.toBeNull();
     act(() => vi.advanceTimersByTime(30_000));
-    expect(bar.complete).toHaveBeenCalledOnce();
+    expect(progressBar()).toBeNull();
   });
 
   it("does not start a late progress flash for an untracked route update", () => {
     const view = render(<NavigationProgress />);
     route.pathname = "/dashboard/servers";
     view.rerender(<NavigationProgress />);
-    expect(bar.continuousStart).not.toHaveBeenCalled();
-    expect(bar.complete).not.toHaveBeenCalled();
+    expect(progressBar()).toBeNull();
   });
 
   it.each([
@@ -361,7 +355,7 @@ describe("router-compat: navigation progress", () => {
       </Navigation>
     );
     fireEvent.click(screen.getByRole("link"));
-    expect(bar.continuousStart).not.toHaveBeenCalled();
+    expect(progressBar()).toBeNull();
   });
 
   it.each([
@@ -378,7 +372,7 @@ describe("router-compat: navigation progress", () => {
       </Navigation>
     );
     fireEvent.click(screen.getByRole("link"), { [modifier]: true });
-    expect(bar.continuousStart).not.toHaveBeenCalled();
+    expect(progressBar()).toBeNull();
   });
 });
 

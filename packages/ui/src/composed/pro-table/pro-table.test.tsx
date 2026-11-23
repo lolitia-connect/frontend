@@ -10,6 +10,7 @@ import {
 } from "@testing-library/react";
 import { createRef, useState } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { ProList } from "../pro-list/pro-list";
 import { ProTable, type ProTableActions } from "./pro-table";
 
 vi.mock("react-i18next", () => ({
@@ -51,6 +52,34 @@ function StatefulEditor() {
 }
 
 describe("ProTable native collection", () => {
+  it.each([
+    "table",
+    "list",
+  ])("waits for the first %s response before showing the empty state", async (kind) => {
+    let resolve!: (value: { list: typeof rows; total: number }) => void;
+    const request = () =>
+      new Promise<{ list: typeof rows; total: number }>((done) => {
+        resolve = done;
+      });
+    const empty = <span>No matching servers</span>;
+    render(
+      kind === "table" ? (
+        <ProTable columns={columns} empty={empty} request={request} />
+      ) : (
+        <ProList
+          empty={empty}
+          renderItem={(row) => row.name}
+          request={request}
+        />
+      )
+    );
+    expect(screen.getByRole("status", { name: "Loading" })).toBeTruthy();
+    expect(screen.queryByText("No matching servers")).toBeNull();
+    await act(async () => resolve({ list: [], total: 0 }));
+    expect(await screen.findByText("No matching servers")).toBeTruthy();
+    expect(screen.queryByRole("status", { name: "Loading" })).toBeNull();
+  });
+
   it("preserves an open row editor and its draft across parent updates and refreshes", async () => {
     const action = createRef<ProTableActions>();
     const request = vi.fn().mockResolvedValue({ list: rows, total: 2 });

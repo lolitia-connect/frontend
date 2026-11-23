@@ -36,6 +36,7 @@ import {
   PieChart,
   XAxis,
 } from "recharts";
+import { ChartPlaceholder } from "./deferred-chart";
 
 export function UserStatisticsCard() {
   const { t, i18n } = useTranslation("dashboard");
@@ -56,13 +57,15 @@ export function UserStatisticsCard() {
     },
   };
 
-  const { data: UserStatistics } = useQuery({
+  const { data: UserStatistics, isLoading } = useQuery({
     queryKey: ["queryUserStatistics"],
     queryFn: async () => {
       const { data } = await queryUserStatistics();
       return data.data;
     },
   });
+
+  if (isLoading) return <ChartPlaceholder tall />;
 
   return (
     <Tabs className="min-w-0 max-w-full" defaultSelectedKey="today">

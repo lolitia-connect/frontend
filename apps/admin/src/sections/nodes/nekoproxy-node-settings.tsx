@@ -1,5 +1,6 @@
 import { Button } from "@workspace/ui/components/button";
 import { Label } from "@workspace/ui/components/label";
+import { Spinner } from "@workspace/ui/components/spinner";
 import { Switch } from "@workspace/ui/components/switch";
 import type { NekoproxyNodeEntry } from "@workspace/ui/services/admin/nekoproxy";
 import { useId } from "react";
@@ -99,7 +100,7 @@ export default function NekoproxyNodeSettings({
           </p>
         )
       ) : (
-        <p role="status">{t("np.loading", "Loading Nekoproxy…")}</p>
+        <Spinner aria-label={t("np.loading", "Loading Nekoproxy…")} />
       )}
       {entry && !isError && (
         <>
@@ -116,7 +117,7 @@ export default function NekoproxyNodeSettings({
             </p>
           )}
           {(config.isLoading || state.isFetching) && (
-            <p role="status">{t("np.loading", "Loading Nekoproxy…")}</p>
+            <Spinner aria-label={t("np.loading", "Loading Nekoproxy…")} />
           )}
           {config.data?.has_api_token && state.data && !state.data.error && (
             <ForwardPicker

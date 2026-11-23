@@ -8,10 +8,12 @@ import {
   Label,
   Radio,
   RadioGroup,
+  Skeleton,
   Spinner,
   Surface,
   TextField,
 } from "@heroui/react";
+import { AsyncButton } from "@workspace/ui/composed/async-button";
 import { formatDate } from "@workspace/ui/utils/formatting";
 import { RefreshCw } from "lucide-react";
 import Image from "next/image";
@@ -31,14 +33,14 @@ interface RechargeScreenProps {
   methods: PaymentMethod[];
   minimumCustomAmount: number;
   onAmountSelect: (value: string) => void;
-  onContinuePayment: () => void;
+  onContinuePayment: () => Promise<void> | void;
   onCustomAmountChange: (value: string) => void;
   onLogout: () => void;
   onMethodSelect: (value: string) => void;
   onOpenConfirm: () => void;
   onRefresh: () => void;
-  onRefreshCheckout: () => void;
-  onRefreshOrder: () => void;
+  onRefreshCheckout: () => Promise<void> | void;
+  onRefreshOrder: () => Promise<void> | void;
   records: RechargeRecord[];
   selectedAmount: number;
   selectedMethodId: string | null;
@@ -73,6 +75,7 @@ export function RechargeScreen({
   onContinuePayment,
 }: Readonly<RechargeScreenProps>) {
   const { t } = useTranslation("app");
+  const initialLoad = loadingData && userBalance === null;
   const selectedMethod =
     methods.find((method) => method.id === selectedMethodId) || null;
 
@@ -98,7 +101,16 @@ export function RechargeScreen({
             </div>
             <div className="flex shrink-0 flex-wrap items-center gap-2">
               <Preferences />
-              <Button onPress={onRefresh} size="sm" variant="outline">
+              <Button
+                isDisabled={initialLoad}
+                isPending={loadingData && !initialLoad}
+                onPress={onRefresh}
+                size="sm"
+                variant="outline"
+              >
+                {loadingData && !initialLoad && (
+                  <Spinner aria-hidden="true" color="current" size="sm" />
+                )}
                 {t("dashboard.refresh", "刷新")}
               </Button>
               <Button onPress={onLogout} size="sm" variant="outline">
@@ -113,9 +125,13 @@ export function RechargeScreen({
               <p className="wrap-anywhere text-muted text-sm">
                 {t("dashboard.balance", "当前余额")}
               </p>
-              <p className="font-semibold text-2xl">
-                <Display type="currency" value={userBalance} />
-              </p>
+              {initialLoad ? (
+                <Skeleton className="h-8 w-24" />
+              ) : (
+                <p className="font-semibold text-2xl">
+                  <Display type="currency" value={userBalance} />
+                </p>
+              )}
             </Surface>
             {userEmail && (
               <Surface className="min-w-0 rounded-2xl p-4" variant="secondary">
@@ -129,7 +145,11 @@ export function RechargeScreen({
               <p className="wrap-anywhere text-muted text-sm">
                 {t("dashboard.methods", "可用支付方式")}
               </p>
-              <p className="font-semibold text-2xl">{methods.length}</p>
+              {initialLoad ? (
+                <Skeleton className="h-8 w-10" />
+              ) : (
+                <p className="font-semibold text-2xl">{methods.length}</p>
+              )}
             </Surface>
           </div>
         </Card.Content>
@@ -157,6 +177,7 @@ export function RechargeScreen({
             >
               <Label>{t("dashboard.methods", "可用支付方式")}</Label>
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                {initialLoad && <Skeleton className="h-14 rounded-field" />}
                 {methods.map((method) => (
                   <Radio key={method.id} value={method.id}>
                     <Radio.Content
@@ -392,30 +413,29 @@ export function RechargeScreen({
 
                   <div className="flex flex-wrap gap-2">
                     {Number(activeOrder.status) === 1 && (
-                      <Button
+                      <AsyncButton
                         className="flex-1"
                         id="payment-next-action"
-                        onPress={onContinuePayment}
+                        onAction={onContinuePayment}
                       >
                         {t("dashboard.payNow", "立即支付")}
-                      </Button>
+                      </AsyncButton>
                     )}
                     {Number(activeOrder.status) === 1 && (
-                      <Button
+                      <AsyncButton
                         aria-label={t(
                           "dashboard.refreshCheckout",
                           "刷新支付链接"
                         )}
-                        isIconOnly
-                        onPress={onRefreshCheckout}
+                        icon={<RefreshCw className="size-4" />}
+                        onAction={onRefreshCheckout}
+                        size="icon"
                         variant="outline"
-                      >
-                        <RefreshCw className="h-4 w-4" />
-                      </Button>
+                      />
                     )}
-                    <Button onPress={onRefreshOrder} variant="outline">
+                    <AsyncButton onAction={onRefreshOrder} variant="outline">
                       {t("dashboard.refreshStatus", "刷新状态")}
-                    </Button>
+                    </AsyncButton>
                   </div>
                 </Card.Content>
               </Card>
@@ -430,7 +450,9 @@ export function RechargeScreen({
           </Card.Title>
         </Card.Header>
         <Card.Content>
-          {records.length > 0 ? (
+          {initialLoad ? (
+            <Skeleton className="h-16 w-full" />
+          ) : records.length > 0 ? (
             <div className="grid min-w-0 gap-3">
               {records.map((record) => (
                 <Surface

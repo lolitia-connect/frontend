@@ -251,7 +251,7 @@ export default function TrafficRangeConfig({
               />
               {isUpdating(nodeGroup.id) && (
                 <div className="absolute top-1/2 right-2 -translate-y-1/2">
-                  <Spinner className="h-4 w-4 animate-spin text-muted" />
+                  <Spinner className="text-muted" />
                 </div>
               )}
             </div>
@@ -279,7 +279,7 @@ export default function TrafficRangeConfig({
               />
               {isUpdating(nodeGroup.id) && (
                 <div className="absolute top-1/2 right-2 -translate-y-1/2">
-                  <Spinner className="h-4 w-4 animate-spin text-muted" />
+                  <Spinner className="text-muted" />
                 </div>
               )}
             </div>

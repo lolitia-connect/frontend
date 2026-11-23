@@ -7,7 +7,6 @@ import {
   toast,
 } from "@heroui/react";
 import { Button } from "@workspace/ui/components/button";
-import { ScrollArea } from "@workspace/ui/components/scroll-area";
 import { ArrayInput } from "@workspace/ui/composed/dynamic-inputs";
 import { Icon } from "@workspace/ui/composed/icon";
 import { useQuery } from "@workspace/ui/hooks/query";
@@ -17,6 +16,7 @@ import {
 } from "@workspace/ui/services/admin/admin";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { SettingsFormBody } from "@/components/settings-form-body";
 
 export default function DynamicMultiplier() {
   const { t } = useTranslation("servers");
@@ -24,7 +24,11 @@ export default function DynamicMultiplier() {
   const [timeSlots, setTimeSlots] = useState<API.TimePeriod[]>([]);
   const [saving, setSaving] = useState(false);
 
-  const { data: periodsResp, refetch: refetchPeriods } = useQuery({
+  const {
+    data: periodsResp,
+    refetch: refetchPeriods,
+    isLoading: loadingConfig,
+  } = useQuery({
     queryKey: ["getNodeMultiplier"],
     queryFn: async () => {
       const { data } = await getNodeMultiplier();
@@ -98,7 +102,10 @@ export default function DynamicMultiplier() {
                 )}
               </Description>
             </Sheet.Header>
-            <ScrollArea className="h-[calc(100dvh-48px-36px-60px-env(safe-area-inset-top))] px-6">
+            <SettingsFormBody
+              className="h-[calc(100dvh-48px-36px-60px-env(safe-area-inset-top))] px-6"
+              isLoading={loadingConfig}
+            >
               <div className="space-y-4 pt-4">
                 <ArrayInput<API.TimePeriod>
                   fields={[
@@ -131,7 +138,7 @@ export default function DynamicMultiplier() {
                   value={timeSlots}
                 />
               </div>
-            </ScrollArea>
+            </SettingsFormBody>
 
             <Sheet.Footer className="flex-row justify-between pt-3">
               <Button
@@ -144,7 +151,11 @@ export default function DynamicMultiplier() {
                 <Button onClick={() => setOpen(false)} variant="outline">
                   {t("actions.cancel", "Cancel")}
                 </Button>
-                <Button loading={saving} onClick={savePeriods}>
+                <Button
+                  disabled={loadingConfig}
+                  loading={saving}
+                  onClick={savePeriods}
+                >
                   {t("actions.save", "Save")}
                 </Button>
               </div>

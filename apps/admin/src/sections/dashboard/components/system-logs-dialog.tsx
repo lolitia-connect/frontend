@@ -11,6 +11,7 @@ import {
 } from "@heroui/react";
 import { Button } from "@workspace/ui/components/button";
 import { ScrollArea } from "@workspace/ui/components/scroll-area";
+import { Spinner } from "@workspace/ui/components/spinner";
 import { Icon } from "@workspace/ui/composed/icon";
 import { useQuery } from "@workspace/ui/hooks/query";
 import { getToolLog as getSystemLog } from "@workspace/ui/services/admin/admin";
@@ -35,6 +36,7 @@ export default function SystemLogsDialog({
     data: logs,
     refetch,
     isLoading,
+    isFetching,
   } = useQuery({
     queryKey: ["getSystemLog"],
     queryFn: async () => {
@@ -62,10 +64,7 @@ export default function SystemLogsDialog({
             <ScrollArea className="h-[60vh] max-h-[80vh] min-h-[400px] w-full rounded-lg border bg-default/30 p-1">
               {isLoading ? (
                 <div className="flex h-full items-center justify-center">
-                  <Icon
-                    className="h-8 w-8 animate-spin text-accent"
-                    icon="uil:loading"
-                  />
+                  <Spinner color="accent" size="lg" />
                 </div>
               ) : (
                 <Accordion className="w-full">
@@ -103,15 +102,12 @@ export default function SystemLogsDialog({
             </ScrollArea>
             <Modal.Footer>
               <Button
-                onClick={() => {
-                  refetch();
-                }}
+                disabled={isLoading}
+                loading={isFetching && !isLoading}
+                onClick={() => refetch()}
                 variant="outline"
               >
-                <Icon
-                  className={`h-5 w-5 ${isLoading ? "animate-spin" : ""}`}
-                  icon="uil:refresh"
-                />
+                {!isFetching && <Icon className="size-5" icon="uil:refresh" />}
                 <span>{t("refreshLogs", "Refresh Logs")}</span>
               </Button>
             </Modal.Footer>

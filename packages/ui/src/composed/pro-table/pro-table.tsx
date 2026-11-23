@@ -9,7 +9,8 @@ import {
 } from "@workspace/ui/components/alert";
 import { Button } from "@workspace/ui/components/button";
 import { Checkbox } from "@workspace/ui/components/checkbox";
-import { Spinner } from "@workspace/ui/components/spinner";
+import { LoadingBar } from "@workspace/ui/components/progress";
+import { BlockLoading } from "@workspace/ui/composed/block-loading";
 import Empty from "@workspace/ui/composed/empty";
 import {
   ColumnFilter,
@@ -137,7 +138,7 @@ export function ProTable<
     pageSize: 10,
   });
   const requestIdRef = useRef(0);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const table = useReactTable({
     data,
@@ -355,7 +356,15 @@ export function ProTable<
                       </Table.Column>
                     ))}
                 </Table.Header>
-                <Table.Body renderEmptyState={() => empty || <Empty />}>
+                <Table.Body
+                  renderEmptyState={() =>
+                    isLoading ? (
+                      <BlockLoading minHeight="8rem" surface={false} />
+                    ) : (
+                      empty || <Empty />
+                    )
+                  }
+                >
                   {table.getRowModel().rows.map((row) => (
                     <Table.Row
                       data-selected={row.getIsSelected() || undefined}
@@ -388,12 +397,8 @@ export function ProTable<
           </Table>
         </ProTableWrapper>
 
-        {isLoading && (
-          <div className="absolute inset-0 z-20 flex items-center justify-center rounded-md bg-background/70 backdrop-blur-[1px]">
-            <div className="rounded-full border bg-background p-3 shadow-sm">
-              <Spinner className="size-6 text-muted" />
-            </div>
-          </div>
+        {isLoading && data.length > 0 && (
+          <LoadingBar className="absolute inset-x-0 top-0 z-20" />
         )}
       </div>
       {rowCount > 0 && <Pagination table={table} />}

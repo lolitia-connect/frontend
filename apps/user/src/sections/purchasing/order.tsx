@@ -4,7 +4,9 @@ import { Card } from "@heroui/react";
 import { Badge } from "@workspace/ui/components/badge";
 import { Button } from "@workspace/ui/components/button";
 import { Separator } from "@workspace/ui/components/separator";
+import { Spinner } from "@workspace/ui/components/spinner";
 import { Icon } from "@workspace/ui/composed/icon";
+import { PageLoading } from "@workspace/ui/composed/page-loading";
 import { useMutation, useQuery } from "@workspace/ui/hooks/query";
 import { Link, useSearch } from "@workspace/ui/lib/router-compat";
 import {
@@ -31,7 +33,7 @@ import { watchOrderEvents } from "./order-events";
 export default function Order() {
   const { t } = useTranslation("order");
   const { getUserInfo, isLoadingUser } = useGlobalStore();
-  const [orderNo, setOrderNo] = useState<string>();
+  const [orderNo, setOrderNo] = useState<string | null>();
   const [enabled, setEnabled] = useState<boolean>(false);
   const [accessError, setAccessError] = useState(false);
   const [snapshot, setSnapshot] = useState<OrderSnapshot>();
@@ -44,7 +46,7 @@ export default function Order() {
 
   const capability = orderNo ? getCheckoutToken(orderNo) : undefined;
   const canQuery = Boolean(orderNo && capability);
-  const { data, refetch, isFetching } = useQuery({
+  const { data, refetch, isFetching, isLoading } = useQuery({
     enabled: enabled && canQuery,
     queryKey: ["queryPurchaseOrder", orderNo],
     queryFn: async () => {
@@ -173,6 +175,8 @@ export default function Order() {
       setPaymentType(undefined);
       setCheckoutUrl(undefined);
       setSessionState("idle");
+    } else {
+      setOrderNo(null);
     }
   }, [search.order_no]);
 
@@ -209,6 +213,12 @@ export default function Order() {
     ) : (
       t("timeExpired", "Time Expired")
     );
+
+  if (
+    orderNo === undefined ||
+    (!(accessError || data) && (isLoading || isLoadingUser))
+  )
+    return <PageLoading />;
 
   if (accessError || !(isLoadingUser || canQuery || data)) {
     return (
@@ -320,6 +330,12 @@ export default function Order() {
                     role="status"
                   >
                     <p>
+                      {sessionState === "pending" && (
+                        <Spinner
+                          aria-hidden="true"
+                          className="me-1 align-middle"
+                        />
+                      )}
                       {sessionState === "error"
                         ? t(
                             "sessionRestoreFailed",
@@ -367,7 +383,7 @@ export default function Order() {
                 <Icon className="text-7xl text-muted" icon="mdi:access-time" />
                 <div className="flex gap-4">
                   <Button
-                    disabled={checkoutMutation.isPending}
+                    loading={checkoutMutation.isPending}
                     onClick={() => {
                       if (paymentType === "url" && checkoutUrl)
                         window.location.assign(checkoutUrl);

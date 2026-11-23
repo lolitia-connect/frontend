@@ -14,7 +14,8 @@ import * as React from "react";
  *   sm/md/lg -> sm/md/lg   | icon/icon-sm/icon-lg -> isIconOnly + md/sm/lg
  *
  * Two behaviours are preserved through HeroUI's own props:
- *   - `loading` -> `isDisabled` plus this package's `Spinner` as a child.
+ *   - `loading` -> `isPending` and `isDisabled`, with a decorative `Spinner`
+ *     so the action keeps its accessible name.
  *   - `type`    -> forwarded explicitly, defaulting to `"submit"`. This matters:
  *     react-aria's `useButton` hardcodes `type = 'button'`
  *     (`react-aria/dist/private/button/useButton.js`: `type: type = 'button'`),
@@ -214,12 +215,13 @@ function Button({
       data-slot="button"
       isDisabled={loading || disabled}
       isIconOnly={resolvedSize.startsWith("icon")}
+      isPending={loading}
       size={HERO_SIZE[resolvedSize]}
       type={type ?? "submit"}
       variant={HERO_VARIANT[resolvedVariant]}
       {...heroProps}
     >
-      {loading && <Spinner />}
+      {loading && <Spinner aria-hidden="true" />}
       {children}
     </HeroUIButton>
   );

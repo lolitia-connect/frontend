@@ -781,16 +781,11 @@ export default function ServerNodeConfig({ server }: { server: API.Server }) {
                   {t("actions.cancel", "Cancel")}
                 </Button>
                 <Button
-                  disabled={
-                    saving || isLoading || isError || !cfgResp || !isDirty
-                  }
+                  disabled={isLoading || isError || !cfgResp || !isDirty}
                   form="server-node-config-form"
+                  loading={saving}
                   type="submit"
                 >
-                  <Icon
-                    className={saving ? "animate-spin" : "hidden"}
-                    icon="mdi:loading"
-                  />
                   {t("actions.save", "Save")}
                 </Button>
               </div>

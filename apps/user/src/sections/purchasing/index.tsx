@@ -1,5 +1,6 @@
 "use client";
 
+import { BlockLoading } from "@workspace/ui/composed/block-loading";
 import { useQuery } from "@workspace/ui/hooks/query";
 import { useSearch } from "@workspace/ui/lib/router-compat";
 import { getSubscription } from "@workspace/ui/services/user/portal";
@@ -11,7 +12,7 @@ export default function Purchasing() {
   const { id } = useSearch({ from: "/(main)/purchasing/" }) as { id: string };
   const { t, i18n } = useTranslation("components");
   const locale = getContentLanguage(i18n.language);
-  const { data } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ["subscription", locale],
     queryFn: async () => {
       const { data } = await getSubscription(
@@ -31,7 +32,7 @@ export default function Purchasing() {
   return (
     <main className="container space-y-16 pb-8" id="main-content" tabIndex={-1}>
       <h1 className="sr-only">{t("menu.subscribe", "Subscribe")}</h1>
-      <Content subscription={subscription} />
+      {isLoading ? <BlockLoading /> : <Content subscription={subscription} />}
     </main>
   );
 }

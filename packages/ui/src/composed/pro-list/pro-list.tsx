@@ -8,7 +8,8 @@ import {
 } from "@workspace/ui/components/alert";
 import { Button } from "@workspace/ui/components/button";
 import { Checkbox } from "@workspace/ui/components/checkbox";
-import { Spinner } from "@workspace/ui/components/spinner";
+import { LoadingBar } from "@workspace/ui/components/progress";
+import { BlockLoading } from "@workspace/ui/composed/block-loading";
 import Empty from "@workspace/ui/composed/empty";
 import {
   ColumnFilter,
@@ -78,8 +79,8 @@ export function ProList<TData, TValue extends Record<string, unknown>>({
     pageIndex: 0,
     pageSize: 10,
   });
-  const [loading, setLoading] = useState(false);
-  const loadingRef = useRef(false);
+  const [loading, setLoading] = useState(true);
+  const requestIdRef = useRef(0);
 
   const table = useReactTable({
     data,
@@ -101,8 +102,7 @@ export function ProList<TData, TValue extends Record<string, unknown>>({
   });
 
   const fetchData = async () => {
-    if (loadingRef.current) return;
-    loadingRef.current = true;
+    const requestId = ++requestIdRef.current;
     setLoading(true);
     try {
       const response = await request(
@@ -114,13 +114,14 @@ export function ProList<TData, TValue extends Record<string, unknown>>({
           columnFilters.map((item) => [item.id, item.value])
         ) as TValue
       );
+      if (requestId !== requestIdRef.current) return;
       setData(response.list);
       setRowCount(response.total);
     } catch (error) {
-      console.log("Fetch data error:", error);
+      if (requestId === requestIdRef.current)
+        console.log("Fetch data error:", error);
     } finally {
-      loadingRef.current = false;
-      setLoading(false);
+      if (requestId === requestIdRef.current) setLoading(false);
     }
   };
 
@@ -208,6 +209,7 @@ export function ProList<TData, TValue extends Record<string, unknown>>({
       )}
 
       <div
+        aria-busy={loading}
         className={cn("relative overflow-x-auto", {
           "rounded-xl border": data.length === 0,
         })}
@@ -229,6 +231,8 @@ export function ProList<TData, TValue extends Record<string, unknown>>({
 
               return <div key={index}>{renderItem(item, checkbox)}</div>;
             })
+          ) : loading ? (
+            <BlockLoading minHeight="12rem" surface={false} />
           ) : (
             <div className="flex items-center justify-center py-24">
               {empty || <Empty />}
@@ -236,12 +240,8 @@ export function ProList<TData, TValue extends Record<string, unknown>>({
           )}
         </div>
 
-        {loading && (
-          <div className="absolute inset-0 z-20 flex items-center justify-center rounded-md bg-background/70 backdrop-blur-[1px]">
-            <div className="rounded-full border bg-background p-3 shadow-sm">
-              <Spinner className="size-6 text-muted" />
-            </div>
-          </div>
+        {loading && data.length > 0 && (
+          <LoadingBar className="absolute inset-x-0 top-0 z-20" />
         )}
       </div>
       {rowCount > 0 && <Pagination table={table} />}

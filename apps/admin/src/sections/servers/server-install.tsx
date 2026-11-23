@@ -4,6 +4,7 @@ import { Modal, toast } from "@heroui/react";
 import { Button } from "@workspace/ui/components/button";
 import { Input } from "@workspace/ui/components/input";
 import { Label } from "@workspace/ui/components/label";
+import { BlockLoading } from "@workspace/ui/composed/block-loading";
 import { useQuery } from "@workspace/ui/hooks/query";
 import { getSystemNodeConfig as getNodeConfig } from "@workspace/ui/services/admin/admin";
 import {
@@ -26,7 +27,7 @@ export default function ServerInstall({ server, trigger }: Props) {
   const [open, setOpen] = useState(false);
   const [domain, setDomain] = useState("");
 
-  const { data: cfgResp } = useQuery({
+  const { data: cfgResp, isLoading } = useQuery({
     queryKey: ["getNodeConfig"],
     queryFn: async () => {
       const { data } = await getNodeConfig();
@@ -103,14 +104,16 @@ export default function ServerInstall({ server, trigger }: Props) {
 
               <div>
                 <Label>{t("installCommand", "Install command")}</Label>
-                <div className="flex flex-col gap-2">
+                {isLoading ? (
+                  <BlockLoading minHeight="5.5rem" surface={false} />
+                ) : (
                   <textarea
                     aria-label={t("installCommand", "Install command")}
                     className="min-h-[88px] w-full rounded border p-2 font-mono text-sm"
                     readOnly
                     value={installCommand}
                   />
-                </div>
+                )}
               </div>
             </div>
 
@@ -118,7 +121,7 @@ export default function ServerInstall({ server, trigger }: Props) {
               <Button onClick={() => setOpen(false)} variant="outline">
                 {t("close", "Close")}
               </Button>
-              <Button onClick={handleCopy}>
+              <Button disabled={isLoading || !cfgResp} onClick={handleCopy}>
                 {t("copyAndClose", "Copy and Close")}
               </Button>
             </Modal.Footer>

@@ -3,6 +3,7 @@
 
 import { Sheet, Button as SheetButton } from "@heroui/react";
 import { Badge } from "@workspace/ui/components/badge";
+import { Skeleton } from "@workspace/ui/components/skeleton";
 import { ProTable } from "@workspace/ui/composed/pro-table/pro-table";
 import { useQuery } from "@workspace/ui/hooks/query";
 import { getUserSubscribeDetail as getUserSubscribeById } from "@workspace/ui/services/admin/admin";
@@ -32,7 +33,7 @@ function UserSubscribeInfo({
   expiredText: string;
   unlimitedText: string;
 }) {
-  const { data } = useQuery({
+  const { data, isLoading } = useQuery({
     enabled: Boolean(subscribeId) && open,
     queryKey: ["getUserSubscribeById", subscribeId],
     queryFn: async () => {
@@ -41,6 +42,7 @@ function UserSubscribeInfo({
     },
   });
 
+  if (isLoading) return <Skeleton className="h-4 w-16" />;
   if (!data) return <span className="text-muted">--</span>;
 
   switch (type) {

@@ -23,7 +23,7 @@ export default function Recharge(
 
   const [open, setOpen] = useState<boolean>(false);
   const [loading, startTransition] = useTransition();
-  const [availableMethodsCount, setAvailableMethodsCount] = useState<number>(0);
+  const [availableMethodsCount, setAvailableMethodsCount] = useState<number>();
 
   const [params, setParams] = useState<API.RechargeOrderRequest>({
     amount: 0,
@@ -31,7 +31,7 @@ export default function Recharge(
   });
 
   const hasNoPaymentMethods = availableMethodsCount === 0;
-  const isButtonDisabled = loading || !params.amount || hasNoPaymentMethods;
+  const isButtonDisabled = !(params.amount && availableMethodsCount);
 
   return (
     <Modal isOpen={open} onOpenChange={setOpen}>
@@ -97,6 +97,7 @@ export default function Recharge(
               <Button
                 className="w-full md:w-auto md:min-w-40"
                 disabled={isButtonDisabled}
+                loading={loading}
                 onClick={() => {
                   startTransition(async () => {
                     try {

@@ -12,7 +12,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@workspace/ui/components/form";
-import { ScrollArea } from "@workspace/ui/components/scroll-area";
 import { Switch } from "@workspace/ui/components/switch";
 import { Textarea } from "@workspace/ui/components/textarea";
 import { EnhancedInput } from "@workspace/ui/composed/enhanced-input";
@@ -26,6 +25,7 @@ import { useEffect, useState } from "react";
 import { type Resolver, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
+import { SettingsFormBody } from "@/components/settings-form-body";
 
 const subscribeConfigSchema = z.object({
   single_model: z.boolean().optional(),
@@ -46,7 +46,11 @@ export default function ConfigForm() {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const { data, refetch } = useQuery({
+  const {
+    data,
+    refetch,
+    isLoading: loadingConfig,
+  } = useQuery({
     queryKey: ["getSubscribeConfig"],
     queryFn: async () => {
       const { data } = await getSubscribeConfig();
@@ -123,7 +127,10 @@ export default function ConfigForm() {
                 {t("config.title", "Subscription Configuration")}
               </Sheet.Heading>
             </Sheet.Header>
-            <ScrollArea className="h-[calc(100dvh-48px-36px-36px-env(safe-area-inset-top))] px-6">
+            <SettingsFormBody
+              className="h-[calc(100dvh-48px-36px-36px-env(safe-area-inset-top))] px-6"
+              isLoading={loadingConfig}
+            >
               <Form {...form}>
                 <form
                   className="space-y-2 pt-4"
@@ -412,16 +419,17 @@ export default function ConfigForm() {
                   />
                 </form>
               </Form>
-            </ScrollArea>
+            </SettingsFormBody>
             <Sheet.Footer className="flex-row justify-end gap-2 pt-3">
               <Button
-                loading={loading}
+                disabled={loading}
                 onClick={() => setOpen(false)}
                 variant="outline"
               >
                 {t("actions.cancel", "Cancel")}
               </Button>
               <Button
+                disabled={loadingConfig}
                 form="subscribe-config-form"
                 loading={loading}
                 type="submit"

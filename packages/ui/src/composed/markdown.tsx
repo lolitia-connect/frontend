@@ -1,5 +1,6 @@
 "use client";
 
+import { Skeleton } from "@workspace/ui/components/skeleton";
 import { lazy, Suspense } from "react";
 import type { Components } from "react-markdown";
 
@@ -26,7 +27,7 @@ export function Markdown({ rich, ...props }: MarkdownProps) {
       ? RichMarkdownImpl
       : MarkdownImpl;
   return (
-    <Suspense fallback={null}>
+    <Suspense fallback={<Skeleton aria-hidden="true" className="h-5 w-3/4" />}>
       <Impl {...props} />
     </Suspense>
   );

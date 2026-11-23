@@ -4,7 +4,6 @@ import { getRequestLanguage } from "@workspace/ui/lib/request-language";
 import { ThemeScript } from "@workspace/ui/lib/theme-script";
 import type { Metadata, Viewport } from "next";
 import { headers } from "next/headers";
-import { Suspense } from "react";
 import { fallbackLng, supportedLngs } from "@/config/i18n";
 import { loadInitialTranslations } from "@/config/i18n-server";
 import { Bootstrap } from "./bootstrap";
@@ -54,17 +53,15 @@ export default async function RootLayout({
         className={`${brandFontVariables} admin-shell bg-background text-foreground`}
       >
         <ThemeScript />
-        <Suspense fallback={null}>
-          <Providers
-            initialLanguage={initialLanguage}
-            initialTranslations={initialTranslations}
-          >
-            <Bootstrap />
-            <SiteMetadata />
-            <NavigationProgressClient />
-            {children}
-          </Providers>
-        </Suspense>
+        <Providers
+          initialLanguage={initialLanguage}
+          initialTranslations={initialTranslations}
+        >
+          <Bootstrap />
+          <SiteMetadata />
+          <NavigationProgressClient />
+          {children}
+        </Providers>
       </body>
     </html>
   );

@@ -1,6 +1,7 @@
 "use client";
 
 import { Card, CardContent } from "@heroui/react";
+import { Skeleton } from "@workspace/ui/components/skeleton";
 import { Icon } from "@workspace/ui/composed/icon";
 import { useQuery } from "@workspace/ui/hooks/query";
 import { Link } from "@workspace/ui/lib/router-compat";
@@ -38,14 +39,14 @@ const TrafficRankCard = dynamic(() => import("./traffic-rank-card"), {
 export default function Statistics() {
   const { t } = useTranslation("dashboard");
 
-  const { data: TicketTotal } = useQuery({
+  const { data: TicketTotal, isLoading: loadingTickets } = useQuery({
     queryKey: ["queryTicketWaitReply"],
     queryFn: async () => {
       const { data } = await queryTicketWaitReply();
       return data.data?.count;
     },
   });
-  const { data: ServerTotal } = useQuery({
+  const { data: ServerTotal, isLoading: loadingServers } = useQuery({
     queryKey: ["queryServerTotalData"],
     queryFn: async () => {
       const { data } = await queryServerTotalData();
@@ -118,12 +119,18 @@ export default function Statistics() {
                     <p className="mb-2 font-medium text-default-600 text-sm">
                       {item.title}
                     </p>
-                    <div className="mb-1 font-bold text-2xl text-foreground">
-                      {item.value}
-                    </div>
-                    <div className="h-4 text-muted text-xs">
-                      {item.subtitle}
-                    </div>
+                    {(item.alert ? loadingTickets : loadingServers) ? (
+                      <Skeleton className="h-12 w-24" />
+                    ) : (
+                      <>
+                        <div className="mb-1 font-bold text-2xl text-foreground">
+                          {item.value}
+                        </div>
+                        <div className="h-4 text-muted text-xs">
+                          {item.subtitle}
+                        </div>
+                      </>
+                    )}
                   </div>
                   <div
                     className={`rounded-full p-3 transition-transform duration-300 group-hover:scale-110 ${
@@ -153,12 +160,16 @@ export default function Statistics() {
       <div className="grid gap-3 md:grid-cols-2">
         {(["nodes", "users"] as const).map((type) => (
           <DeferredChart key={type}>
-            <TrafficRankCard
-              data={ServerTotal}
-              onTimeFrameChange={setTimeFrame}
-              timeFrame={timeFrame}
-              type={type}
-            />
+            {loadingServers ? (
+              <ChartPlaceholder />
+            ) : (
+              <TrafficRankCard
+                data={ServerTotal}
+                onTimeFrameChange={setTimeFrame}
+                timeFrame={timeFrame}
+                type={type}
+              />
+            )}
           </DeferredChart>
         ))}
       </div>

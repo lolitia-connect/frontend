@@ -10,6 +10,7 @@ import {
 } from "@heroui/react";
 import { Badge } from "@workspace/ui/components/badge";
 import { Button } from "@workspace/ui/components/button";
+import { Skeleton } from "@workspace/ui/components/skeleton";
 import { Icon } from "@workspace/ui/composed/icon";
 import { useQuery } from "@workspace/ui/hooks/query";
 import {
@@ -24,7 +25,7 @@ export default function SystemVersionCard() {
   const { t } = useTranslation("tool");
   const [openRestart, setOpenRestart] = useState(false);
   const [isRestarting, setIsRestarting] = useState(false);
-  const { data: serverVersion } = useQuery({
+  const { data: serverVersion, isLoading } = useQuery({
     queryKey: ["getServerVersion"],
     queryFn: async () => {
       const { data } = await getServerVersion({ skipErrorHandler: true });
@@ -69,7 +70,7 @@ export default function SystemVersionCard() {
                         {t("cancel", "Cancel")}
                       </Button>
                       <Button
-                        disabled={isRestarting}
+                        loading={isRestarting}
                         onClick={async () => {
                           setIsRestarting(true);
                           try {
@@ -85,12 +86,6 @@ export default function SystemVersionCard() {
                           }
                         }}
                       >
-                        {isRestarting && (
-                          <Icon
-                            className="mr-2 animate-spin"
-                            icon="mdi:loading"
-                          />
-                        )}
                         {isRestarting
                           ? t("rebooting", "Rebooting...")
                           : t("confirmReboot", "Confirm Reboot")}
@@ -128,7 +123,11 @@ export default function SystemVersionCard() {
             </span>
           </div>
           <div className="flex items-center space-x-2">
-            <Badge>{serverVersion ? `V${serverVersion}` : "—"}</Badge>
+            {isLoading ? (
+              <Skeleton className="h-5 w-16" />
+            ) : (
+              <Badge>{serverVersion ? `V${serverVersion}` : "—"}</Badge>
+            )}
           </div>
         </div>
       </CardContent>

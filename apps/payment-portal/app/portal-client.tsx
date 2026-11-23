@@ -1,6 +1,6 @@
 "use client";
 
-import { Spinner } from "@heroui/react";
+import { PageLoading } from "@workspace/ui/composed/page-loading";
 import dynamic from "next/dynamic";
 
 /**
@@ -11,11 +11,7 @@ import dynamic from "next/dynamic";
  * so the first client render matches the SSR output.
  */
 const Portal = dynamic(() => import("@/portal-app"), {
-  loading: () => (
-    <div className="grid min-h-screen place-items-center">
-      <Spinner aria-label="Loading" color="accent" size="lg" />
-    </div>
-  ),
+  loading: () => <PageLoading className="min-h-svh" />,
 });
 
 export function PortalClient({

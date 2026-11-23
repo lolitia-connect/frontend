@@ -210,7 +210,7 @@ export const usePortalStore = create<PortalStore>((set, get) => ({
   selectedAmount: 10,
   customAmountEnabled: false,
   customAmountInput: "",
-  loadingPortal: false,
+  loadingPortal: true,
 
   refreshPortal: async () => {
     set({ loadingPortal: true });
@@ -344,6 +344,6 @@ export const usePortalStore = create<PortalStore>((set, get) => ({
       selectedAmount: 10,
       customAmountEnabled: false,
       customAmountInput: "",
-      loadingPortal: false,
+      loadingPortal: true,
     }),
 }));

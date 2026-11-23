@@ -87,7 +87,9 @@ export default function CurrentGroupResults() {
           <CardTitle>
             {t("currentGroupingResult", "Current Grouping Result")}
           </CardTitle>
-          <CardDescription>{t("loading", "Loading...")}</CardDescription>
+          <CardDescription>
+            <Spinner aria-label={t("loading", "Loading...")} />
+          </CardDescription>
         </CardHeader>
       </Card>
     );

@@ -11,6 +11,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@workspace/ui/components/form";
+import { Spinner } from "@workspace/ui/components/spinner";
 import { Switch } from "@workspace/ui/components/switch";
 import { EnhancedInput } from "@workspace/ui/composed/enhanced-input";
 import { Icon } from "@workspace/ui/composed/icon";
@@ -271,7 +272,7 @@ export default function SentryForm() {
                 {isError ? (
                   <Button onClick={() => refetch()}>{t("sentry.retry")}</Button>
                 ) : (
-                  t("sentry.loading")
+                  <Spinner aria-label={t("sentry.loading")} />
                 )}
               </Sheet.Body>
             )}

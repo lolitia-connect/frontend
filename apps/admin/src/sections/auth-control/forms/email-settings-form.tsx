@@ -22,7 +22,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@workspace/ui/components/form";
-import { ScrollArea } from "@workspace/ui/components/scroll-area";
 import { Switch } from "@workspace/ui/components/switch";
 import { Textarea } from "@workspace/ui/components/textarea";
 import { HTMLEditor } from "@workspace/ui/composed/editor/html";
@@ -37,6 +36,7 @@ import {
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
+import { SettingsFormBody } from "@/components/settings-form-body";
 import {
   type EmailSettingsFormData,
   emailSettingsSchema,
@@ -46,9 +46,15 @@ export default function EmailSettingsForm() {
   const { t } = useTranslation("auth-control");
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [sendingTest, setSendingTest] = useState(false);
   const [testEmail, setTestEmail] = useState<string>();
 
-  const { data, refetch, isFetching } = useQuery({
+  const {
+    data,
+    refetch,
+    isFetching,
+    isLoading: loadingConfig,
+  } = useQuery({
     queryKey: ["getAuthMethodConfig", "email"],
     queryFn: async () => {
       const { data } = await getAuthMethodConfig({
@@ -154,7 +160,10 @@ export default function EmailSettingsForm() {
                 {t("email.title", "Email Settings")}
               </Sheet.Heading>
             </Sheet.Header>
-            <ScrollArea className="h-[calc(100dvh-48px-36px-36px-24px-env(safe-area-inset-top))] px-6">
+            <SettingsFormBody
+              className="h-[calc(100dvh-48px-36px-36px-24px-env(safe-area-inset-top))] px-6"
+              isLoading={loadingConfig}
+            >
               <Form {...form}>
                 <form
                   className="space-y-2 pt-4"
@@ -576,8 +585,10 @@ export default function EmailSettingsForm() {
                           />
                           <Button
                             disabled={!testEmail || isFetching}
+                            loading={sendingTest}
                             onClick={async () => {
                               if (!testEmail) return;
+                              setSendingTest(true);
                               try {
                                 await testEmailSend({ email: testEmail });
                                 toast.success(
@@ -590,6 +601,8 @@ export default function EmailSettingsForm() {
                                 toast.danger(
                                   t("email.sendFailure", "Email send failed")
                                 );
+                              } finally {
+                                setSendingTest(false);
                               }
                             }}
                             type="button"
@@ -1049,7 +1062,7 @@ export default function EmailSettingsForm() {
                   </Tabs>
                 </form>
               </Form>
-            </ScrollArea>
+            </SettingsFormBody>
             <Sheet.Footer className="flex-row justify-end gap-2 pt-3">
               <Button
                 disabled={loading}
@@ -1059,13 +1072,11 @@ export default function EmailSettingsForm() {
                 {t("common.cancel", "Cancel")}
               </Button>
               <Button
-                disabled={loading}
+                disabled={loadingConfig}
                 form="email-settings-form"
+                loading={loading}
                 type="submit"
               >
-                {loading && (
-                  <Icon className="mr-2 animate-spin" icon="mdi:loading" />
-                )}
                 {t("common.save", "Save")}
               </Button>
             </Sheet.Footer>

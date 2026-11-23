@@ -2,6 +2,7 @@
 
 import { Avatar, AvatarFallback } from "@workspace/ui/components/avatar";
 import { buttonVariants } from "@workspace/ui/components/button";
+import { Spinner } from "@workspace/ui/components/spinner";
 import { Markdown } from "@workspace/ui/composed/markdown";
 import { useQuery } from "@workspace/ui/hooks/query";
 import { useOutsideClick } from "@workspace/ui/hooks/use-outside-click";
@@ -24,7 +25,7 @@ export function DocumentButton({ items }: { items: API.Document[] }) {
   const id = useId();
   const ref = useRef<HTMLDivElement>(null);
 
-  const { data } = useQuery({
+  const { data, isLoading: loadingDocument } = useQuery({
     enabled: !!(active as API.Document)?.id,
     queryKey: ["queryDocumentDetail", (active as API.Document)?.id],
     queryFn: async () => {
@@ -160,8 +161,11 @@ export function DocumentButton({ items }: { items: API.Document[] }) {
               layoutId={`card-${active.id}-${id}`}
               ref={ref}
             >
-              {subscriptionConfigMessage ? (
-                <div className="m-auto text-center text-muted">
+              {loadingDocument ? (
+                <Spinner className="m-auto" size="lg" />
+              ) : subscriptionConfigMessage ? (
+                <div className="m-auto flex items-center gap-2 text-center text-muted">
+                  {(isLoadingCommon || isLoadingSubscriptions) && <Spinner />}
                   {subscriptionConfigMessage}
                 </div>
               ) : (

@@ -19,6 +19,8 @@ import {
 } from "@heroui/react";
 import { Button } from "@workspace/ui/components/button";
 import { Separator } from "@workspace/ui/components/separator";
+import { Spinner } from "@workspace/ui/components/spinner";
+import { BlockLoading } from "@workspace/ui/composed/block-loading";
 import { Icon } from "@workspace/ui/composed/icon";
 import { RefreshButton } from "@workspace/ui/composed/refresh-button";
 import { useQuery } from "@workspace/ui/hooks/query";
@@ -67,7 +69,11 @@ export default function Content() {
 
   const [protocol, setProtocol] = useState("");
 
-  const { data: userSubscribe = [], refetch } = useQuery({
+  const {
+    data: userSubscribe = [],
+    refetch,
+    isLoading: loadingSubscriptions,
+  } = useQuery({
     queryKey: ["queryUserSubscribe"],
     queryFn: async () => {
       const { data } = await queryUserSubscribe();
@@ -136,6 +142,8 @@ export default function Content() {
     3: t("expired", "Expired"),
     4: t("deducted", "Deducted"),
   };
+
+  if (loadingSubscriptions) return <BlockLoading />;
 
   return (
     <>
@@ -428,7 +436,8 @@ export default function Content() {
                   </ul>
                   <Separator className="mt-4" />
                   {subscriptionUrlAvailability !== "ready" && (
-                    <p className="py-4 text-center text-muted text-sm">
+                    <p className="flex items-center justify-center gap-2 py-4 text-center text-muted text-sm">
+                      {subscriptionUrlAvailability === "loading" && <Spinner />}
                       {subscriptionUrlAvailability === "loading"
                         ? t(
                             "loadingSubscriptionConfig",

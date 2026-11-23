@@ -69,7 +69,8 @@ export default function RedeemCode({ onSuccess }: RedeemCodeProps) {
               />
               <Button
                 className="shrink-0 whitespace-nowrap"
-                disabled={redeemMutation.isPending || !code.trim()}
+                disabled={!code.trim()}
+                loading={redeemMutation.isPending}
                 type="submit"
               >
                 {redeemMutation.isPending

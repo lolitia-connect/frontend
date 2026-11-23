@@ -2,6 +2,7 @@
 
 import { Tooltip } from "@heroui/react";
 import { Button } from "@workspace/ui/components/button";
+import { Skeleton } from "@workspace/ui/components/skeleton";
 import { useQuery } from "@workspace/ui/hooks/query";
 import { Link } from "@workspace/ui/lib/router-compat";
 
@@ -28,7 +29,7 @@ export function UserSubscribeDetail({
   const { t } = useTranslation("user");
   const resolvedId = id ? String(id) : "";
 
-  const { data } = useQuery({
+  const { data, isLoading } = useQuery({
     enabled: resolvedId !== "" && resolvedId !== "0" && enabled,
     queryKey: ["getUserSubscribeById", resolvedId],
     queryFn: async () => {
@@ -51,6 +52,7 @@ export function UserSubscribeDetail({
   // });
 
   if (!resolvedId || resolvedId === "0") return "--";
+  if (isLoading) return <Skeleton className="h-4 w-20" />;
 
   const usedTraffic = data ? data.upload + data.download : 0;
   const totalTraffic = data?.traffic || 0;
@@ -200,7 +202,7 @@ export function UserSubscribeDetail({
     return (
       <Tooltip>
         <Button className="p-0" variant="link">
-          {data?.subscribe?.name || t("loading")}
+          {data?.subscribe?.name || resolvedId}
         </Button>
 
         <Tooltip.Content className="w-96">{subscribeContent}</Tooltip.Content>
@@ -215,7 +217,7 @@ export function UserDetail({ id }: { id: string | number }) {
   const { t } = useTranslation("user");
   const resolvedId = id ? String(id) : "";
 
-  const { data } = useQuery({
+  const { data, isLoading } = useQuery({
     enabled: resolvedId !== "" && resolvedId !== "0",
     queryKey: ["getUserDetail", resolvedId],
     queryFn: async () => {
@@ -225,6 +227,7 @@ export function UserDetail({ id }: { id: string | number }) {
   });
 
   if (!resolvedId || resolvedId === "0") return "--";
+  if (isLoading) return <Skeleton className="h-4 w-20" />;
 
   const identifier =
     data?.auth_methods.find((m) => m.auth_type === "email")?.auth_identifier ||
@@ -234,7 +237,7 @@ export function UserDetail({ id }: { id: string | number }) {
     <Tooltip>
       <Button asChild className="p-0" variant="link">
         <Link search={{ user_id: resolvedId }} to="/dashboard/user">
-          {identifier || t("loading", "Loading...")}
+          {identifier || resolvedId}
         </Link>
       </Button>
 

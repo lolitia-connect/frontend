@@ -1,5 +1,6 @@
 "use client";
 
+import { PageLoading } from "@workspace/ui/composed/page-loading";
 import { useNavigate } from "@workspace/ui/lib/router-compat";
 import { useEffect } from "react";
 import { useGlobalStore } from "@/stores/global";
@@ -32,7 +33,7 @@ export default function Main() {
     }
   }, [user, isLoadingUser, navigate, showLanding]);
 
-  if (!showLanding) return null;
+  if (!showLanding) return <PageLoading />;
 
   return (
     <main

@@ -5,6 +5,7 @@ import { Badge } from "@workspace/ui/components/badge";
 import { Button } from "@workspace/ui/components/button";
 import { Separator } from "@workspace/ui/components/separator";
 import { Icon } from "@workspace/ui/composed/icon";
+import { PageLoading } from "@workspace/ui/composed/page-loading";
 import { useMutation, useQuery } from "@workspace/ui/hooks/query";
 import { getRouteApi, Link } from "@workspace/ui/lib/router-compat";
 import {
@@ -47,7 +48,7 @@ export default function Page() {
     }
   }, [order_no]);
 
-  const { data, refetch, isError } = useQuery({
+  const { data, refetch, isError, isLoading } = useQuery({
     enabled: enabled && !!order_no,
     queryKey: ["queryOrderDetail", order_no],
     queryFn: async () => {
@@ -145,6 +146,8 @@ export default function Page() {
     ) : (
       t("timeExpired", "Time Expired")
     );
+
+  if (isLoading && !data) return <PageLoading />;
 
   return (
     <div className="container grid gap-4 py-16 xl:grid-cols-2">
@@ -277,7 +280,7 @@ export default function Page() {
               <Icon className="text-7xl text-muted" icon="mdi:access-time" />
               <div className="flex flex-wrap justify-center gap-4">
                 <Button
-                  disabled={checkoutMutation.isPending}
+                  loading={checkoutMutation.isPending}
                   onClick={() => {
                     if (paymentType === "url" && checkoutUrl)
                       window.location.assign(checkoutUrl);

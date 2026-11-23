@@ -29,7 +29,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@workspace/ui/components/form";
-import { ScrollArea } from "@workspace/ui/components/scroll-area";
 import { Textarea } from "@workspace/ui/components/textarea";
 import { ArrayInput } from "@workspace/ui/composed/dynamic-inputs";
 import { EnhancedInput } from "@workspace/ui/composed/enhanced-input";
@@ -46,6 +45,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
+import { SettingsFormBody } from "@/components/settings-form-body";
 import {
   normalizeOutboundConfig,
   outboundConfigSchema,
@@ -76,7 +76,11 @@ export default function ServerConfig() {
   const [open, setOpen] = useState(false);
   const [saving, setSaving] = useState(false);
 
-  const { data: cfgResp, refetch: refetchCfg } = useQuery({
+  const {
+    data: cfgResp,
+    refetch: refetchCfg,
+    isLoading: loadingConfig,
+  } = useQuery({
     queryKey: ["getNodeConfig"],
     queryFn: async () => {
       const { data } = await getNodeConfig();
@@ -174,7 +178,10 @@ export default function ServerConfig() {
               </Sheet.Heading>
             </Sheet.Header>
 
-            <ScrollArea className="h-[calc(100dvh-48px-36px-36px-env(safe-area-inset-top))] px-6">
+            <SettingsFormBody
+              className="h-[calc(100dvh-48px-36px-36px-env(safe-area-inset-top))] px-6"
+              isLoading={loadingConfig}
+            >
               <Tabs
                 className="min-w-0 max-w-full pt-4"
                 defaultSelectedKey="basic"
@@ -573,17 +580,22 @@ export default function ServerConfig() {
                   </form>
                 </Form>
               </Tabs>
-            </ScrollArea>
+            </SettingsFormBody>
 
             <Sheet.Footer className="flex-row justify-end gap-2 pt-3">
               <Button
-                loading={saving}
+                disabled={saving}
                 onClick={() => setOpen(false)}
                 variant="outline"
               >
                 {t("actions.cancel", "Cancel")}
               </Button>
-              <Button form="server-config-form" loading={saving} type="submit">
+              <Button
+                disabled={loadingConfig}
+                form="server-config-form"
+                loading={saving}
+                type="submit"
+              >
                 {t("actions.save", "Save")}
               </Button>
             </Sheet.Footer>

@@ -1,8 +1,10 @@
 "use client";
 
 import { Modal, Table } from "@heroui/react";
+import { BlockLoading } from "@workspace/ui/composed/block-loading";
+import { useQuery } from "@workspace/ui/hooks/query";
 import { getRedemptionRecordList } from "@workspace/ui/services/admin/redemption";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { formatDate } from "@/utils/common";
 
@@ -18,34 +20,20 @@ export default function RedemptionRecords({
   onOpenChange,
 }: RedemptionRecordsProps) {
   const { t } = useTranslation("redemption");
-  const [loading, setLoading] = useState(false);
-  const [records, setRecords] = useState<API.RedemptionRecord[]>([]);
-  const [total, setTotal] = useState(0);
   const [pagination, setPagination] = useState({ page: 1, size: 10 });
-
-  const fetchRecords = async () => {
-    if (!codeId) return;
-
-    setLoading(true);
-    try {
-      const { data } = await getRedemptionRecordList({
+  const { data, isLoading } = useQuery({
+    queryKey: ["redemptionRecords", codeId, pagination.page, pagination.size],
+    enabled: open && Boolean(codeId),
+    queryFn: async () => {
+      const response = await getRedemptionRecordList({
         ...pagination,
-        code_id: codeId,
+        code_id: codeId!,
       });
-      setRecords(data.data?.list || []);
-      setTotal(data.data?.total || 0);
-    } catch (error) {
-      console.error("Failed to fetch redemption records:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (open && codeId) {
-      fetchRecords();
-    }
-  }, [open, codeId, pagination]);
+      return response.data.data;
+    },
+  });
+  const records = data?.list ?? [];
+  const total = data?.total ?? 0;
 
   return (
     <Modal.Backdrop isOpen={open} onOpenChange={onOpenChange}>
@@ -55,10 +43,8 @@ export default function RedemptionRecords({
             <Modal.Heading>{t("records", "Redemption Records")}</Modal.Heading>
           </Modal.Header>
           <div className="mt-4">
-            {loading ? (
-              <div className="flex justify-center py-8">
-                <span>{t("loading", "Loading...")}</span>
-              </div>
+            {isLoading ? (
+              <BlockLoading minHeight="6rem" surface={false} />
             ) : records.length === 0 ? (
               <div className="py-8 text-center text-muted">
                 {t("noRecords", "No records found")}

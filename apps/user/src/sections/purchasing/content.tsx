@@ -367,9 +367,8 @@ export default function Content({
 
         <Button
           className="w-full"
-          disabled={
-            (!user && (!isEmailValid.valid || isPasswordInvalid)) || loading
-          }
+          disabled={!user && (!isEmailValid.valid || isPasswordInvalid)}
+          loading={loading}
           onClick={handleSubmit}
           size="lg"
         >

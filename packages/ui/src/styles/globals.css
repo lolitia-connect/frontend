@@ -224,6 +224,14 @@
 }
 
 @layer components {
+  @media (prefers-reduced-motion: reduce) {
+    .skeleton,
+    .skeleton::before,
+    .skeleton::after {
+      animation: none;
+    }
+  }
+
   /* Avoid retained pixel dimensions when native indicator transitions are interrupted. */
   .tabs__indicator {
     transition-property: none;

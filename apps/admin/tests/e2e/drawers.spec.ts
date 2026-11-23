@@ -136,7 +136,24 @@ test("server fields reflow, protocol actions fit, and multiplier values still sa
   ).toBe(true);
   await closePanel(dialog);
 
-  await page.getByRole("button", { name: /Dynamic multiplier/ }).click();
+  let release!: () => void;
+  const settingsResponse = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  await page.route("**/system/get_node_multiplier*", async (route) => {
+    await settingsResponse;
+    await route.fallback();
+  });
+  try {
+    await page.getByRole("button", { name: /Dynamic multiplier/ }).click();
+    await expect(dialog.getByRole("status", { name: "Loading" })).toBeVisible();
+    await expect(
+      dialog.getByRole("button", { name: "Save", exact: true })
+    ).toBeDisabled();
+    await expect(dialog.locator('input[type="time"]')).toHaveCount(0);
+  } finally {
+    release();
+  }
   await expectPanelFits(page, dialog);
   await dialog.locator('input[type="time"]').nth(0).fill("09:00:00");
   await dialog.locator('input[type="time"]').nth(1).fill("18:00:00");

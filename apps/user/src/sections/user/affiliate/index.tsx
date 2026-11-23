@@ -3,6 +3,7 @@
 import { Card, Description, Modal, toast } from "@heroui/react";
 import { Button } from "@workspace/ui/components/button";
 import { Input } from "@workspace/ui/components/input";
+import { Skeleton } from "@workspace/ui/components/skeleton";
 import { Textarea } from "@workspace/ui/components/textarea";
 import { ProList } from "@workspace/ui/composed/pro-list/pro-list";
 import { useMutation, useQuery } from "@workspace/ui/hooks/query";
@@ -26,7 +27,7 @@ export default function Affiliate() {
   const [withdrawOpen, setWithdrawOpen] = useState(false);
   const [withdrawAmount, setWithdrawAmount] = useState("");
   const [withdrawContent, setWithdrawContent] = useState("");
-  const { data, refetch } = useQuery({
+  const { data, refetch, isLoading } = useQuery({
     queryKey: ["queryUserAffiliate"],
     queryFn: async () => {
       const response = await queryUserAffiliate();
@@ -98,9 +99,13 @@ export default function Affiliate() {
         <Card.Content>
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div className="flex items-baseline gap-2">
-              <span className="font-bold text-3xl">
-                <Display type="currency" value={data?.total_commission} />
-              </span>
+              {isLoading ? (
+                <Skeleton className="h-9 w-24" />
+              ) : (
+                <span className="font-bold text-3xl">
+                  <Display type="currency" value={data?.total_commission} />
+                </span>
+              )}
               <span className="text-muted text-sm">
                 ({t("commissionRate", "Commission Rate")}:{" "}
                 {user?.referral_percentage ||
@@ -206,7 +211,7 @@ export default function Affiliate() {
                       </div>
                       <Modal.Footer>
                         <Button
-                          disabled={withdrawMutation.isPending}
+                          loading={withdrawMutation.isPending}
                           type="submit"
                         >
                           {withdrawMutation.isPending

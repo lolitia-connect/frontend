@@ -9,6 +9,7 @@ import {
   Tab as TabsTrigger,
 } from "@heroui/react";
 import { AuthShell } from "@workspace/ui/composed/auth-shell";
+import { BlockLoading } from "@workspace/ui/composed/block-loading";
 import { LanguageSwitch } from "@workspace/ui/composed/language-switch";
 import { ThemeSwitch } from "@workspace/ui/composed/theme-switch";
 import { Link } from "@workspace/ui/lib/router-compat";
@@ -20,7 +21,7 @@ import PhoneAuthForm from "./phone/auth-form";
 
 export default function Main() {
   const { t } = useTranslation("auth");
-  const { common } = useGlobalStore();
+  const { common, isLoadingCommon } = useGlobalStore();
   const { site, auth } = common;
 
   const AUTH_METHODS = [
@@ -66,6 +67,11 @@ export default function Main() {
         <div className="mb-6 text-center font-medium text-muted">
           {t("verifyAccountDesc", "Please login or register to continue")}
         </div>
+        {isLoadingCommon &&
+          !AUTH_METHODS.length &&
+          !common.oauth_methods?.length && (
+            <BlockLoading minHeight="12rem" surface={false} />
+          )}
         {AUTH_METHODS.length === 1
           ? AUTH_METHODS[0]?.children
           : AUTH_METHODS[0] && (

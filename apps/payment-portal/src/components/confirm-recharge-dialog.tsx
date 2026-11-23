@@ -1,4 +1,4 @@
-import { Button, Description, Modal, Separator } from "@heroui/react";
+import { Button, Description, Modal, Separator, Spinner } from "@heroui/react";
 import { useCallback, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { Display } from "@/components/display";
@@ -98,7 +98,14 @@ export function ConfirmRechargeDialog({
             <Button onPress={onClose} variant="secondary">
               {t("dialog.cancel", "取消")}
             </Button>
-            <Button isDisabled={loading} onPress={onConfirm}>
+            <Button
+              isDisabled={loading}
+              isPending={loading}
+              onPress={onConfirm}
+            >
+              {loading && (
+                <Spinner aria-hidden="true" color="current" size="sm" />
+              )}
               {loading
                 ? t("dialog.confirming", "处理中...")
                 : t("dialog.confirm", "确认并支付")}

@@ -1,13 +1,15 @@
 "use client";
 
+import { BlockLoading } from "@workspace/ui/composed/block-loading";
 import { getV1PublicPortalSubscribe as getSubscription } from "@workspace/ui/services/user/user";
 import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { getContentLanguage } from "@/config/i18n";
 
-const Content = dynamic(() =>
-  import("./content").then((module) => module.Content)
+const Content = dynamic(
+  () => import("./content").then((module) => module.Content),
+  { loading: () => <BlockLoading /> }
 );
 
 export function ProductShowcase() {
@@ -57,7 +59,8 @@ export function ProductShowcase() {
     };
   }, [locale]);
 
-  if (isLoading || subscriptionList.length === 0) return null;
+  if (isLoading) return <BlockLoading />;
+  if (!subscriptionList.length) return null;
 
   return <Content subscriptionData={subscriptionList} />;
 }

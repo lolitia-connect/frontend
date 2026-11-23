@@ -23,7 +23,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@workspace/ui/components/form";
-import { ScrollArea } from "@workspace/ui/components/scroll-area";
 import { Switch } from "@workspace/ui/components/switch";
 import { Textarea } from "@workspace/ui/components/textarea";
 import { AreaCodeSelect } from "@workspace/ui/composed/area-code-select";
@@ -42,6 +41,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
+import { SettingsFormBody } from "@/components/settings-form-body";
 
 const phoneSettingsSchema = z.object({
   id: z.string(),
@@ -73,12 +73,18 @@ export default function PhoneSettingsForm() {
   const { t } = useTranslation("auth-control");
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [sendingTest, setSendingTest] = useState(false);
   const [testParams, setTestParams] = useState<API.TestSmsSendRequest>({
     telephone: "",
     area_code: "1",
   });
 
-  const { data, refetch, isFetching } = useQuery({
+  const {
+    data,
+    refetch,
+    isFetching,
+    isLoading: loadingConfig,
+  } = useQuery({
     queryKey: ["getAuthMethodConfig", "mobile"],
     queryFn: async () => {
       const { data } = await getAuthMethodConfig({
@@ -179,7 +185,10 @@ export default function PhoneSettingsForm() {
             <Sheet.Header>
               <Sheet.Heading>{t("phone.title", "SMS Settings")}</Sheet.Heading>
             </Sheet.Header>
-            <ScrollArea className="h-[calc(100dvh-48px-36px-36px-24px-env(safe-area-inset-top))] px-6">
+            <SettingsFormBody
+              className="h-[calc(100dvh-48px-36px-36px-24px-env(safe-area-inset-top))] px-6"
+              isLoading={loadingConfig}
+            >
               <Form {...form}>
                 <form
                   className="space-y-2 pt-4"
@@ -627,6 +636,7 @@ export default function PhoneSettingsForm() {
                             !(testParams.telephone && testParams.area_code) ||
                             isFetching
                           }
+                          loading={sendingTest}
                           onClick={async () => {
                             if (
                               isFetching ||
@@ -634,6 +644,7 @@ export default function PhoneSettingsForm() {
                               !testParams.area_code
                             )
                               return;
+                            setSendingTest(true);
                             try {
                               await testSmsSend(testParams);
                               toast.success(
@@ -643,6 +654,8 @@ export default function PhoneSettingsForm() {
                               toast.danger(
                                 t("phone.sendFailed", "SMS send failed")
                               );
+                            } finally {
+                              setSendingTest(false);
                             }
                           }}
                           type="button"
@@ -654,16 +667,17 @@ export default function PhoneSettingsForm() {
                   </div>
                 </form>
               </Form>
-            </ScrollArea>
+            </SettingsFormBody>
             <Sheet.Footer className="flex-row justify-end gap-2 pt-3">
               <Button
-                loading={loading}
+                disabled={loading}
                 onClick={() => setOpen(false)}
                 variant="outline"
               >
                 {t("common.cancel", "Cancel")}
               </Button>
               <Button
+                disabled={loadingConfig}
                 form="phone-settings-form"
                 loading={loading}
                 type="submit"

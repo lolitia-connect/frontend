@@ -31,20 +31,21 @@ export default function TrafficStatistics() {
   );
 
   // 查询用户订阅列表
-  const { data: userSubscribe = [] } = useQuery({
-    queryKey: ["queryUserSubscribe"],
-    queryFn: async () => {
-      const { data } = await queryUserSubscribe();
-      return data.data?.list || [];
-    },
-  });
+  const { data: userSubscribe = [], isLoading: loadingSubscriptions } =
+    useQuery({
+      queryKey: ["queryUserSubscribe"],
+      queryFn: async () => {
+        const { data } = await queryUserSubscribe();
+        return data.data?.list || [];
+      },
+    });
 
   // 使用 id_str 字段，避免 JavaScript 精度丢失
   const activeSubscribeId =
     selectedSubscribeId || userSubscribe[0]?.id_str || null;
 
   // 查询流量统计数据
-  const { data: trafficStats, isLoading } = useQuery({
+  const { data: trafficStats, isLoading: loadingStats } = useQuery({
     queryKey: ["getUserTrafficStats", activeSubscribeId, days],
     queryFn: async () => {
       if (!activeSubscribeId) return null;
@@ -56,6 +57,8 @@ export default function TrafficStatistics() {
     },
     enabled: !!activeSubscribeId,
   });
+
+  const isLoading = loadingSubscriptions || loadingStats;
 
   return (
     <div className="flex min-h-[calc(100vh-64px-58px-32px-114px)] w-full flex-col gap-4 overflow-x-hidden">

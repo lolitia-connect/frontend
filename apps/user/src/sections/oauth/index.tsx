@@ -18,7 +18,7 @@ export default function OAuthPage({
   return (
     <Certification platform={platform}>
       <div className="relative flex h-screen w-full flex-col items-center justify-center overflow-hidden bg-background">
-        <div className="flex animate-pulse flex-col items-center gap-4">
+        <div className="flex flex-col items-center gap-4">
           <div className="flex items-center gap-3">
             <Icon className="size-12" icon={`logos:${platform}`} />
             <Spinner className="size-8" />

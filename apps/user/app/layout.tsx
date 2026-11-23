@@ -4,7 +4,6 @@ import { getRequestLanguage } from "@workspace/ui/lib/request-language";
 import { ThemeScript } from "@workspace/ui/lib/theme-script";
 import type { Metadata, Viewport } from "next";
 import { headers } from "next/headers";
-import { Suspense } from "react";
 import { fallbackLng, supportedLngs } from "@/config/i18n";
 import { loadInitialTranslations } from "@/config/i18n-server";
 import { Providers } from "./providers";
@@ -30,19 +29,6 @@ export const viewport: Viewport = {
   ],
 };
 
-/** Keep route-level client suspension behind a stable loading shell. */
-function RouteFallback() {
-  return (
-    <div className="grid min-h-screen place-items-center">
-      <div
-        aria-label="Loading"
-        className="size-8 animate-spin rounded-full border-3 border-default border-t-accent"
-        role="status"
-      />
-    </div>
-  );
-}
-
 export default async function RootLayout({
   children,
 }: {
@@ -63,15 +49,13 @@ export default async function RootLayout({
       </head>
       <body className={`${brandFontVariables} bg-background text-foreground`}>
         <ThemeScript />
-        <Suspense fallback={<RouteFallback />}>
-          <Providers
-            initialLanguage={initialLanguage}
-            initialTranslations={initialTranslations}
-          >
-            <SiteMetadata />
-            {children}
-          </Providers>
-        </Suspense>
+        <Providers
+          initialLanguage={initialLanguage}
+          initialTranslations={initialTranslations}
+        >
+          <SiteMetadata />
+          {children}
+        </Providers>
       </body>
     </html>
   );

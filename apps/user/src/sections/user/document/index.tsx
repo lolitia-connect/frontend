@@ -8,6 +8,7 @@ import {
   TabListContainer as TabsListContainer,
   Tab as TabsTrigger,
 } from "@heroui/react";
+import { BlockLoading } from "@workspace/ui/composed/block-loading";
 import { useQuery } from "@workspace/ui/hooks/query";
 import { getV1PublicDocumentList as queryDocumentList } from "@workspace/ui/services/user/user";
 import { useTranslation } from "react-i18next";
@@ -24,7 +25,7 @@ export default function Document() {
   const { common } = useGlobalStore();
   const showTutorial = common.subscribe?.show_tutorial !== false;
 
-  const { data } = useQuery({
+  const { data, isLoading: loadingDocuments } = useQuery({
     queryKey: ["queryDocumentList"],
     queryFn: async () => {
       const response = await queryDocumentList();
@@ -41,7 +42,7 @@ export default function Document() {
   });
   const { tags, list: DocumentList } = data || { tags: [], list: [] };
 
-  const { data: TutorialList } = useQuery({
+  const { data: TutorialList, isLoading: loadingTutorials } = useQuery({
     queryKey: ["getTutorialList", locale],
     queryFn: async () => {
       const list = await getTutorialList();
@@ -50,10 +51,10 @@ export default function Document() {
     enabled: showTutorial,
   });
 
-  if (
-    (!DocumentList || DocumentList.length === 0) &&
-    (!TutorialList || TutorialList.length === 0)
-  ) {
+  if (!(DocumentList.length || (showTutorial && TutorialList?.length))) {
+    if (loadingDocuments || (showTutorial && loadingTutorials)) {
+      return <BlockLoading />;
+    }
     return <MainEmpty border />;
   }
 

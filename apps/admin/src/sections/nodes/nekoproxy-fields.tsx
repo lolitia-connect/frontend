@@ -2,6 +2,7 @@
 
 import { Button } from "@workspace/ui/components/button";
 import { Label } from "@workspace/ui/components/label";
+import { Spinner } from "@workspace/ui/components/spinner";
 import { Switch } from "@workspace/ui/components/switch";
 import { Combobox } from "@workspace/ui/composed/combobox";
 import { EnhancedInput } from "@workspace/ui/composed/enhanced-input";
@@ -112,12 +113,13 @@ export default function NekoproxyFields({
                 t("np.failed", "The operation failed. Please retry.")}
             </p>
           )}
-          {(config.isLoading || state.isFetching) && (
-            <p role="status">{t("np.loading", "Loading Nekoproxy…")}</p>
+          {(config.isLoading || state.isLoading) && (
+            <Spinner aria-label={t("np.loading", "Loading Nekoproxy…")} />
           )}
           {config.data?.has_api_token && (
             <Button
-              disabled={state.isFetching}
+              disabled={state.isLoading}
+              loading={state.isFetching && !state.isLoading}
               onClick={() => state.refetch()}
               size="sm"
               type="button"

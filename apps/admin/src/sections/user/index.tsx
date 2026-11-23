@@ -17,6 +17,7 @@ import {
 import { Badge } from "@workspace/ui/components/badge";
 import { Button } from "@workspace/ui/components/button";
 import { ScrollArea } from "@workspace/ui/components/scroll-area";
+import { BlockLoading } from "@workspace/ui/composed/block-loading";
 import { ConfirmButton } from "@workspace/ui/composed/confirm-button";
 import {
   ProTable,
@@ -480,9 +481,7 @@ function PreviewNodesDialog({ userId }: { userId: string | number }) {
               </Modal.Heading>
             </Modal.Header>
             {isLoading ? (
-              <div className="py-8 text-center text-muted">
-                {t("loading", "Loading...")}
-              </div>
+              <BlockLoading minHeight="6rem" surface={false} />
             ) : previewData ? (
               <div className="space-y-4">
                 <div>

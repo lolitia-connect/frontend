@@ -1,8 +1,8 @@
 "use client";
 
+import { LoadingBar } from "@workspace/ui/components/progress";
 import { usePathname, useSearchParams } from "next/navigation";
-import { useEffect, useRef, useSyncExternalStore } from "react";
-import LoadingBar, { type LoadingBarRef } from "react-top-loading-bar";
+import { useEffect, useSyncExternalStore } from "react";
 import {
   completeNavigationProgress,
   getNavigationProgress,
@@ -11,8 +11,6 @@ import {
 
 /** Starts at navigation intent; location changes only complete the bar. */
 export function NavigationProgress() {
-  const ref = useRef<LoadingBarRef>(null);
-  const started = useRef<number | null>(null);
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const navigation = useSyncExternalStore(
@@ -22,31 +20,15 @@ export function NavigationProgress() {
   );
   const routeKey = `${pathname}?${searchParams.toString()}`;
 
-  useEffect(() => {
-    if (!navigation) return;
-    if (navigation.pending && navigation.from === routeKey) {
-      if (started.current !== navigation.id) {
-        started.current = navigation.id;
-        ref.current?.continuousStart();
-      }
-      return;
-    }
+  const pending = navigation?.pending && navigation.from === routeKey;
 
-    if (started.current !== null) {
-      started.current = null;
-      ref.current?.complete();
+  useEffect(() => {
+    if (navigation?.pending && navigation.from !== routeKey) {
+      completeNavigationProgress(navigation.id);
     }
-    completeNavigationProgress(navigation.id);
   }, [navigation, routeKey]);
 
-  return (
-    <LoadingBar
-      className="navigation-progress"
-      color="var(--accent)"
-      height={2}
-      key={navigation?.id ?? 0}
-      ref={ref}
-      shadow={true}
-    />
-  );
+  if (!pending) return null;
+
+  return <LoadingBar className="fixed inset-x-0 top-0 z-[9999]" />;
 }

@@ -3,6 +3,7 @@
 import { Card, Description, Modal } from "@heroui/react";
 import { Button } from "@workspace/ui/components/button";
 import { Separator } from "@workspace/ui/components/separator";
+import { BlockLoading } from "@workspace/ui/composed/block-loading";
 import { Icon } from "@workspace/ui/composed/icon";
 import { useQuery } from "@workspace/ui/hooks/query";
 import { cn } from "@workspace/ui/lib/utils";
@@ -33,7 +34,7 @@ export default function Subscribe() {
   const [subscribe, setSubscribe] = useState<API.Subscribe>();
   const [pendingPlan, setPendingPlan] = useState<API.Subscribe>();
 
-  const { data: subscribeList } = useQuery({
+  const { data: subscribeList, isLoading: loadingPlans } = useQuery({
     queryKey: ["querySubscribeList", locale],
     queryFn: async () => {
       console.log("Fetching subscription list...");
@@ -42,13 +43,15 @@ export default function Subscribe() {
     },
   });
 
-  const { data: userSubscriptions } = useQuery({
-    queryKey: ["queryUserSubscribe"],
-    queryFn: async () => {
-      const { data } = await queryUserSubscribe();
-      return data.data?.list || [];
-    },
-  });
+  const { data: userSubscriptions, isLoading: loadingSubscriptions } = useQuery(
+    {
+      queryKey: ["queryUserSubscribe"],
+      queryFn: async () => {
+        const { data } = await queryUserSubscribe();
+        return data.data?.list || [];
+      },
+    }
+  );
 
   // Get IDs of plans the user has already purchased
   const purchasedPlanIds = new Set(
@@ -237,7 +240,12 @@ export default function Subscribe() {
             </Card>
           ))}
         </div>
-        {filteredData?.length === 0 && <MainEmpty />}
+        {!filteredData?.length &&
+          (loadingPlans || loadingSubscriptions ? (
+            <BlockLoading />
+          ) : (
+            <MainEmpty />
+          ))}
       </div>
 
       <Modal.Backdrop

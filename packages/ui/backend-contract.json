@@ -11740,6 +11740,13 @@
         "tag": "json:\"expires_at\""
       }
     ],
+    "V2ReconcileOrderRequest": [
+      {
+        "name": "CheckoutToken",
+        "type": "string",
+        "tag": "json:\"checkout_token,omitempty\""
+      }
+    ],
     "VeifyConfig": [
       {
         "name": "CaptchaType",
@@ -13678,6 +13685,12 @@
     },
     {
       "method": "POST",
+      "path": "/v2/public/orders/:orderNo/reconcile",
+      "request": "V2ReconcileOrderRequest",
+      "response": "V2OrderResponse"
+    },
+    {
+      "method": "POST",
       "path": "/v2/public/orders/:orderNo/session",
       "request": "V2OrderSessionRequest",
       "response": "V2OrderSessionResponse"
@@ -13698,6 +13711,6 @@
       "path": "/v2/server/:server_id"
     }
   ],
-  "backendCommit": "7e079783f94a2256002e15ffb557ed471b179b7e",
-  "backendDirty": true
+  "backendCommit": "5611a4eb0bcc7227c01963ced308fdfd10c50ad8",
+  "backendDirty": false
 }

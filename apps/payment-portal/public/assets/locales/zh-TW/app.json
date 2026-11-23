@@ -44,6 +44,7 @@
     "paymentNow": "前往支付",
     "paymentHint": "若已開啟支付頁，請完成支付後返回這裡重新整理訂單狀態。",
     "paymentSuccess": "支付成功，餘額和訂單記錄已更新",
+    "creditPending": "已收款，餘額入帳中",
     "paymentSuccessTitle": "支付已完成",
     "paymentSuccessHint": "當前訂單已支付成功，系統會同步重新整理餘額和充值記錄。",
     "scanToPay": "請掃碼繼續支付",

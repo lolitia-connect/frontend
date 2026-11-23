@@ -104,7 +104,7 @@ export interface PortalStore {
     options?: { autoOpenPayment?: boolean; requestCheckout?: boolean }
   ) => Promise<void>;
   // Actions
-  refreshPortal: () => Promise<void>;
+  refreshPortal: (returnOrderNo?: string) => Promise<void>;
   reset: () => void;
   resetCheckoutFlag: () => void;
   selectedAmount: number;
@@ -212,7 +212,7 @@ export const usePortalStore = create<PortalStore>((set, get) => ({
   customAmountInput: "",
   loadingPortal: true,
 
-  refreshPortal: async () => {
+  refreshPortal: async (returnOrderNo) => {
     set({ loadingPortal: true });
     try {
       const [userResponse, methodsResponse, ordersResponse] = await Promise.all(
@@ -254,25 +254,11 @@ export const usePortalStore = create<PortalStore>((set, get) => ({
         set({ selectedMethodId: methods[0]?.id ?? null });
       }
 
-      // Check for pending order (don't auto-request checkout)
-      const pendingRechargeOrder = rechargeOrderItems.find(
-        (item) => Number(item?.status) === 1
-      );
-
-      if (pendingRechargeOrder?.order_no) {
-        const orderNo = String(pendingRechargeOrder.order_no);
-        const detailResponse = await queryOrderDetail({ order_no: orderNo });
-        const detail = detailResponse.data.data;
-        if (detail) {
-          const current = get().activeOrder;
-          set({
-            activeOrder: mapActiveOrder(
-              detail,
-              current?.orderNo === orderNo ? current.checkout : undefined
-            ),
-          });
-        }
-      }
+      const orderNo =
+        returnOrderNo ||
+        rechargeOrderItems.find((item) => [1, 2].includes(Number(item?.status)))
+          ?.order_no;
+      if (orderNo) await get().refreshActiveOrder(String(orderNo));
     } finally {
       set({ loadingPortal: false });
     }
@@ -283,9 +269,10 @@ export const usePortalStore = create<PortalStore>((set, get) => ({
     const autoOpenPayment = Boolean(options?.autoOpenPayment);
     const requestCheckout = Boolean(options?.requestCheckout);
 
+    const previousOrderNo = get().activeOrder?.orderNo;
     const detailResponse = await queryOrderDetail({ order_no: orderNo });
     const detail = detailResponse.data.data;
-    if (!detail) return;
+    if (detail?.order_no !== orderNo || Number(detail.type) !== 4) return;
 
     // Only request checkout if explicitly requested AND not already done for this order
     let checkout: CheckoutInfo | undefined;
@@ -309,6 +296,15 @@ export const usePortalStore = create<PortalStore>((set, get) => ({
     }
 
     const current = get().activeOrder;
+    if (current?.orderNo !== previousOrderNo && current?.orderNo !== orderNo)
+      return;
+    if (
+      current?.orderNo === orderNo &&
+      current.status !== Number(detail.status) &&
+      ([3, 4, 5].includes(current.status) ||
+        (current.status === 2 && Number(detail.status) === 1))
+    )
+      return;
     set({
       activeOrder: mapActiveOrder(
         detail,

@@ -77,6 +77,17 @@ export function getV2Order(orderNo: string, checkoutToken?: string) {
   });
 }
 
+export function reconcileStripeReturn(orderNo: string, checkoutToken?: string) {
+  return request<API.Response & { data?: V2Order }>(
+    `${orderPath(orderNo)}/reconcile`,
+    {
+      method: "POST",
+      data: { checkout_token: checkoutToken },
+      skipErrorHandler: true,
+    }
+  );
+}
+
 export function checkoutV2Order(orderNo: string, checkoutToken?: string) {
   return request<API.Response & { data?: V2Order }>(
     `${orderPath(orderNo)}/checkout`,

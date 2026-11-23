@@ -1,8 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { watchOrderEvents } from "./order-events";
 
-const mocks = vi.hoisted(() => ({ ticket: vi.fn(), order: vi.fn() }));
+const mocks = vi.hoisted(() => ({
+  ticket: vi.fn(),
+  order: vi.fn(),
+  reconcile: vi.fn(),
+}));
 vi.mock("@workspace/ui/services/user/order-v2", () => ({
+  reconcileStripeReturn: mocks.reconcile,
   getOrderEventTicket: mocks.ticket,
   getV2Order: mocks.order,
   orderEventUrl: (_orderNo: string, _ticket: unknown, cursor?: string) =>
@@ -63,6 +68,35 @@ afterEach(() => {
 });
 
 describe("V2 order stream", () => {
+  it("reconciles once on return and ignores a stale pending event after payment", async () => {
+    const onSnapshot = vi.fn();
+    mocks.reconcile.mockResolvedValueOnce({
+      data: {
+        data: {
+          order: {
+            ...initial,
+            status: "paid",
+            payment_status: "paid",
+            state_version: 2,
+          },
+        },
+      },
+    });
+    stop = watchOrderEvents({
+      orderNo: "order",
+      checkoutToken: "cap",
+      stripeReturn: true,
+      onSnapshot,
+      onError: vi.fn(),
+    });
+    await vi.advanceTimersByTimeAsync(0);
+    Stream.instances[0]?.emit("order.snapshot", initial);
+    await vi.advanceTimersByTimeAsync(5000);
+    expect(mocks.reconcile).toHaveBeenCalledOnce();
+    expect(mocks.reconcile).toHaveBeenCalledWith("order", "cap");
+    expect(onSnapshot.mock.lastCall?.[0].status).toBe("paid");
+  });
+
   it("stops all recovery requests after access is rejected", async () => {
     const onError = vi.fn();
     mocks.order.mockRejectedValueOnce({ code: 40_004 });

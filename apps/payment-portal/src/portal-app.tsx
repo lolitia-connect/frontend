@@ -5,6 +5,7 @@ import { useSiteMetadata } from "@workspace/ui/lib/site-metadata";
 import { userLogin } from "@workspace/ui/services/common/auth";
 import { getGlobalConfig } from "@workspace/ui/services/common/common";
 import { queryOrderDetail, recharge } from "@workspace/ui/services/user/order";
+import { reconcileStripeReturn } from "@workspace/ui/services/user/order-v2";
 import { usePathname } from "next/navigation";
 import {
   useCallback,
@@ -145,32 +146,47 @@ export default function App({
     if (!authenticated) return;
     if (portalBootstrappedRef.current) return;
     portalBootstrappedRef.current = true;
-    refreshPortal().catch(handleReportedRequestError);
+    const params = new URLSearchParams(window.location.search);
+    const orderNo = params.get("order_no") || undefined;
+    const confirm =
+      orderNo && params.get("stripe_return") === "1"
+        ? reconcileStripeReturn(orderNo).catch(handleReportedRequestError)
+        : Promise.resolve();
+    confirm
+      .then(() => refreshPortal(orderNo))
+      .catch(handleReportedRequestError);
   }, [authenticated, refreshPortal]);
 
   // Poll active order
   useEffect(() => {
     if (!activeOrder?.orderNo) return;
-    if (Number(activeOrder.status) !== 1) return;
+    if (![1, 2].includes(Number(activeOrder.status))) return;
 
-    const timer = window.setInterval(() => {
+    const refresh = () => {
       refreshActiveOrder(activeOrder.orderNo).catch(handleReportedRequestError);
-    }, 3000);
-
-    return () => window.clearInterval(timer);
+    };
+    const timer = window.setInterval(refresh, 3000);
+    window.addEventListener("focus", refresh);
+    return () => {
+      window.clearInterval(timer);
+      window.removeEventListener("focus", refresh);
+    };
   }, [activeOrder?.orderNo, activeOrder?.status, refreshActiveOrder]);
 
   // Handle completed order
   useEffect(() => {
     if (!activeOrder?.orderNo) return;
-    if (![2, 5].includes(Number(activeOrder.status))) return;
+    if (Number(activeOrder.status) !== 5) return;
     if (completedOrderNoticeRef.current === activeOrder.orderNo) return;
 
     completedOrderNoticeRef.current = activeOrder.orderNo;
-    toast.success(
-      t("dashboard.paymentSuccess", "支付成功，余额和订单记录已更新")
-    );
-    refreshPortal().catch(handleReportedRequestError);
+    refreshPortal(activeOrder.orderNo)
+      .then(() =>
+        toast.success(
+          t("dashboard.paymentSuccess", "支付成功，余额和订单记录已更新")
+        )
+      )
+      .catch(handleReportedRequestError);
   }, [activeOrder?.orderNo, activeOrder?.status, refreshPortal, t]);
 
   // Reset custom amount when not enabled and selected amount is not in preset list
@@ -256,8 +272,6 @@ export default function App({
           }
 
           setAuthorization(String(token));
-          portalBootstrappedRef.current = true;
-          await refreshPortal();
           setAuthenticated(true);
           toast.success(t("login.success", "登录成功"));
         } catch {
@@ -274,7 +288,6 @@ export default function App({
       captchaType,
       captchaId,
       t,
-      refreshPortal,
     ]
   );
 

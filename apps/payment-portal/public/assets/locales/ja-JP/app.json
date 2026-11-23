@@ -44,6 +44,7 @@
     "paymentNow": "決済ページへ",
     "paymentHint": "決済ページが既に開かれている場合は、そこで完了してからここに戻ってステータスを更新してください。",
     "paymentSuccess": "決済完了。残高と記録が更新されました。",
+    "creditPending": "お支払いを確認しました。残高に反映しています。",
     "paymentSuccessTitle": "決済完了",
     "paymentSuccessHint": "このオーダーは正常に支払われました。システムは残高とチャージ記録を更新します。",
     "scanToPay": "スキャンして決済を続行",

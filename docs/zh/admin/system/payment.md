@@ -129,11 +129,21 @@
 - Publishable Key: pk_live_xxx
 - Secret Key: sk_live_xxx
 - Webhook Secret: whsec_xxx
-- 回调URL: https://myvpn.com/callback/stripe
+- 使用管理端支付方式显示的 Webhook 地址，例如 `https://myvpn.com/v1/notify/Stripe/<payment-token>`。启用了 `/api` 前缀时一并保留。
 - 最小金额: $1
 - 最大金额: $1000
 - 手续费率: 2.9% + $0.30
 - 状态: 启用
+
+### Stripe 收款确认与订单恢复
+
+Webhook 需要订阅 `checkout.session.completed`、`checkout.session.async_payment_succeeded` 和 `checkout.session.async_payment_failed`。有绑定 PaymentIntent 的历史订单时，保留 `payment_intent.succeeded`。后端验证签名，核对订单、支付方式、金额和币种，确认 Session 已收款后登记付款。银行等延迟支付方式在 Checkout 流程完成后仍可能等待清算。[Stripe Checkout 履约指南](https://docs.stripe.com/checkout/fulfillment)
+
+成功回跳时，页面会请后端核验订单已绑定的 Session。回跳核验与 Webhook 共用同一结算事务。**已支付**表示已确认收款，**已完成**表示余额已入账或订阅已开通。用户付款后可以关闭页面。
+
+保持 API、调度器和队列 worker 运行。调度器每分钟分批检查已收款超过一分钟仍待履约的 Stripe 订单，以及超过 15 分钟支付窗口仍待支付的订单。worker 向 Stripe 核实状态后才释放库存。排查延迟时，按同一订单对比 Stripe 投递时间、`order.payment_paid` 和 `order.fulfilled` 的时间。金额等信息不符时，检查未匹配付款日志。
+
+升级时先应用数据库迁移 `02174`，再升级 worker 和调度器，最后更新 API 和前端。新访客订单保留密码哈希至履约或关单；升级前创建的待履约访客订单仍需要原有临时注册记录。
 
 ### 场景三: 配置加密货币支付
 

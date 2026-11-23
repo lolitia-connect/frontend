@@ -129,11 +129,21 @@ Different payment methods require different configs:
 - Publishable Key: pk_live_xxx
 - Secret Key: sk_live_xxx
 - Webhook Secret: whsec_xxx
-- Callback URL: https://myvpn.com/callback/stripe
+- Webhook endpoint URL from the payment method in Admin, for example `https://myvpn.com/v1/notify/Stripe/<payment-token>` (including the `/api` prefix when configured)
 - Min Amount: $1
 - Max Amount: $1000
 - Fee Rate: 2.9% + $0.30
 - Status: Enabled
+
+### Stripe payment confirmation and recovery
+
+Subscribe the endpoint to `checkout.session.completed`, `checkout.session.async_payment_succeeded` and `checkout.session.async_payment_failed`. Keep `payment_intent.succeeded` enabled for older orders bound to a PaymentIntent. The API verifies the signature and records a paid Checkout Session after checking the order, payment method, amount and currency. A completed Session can still be waiting for a bank payment to clear. [Stripe Checkout fulfillment](https://docs.stripe.com/checkout/fulfillment)
+
+On a successful redirect, the return page asks the API to verify the Session saved on the order. Both paths use the same transaction. **Paid** means the payment has been recorded. **Completed** means the worker has credited the balance or activated the subscription. Customers can close the browser after paying.
+
+Keep the API, scheduler and queue worker running. Each minute the scheduler pages through paid Stripe orders awaiting fulfillment for over a minute and pending orders past the 15-minute checkout window. The worker checks the gateway before releasing a reservation. To diagnose a delay, compare the Stripe delivery time with the order's `order.payment_paid` and `order.fulfilled` events. A mismatch in payment details requires investigation in the unmatched-payment log.
+
+For upgrades, apply database migration `02174` first, upgrade the worker and scheduler, then roll out the API and return pages. New guest orders retain a password hash until fulfillment or closure. Older pending guest orders still need their original temporary registration record.
 
 ### Scenario 3: Configure Cryptocurrency
 

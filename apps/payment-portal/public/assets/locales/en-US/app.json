@@ -44,6 +44,7 @@
     "paymentNow": "Go To Payment",
     "paymentHint": "If the payment page has already been opened, complete it there and come back here to refresh the order status.",
     "paymentSuccess": "Payment completed. Balance and records have been refreshed.",
+    "creditPending": "Payment received. Crediting your balance.",
     "paymentSuccessTitle": "Payment Completed",
     "paymentSuccessHint": "This order has been paid successfully. The system will refresh your balance and recharge records.",
     "scanToPay": "Scan to continue payment",

@@ -73,6 +73,18 @@ it("renders backend cents exactly once and submits the displayed amount in cents
   expect(toMinorUnits(state.selectedAmount)).toBe(1000);
 });
 
+it("keeps the returned order and ignores a late pending detail after it is fulfilled", async () => {
+  const returned = { ...order, order_no: "OLDER", status: 5 };
+  api.detail.mockResolvedValueOnce(response(returned));
+  await usePortalStore.getState().refreshPortal(returned.order_no);
+  expect(usePortalStore.getState().activeOrder?.orderNo).toBe(
+    returned.order_no
+  );
+  api.detail.mockResolvedValueOnce(response({ ...returned, status: 1 }));
+  await usePortalStore.getState().refreshActiveOrder(returned.order_no);
+  expect(usePortalStore.getState().activeOrder?.status).toBe(5);
+});
+
 it("does not mark an empty checkout response as completed and allows another request", async () => {
   api.checkout.mockResolvedValueOnce(response({}));
   await usePortalStore

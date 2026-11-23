@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Lolitia local backend",
-    "version": "7e079783f94a2256002e15ffb557ed471b179b7e"
+    "version": "5611a4eb0bcc7227c01963ced308fdfd10c50ad8"
   },
   "paths": {
     "/v1/admin/ads/": {
@@ -10222,6 +10222,46 @@
         }
       }
     },
+    "/v2/public/orders/{orderNo}/reconcile": {
+      "post": {
+        "tags": ["backend"],
+        "parameters": [
+          {
+            "name": "orderNo",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Local backend result envelope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": { "type": "integer" },
+                    "msg": { "type": "string" },
+                    "data": { "$ref": "#/components/schemas/V2OrderResponse" }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/V2ReconcileOrderRequest"
+              }
+            }
+          }
+        }
+      }
+    },
     "/v2/public/orders/{orderNo}/session": {
       "post": {
         "tags": ["backend"],
@@ -16987,6 +17027,10 @@
           "currency",
           "expires_at"
         ]
+      },
+      "V2ReconcileOrderRequest": {
+        "type": "object",
+        "properties": { "checkout_token": { "type": "string" } }
       },
       "VeifyConfig": {
         "type": "object",

@@ -265,15 +265,23 @@ test("confirms server totals, defers checkout until Pay Now, retains QR on refre
     .click();
   await expect.poll(() => api.checkouts.length).toBe(2);
   const detailCount = api.detailRequests;
-  api.balance = 3500;
   if (!api.order) throw new Error("Expected a pending order");
   api.order.status = 2;
+  await expect(
+    page.getByText("Payment received. Crediting your balance.")
+  ).toBeVisible();
+  await expect(page.getByText("$25.00", { exact: true })).toBeVisible();
+  await expect(
+    page.getByText("Payment Completed", { exact: true })
+  ).toHaveCount(0);
+  api.balance = 3500;
+  api.order.status = 5;
   await expect(
     page.getByText("Payment Completed", { exact: true })
   ).toBeVisible({ timeout: 10_000 });
   expect(api.detailRequests).toBeGreaterThan(detailCount);
   await expect(page.getByText("$35.00", { exact: true })).toBeVisible();
-  await expect(page.getByText("Paid", { exact: true })).toHaveCount(2);
+  await expect(page.getByText("Completed", { exact: true })).toHaveCount(2);
   await expect(qr).toBeHidden();
   await expect(
     page.getByRole("button", { name: "Pay Now", exact: true })
@@ -327,7 +335,7 @@ test("recovers from checkout and order refresh failures without blocking retry o
   api.failDetails = false;
   api.balance = 3500;
   if (!api.order) throw new Error("Expected pending order");
-  api.order.status = 2;
+  api.order.status = 5;
   await page
     .getByRole("button", { name: "Refresh status", exact: true })
     .click();
@@ -335,6 +343,49 @@ test("recovers from checkout and order refresh failures without blocking retry o
     page.getByText("Payment Completed", { exact: true })
   ).toBeVisible();
   await expect(page.getByText("$35.00", { exact: true })).toBeVisible();
+});
+
+test("reconciles the returned Stripe order after sign-in and credits it only after fulfillment", async ({
+  page,
+  api,
+}) => {
+  const returned = {
+    id: 2,
+    type: 4,
+    order_no: "RETURN",
+    trade_no: "cs_test",
+    payment: { id: "card", name: "Stripe" },
+    amount: 1000,
+    price: 1000,
+    fee_amount: 0,
+    created_at: 1_800_000_000,
+    status: 1,
+  };
+  api.order = returned;
+  const lookups: string[] = [];
+  await page.route("**/v2/public/orders/RETURN/reconcile", (route) => {
+    lookups.push(route.request().method());
+    returned.status = 2;
+    return route.fulfill({
+      json: {
+        code: 200,
+        data: { order: { order_no: "RETURN", status: "paid" } },
+      },
+    });
+  });
+  await signIn(page, "/?order_no=RETURN&stripe_return=1");
+  await expect(
+    page.getByText("Payment received. Crediting your balance.")
+  ).toBeVisible();
+  await expect(page.getByText("$25.00", { exact: true })).toBeVisible();
+  returned.status = 5;
+  api.balance = 3500;
+  await expect(
+    page.getByText("Payment Completed", { exact: true })
+  ).toBeVisible();
+  await expect(page.getByText("$35.00", { exact: true })).toBeVisible();
+  expect(lookups).toEqual(["POST"]);
+  expect(api.checkouts).toHaveLength(0);
 });
 
 test("opens URL checkout only after an explicit payment action", async ({

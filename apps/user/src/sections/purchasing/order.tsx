@@ -44,6 +44,8 @@ export default function Order() {
   const sessionAttempt = useRef<string | undefined>(undefined);
   const search = useSearch({ from: "/(main)/purchasing/order/" });
 
+  const stripeReturn =
+    search.stripe_return === "1" && search.order_no === orderNo;
   const capability = orderNo ? getCheckoutToken(orderNo) : undefined;
   const canQuery = Boolean(orderNo && capability);
   const { data, refetch, isFetching, isLoading } = useQuery({
@@ -88,13 +90,14 @@ export default function Order() {
     return watchOrderEvents({
       orderNo,
       checkoutToken: capability,
+      stripeReturn,
       onSnapshot: setSnapshot,
       onError: () => {
         setAccessError(true);
         setEnabled(false);
       },
     });
-  }, [orderNo, capability, accessError]);
+  }, [orderNo, capability, accessError, stripeReturn]);
 
   useEffect(() => {
     if (!orderNo) return;

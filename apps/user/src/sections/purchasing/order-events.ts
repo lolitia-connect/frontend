@@ -5,6 +5,7 @@ import {
   getV2Order,
   type OrderSnapshot,
   orderEventUrl,
+  reconcileStripeReturn,
 } from "@workspace/ui/services/user/order-v2";
 
 interface OrderEventsOptions {
@@ -12,11 +13,13 @@ interface OrderEventsOptions {
   onError: (error: unknown) => void;
   onSnapshot: (snapshot: OrderSnapshot) => void;
   orderNo: string;
+  stripeReturn?: boolean;
 }
 
 export function watchOrderEvents({
   orderNo,
   checkoutToken,
+  stripeReturn = false,
   onSnapshot,
   onError,
 }: OrderEventsOptions) {
@@ -66,11 +69,15 @@ export function watchOrderEvents({
     onSnapshot(snapshot);
     if (["finished", "closed", "failed"].includes(snapshot.status)) stop();
   };
-  const poll = async () => {
+  const poll = async (onReturn = false) => {
     if (stopped) return;
     try {
-      if (connected) return;
-      const { data } = await getV2Order(orderNo, checkoutToken);
+      if (connected && !onReturn) return;
+      const { data } = onReturn
+        ? await reconcileStripeReturn(orderNo, checkoutToken).catch(() =>
+            getV2Order(orderNo, checkoutToken)
+          )
+        : await getV2Order(orderNo, checkoutToken);
       if (data.data) accept(data.data.order);
     } catch (error) {
       const failure = error as {
@@ -154,7 +161,7 @@ export function watchOrderEvents({
       reconnect();
     }
   };
-  poll();
+  poll(stripeReturn);
   connect();
   return stop;
 }

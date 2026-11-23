@@ -218,8 +218,8 @@ export const test = base.extend<{ api: PortalApi }>({
 });
 export { expect } from "@playwright/test";
 
-export async function signIn(page: Page) {
-  await page.goto("/");
+export async function signIn(page: Page, path = "/") {
+  await page.goto(path);
   await expect(page.getByRole("link", { name: "LoliTia Pay" })).toBeVisible();
   await page.getByLabel("Account / Email").fill("member@portal.test");
   await page.getByLabel("Password", { exact: true }).fill("correct-password");

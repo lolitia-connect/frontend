@@ -34,8 +34,13 @@ const routeApi = getRouteApi("/(main)/payment");
 export default function Page() {
   const { t } = useTranslation("order");
   const { getUserInfo } = useGlobalStore();
-  const search = routeApi.useSearch() as { order_no?: string };
+  const search = routeApi.useSearch() as {
+    order_no?: string;
+    stripe_return?: string;
+  };
   const order_no = search.order_no || recentCheckoutOrder();
+  const stripeReturn =
+    search.stripe_return === "1" && search.order_no === order_no;
   const [enabled, setEnabled] = useState<boolean>(!!order_no);
   const [snapshot, setSnapshot] = useState<OrderSnapshot>();
 
@@ -71,16 +76,17 @@ export default function Page() {
   const [checkoutUrl, setCheckoutUrl] = useState<string>();
 
   useEffect(() => {
-    if (!order_no || isError) return;
+    if (!order_no) return;
     return watchOrderEvents({
       orderNo: order_no,
+      stripeReturn,
       onSnapshot: (next) => {
         setSnapshot(next);
-        if (next.payment_status === "paid") getUserInfo();
+        if (next.status === "finished") getUserInfo();
       },
       onError: () => undefined,
     });
-  }, [order_no, getUserInfo, isError]);
+  }, [order_no, getUserInfo, stripeReturn]);
 
   useEffect(() => {
     if (!order_no) return;
@@ -249,18 +255,27 @@ export default function Page() {
           {currentStatus && [2, 5].includes(currentStatus) && (
             <div className="flex flex-col items-center gap-8 text-center">
               <h3 className="font-bold text-2xl tracking-tight">
-                {t("paymentSuccess", "Payment Success")}
+                {currentStatus === 5
+                  ? t("status.5", "Completed")
+                  : t("paymentReceived", "Payment received")}
               </h3>
               <Icon
                 className="text-7xl text-success"
                 icon="mdi:success-circle-outline"
               />
+              {currentStatus === 2 && (
+                <p className="text-muted text-sm" role="status">
+                  {t("processing", "Processing...")}
+                </p>
+              )}
               <div className="flex flex-wrap justify-center gap-4">
-                <Button asChild>
-                  <Link to="/dashboard">
-                    {t("subscribeNow", "Subscribe Now")}
-                  </Link>
-                </Button>
+                {currentStatus === 5 && (
+                  <Button asChild>
+                    <Link to="/dashboard">
+                      {t("subscribeNow", "Subscribe Now")}
+                    </Link>
+                  </Button>
+                )}
                 <Button variant="outline">
                   <Link to="/document">
                     {t("viewDocument", "View Document")}

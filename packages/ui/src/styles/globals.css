@@ -15,7 +15,8 @@
 /* Keep Latin glyphs in Fredoka/Sen; resolve CJK at each language boundary. */
 @theme inline {
   --font-sans:
-    "Fredoka", "Sen", var(--font-cjk), ui-sans-serif, system-ui, sans-serif;
+    var(--font-fredoka, "Fredoka"), var(--font-sen, "Sen"), var(--font-cjk),
+    ui-sans-serif, system-ui, sans-serif;
 }
 
 @layer base {

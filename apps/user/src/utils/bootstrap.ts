@@ -10,7 +10,7 @@ export function fetchInitialConfig(): Promise<API.GetGlobalConfigResponse> {
   if (!initialConfigPromise) {
     initialConfigPromise = loadRequiredData<API.GetGlobalConfigResponse>(
       getGlobalConfig,
-      { attempts: 3, delayMs: 1000 }
+      { attempts: 1, delayMs: 0 }
     );
     // The root route attaches its own handlers later; swallow the rejection
     // here to avoid an unhandled-rejection warning in the meantime.

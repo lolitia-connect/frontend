@@ -1,4 +1,5 @@
-import { BrandFontLinks } from "@workspace/ui/lib/brand-font-links";
+import { brandFontVariables } from "@workspace/ui/lib/brand-fonts";
+import { PortalResourceHints } from "@workspace/ui/lib/portal-resource-hints";
 import { ThemeScript } from "@workspace/ui/lib/theme-script";
 import type { Metadata, Viewport } from "next";
 import { Providers } from "./providers";
@@ -22,9 +23,9 @@ export default function RootLayout({
   return (
     <html lang="zh-CN" suppressHydrationWarning>
       <head>
-        <BrandFontLinks />
+        <PortalResourceHints />
       </head>
-      <body className="bg-background text-foreground">
+      <body className={`${brandFontVariables} bg-background text-foreground`}>
         <ThemeScript />
         <Providers>{children}</Providers>
       </body>

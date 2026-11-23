@@ -28,7 +28,7 @@ export function Hero() {
         )}
         <div className="flex w-full flex-wrap items-center gap-3">
           <Button asChild size="lg">
-            <Link to={user ? "/dashboard" : "/auth"}>
+            <Link prefetch={false} to={user ? "/dashboard" : "/auth"}>
               {t("started", "Get Started")}
               <ArrowRight aria-hidden="true" className="size-4" />
             </Link>

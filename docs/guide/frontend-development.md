@@ -7,12 +7,15 @@ This guide contains durable maintenance conventions, not task logs or acceptance
 ## Typography
 
 All three apps share the CJK font configuration in `packages/ui/src/styles/`.
-All three load Fredoka / Sen through the shared font links. CJK text uses self-hosted
-[Swei Gothic](https://github.com/max32002/swei-gothic) WOFF2 fonts selected by the
-page or element's `lang`: `ja` / `ja-JP` → JP, `zh-CN` / `zh-Hans` → SC, and
-`zh-TW` / `zh-HK` / `zh-MO` / `zh-Hant` → TC. Unmarked CJK text defaults to SC.
-Language switching, saved preferences, and native-language labels in the language
-menu use the same mapping. Explicit `font-sans` utilities also follow that language.
+Fredoka and Sen are bundled locally and exposed through `next/font/local` by the
+shared UI package; Fredoka is eligible for the initial font preload, while Sen
+remains available without adding another critical request. CJK text uses
+self-hosted [Swei Gothic](https://github.com/max32002/swei-gothic) WOFF2 fonts
+selected by the page or element's `lang`: `ja` / `ja-JP` → JP, `zh-CN` /
+`zh-Hans` → SC, and `zh-TW` / `zh-HK` / `zh-MO` / `zh-Hant` → TC. Unmarked CJK
+text defaults to SC. Language switching, saved preferences, and native-language
+labels in the language menu use the same mapping. Explicit `font-sans` utilities
+also follow that language.
 
 The CJK faces are restricted to CJK Unicode ranges, so they do not replace Latin
 letters or ASCII digits, even if the existing Latin webfonts are unavailable.
@@ -234,12 +237,15 @@ Test-only keys belong in test fixtures, not production catalogs. Run
 ## Startup performance (user and admin)
 
 Site configuration and session recovery run independently: slow or failed public
-configuration must not delay authentication or guest detection. Initial admin
-translation namespaces are selected by pathname; other namespaces load when their
-components are visited. Keep bundled fallback translations for deterministic HTML.
-Pages rely on Next.js route splitting rather than dynamically importing their
+configuration must not delay authentication or guest detection. The initial
+configuration request is issued once with no client-side artificial retry delay;
+if it fails, the existing error state remains responsible for recovery. Initial
+admin translation namespaces are selected by pathname; other namespaces load when
+their components are visited. Keep bundled fallback translations for deterministic
+HTML. Pages rely on Next.js route splitting rather than dynamically importing their
 entire visible section, avoiding an extra hydration boundary racing with language
-detection.
+detection. API origins may use a `preconnect` hint, but do not add anonymous API
+`preload` links because they can duplicate the later Axios request.
 
 The user hero remains in the initial HTML. Its decorative globe is code-split and
 starts after configuration and session detection settle, a paint opportunity, and
@@ -252,9 +258,11 @@ mounted to retain their selections. Traffic cards use stable component identitie
 and share the selected period; hover details load on demand. The focused browser
 checks are in [performance.spec.ts](https://github.com/lolitia-connect/frontend/blob/main/apps/admin/tests/e2e/performance.spec.ts).
 
-These are code-level optimizations, not asset or infrastructure changes. Measure
-LCP with a production build; development compilation timings are not production
-performance results.
+These changes keep the existing visual assets and globe implementation intact. The
+only font change is bundling the existing Latin brand faces locally so their load is
+same-origin and independently discoverable; CJK font selection and files remain
+unchanged. Measure LCP with a production build; development compilation timings are
+not production performance results.
 
 Page-enter animations must keep their first frame opaque: a full-page fade from
 zero opacity hides already-rendered text while hydration occupies the main thread.

@@ -2,7 +2,7 @@
 
 import { getV1PublicPortalSubscribe as getSubscription } from "@workspace/ui/services/user/user";
 import dynamic from "next/dynamic";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { getContentLanguage } from "@/config/i18n";
 
@@ -15,27 +15,46 @@ export function ProductShowcase() {
   const locale = getContentLanguage(i18n.language);
   const [subscriptionList, setSubscriptionList] = useState<API.Subscribe[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const requestRef = useRef<
+    | {
+        locale: string;
+        promise: Promise<API.Subscribe[]>;
+      }
+    | undefined
+  >(undefined);
 
   useEffect(() => {
-    const fetchSubscriptions = async () => {
-      try {
-        const { data } = await getSubscription(
-          {
-            language: locale,
-          },
-          {
-            skipErrorHandler: true,
-          }
-        );
-        setSubscriptionList(data.data?.list || []);
-      } catch (error) {
-        console.error("Failed to fetch subscriptions:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+    let request = requestRef.current;
+    if (!request || request.locale !== locale) {
+      const promise = getSubscription(
+        {
+          language: locale,
+        },
+        {
+          skipErrorHandler: true,
+        }
+      ).then(({ data }) => data.data?.list || []);
+      request = { locale, promise };
+      requestRef.current = request;
+    }
 
-    fetchSubscriptions();
+    let cancelled = false;
+    request.promise
+      .then((subscriptions) => {
+        if (!cancelled) setSubscriptionList(subscriptions);
+      })
+      .catch((error) => {
+        if (!cancelled) {
+          console.error("Failed to fetch subscriptions:", error);
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setIsLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, [locale]);
 
   if (isLoading || subscriptionList.length === 0) return null;

@@ -1,4 +1,5 @@
-import { BrandFontLinks } from "@workspace/ui/lib/brand-font-links";
+import { brandFontVariables } from "@workspace/ui/lib/brand-fonts";
+import { PortalResourceHints } from "@workspace/ui/lib/portal-resource-hints";
 import { getRequestLanguage } from "@workspace/ui/lib/request-language";
 import { ThemeScript } from "@workspace/ui/lib/theme-script";
 import type { Metadata, Viewport } from "next";
@@ -47,9 +48,11 @@ export default async function RootLayout({
   return (
     <html lang={initialLanguage} suppressHydrationWarning>
       <head>
-        <BrandFontLinks />
+        <PortalResourceHints />
       </head>
-      <body className="admin-shell bg-background text-foreground">
+      <body
+        className={`${brandFontVariables} admin-shell bg-background text-foreground`}
+      >
         <ThemeScript />
         <Suspense fallback={null}>
           <Providers

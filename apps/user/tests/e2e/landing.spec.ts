@@ -94,6 +94,40 @@ test.afterEach(({ page }) => {
   expect(pageErrors.get(page), "Uncaught browser errors").toEqual([]);
 });
 
+test("does not duplicate bootstrap API requests or preload API data", async ({
+  page,
+}) => {
+  const requestCounts = new Map<string, number>();
+  page.on("request", (request) => {
+    const pathname = new URL(request.url()).pathname;
+    for (const endpoint of [
+      "/common/site/config",
+      "/v1/public/portal/subscribe",
+    ]) {
+      if (pathname.endsWith(endpoint)) {
+        requestCounts.set(endpoint, (requestCounts.get(endpoint) ?? 0) + 1);
+      }
+    }
+  });
+
+  await page.goto("/", { waitUntil: "domcontentloaded" });
+  for (const endpoint of [
+    "/common/site/config",
+    "/v1/public/portal/subscribe",
+  ]) {
+    await expect
+      .poll(() => requestCounts.get(endpoint) ?? 0, {
+        message: `Expected a request for ${endpoint}`,
+      })
+      .toBeGreaterThan(0);
+  }
+  await page.waitForLoadState("networkidle");
+
+  expect(requestCounts.get("/common/site/config")).toBe(1);
+  expect(requestCounts.get("/v1/public/portal/subscribe")).toBe(1);
+  await expect(page.locator('link[rel="preload"][as="fetch"]')).toHaveCount(0);
+});
+
 test("resolves scoped globe CSS colors and refreshes them on theme changes", async ({
   page,
 }) => {

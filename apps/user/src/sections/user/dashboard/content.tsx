@@ -524,18 +524,10 @@ export default function Content() {
 
                                     const showSuccessMessage = () => {
                                       toast.success(
-                                        <>
-                                          <p>
-                                            {t("copySuccess", "Copy Success")}
-                                          </p>
-                                          <br />
-                                          <p>
-                                            {t(
-                                              "manualImportMessage",
-                                              "Please import manually"
-                                            )}
-                                          </p>
-                                        </>
+                                        t(
+                                          "copySuccessManualImport",
+                                          "Copied. If the app didn’t open, paste the link into it to import your subscription."
+                                        )
                                       );
                                     };
 

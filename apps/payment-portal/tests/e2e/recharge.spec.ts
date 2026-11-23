@@ -125,6 +125,11 @@ test("shows a HeroUI error, permits login retry, persists authorization, and log
   await expect(
     page.getByRole("heading", { name: "Recharge Center" })
   ).toBeVisible();
+  await expect(
+    page
+      .locator('[data-slot="toast"].toast--success')
+      .filter({ hasText: "Login successful" })
+  ).toBeVisible();
   await expect(page.getByText("$25.00", { exact: true })).toBeVisible();
   expect(api.credentials).toEqual([
     { email: "member@portal.test", password: "incorrect-password" },
@@ -290,9 +295,18 @@ test("recovers from checkout and order refresh failures without blocking retry o
   const pay = page.getByRole("button", { name: "Pay Now", exact: true });
   api.failCheckout = true;
   await pay.click();
-  await expect(
-    page.getByText("Temporary checkout failure", { exact: true })
-  ).toBeVisible();
+  const errorToast = page
+    .locator('[data-slot="toast"].toast--danger')
+    .filter({ hasText: "Temporary checkout failure" });
+  await expect(errorToast).toBeVisible();
+  await expect(errorToast).toHaveAttribute("data-placement", "top end");
+  await expect(page.locator('[data-slot="toast-region"]')).toHaveCSS(
+    "position",
+    "fixed"
+  );
+  await errorToast.hover();
+  await errorToast.getByRole("button", { name: "Close", exact: true }).click();
+  await expect(errorToast).toHaveCount(0);
   expect(api.checkouts).toHaveLength(1);
   await pay.click();
   await expect(page.locator("canvas")).toBeVisible();

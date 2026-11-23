@@ -53,6 +53,10 @@ export function RevenueStatisticsCard() {
       label: t("repurchase", "Repurchase"),
       color: "var(--primary-400)",
     },
+    redemption: {
+      label: t("redemption", "Redemption"),
+      color: "var(--success)",
+    },
     total: {
       label: t("totalIncome", "Total Income"),
       color: "var(--primary-700)",
@@ -105,7 +109,8 @@ export function RevenueStatisticsCard() {
         <TabsContent className="h-full" id="today">
           <CardContent className="h-80">
             {RevenueStatistics?.today.new_order_amount ||
-            RevenueStatistics?.today.renewal_order_amount ? (
+            RevenueStatistics?.today.renewal_order_amount ||
+            RevenueStatistics?.today.redemption_order_amount ? (
               <ChartContainer
                 className="mx-auto h-full max-h-80 w-full"
                 config={IncomeStatisticsConfig}
@@ -133,6 +138,14 @@ export function RevenueStatisticsCard() {
                           RevenueStatistics?.today.renewal_order_amount
                         ),
                         fill: "var(--color-repurchase)",
+                      },
+                      {
+                        type: "redemption",
+                        value: unitConversion(
+                          "centsToDollars",
+                          RevenueStatistics?.today.redemption_order_amount ?? 0
+                        ),
+                        fill: "var(--color-redemption)",
                       },
                     ]}
                     dataKey="value"
@@ -211,6 +224,20 @@ export function RevenueStatisticsCard() {
                   />
                 </div>
               </div>
+              <Separator className="!h-10 mx-2 w-px" orientation="vertical" />
+              <div className="grid flex-1 auto-rows-min gap-0.5">
+                <div className="text-muted text-xs">
+                  {IncomeStatisticsConfig.redemption.label}
+                </div>
+                <div className="font-bold text-xl tabular-nums leading-none">
+                  <Display
+                    type="currency"
+                    value={
+                      RevenueStatistics?.today.redemption_order_amount ?? 0
+                    }
+                  />
+                </div>
+              </div>
             </div>
           </CardFooter>
         </TabsContent>
@@ -236,9 +263,13 @@ export function RevenueStatisticsCard() {
                         "centsToDollars",
                         item.renewal_order_amount
                       ),
+                      redemption: unitConversion(
+                        "centsToDollars",
+                        item.redemption_order_amount ?? 0
+                      ),
                       total: unitConversion(
                         "centsToDollars",
-                        item.new_order_amount + item.renewal_order_amount
+                        item.amount_total
                       ),
                     })) || []
                   }
@@ -269,6 +300,12 @@ export function RevenueStatisticsCard() {
                   <Bar
                     dataKey="repurchase"
                     fill="var(--color-repurchase)"
+                    radius={0}
+                    stackId="a"
+                  />
+                  <Bar
+                    dataKey="redemption"
+                    fill="var(--color-redemption)"
                     radius={[4, 4, 0, 0]}
                     stackId="a"
                   />
@@ -291,7 +328,7 @@ export function RevenueStatisticsCard() {
                             <div className="ml-auto flex items-baseline gap-0.5 font-medium font-mono text-foreground tabular-nums">
                               {value}
                             </div>
-                            {index === 1 && (
+                            {index === 2 && (
                               <div className="flex basis-full items-center border-t pt-1.5 font-medium text-foreground text-xs">
                                 {t("totalIncome", "Total Income")}
                                 <div className="ml-auto flex items-baseline gap-0.5 font-medium font-mono text-foreground tabular-nums">
@@ -351,6 +388,20 @@ export function RevenueStatisticsCard() {
                   />
                 </div>
               </div>
+              <Separator className="!h-10 mx-2 w-px" orientation="vertical" />
+              <div className="grid flex-1 auto-rows-min gap-0.5">
+                <div className="text-muted text-xs">
+                  {IncomeStatisticsConfig.redemption.label}
+                </div>
+                <div className="font-bold text-xl tabular-nums leading-none">
+                  <Display
+                    type="currency"
+                    value={
+                      RevenueStatistics?.monthly.redemption_order_amount ?? 0
+                    }
+                  />
+                </div>
+              </div>
             </div>
           </CardFooter>
         </TabsContent>
@@ -376,9 +427,13 @@ export function RevenueStatisticsCard() {
                         "centsToDollars",
                         item.renewal_order_amount
                       ),
+                      redemption: unitConversion(
+                        "centsToDollars",
+                        item.redemption_order_amount ?? 0
+                      ),
                       total: unitConversion(
                         "centsToDollars",
-                        item.new_order_amount + item.renewal_order_amount
+                        item.amount_total
                       ),
                     })) || []
                   }
@@ -421,7 +476,7 @@ export function RevenueStatisticsCard() {
                             <div className="ml-auto flex items-baseline gap-0.5 font-medium font-mono text-foreground tabular-nums">
                               {value}
                             </div>
-                            {index === 1 && (
+                            {index === 2 && (
                               <div className="flex basis-full items-center border-t pt-1.5 font-medium text-foreground text-xs">
                                 {t("totalIncome", "Total Income")}
                                 <div className="ml-auto flex items-baseline gap-0.5 font-medium font-mono text-foreground tabular-nums">
@@ -451,6 +506,14 @@ export function RevenueStatisticsCard() {
                     stroke="var(--color-repurchase)"
                     type="natural"
                   />
+                  <Area
+                    dataKey="redemption"
+                    fill="var(--color-redemption)"
+                    fillOpacity={0.4}
+                    stackId="a"
+                    stroke="var(--color-redemption)"
+                    type="natural"
+                  />
                   <ChartLegend content={<ChartLegendContent />} />
                 </AreaChart>
               </ChartContainer>
@@ -470,6 +533,18 @@ export function RevenueStatisticsCard() {
                   <Display
                     type="currency"
                     value={RevenueStatistics?.all.amount_total}
+                  />
+                </div>
+              </div>
+              <Separator className="!h-10 mx-2 w-px" orientation="vertical" />
+              <div className="grid flex-1 auto-rows-min gap-0.5">
+                <div className="text-muted text-xs">
+                  {IncomeStatisticsConfig.redemption.label}
+                </div>
+                <div className="font-bold text-xl tabular-nums leading-none">
+                  <Display
+                    type="currency"
+                    value={RevenueStatistics?.all.redemption_order_amount ?? 0}
                   />
                 </div>
               </div>

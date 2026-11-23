@@ -55,6 +55,10 @@ export function UserStatisticsCard() {
       label: t("repurchase", "Repurchase"),
       color: "var(--primary-700)",
     },
+    redemption: {
+      label: t("redemption", "Redemption"),
+      color: "var(--success)",
+    },
   };
 
   const { data: UserStatistics, isLoading } = useQuery({
@@ -105,7 +109,8 @@ export function UserStatisticsCard() {
           <CardContent className="h-80">
             {UserStatistics?.today.register ||
             UserStatistics?.today.new_order_users ||
-            UserStatistics?.today.renewal_order_users ? (
+            UserStatistics?.today.renewal_order_users ||
+            UserStatistics?.today.redemption_order_users ? (
               <ChartContainer
                 className="mx-auto h-full max-h-80 w-full"
                 config={UserStatisticsConfig}
@@ -133,6 +138,12 @@ export function UserStatisticsCard() {
                         value: UserStatistics?.today.renewal_order_users || 0,
                         fill: "var(--color-repurchase)",
                       },
+                      {
+                        type: "redemption",
+                        value:
+                          UserStatistics?.today.redemption_order_users || 0,
+                        fill: "var(--color-redemption)",
+                      },
                     ]}
                     dataKey="value"
                     innerRadius={50}
@@ -145,7 +156,8 @@ export function UserStatisticsCard() {
                           const total =
                             (UserStatistics?.today.register || 0) +
                             (UserStatistics?.today.new_order_users || 0) +
-                            (UserStatistics?.today.renewal_order_users || 0);
+                            (UserStatistics?.today.renewal_order_users || 0) +
+                            (UserStatistics?.today.redemption_order_users || 0);
                           return (
                             <text
                               dominantBaseline="middle"
@@ -202,6 +214,15 @@ export function UserStatisticsCard() {
                   {UserStatistics?.today.renewal_order_users}
                 </div>
               </div>
+              <Separator className="!h-10 mx-2 w-px" orientation="vertical" />
+              <div className="grid flex-1 auto-rows-min gap-0.5">
+                <div className="text-muted text-xs">
+                  {UserStatisticsConfig.redemption.label}
+                </div>
+                <div className="font-bold text-xl tabular-nums leading-none">
+                  {UserStatistics?.today.redemption_order_users ?? 0}
+                </div>
+              </div>
             </div>
           </CardFooter>
         </TabsContent>
@@ -222,6 +243,7 @@ export function UserStatisticsCard() {
                       register: item.register,
                       new_purchase: item.new_order_users,
                       repurchase: item.renewal_order_users,
+                      redemption: item.redemption_order_users ?? 0,
                     })) || []
                   }
                 >
@@ -257,6 +279,12 @@ export function UserStatisticsCard() {
                   <Bar
                     dataKey="repurchase"
                     fill="var(--color-repurchase)"
+                    radius={0}
+                    stackId="a"
+                  />
+                  <Bar
+                    dataKey="redemption"
+                    fill="var(--color-redemption)"
                     radius={[4, 4, 0, 0]}
                     stackId="a"
                   />
@@ -301,6 +329,15 @@ export function UserStatisticsCard() {
                   {UserStatistics?.monthly.renewal_order_users}
                 </div>
               </div>
+              <Separator className="!h-10 mx-2 w-px" orientation="vertical" />
+              <div className="grid flex-1 auto-rows-min gap-0.5">
+                <div className="text-muted text-xs">
+                  {UserStatisticsConfig.redemption.label}
+                </div>
+                <div className="font-bold text-xl tabular-nums leading-none">
+                  {UserStatistics?.monthly.redemption_order_users ?? 0}
+                </div>
+              </div>
             </div>
           </CardFooter>
         </TabsContent>
@@ -320,6 +357,7 @@ export function UserStatisticsCard() {
                       register: item.register,
                       new_purchase: item.new_order_users,
                       repurchase: item.renewal_order_users,
+                      redemption: item.redemption_order_users ?? 0,
                     })) || []
                   }
                   margin={{
@@ -370,6 +408,14 @@ export function UserStatisticsCard() {
                     stroke="var(--color-repurchase)"
                     type="natural"
                   />
+                  <Area
+                    dataKey="redemption"
+                    fill="var(--color-redemption)"
+                    fillOpacity={0.4}
+                    stackId="a"
+                    stroke="var(--color-redemption)"
+                    type="natural"
+                  />
                   <ChartLegend content={<ChartLegendContent />} />
                 </AreaChart>
               </ChartContainer>
@@ -387,6 +433,15 @@ export function UserStatisticsCard() {
                 </div>
                 <div className="font-bold text-xl tabular-nums leading-none">
                   {UserStatistics?.all.register}
+                </div>
+              </div>
+              <Separator className="!h-10 mx-2 w-px" orientation="vertical" />
+              <div className="grid flex-1 auto-rows-min gap-0.5">
+                <div className="text-muted text-xs">
+                  {UserStatisticsConfig.redemption.label}
+                </div>
+                <div className="font-bold text-xl tabular-nums leading-none">
+                  {UserStatistics?.all.redemption_order_users ?? 0}
                 </div>
               </div>
             </div>

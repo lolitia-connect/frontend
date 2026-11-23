@@ -5874,6 +5874,11 @@
         "tag": "json:\"renewal_order_amount\""
       },
       {
+        "name": "RedemptionOrderAmount",
+        "type": "int64",
+        "tag": "json:\"redemption_order_amount\""
+      },
+      {
         "name": "List",
         "type": "[]OrdersStatistics",
         "tag": "json:\"list,omitempty\""
@@ -11028,6 +11033,11 @@
         "name": "RenewalOrderUsers",
         "type": "int64",
         "tag": "json:\"renewal_order_users\""
+      },
+      {
+        "name": "RedemptionOrderUsers",
+        "type": "int64",
+        "tag": "json:\"redemption_order_users\""
       },
       {
         "name": "List",

@@ -13848,12 +13848,18 @@
           "amount_total": { "type": "integer", "format": "int64" },
           "new_order_amount": { "type": "integer", "format": "int64" },
           "renewal_order_amount": { "type": "integer", "format": "int64" },
+          "redemption_order_amount": { "type": "integer", "format": "int64" },
           "list": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/OrdersStatistics" }
           }
         },
-        "required": ["amount_total", "new_order_amount", "renewal_order_amount"]
+        "required": [
+          "amount_total",
+          "new_order_amount",
+          "renewal_order_amount",
+          "redemption_order_amount"
+        ]
       },
       "PaymentConfig": {
         "type": "object",
@@ -16663,12 +16669,18 @@
           "register": { "type": "integer", "format": "int64" },
           "new_order_users": { "type": "integer", "format": "int64" },
           "renewal_order_users": { "type": "integer", "format": "int64" },
+          "redemption_order_users": { "type": "integer", "format": "int64" },
           "list": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/UserStatistics" }
           }
         },
-        "required": ["register", "new_order_users", "renewal_order_users"]
+        "required": [
+          "register",
+          "new_order_users",
+          "renewal_order_users",
+          "redemption_order_users"
+        ]
       },
       "UserStatisticsResponse": {
         "type": "object",

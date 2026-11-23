@@ -9,6 +9,12 @@ import {
   within,
 } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@workspace/ui/hooks/query";
+import {
+  Children,
+  isValidElement,
+  type ReactElement,
+  type ReactNode,
+} from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { RevenueStatisticsCard } from "./revenue-statistics-card";
 import { UserStatisticsCard } from "./user-statistics-card";
@@ -22,7 +28,24 @@ vi.mock("@/stores/global", () => ({
   useGlobalStore: () => ({ common: { currency: { currency_symbol: "$" } } }),
 }));
 vi.mock("@workspace/ui/components/chart", () => ({
-  ChartContainer: () => <div data-testid="statistics-chart" />,
+  ChartContainer: ({
+    children,
+    config,
+  }: {
+    children: ReactElement<{ data?: unknown; children?: ReactNode }>;
+    config: Record<string, { label: string }>;
+  }) => (
+    <div data-testid="statistics-chart">
+      {JSON.stringify({
+        config,
+        data: children.props.data,
+        series: Children.toArray(children.props.children)
+          .filter(isValidElement)
+          .map((child) => (child.props as { dataKey?: string }).dataKey)
+          .filter(Boolean),
+      })}
+    </div>
+  ),
   ChartLegend: () => null,
   ChartLegendContent: () => null,
   ChartTooltip: () => null,
@@ -58,15 +81,36 @@ const cards = [
     name: "revenue statistics",
     Component: RevenueStatisticsCard,
     queryKey: "queryRevenueStatistics",
-    empty: { new_order_amount: 0, renewal_order_amount: 0, amount_total: 0 },
-    series: ["new_order_amount", "renewal_order_amount"],
+    empty: {
+      new_order_amount: 0,
+      renewal_order_amount: 0,
+      redemption_order_amount: 0,
+      amount_total: 0,
+    },
+    series: [
+      "new_order_amount",
+      "renewal_order_amount",
+      "redemption_order_amount",
+    ],
+    redemptionKey: "redemption_order_amount",
   },
   {
     name: "user statistics",
     Component: UserStatisticsCard,
     queryKey: "queryUserStatistics",
-    empty: { register: 0, new_order_users: 0, renewal_order_users: 0 },
-    series: ["register", "new_order_users", "renewal_order_users"],
+    empty: {
+      register: 0,
+      new_order_users: 0,
+      renewal_order_users: 0,
+      redemption_order_users: 0,
+    },
+    series: [
+      "register",
+      "new_order_users",
+      "renewal_order_users",
+      "redemption_order_users",
+    ],
+    redemptionKey: "redemption_order_users",
   },
 ];
 
@@ -75,6 +119,7 @@ describe.each(cards)("$name empty state", ({
   queryKey,
   empty,
   series,
+  redemptionKey,
 }) => {
   type Metric = Partial<typeof empty> & { date?: string };
 
@@ -140,6 +185,33 @@ describe.each(cards)("$name empty state", ({
       const panel = within(screen.getByRole("tabpanel", { name: tab }));
       expect(panel.getByTestId("statistics-chart")).toBeTruthy();
       expect(panel.queryByTitle("Empty")).toBeNull();
+    }
+  });
+
+  it("shows redemption summaries and chart series for every period", async () => {
+    const metrics = { ...empty, [redemptionKey]: 300 };
+    const expectedValue = redemptionKey === "redemption_order_amount" ? 3 : 300;
+    renderCard(
+      { ...metrics, list: [{ ...metrics, date: "2026-11-19" }] },
+      metrics
+    );
+
+    for (const tab of ["Today", "Month", "Total"]) {
+      await selectTab(tab);
+      const panel = within(screen.getByRole("tabpanel", { name: tab }));
+      expect(panel.getByText("Redemption")).toBeTruthy();
+      const chart = JSON.parse(
+        panel.getByTestId("statistics-chart").textContent ?? "{}"
+      );
+      expect(chart.config.redemption.label).toBe("Redemption");
+      if (tab === "Today") {
+        expect(chart.series).toContain("value");
+      } else {
+        expect(chart.series).toContain("redemption");
+        expect(chart.data[0].redemption).toBe(expectedValue);
+        expect(chart.data[0].new_purchase).toBe(0);
+        expect(chart.data[0].repurchase).toBe(0);
+      }
     }
   });
 

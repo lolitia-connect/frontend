@@ -38,11 +38,19 @@ export default function Page() {
     order_no?: string;
     stripe_return?: string;
   };
-  const order_no = search.order_no || recentCheckoutOrder();
+  // Session storage is browser-only. Reading it during render makes the
+  // client’s first render differ from the server HTML when returning from a
+  // payment gateway, which causes React hydration to fail.
+  const [recentOrder, setRecentOrder] = useState<string>();
+  const order_no = search.order_no || recentOrder;
   const stripeReturn =
     search.stripe_return === "1" && search.order_no === order_no;
-  const [enabled, setEnabled] = useState<boolean>(!!order_no);
+  const [enabled, setEnabled] = useState<boolean>(!!search.order_no);
   const [snapshot, setSnapshot] = useState<OrderSnapshot>();
+
+  useEffect(() => {
+    setRecentOrder(recentCheckoutOrder());
+  }, []);
 
   useEffect(() => {
     if (order_no) {

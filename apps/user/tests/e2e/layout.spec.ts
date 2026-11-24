@@ -48,6 +48,39 @@ test("payment bill and completed-order actions fit mobile widths", async ({
   }
 });
 
+test("restores a recent checkout order without a hydration error", async ({
+  page,
+}) => {
+  await mockLayoutApi(page);
+  const errors: string[] = [];
+  const orderNo = "RECENT-ORDER";
+  page.on("pageerror", (error) => errors.push(error.message));
+  await page.addInitScript((value) => {
+    sessionStorage.setItem("recent-checkout-order", value);
+  }, orderNo);
+  await page.route(/\/public\/order\/detail(?:\?|$)/, (route) =>
+    route.fulfill({
+      json: {
+        code: 200,
+        data: {
+          order_no: orderNo,
+          status: 5,
+          type: 4,
+          created_at: 1_800_000_000,
+          amount: 100,
+          price: 100,
+          fee_amount: 0,
+          payment: { name: "Provider", platform: "alipay" },
+        },
+      },
+    })
+  );
+
+  await page.goto("/payment", { waitUntil: "domcontentloaded" });
+  await expect(page.getByText(orderNo, { exact: true })).toBeVisible();
+  expect(errors).toEqual([]);
+});
+
 test("profile credential fields align with new password fields in both tabs", async ({
   page,
   baseURL,

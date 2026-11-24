@@ -39,17 +39,38 @@ function isSafeCustomFrame({ data }: ReplayFrame) {
   );
 }
 
+const cssResourceUrl =
+  /\burl\(\s*(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|[^)'"\s]*)\s*\)/gi;
+
+function scrubRecordingAttributes(attributes: Record<string, unknown>) {
+  const result = Object.fromEntries(
+    Object.entries(attributes).filter(
+      ([name, entry]) =>
+        layoutAttributes.has(name) ||
+        (name === "data-theme" &&
+          (entry === "dark" || entry === "light" || entry === null)) ||
+        (name === "value" &&
+          typeof entry === "string" &&
+          maskedText.test(entry))
+    )
+  );
+  // rrweb replaces a loaded link's href and rel with its CSSOM text, both
+  // in the snapshot and in the attribute mutation for a late-loading sheet.
+  const css = attributes._cssText;
+  if (
+    attributes["data-precedence"] === "next" &&
+    attributes.rel === null &&
+    typeof css === "string" &&
+    !/@import\b/i.test(css)
+  ) {
+    result._cssText = css.replace(cssResourceUrl, 'url("about:blank")');
+  }
+  return result;
+}
+
 function scrubRecordingValue(key: string, value: unknown): unknown {
   if (key === "attributes" && value && !Array.isArray(value)) {
-    return Object.fromEntries(
-      Object.entries(value).filter(
-        ([name, entry]) =>
-          layoutAttributes.has(name) ||
-          (name === "value" &&
-            typeof entry === "string" &&
-            maskedText.test(entry))
-      )
-    );
+    return scrubRecordingAttributes(value as Record<string, unknown>);
   }
   if (key === "href" || key === "url") return removedUrl;
   if (
@@ -83,7 +104,7 @@ export function scrubReplayEnvelope(envelope: Envelope): Envelope | null {
     const recording = JSON.stringify(
       frames.filter((frame) => {
         // rrweb's DOM snapshots and viewport/mouse/scroll/input updates. Drop
-        // stylesheets, canvas, fonts, and plugin data with arbitrary payloads.
+        // dynamic CSS rule edits, canvas, fonts, and arbitrary plugin data.
         if (frame.type === 3)
           return [0, 1, 2, 3, 4, 5, 6].includes(frame.data.source);
         return (
@@ -152,7 +173,13 @@ export function sentryBrowserOptions(
     replaysOnErrorSampleRate: 1,
     integrations: [
       replayIntegration({
-        block: ["canvas", "iframe", "#custom_html"],
+        block: [
+          "canvas",
+          "iframe",
+          "#custom_html",
+          // Only Next's local build assets should supply embedded replay CSS.
+          'link[data-precedence="next"]:not([href^="/_next/static/chunks/"]):not([href^="/_next/static/css/"])',
+        ],
         blockAllMedia: true,
         maskAllInputs: true,
         maskAllText: true,

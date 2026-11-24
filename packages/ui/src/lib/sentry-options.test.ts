@@ -92,6 +92,39 @@ describe("Sentry session replay", () => {
           },
         },
       },
+      {
+        type: 2,
+        data: {
+          node: {
+            tagName: "link",
+            attributes: {
+              "data-precedence": "next",
+              href: null,
+              rel: null,
+              _cssText: '.grid { display: grid; background: url("/secret"); }',
+            },
+          },
+        },
+      },
+      {
+        type: 3,
+        data: {
+          source: 0,
+          attributes: [
+            { id: 2, attributes: { "data-theme": "dark", style: "secret" } },
+            {
+              id: 3,
+              attributes: {
+                "data-precedence": "next",
+                href: null,
+                rel: null,
+                _cssText: ".card { display: flex; }",
+              },
+            },
+            { id: 4, attributes: { _cssText: "secret" } },
+          ],
+        },
+      },
       { type: 3, data: { source: 8, rule: "secret" } },
       {
         type: 5,
@@ -147,6 +180,29 @@ describe("Sentry session replay", () => {
         {
           type: 2,
           data: { node: { attributes: { class: "layout", value: "****" } } },
+        },
+        {
+          type: 2,
+          data: {
+            node: {
+              tagName: "link",
+              attributes: {
+                _cssText:
+                  '.grid { display: grid; background: url("about:blank"); }',
+              },
+            },
+          },
+        },
+        {
+          type: 3,
+          data: {
+            source: 0,
+            attributes: [
+              { id: 2, attributes: { "data-theme": "dark" } },
+              { id: 3, attributes: { _cssText: ".card { display: flex; }" } },
+              { id: 4, attributes: {} },
+            ],
+          },
         },
         {
           type: 5,

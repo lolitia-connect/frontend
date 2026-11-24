@@ -1,5 +1,8 @@
 import { withSentryConfig } from "@sentry/nextjs/config";
-import { sentryBuildOptions } from "@workspace/ui/lib/sentry-build-options";
+import {
+  replayAssetHeaders,
+  sentryBuildOptions,
+} from "@workspace/ui/lib/sentry-build-options";
 import type { NextConfig } from "next";
 
 /**
@@ -16,6 +19,7 @@ import type { NextConfig } from "next";
  * make sure the backend allows CORS from the site origin.
  */
 const nextConfig: NextConfig = {
+  headers: replayAssetHeaders,
   // The shared workspace UI package ships untranspiled TS/TSX.
   transpilePackages: ["@workspace/ui"],
   distDir: process.env.NEXT_DIST_DIR ?? ".next",

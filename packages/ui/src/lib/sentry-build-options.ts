@@ -1,3 +1,12 @@
+export async function replayAssetHeaders() {
+  return [
+    {
+      source: "/_next/static/:path*",
+      headers: [{ key: "Access-Control-Allow-Origin", value: "*" }],
+    },
+  ];
+}
+
 export function sentryBuildOptions(
   project: string,
   env: NodeJS.ProcessEnv = process.env

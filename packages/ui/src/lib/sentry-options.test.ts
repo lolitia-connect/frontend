@@ -76,7 +76,90 @@ describe("Sentry session replay", () => {
     ).toBeUndefined();
   });
 
-  it("scrubs Replay metadata, DOM attributes, and raw events before transport", () => {
+  it("preserves rendering resources and redacts private Replay data", () => {
+    const font = 'url("https://fonts.example.test/fetch?family=UI")';
+    const image = "https://cdn.example.test/image?width=320";
+    const css = `@import "https://cdn.example.test/theme"; @font-face { font-family: UI; src: ${font} }`;
+    const renderFrames = [
+      {
+        type: 2,
+        data: {
+          node: {
+            tagName: "html",
+            childNodes: [
+              {
+                id: 1,
+                tagName: "style",
+                childNodes: [{ type: 3, isStyle: true, textContent: css }],
+              },
+              {
+                id: 2,
+                tagName: "link",
+                attributes: {
+                  rel: "stylesheet",
+                  href: "https://cdn.example.test/css?theme=light",
+                },
+              },
+              {
+                id: 3,
+                tagName: "img",
+                attributes: { src: image, srcset: `${image} 2x` },
+              },
+              {
+                id: 4,
+                tagName: "path",
+                isSVG: true,
+                attributes: { d: "M0 0 L1 1" },
+              },
+            ],
+          },
+        },
+      },
+      {
+        type: 3,
+        data: {
+          source: 0,
+          attributes: [
+            { id: 2, attributes: { _cssText: css } },
+            {
+              id: 3,
+              attributes: {
+                src: "/assets/new.png",
+                style: { width: ["32px", "important"] },
+              },
+            },
+          ],
+        },
+      },
+      {
+        type: 3,
+        data: {
+          source: 8,
+          id: 1,
+          adds: [{ rule: ".card {display:grid}", index: 0 }],
+        },
+      },
+      {
+        type: 3,
+        data: { source: 10, family: "UI", fontSource: font, buffer: false },
+      },
+      {
+        type: 3,
+        data: {
+          source: 13,
+          id: 1,
+          set: { property: "display", value: "flex" },
+        },
+      },
+      {
+        type: 3,
+        data: {
+          source: 15,
+          styleIds: [1],
+          styles: [{ styleId: 1, rules: [{ rule: css, index: 0 }] }],
+        },
+      },
+    ];
     const frames = [
       { type: 4, data: { href: "https://example.test/orders/secret" } },
       {
@@ -92,40 +175,8 @@ describe("Sentry session replay", () => {
           },
         },
       },
-      {
-        type: 2,
-        data: {
-          node: {
-            tagName: "link",
-            attributes: {
-              "data-precedence": "next",
-              href: null,
-              rel: null,
-              _cssText: '.grid { display: grid; background: url("/secret"); }',
-            },
-          },
-        },
-      },
-      {
-        type: 3,
-        data: {
-          source: 0,
-          attributes: [
-            { id: 2, attributes: { "data-theme": "dark", style: "secret" } },
-            {
-              id: 3,
-              attributes: {
-                "data-precedence": "next",
-                href: null,
-                rel: null,
-                _cssText: ".card { display: flex; }",
-              },
-            },
-            { id: 4, attributes: { _cssText: "secret" } },
-          ],
-        },
-      },
-      { type: 3, data: { source: 8, rule: "secret" } },
+      ...renderFrames,
+      { type: 3, data: { source: 9, payload: "secret" } },
       {
         type: 5,
         data: {
@@ -181,29 +232,7 @@ describe("Sentry session replay", () => {
           type: 2,
           data: { node: { attributes: { class: "layout", value: "****" } } },
         },
-        {
-          type: 2,
-          data: {
-            node: {
-              tagName: "link",
-              attributes: {
-                _cssText:
-                  '.grid { display: grid; background: url("about:blank"); }',
-              },
-            },
-          },
-        },
-        {
-          type: 3,
-          data: {
-            source: 0,
-            attributes: [
-              { id: 2, attributes: { "data-theme": "dark" } },
-              { id: 3, attributes: { _cssText: ".card { display: flex; }" } },
-              { id: 4, attributes: {} },
-            ],
-          },
-        },
+        ...renderFrames,
         {
           type: 5,
           data: {

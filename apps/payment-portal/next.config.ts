@@ -1,8 +1,12 @@
 import { withSentryConfig } from "@sentry/nextjs/config";
-import { sentryBuildOptions } from "@workspace/ui/lib/sentry-build-options";
+import {
+  replayAssetHeaders,
+  sentryBuildOptions,
+} from "@workspace/ui/lib/sentry-build-options";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  headers: replayAssetHeaders,
   // Compile the shared workspace UI package (it ships untranspiled TS/TSX).
   transpilePackages: ["@workspace/ui"],
   // Allow an isolated build/dist dir (used by the E2E dev server) so it can run

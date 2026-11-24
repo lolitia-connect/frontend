@@ -61,6 +61,15 @@ unlimited-traffic switch reset when the form opens.
 The admin `subscription-forms.spec.ts` browser tests cover responsive layout,
 continuous typing, calendar focus, cancellation, reopening and request payloads.
 
+## Table column defaults
+
+`ProTable` accepts `initialColumnVisibility` to configure unchecked columns in
+the column chooser. Server, node, and product tables set `{ sort: false }` so
+Sort ID is hidden by default; node group and payment tables keep Sort visible.
+Users can select Sort ID to view or edit sort values. Refreshing preserves the
+current selection; resetting the table restores its initial column visibility.
+Dragging rows to reorder them remains available when Sort ID is hidden.
+
 ## Testing
 
 Unit and component tests run on [Vitest](https://vitest.dev); end-to-end flows

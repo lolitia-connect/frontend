@@ -426,6 +426,7 @@ export default function Nodes() {
             </div>
           ),
         }}
+        initialColumnVisibility={{ sort: false }}
         onSort={async (source, target, items) => {
           if (target == null) return null;
           const updatedItems = reorderSortableItems(items, source, target);

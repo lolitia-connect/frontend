@@ -198,6 +198,68 @@ describe("ProTable native collection", () => {
     expect(edit).toHaveBeenCalledWith("a");
   });
 
+  it.each([
+    [true, true],
+    [true, false],
+    [false, true],
+    [false, false],
+  ])("preserves and resets sort column visibility (initially hidden: %s, explicit id: %s)", async (hidden, explicitId) => {
+    const action = createRef<ProTableActions>();
+    const request = vi.fn().mockResolvedValue({
+      list: rows.map((row, index) => ({ ...row, sort: index + 1 })),
+      total: 2,
+    });
+    const table = (title: string) => (
+      <ProTable
+        action={action}
+        aria-label="Servers"
+        columns={[
+          ...columns,
+          {
+            ...(explicitId ? { id: "sort" } : {}),
+            accessorKey: "sort",
+            header: "Sort ID",
+          },
+        ]}
+        header={{ title }}
+        initialColumnVisibility={hidden ? { sort: false } : undefined}
+        request={request}
+      />
+    );
+    const { rerender } = render(table("Initial"));
+    const grid = await screen.findByRole("grid", { name: "Servers" });
+    await within(grid).findByRole("rowheader", { name: "Tokyo" });
+    const sortHeader = () => within(grid).queryByText("Sort ID");
+    expect(Boolean(sortHeader())).toBe(!hidden);
+    expect(
+      within(grid).getByRole("columnheader", { name: "Address" })
+    ).toBeTruthy();
+
+    fireEvent.click(screen.getByRole("button", { name: "Choose columns" }));
+    const sortOption = await screen.findByRole("menuitemcheckbox", {
+      name: "Sort ID",
+    });
+    expect(sortOption.getAttribute("aria-checked")).toBe(String(!hidden));
+    fireEvent.click(sortOption);
+    expect(sortOption.getAttribute("aria-checked")).toBe(String(hidden));
+    await waitFor(() => expect(Boolean(sortHeader())).toBe(hidden));
+    if (hidden) {
+      expect(within(grid).getByText("1")).toBeTruthy();
+    }
+
+    rerender(table("Updated"));
+    await act(async () => action.current?.refresh());
+    expect(Boolean(sortHeader())).toBe(hidden);
+    await act(async () => action.current?.reset());
+    await waitFor(() => expect(Boolean(sortHeader())).toBe(!hidden));
+    expect(within(grid).getByText("Address")).toBeTruthy();
+    expect(
+      (
+        await screen.findByRole("menuitemcheckbox", { name: "Sort ID" })
+      ).getAttribute("aria-checked")
+    ).toBe(String(!hidden));
+  });
+
   it("keeps the newest filter result when requests resolve out of order", async () => {
     const pending = new Map<
       string,

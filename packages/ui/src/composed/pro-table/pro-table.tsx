@@ -68,6 +68,7 @@ export interface ProTableProps<TData, TValue> {
     toolbar?: React.ReactNode | React.ReactNode[];
     hidden?: boolean;
   };
+  initialColumnVisibility?: VisibilityState;
   initialFilters?: Record<string, unknown>;
   onFiltersChange?: (filters: TValue) => void;
   onSort?: (
@@ -112,6 +113,7 @@ export function ProTable<
   texts,
   empty,
   onSort,
+  initialColumnVisibility = {},
   initialFilters,
   onFiltersChange,
   "aria-label": ariaLabel,
@@ -129,7 +131,9 @@ export function ProTable<
     }
     return [];
   });
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
+    initialColumnVisibility
+  );
   const [rowSelection, setRowSelection] = useState({});
   const [data, setData] = useState<TData[]>([]);
   const [rowCount, setRowCount] = useState<number>();
@@ -235,7 +239,7 @@ export function ProTable<
     table.resetSorting();
     table.resetColumnFilters();
     table.resetGlobalFilter(true);
-    table.resetColumnVisibility();
+    setColumnVisibility(initialColumnVisibility);
     table.resetRowSelection();
     table.resetPagination();
   };

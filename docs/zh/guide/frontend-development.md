@@ -48,6 +48,13 @@ Bold（700）、Black（900），中间字重按 CSS 规则选择最接近的字
 订阅表单打开时须重置字段和无限流量开关。管理端的 `subscription-forms.spec.ts`
 浏览器测试覆盖响应式布局、连续输入、日历焦点、取消、重新打开和请求参数。
 
+## 表格列默认显示
+
+`ProTable` 通过 `initialColumnVisibility` 配置列选择菜单中默认不勾选的列。
+服务器、节点和产品表格设置 `{ sort: false }`，使排序 ID 列默认隐藏；节点组和支付
+表格的排序列保持默认显示。用户可手动勾选排序 ID 以查看或编辑排序值；刷新保留当前
+勾选状态，重置表格后恢复初始列显示配置。排序 ID 列隐藏时，仍可拖拽行调整顺序。
+
 ## 测试与文件归属
 
 - 应用单元/组件测试：`apps/{user,admin,payment-portal}/src/**/*.test.{ts,tsx}`，与被测源码相邻，由各 app 的 `vitest.config.ts` 执行。

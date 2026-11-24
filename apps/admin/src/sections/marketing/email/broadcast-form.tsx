@@ -46,6 +46,28 @@ import { z } from "zod";
 
 export default function EmailBroadcastForm() {
   const { t } = useTranslation("marketing");
+  const sendScopeOptions = [
+    { id: "1", label: t("allUsers", "All Users") },
+    { id: "2", label: t("subscribedUsersOnly", "Subscribed users only") },
+    {
+      id: "3",
+      label: t(
+        "expiredSubscriptionUsersOnly",
+        "Expired subscription users only"
+      ),
+    },
+    {
+      id: "4",
+      label: t("noSubscriptionUsersOnly", "No subscription users only"),
+    },
+    {
+      id: "5",
+      label: t(
+        "specificUsersOnly",
+        "Additional emails only (skip platform users)"
+      ),
+    },
+  ];
 
   // Define schema with internationalized error messages
   const emailBroadcastSchema = z.object({
@@ -439,39 +461,15 @@ export default function EmailBroadcastForm() {
                                   </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
-                                  <ListBox>
-                                    <SelectItem id="1">
-                                      {t("allUsers", "All Users")}
-                                    </SelectItem>{" "}
-                                    {/* ScopeAll */}
-                                    <SelectItem id="2">
-                                      {t(
-                                        "subscribedUsersOnly",
-                                        "Subscribed users only"
-                                      )}
-                                    </SelectItem>{" "}
-                                    {/* ScopeActive */}
-                                    <SelectItem id="3">
-                                      {t(
-                                        "expiredSubscriptionUsersOnly",
-                                        "Expired subscription users only"
-                                      )}
-                                    </SelectItem>{" "}
-                                    {/* ScopeExpired */}
-                                    <SelectItem id="4">
-                                      {t(
-                                        "noSubscriptionUsersOnly",
-                                        "No subscription users only"
-                                      )}
-                                    </SelectItem>{" "}
-                                    {/* ScopeNone */}
-                                    <SelectItem id="5">
-                                      {t(
-                                        "specificUsersOnly",
-                                        "Additional emails only (skip platform users)"
-                                      )}
-                                    </SelectItem>{" "}
-                                    {/* ScopeSkip */}
+                                  <ListBox items={sendScopeOptions}>
+                                    {(option) => (
+                                      <SelectItem
+                                        id={option.id}
+                                        textValue={option.label}
+                                      >
+                                        {option.label}
+                                      </SelectItem>
+                                    )}
                                   </ListBox>
                                 </SelectContent>
                               </Select>

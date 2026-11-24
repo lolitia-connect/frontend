@@ -12,7 +12,7 @@ Contains two functions:
 
 #### 1. Email Broadcast
 
-Send marketing emails to users in bulk.
+Send marketing emails to users in bulk. Enter the subject and body in the **Email Content** tab, then switch to **Send Settings** to configure recipients, scheduling, and limits. Switching tabs preserves the values already entered.
 
 **Form Fields**:
 
@@ -20,9 +20,10 @@ Send marketing emails to users in bulk.
 - **Email Content** (Required) - Supports HTML editor for rich text emails
 - **Send Scope** - Select target user group:
   - All users
-  - Users with subscriptions
+  - Users with active subscriptions
+  - Users with expired subscriptions
   - Users without subscriptions
-  - Filter by registration time
+  - Additional emails only (skips platform users and disables registration date filters)
 - **Registration Time Range** (Optional) - Filter users registered in specific period
 - **Additional Emails** (Optional) - Manually input extra email addresses, one per line
 - **Scheduled Send** (Optional) - Set future send time

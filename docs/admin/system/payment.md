@@ -38,6 +38,8 @@ Opens side drawer to modify payment config:
 - Transaction fee rate
 - Min/Max amount
 
+After saving, you can immediately reopen the same channel to see its saved configuration. Closing the drawer discards any unsubmitted changes.
+
 #### Delete
 Deletes payment method (requires confirmation).
 

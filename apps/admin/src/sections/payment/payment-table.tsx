@@ -56,7 +56,7 @@ export default function PaymentTable() {
       action={ref}
       actions={{
         render: (row) => [
-          <PaymentForm<PaymentFormValues>
+          <PaymentForm
             initialValues={row}
             isEdit
             key="edit"
@@ -64,7 +64,7 @@ export default function PaymentTable() {
             onSubmit={async (values) => {
               setLoading(true);
               try {
-                await updatePaymentMethod(
+                const { data } = await updatePaymentMethod(
                   buildPaymentPayload(
                     values,
                     row
@@ -72,11 +72,11 @@ export default function PaymentTable() {
                 );
                 toast.success(t("updateSuccess", "Updated successfully"));
                 ref.current?.refresh();
-                setLoading(false);
-                return true;
+                return data?.data ?? values;
               } catch {
-                setLoading(false);
                 return false;
+              } finally {
+                setLoading(false);
               }
             }}
             title={t("editPayment", "Edit Payment Method")}
@@ -244,7 +244,7 @@ export default function PaymentTable() {
       header={{
         title: t("paymentManagement", "Payment Management"),
         toolbar: (
-          <PaymentForm<PaymentFormValues>
+          <PaymentForm
             loading={loading}
             onSubmit={async (values) => {
               setLoading(true);
@@ -256,7 +256,7 @@ export default function PaymentTable() {
                 toast.success(t("createSuccess", "Created successfully"));
                 ref.current?.refresh();
                 setLoading(false);
-                return true;
+                return values;
               } catch {
                 setLoading(false);
                 return false;

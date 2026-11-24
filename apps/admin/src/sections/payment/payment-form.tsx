@@ -31,7 +31,7 @@ import { Icon } from "@workspace/ui/composed/icon";
 import { useQuery } from "@workspace/ui/hooks/query";
 import { getPaymentPlatform } from "@workspace/ui/services/admin/admin";
 import { unitConversion } from "@workspace/ui/utils/unit-conversions";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import * as z from "zod";
@@ -53,27 +53,46 @@ export type PaymentFormValues = {
   bill_desc?: string;
 };
 
-interface PaymentFormProps<T extends { platform?: string }> {
-  initialValues?: T;
+const emptyPayment: PaymentFormValues = {
+  name: "",
+  platform: "",
+  icon: "",
+  domain: "",
+  config: {},
+  fee_mode: 0,
+  fee_percent: 0,
+  fee_amount: 0,
+  exchange_rate: 1,
+  sort: 0,
+};
+
+interface PaymentFormProps {
+  initialValues?: PaymentFormValues;
   isEdit?: boolean;
   loading?: boolean;
-  onSubmit: (values: T) => Promise<boolean>;
+  onSubmit: (values: PaymentFormValues) => Promise<PaymentFormValues | false>;
   title: string;
   trigger: React.ReactElement<{ onPress?: (event: unknown) => void }>;
 }
 
-export default function PaymentForm<T extends { platform?: string }>({
+export default function PaymentForm({
   trigger,
   title,
   loading,
   initialValues,
   onSubmit,
   isEdit,
-}: PaymentFormProps<T>) {
+}: PaymentFormProps) {
   const { t } = useTranslation("payment");
   const { common } = useGlobalStore();
   const { currency } = common;
   const [open, setOpen] = useState(false);
+  const latestValues = useRef(initialValues);
+
+  // Keep refreshed values for the next open without overwriting an active draft.
+  useEffect(() => {
+    latestValues.current = initialValues;
+  }, [initialValues]);
 
   const { data: platformData } = useQuery({
     queryKey: ["getPaymentPlatform"],
@@ -101,19 +120,7 @@ export default function PaymentForm<T extends { platform?: string }>({
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: "",
-      platform: "",
-      icon: "",
-      domain: "",
-      config: {},
-      fee_mode: 0,
-      fee_percent: 0,
-      fee_amount: 0,
-      exchange_rate: 1,
-      sort: 0,
-      ...(initialValues as any),
-    },
+    defaultValues: { ...emptyPayment, ...initialValues },
   });
 
   const feeMode = form.watch("fee_mode");
@@ -139,9 +146,11 @@ export default function PaymentForm<T extends { platform?: string }>({
     }
   }, [feeMode, form]);
 
-  const handleClose = () => {
-    form.reset();
-    setOpen(false);
+  const handleOpenChange = (nextOpen: boolean) => {
+    if (nextOpen) {
+      form.reset({ ...emptyPayment, ...latestValues.current });
+    }
+    setOpen(nextOpen);
   };
 
   const handleSubmit = async (values: z.infer<typeof formSchema>) => {
@@ -156,9 +165,10 @@ export default function PaymentForm<T extends { platform?: string }>({
       cleanedValues.fee_percent = undefined;
     }
 
-    const success = await onSubmit(cleanedValues as unknown as T);
-    if (success) {
-      handleClose();
+    const saved = await onSubmit(cleanedValues);
+    if (saved) {
+      if (isEdit) latestValues.current = saved;
+      setOpen(false);
     }
   };
 
@@ -169,7 +179,7 @@ export default function PaymentForm<T extends { platform?: string }>({
   };
 
   return (
-    <Sheet isOpen={open} onOpenChange={setOpen} placement="right">
+    <Sheet isOpen={open} onOpenChange={handleOpenChange} placement="right">
       <Sheet.Trigger>{trigger}</Sheet.Trigger>
       <Sheet.Backdrop>
         <Sheet.Content>
@@ -617,7 +627,11 @@ export default function PaymentForm<T extends { platform?: string }>({
             </ScrollArea>
 
             <Sheet.Footer className="flex-row justify-end gap-2 pt-3">
-              <Button loading={loading} onClick={handleClose} variant="outline">
+              <Button
+                loading={loading}
+                onClick={() => setOpen(false)}
+                variant="outline"
+              >
                 {t("cancel", "Cancel")}
               </Button>
               <Button

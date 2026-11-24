@@ -665,9 +665,9 @@ netlify deploy --prod
 
 三个 Next.js 应用均可选用 Sentry 监控。开发模式（`next dev`）和测试不会向 Sentry 发送数据，即使本地 `.env` 中已配置 DSN。在 Netlify 中，为每个已部署的站点设置 `NEXT_PUBLIC_SENTRY_DSN`，值为对应 Sentry 项目的公开 DSN，环境选 **Production**，作用范围选 **Builds**。不要在 Deploy Preview 或 Branch Deploy 中设置 DSN，因为这些环境也使用 Next.js 生产构建。只有生产构建且 DSN 非空时才会上报。可选在构建时设置 `NEXT_PUBLIC_SENTRY_RELEASE`，值为部署对应的提交 SHA 或发布标识。生产环境链路采样率为 10%。不要提交本地环境文件，也不要把认证令牌放进任何 `NEXT_PUBLIC_*` 变量。
 
-集成会发送已脱敏的错误和链路数据，不在错误事件中发送请求体、请求头、Cookie、URL 查询参数值或堆栈源码片段。显式发送到 Sentry 的日志只保留通用消息和级别。
+集成会发送已脱敏的错误和链路数据，不在错误事件中发送请求体、请求头、Cookie、URL 查询参数值或堆栈源码片段。显式发送到 Sentry 的日志只保留通用消息和级别。错误事件会保留白名单内的捕获机制及 handled 状态、浏览器/服务端来源（`error.runtime`）、Next.js 路由器种类和路由类型，以及用于关联服务端日志的纯数字错误 digest。未知异常消息仍使用通用文案。Next.js 路由客户端引用清单缺失时，显示 `Next.js client reference manifest is missing`，并带有 `error.kind=nextjs.missing_client_reference_manifest`；原始消息中的路由会被移除。这表示服务端渲染或构建产物异常，应检查部署中的路由清单和函数日志。
 
-三个浏览器应用均使用同一个生产 DSN 条件来启用 Session Replay。发生错误时会保存缓冲的回放。页面文字和输入值会脱敏，媒体、原始 URL、控制台输出、网络详情和录制的样式表会被过滤。可在 Sentry 的错误详情里打开关联回放，查看页面结构和操作。
+三个浏览器应用均使用同一个生产 DSN 条件来启用 Session Replay。浏览器发生错误时会保存缓冲的回放。仅由服务端 `onRequestError` 上报的错误没有浏览器录制可关联，因此没有回放不代表上报失败。页面文字和输入值会脱敏，媒体、原始 URL、控制台输出、网络详情和录制的样式表会被过滤。可在 Sentry 的错误详情里打开关联回放，查看页面结构和操作。
 
 Netlify 子域名的 HTML 有时会在字符集声明后插入托管注释，注释前的换行会形成一个文本节点。React 水合时按 DOM 位置匹配普通的 `<head>` 元素。三个应用都用 React 管理字体样式表，并在 `<body>` 开头执行主题脚本，以便在显示内容前应用主题。Netlify 子域名和自定义域名上的水合错误都会上报到 Sentry。[Netlify 托管注释示例](https://answers.netlify.com/t/170697)
 

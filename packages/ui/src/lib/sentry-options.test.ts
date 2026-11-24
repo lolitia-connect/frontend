@@ -167,6 +167,150 @@ describe("Sentry session replay", () => {
 });
 
 describe("Sentry telemetry redaction", () => {
+  it("identifies a missing Next.js manifest without exposing the requested route", async () => {
+    const originalException = Object.assign(new Error("private message"), {
+      digest: "1234567890",
+    });
+    const result = await beforeSend(
+      {
+        platform: "node",
+        contexts: {
+          trace: {
+            trace_id: "trace",
+            span_id: "span",
+            data: { token: "secret" },
+          },
+          nextjs: {
+            request_path: "/oauth/private?token=secret",
+            router_path: "/oauth/[platform]/page",
+            router_kind: "App Router",
+            route_type: "render",
+          },
+        },
+        exception: {
+          values: [
+            {
+              type: "InvariantError",
+              value:
+                'Invariant: The client reference manifest for route "/oauth/private?token=secret" does not exist. This is a bug in Next.js.',
+              mechanism: {
+                type: "auto.function.nextjs.on_request_error",
+                handled: false,
+                data: { token: "secret" },
+                description: "secret",
+              },
+              stacktrace: {
+                frames: [
+                  { filename: "node_modules_chunk.js", lineno: 11, colno: 892 },
+                ],
+              },
+            },
+          ],
+        },
+        tags: { private: "secret" },
+      },
+      { originalException }
+    );
+
+    expect(result?.exception?.values?.[0]).toMatchObject({
+      type: "InvariantError",
+      value: "Next.js client reference manifest is missing",
+      mechanism: {
+        type: "auto.function.nextjs.on_request_error",
+        handled: false,
+      },
+      stacktrace: {
+        frames: [{ filename: "node_modules_chunk.js", lineno: 11, colno: 892 }],
+      },
+    });
+    expect(result?.tags).toEqual({
+      "error.runtime": "server",
+      "error.kind": "nextjs.missing_client_reference_manifest",
+    });
+    expect(result?.contexts).toEqual({
+      trace: { trace_id: "trace", span_id: "span" },
+      nextjs: { router_kind: "App Router", route_type: "render" },
+      nextjs_error: { digest: "1234567890" },
+    });
+    expect(JSON.stringify(result)).not.toMatch(/secret|private|oauth/);
+    expect(result?.tags).not.toHaveProperty("replayId");
+  });
+
+  it("keeps browser error handling and Replay correlation", async () => {
+    const replayId = "9c75a8ec25aa48b4a97c4184ddec4662";
+    const result = await beforeSend(
+      {
+        platform: "javascript",
+        tags: { replayId },
+        exception: {
+          values: [
+            {
+              type: "TypeError",
+              value: "secret",
+              mechanism: {
+                type: "auto.browser.global_handlers.onerror",
+                handled: false,
+              },
+            },
+          ],
+        },
+      },
+      {}
+    );
+
+    expect(result?.tags).toEqual({ replayId, "error.runtime": "browser" });
+    expect(result?.exception?.values?.[0]).toMatchObject({
+      value: "Unhandled application error",
+      mechanism: {
+        type: "auto.browser.global_handlers.onerror",
+        handled: false,
+      },
+    });
+    expect(JSON.stringify(result)).not.toContain("secret");
+  });
+
+  it.each([
+    "secret",
+    "123456789012345678901",
+    123,
+    undefined,
+  ])("drops untrusted diagnostic fields including digest %s", async (digest) => {
+    const result = await beforeSend(
+      {
+        contexts: {
+          nextjs: {
+            router_kind: "secret",
+            route_type: "secret",
+            request_path: "secret",
+          },
+        },
+        exception: {
+          values: [
+            {
+              type: "secret",
+              value:
+                'The client reference manifest for route "secret" does not exist.',
+              mechanism: {
+                type: "secret",
+                handled: false,
+                data: { token: "secret" },
+              },
+            },
+          ],
+        },
+      },
+      { originalException: Object.assign(new Error("secret"), { digest }) }
+    );
+
+    expect(JSON.stringify(result)).not.toContain("secret");
+    expect(result?.contexts?.nextjs_error).toBeUndefined();
+    expect(result?.exception?.values?.[0]?.mechanism).toBeUndefined();
+    expect(result?.exception?.values?.[0]?.value).toBe(
+      "Unhandled application error"
+    );
+    expect(result?.tags).not.toHaveProperty("error.kind");
+  });
+
   it("removes request data, exception messages and source lines while retaining useful frames", async () => {
     const error = await beforeSend(
       {

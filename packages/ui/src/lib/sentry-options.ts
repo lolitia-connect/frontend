@@ -1,4 +1,4 @@
-import type { DebugImage, Options, StackFrame } from "@sentry/core";
+import type { DebugImage, Mechanism, Options, StackFrame } from "@sentry/core";
 
 const safeErrorTypes = new Set([
   "Error",
@@ -7,7 +7,45 @@ const safeErrorTypes = new Set([
   "SyntaxError",
   "TypeError",
   "URIError",
+  "InvariantError",
 ]);
+
+const safeMechanismTypes = new Set([
+  "generic",
+  "auto.function.nextjs.on_request_error",
+  "auto.function.nextjs.server_component",
+  "auto.function.nextjs.route_handler",
+  "auto.function.nextjs.server_action",
+  "auto.function.nextjs.generation_function",
+  "auto.function.nextjs.wrap_middleware",
+  "auto.browser.global_handlers.onerror",
+  "auto.browser.global_handlers.onunhandledrejection",
+]);
+const missingClientManifest =
+  /^Invariant: The client reference manifest for route "[^"\r\n]*" does not exist\. This is a bug in Next\.js\.$/;
+
+function scrubMechanism(mechanism?: Mechanism): Mechanism | undefined {
+  if (!(mechanism && safeMechanismTypes.has(mechanism.type))) return;
+  return { type: mechanism.type, handled: mechanism.handled };
+}
+
+function scrubNextContext(context?: Record<string, unknown>) {
+  if (!context) return;
+  return {
+    router_kind:
+      typeof context.router_kind === "string" &&
+      ["App Router", "Pages Router"].includes(context.router_kind)
+        ? context.router_kind
+        : undefined,
+    route_type:
+      typeof context.route_type === "string" &&
+      ["render", "route", "action", "middleware", "proxy"].includes(
+        context.route_type
+      )
+        ? context.route_type
+        : undefined,
+  };
+}
 
 const nextBuildPath =
   /\/_next\/(static\/(?:immutable\/)?chunks\/[\w%./()[\]@+~-]+\.[cm]?js)$|(?:^|\/(?:_next|\.next[^/]*)\/)(server\/[\w%./()[\]@+~-]+\.[cm]?js)$/;
@@ -75,16 +113,50 @@ export function sentryOptions(
       urlQueryParams: false,
       userInfo: false,
     },
-    beforeSend(event) {
+    beforeSend(event, hint) {
       const trace = event.contexts?.trace;
+      const nextjs = scrubNextContext(event.contexts?.nextjs);
+      const originalError = hint.originalException;
+      const digest =
+        originalError instanceof Error
+          ? Object.getOwnPropertyDescriptor(originalError, "digest")?.value
+          : undefined;
+      const tags: Record<string, string> = {};
       const replayId = event.tags?.replayId;
+      if (typeof replayId === "string" && /^[\da-f]{32}$/i.test(replayId)) {
+        tags.replayId = replayId;
+      }
+      if (nextjs || event.platform === "node") {
+        tags["error.runtime"] = "server";
+      } else if (event.platform === "javascript") {
+        tags["error.runtime"] = "browser";
+      }
+      if (
+        event.exception?.values?.some((exception) =>
+          missingClientManifest.test(exception.value ?? "")
+        )
+      ) {
+        tags["error.kind"] = "nextjs.missing_client_reference_manifest";
+      }
       const images = scrubSourceMapImages(event.debug_meta?.images);
       const mappedFiles = new Set(images.map((image) => image.code_file));
       return {
         type: event.type,
-        contexts: trace && {
-          trace: { span_id: trace.span_id, trace_id: trace.trace_id },
-        },
+        contexts:
+          trace ||
+          nextjs ||
+          (typeof digest === "string" && /^\d{1,20}$/.test(digest))
+            ? {
+                ...(trace && {
+                  trace: { span_id: trace.span_id, trace_id: trace.trace_id },
+                }),
+                ...(nextjs && { nextjs }),
+                ...(typeof digest === "string" &&
+                  /^\d{1,20}$/.test(digest) && {
+                    nextjs_error: { digest },
+                  }),
+              }
+            : undefined,
         ...(images.length > 0 && { debug_meta: { images } }),
         environment: event.environment,
         event_id: event.event_id,
@@ -98,7 +170,10 @@ export function sentryOptions(
             type: safeErrorTypes.has(exception.type ?? "")
               ? exception.type
               : "Error",
-            value: "Unhandled application error",
+            value: missingClientManifest.test(exception.value ?? "")
+              ? "Next.js client reference manifest is missing"
+              : "Unhandled application error",
+            mechanism: scrubMechanism(exception.mechanism),
           })),
         },
         level: event.level,
@@ -106,10 +181,7 @@ export function sentryOptions(
         platform: event.platform,
         release: event.release,
         sdk: event.sdk,
-        ...(typeof replayId === "string" &&
-          /^[\da-f]{32}$/i.test(replayId) && {
-            tags: { replayId },
-          }),
+        ...(Object.keys(tags).length > 0 && { tags }),
         timestamp: event.timestamp,
       };
     },

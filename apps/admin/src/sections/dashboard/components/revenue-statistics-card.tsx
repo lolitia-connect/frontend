@@ -53,6 +53,10 @@ export function RevenueStatisticsCard() {
       label: t("repurchase", "Repurchase"),
       color: "var(--primary-400)",
     },
+    recharge: {
+      label: t("recharge", "Recharge"),
+      color: "var(--primary-500)",
+    },
     redemption: {
       label: t("redemption", "Redemption"),
       color: "var(--success)",
@@ -110,6 +114,7 @@ export function RevenueStatisticsCard() {
           <CardContent className="h-80">
             {RevenueStatistics?.today.new_order_amount ||
             RevenueStatistics?.today.renewal_order_amount ||
+            RevenueStatistics?.today.recharge_order_amount ||
             RevenueStatistics?.today.redemption_order_amount ? (
               <ChartContainer
                 className="mx-auto h-full max-h-80 w-full"
@@ -138,6 +143,14 @@ export function RevenueStatisticsCard() {
                           RevenueStatistics?.today.renewal_order_amount
                         ),
                         fill: "var(--color-repurchase)",
+                      },
+                      {
+                        type: "recharge",
+                        value: unitConversion(
+                          "centsToDollars",
+                          RevenueStatistics?.today.recharge_order_amount ?? 0
+                        ),
+                        fill: "var(--color-recharge)",
                       },
                       {
                         type: "redemption",
@@ -227,6 +240,18 @@ export function RevenueStatisticsCard() {
               <Separator className="!h-10 mx-2 w-px" orientation="vertical" />
               <div className="grid flex-1 auto-rows-min gap-0.5">
                 <div className="text-muted text-xs">
+                  {IncomeStatisticsConfig.recharge.label}
+                </div>
+                <div className="font-bold text-xl tabular-nums leading-none">
+                  <Display
+                    type="currency"
+                    value={RevenueStatistics?.today.recharge_order_amount ?? 0}
+                  />
+                </div>
+              </div>
+              <Separator className="!h-10 mx-2 w-px" orientation="vertical" />
+              <div className="grid flex-1 auto-rows-min gap-0.5">
+                <div className="text-muted text-xs">
                   {IncomeStatisticsConfig.redemption.label}
                 </div>
                 <div className="font-bold text-xl tabular-nums leading-none">
@@ -262,6 +287,10 @@ export function RevenueStatisticsCard() {
                       repurchase: unitConversion(
                         "centsToDollars",
                         item.renewal_order_amount
+                      ),
+                      recharge: unitConversion(
+                        "centsToDollars",
+                        item.recharge_order_amount ?? 0
                       ),
                       redemption: unitConversion(
                         "centsToDollars",
@@ -304,6 +333,12 @@ export function RevenueStatisticsCard() {
                     stackId="a"
                   />
                   <Bar
+                    dataKey="recharge"
+                    fill="var(--color-recharge)"
+                    radius={0}
+                    stackId="a"
+                  />
+                  <Bar
                     dataKey="redemption"
                     fill="var(--color-redemption)"
                     radius={[4, 4, 0, 0]}
@@ -328,7 +363,7 @@ export function RevenueStatisticsCard() {
                             <div className="ml-auto flex items-baseline gap-0.5 font-medium font-mono text-foreground tabular-nums">
                               {value}
                             </div>
-                            {index === 2 && (
+                            {index === 3 && (
                               <div className="flex basis-full items-center border-t pt-1.5 font-medium text-foreground text-xs">
                                 {t("totalIncome", "Total Income")}
                                 <div className="ml-auto flex items-baseline gap-0.5 font-medium font-mono text-foreground tabular-nums">
@@ -391,6 +426,20 @@ export function RevenueStatisticsCard() {
               <Separator className="!h-10 mx-2 w-px" orientation="vertical" />
               <div className="grid flex-1 auto-rows-min gap-0.5">
                 <div className="text-muted text-xs">
+                  {IncomeStatisticsConfig.recharge.label}
+                </div>
+                <div className="font-bold text-xl tabular-nums leading-none">
+                  <Display
+                    type="currency"
+                    value={
+                      RevenueStatistics?.monthly.recharge_order_amount ?? 0
+                    }
+                  />
+                </div>
+              </div>
+              <Separator className="!h-10 mx-2 w-px" orientation="vertical" />
+              <div className="grid flex-1 auto-rows-min gap-0.5">
+                <div className="text-muted text-xs">
                   {IncomeStatisticsConfig.redemption.label}
                 </div>
                 <div className="font-bold text-xl tabular-nums leading-none">
@@ -426,6 +475,10 @@ export function RevenueStatisticsCard() {
                       repurchase: unitConversion(
                         "centsToDollars",
                         item.renewal_order_amount
+                      ),
+                      recharge: unitConversion(
+                        "centsToDollars",
+                        item.recharge_order_amount ?? 0
                       ),
                       redemption: unitConversion(
                         "centsToDollars",
@@ -476,7 +529,7 @@ export function RevenueStatisticsCard() {
                             <div className="ml-auto flex items-baseline gap-0.5 font-medium font-mono text-foreground tabular-nums">
                               {value}
                             </div>
-                            {index === 2 && (
+                            {index === 3 && (
                               <div className="flex basis-full items-center border-t pt-1.5 font-medium text-foreground text-xs">
                                 {t("totalIncome", "Total Income")}
                                 <div className="ml-auto flex items-baseline gap-0.5 font-medium font-mono text-foreground tabular-nums">
@@ -507,6 +560,14 @@ export function RevenueStatisticsCard() {
                     type="natural"
                   />
                   <Area
+                    dataKey="recharge"
+                    fill="var(--color-recharge)"
+                    fillOpacity={0.4}
+                    stackId="a"
+                    stroke="var(--color-recharge)"
+                    type="natural"
+                  />
+                  <Area
                     dataKey="redemption"
                     fill="var(--color-redemption)"
                     fillOpacity={0.4}
@@ -533,6 +594,18 @@ export function RevenueStatisticsCard() {
                   <Display
                     type="currency"
                     value={RevenueStatistics?.all.amount_total}
+                  />
+                </div>
+              </div>
+              <Separator className="!h-10 mx-2 w-px" orientation="vertical" />
+              <div className="grid flex-1 auto-rows-min gap-0.5">
+                <div className="text-muted text-xs">
+                  {IncomeStatisticsConfig.recharge.label}
+                </div>
+                <div className="font-bold text-xl tabular-nums leading-none">
+                  <Display
+                    type="currency"
+                    value={RevenueStatistics?.all.recharge_order_amount ?? 0}
                   />
                 </div>
               </div>

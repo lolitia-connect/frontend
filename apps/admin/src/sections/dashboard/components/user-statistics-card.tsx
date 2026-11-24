@@ -55,6 +55,10 @@ export function UserStatisticsCard() {
       label: t("repurchase", "Repurchase"),
       color: "var(--primary-700)",
     },
+    recharge: {
+      label: t("recharge", "Recharge"),
+      color: "var(--primary-500)",
+    },
     redemption: {
       label: t("redemption", "Redemption"),
       color: "var(--success)",
@@ -110,6 +114,7 @@ export function UserStatisticsCard() {
             {UserStatistics?.today.register ||
             UserStatistics?.today.new_order_users ||
             UserStatistics?.today.renewal_order_users ||
+            UserStatistics?.today.recharge_order_users ||
             UserStatistics?.today.redemption_order_users ? (
               <ChartContainer
                 className="mx-auto h-full max-h-80 w-full"
@@ -139,6 +144,11 @@ export function UserStatisticsCard() {
                         fill: "var(--color-repurchase)",
                       },
                       {
+                        type: "recharge",
+                        value: UserStatistics?.today.recharge_order_users || 0,
+                        fill: "var(--color-recharge)",
+                      },
+                      {
                         type: "redemption",
                         value:
                           UserStatistics?.today.redemption_order_users || 0,
@@ -157,6 +167,7 @@ export function UserStatisticsCard() {
                             (UserStatistics?.today.register || 0) +
                             (UserStatistics?.today.new_order_users || 0) +
                             (UserStatistics?.today.renewal_order_users || 0) +
+                            (UserStatistics?.today.recharge_order_users || 0) +
                             (UserStatistics?.today.redemption_order_users || 0);
                           return (
                             <text
@@ -217,6 +228,15 @@ export function UserStatisticsCard() {
               <Separator className="!h-10 mx-2 w-px" orientation="vertical" />
               <div className="grid flex-1 auto-rows-min gap-0.5">
                 <div className="text-muted text-xs">
+                  {UserStatisticsConfig.recharge.label}
+                </div>
+                <div className="font-bold text-xl tabular-nums leading-none">
+                  {UserStatistics?.today.recharge_order_users ?? 0}
+                </div>
+              </div>
+              <Separator className="!h-10 mx-2 w-px" orientation="vertical" />
+              <div className="grid flex-1 auto-rows-min gap-0.5">
+                <div className="text-muted text-xs">
                   {UserStatisticsConfig.redemption.label}
                 </div>
                 <div className="font-bold text-xl tabular-nums leading-none">
@@ -243,6 +263,7 @@ export function UserStatisticsCard() {
                       register: item.register,
                       new_purchase: item.new_order_users,
                       repurchase: item.renewal_order_users,
+                      recharge: item.recharge_order_users ?? 0,
                       redemption: item.redemption_order_users ?? 0,
                     })) || []
                   }
@@ -279,6 +300,12 @@ export function UserStatisticsCard() {
                   <Bar
                     dataKey="repurchase"
                     fill="var(--color-repurchase)"
+                    radius={0}
+                    stackId="a"
+                  />
+                  <Bar
+                    dataKey="recharge"
+                    fill="var(--color-recharge)"
                     radius={0}
                     stackId="a"
                   />
@@ -332,6 +359,15 @@ export function UserStatisticsCard() {
               <Separator className="!h-10 mx-2 w-px" orientation="vertical" />
               <div className="grid flex-1 auto-rows-min gap-0.5">
                 <div className="text-muted text-xs">
+                  {UserStatisticsConfig.recharge.label}
+                </div>
+                <div className="font-bold text-xl tabular-nums leading-none">
+                  {UserStatistics?.monthly.recharge_order_users ?? 0}
+                </div>
+              </div>
+              <Separator className="!h-10 mx-2 w-px" orientation="vertical" />
+              <div className="grid flex-1 auto-rows-min gap-0.5">
+                <div className="text-muted text-xs">
                   {UserStatisticsConfig.redemption.label}
                 </div>
                 <div className="font-bold text-xl tabular-nums leading-none">
@@ -357,6 +393,7 @@ export function UserStatisticsCard() {
                       register: item.register,
                       new_purchase: item.new_order_users,
                       repurchase: item.renewal_order_users,
+                      recharge: item.recharge_order_users ?? 0,
                       redemption: item.redemption_order_users ?? 0,
                     })) || []
                   }
@@ -409,6 +446,14 @@ export function UserStatisticsCard() {
                     type="natural"
                   />
                   <Area
+                    dataKey="recharge"
+                    fill="var(--color-recharge)"
+                    fillOpacity={0.4}
+                    stackId="a"
+                    stroke="var(--color-recharge)"
+                    type="natural"
+                  />
+                  <Area
                     dataKey="redemption"
                     fill="var(--color-redemption)"
                     fillOpacity={0.4}
@@ -433,6 +478,15 @@ export function UserStatisticsCard() {
                 </div>
                 <div className="font-bold text-xl tabular-nums leading-none">
                   {UserStatistics?.all.register}
+                </div>
+              </div>
+              <Separator className="!h-10 mx-2 w-px" orientation="vertical" />
+              <div className="grid flex-1 auto-rows-min gap-0.5">
+                <div className="text-muted text-xs">
+                  {UserStatisticsConfig.recharge.label}
+                </div>
+                <div className="font-bold text-xl tabular-nums leading-none">
+                  {UserStatistics?.all.recharge_order_users ?? 0}
                 </div>
               </div>
               <Separator className="!h-10 mx-2 w-px" orientation="vertical" />

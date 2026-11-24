@@ -76,6 +76,7 @@ Displays system revenue data with three time dimensions:
 **Today's Data** - Pie Chart:
 - **New Purchase**: Revenue from new user orders
 - **Renewal**: Revenue from renewal orders
+- **Recharge**: Paid balance recharge order amounts
 - **Redemption**: Actual redemption order amounts; free redemptions contribute zero
 - **Center Number**: Today's total revenue
 
@@ -88,12 +89,15 @@ Displays system revenue data with three time dimensions:
 **Total Data** - Area Chart:
 - **New Purchase**: Monthly new purchase revenue
 - **Renewal**: Monthly renewal revenue
+- **Recharge**: Monthly paid balance recharge amounts
 - **Redemption**: Monthly actual redemption order amounts
 - Area chart showing long-term trends
 
 **Bottom Summary**:
-- Today and Month: total, new purchase, renewal, and redemption amounts
-- Total: total revenue and redemption amounts
+- Today and Month: total, new purchase, renewal, recharge, and redemption amounts
+- Total: total revenue, recharge, and redemption amounts
+
+Recharge orders are classified separately by order type in every summary and daily/monthly trend, regardless of their first-purchase flag. Historical recharge orders use the same classification. Total revenue continues to include paid recharge amounts; purchases paid with the balance are excluded from revenue to avoid counting the same money twice.
 
 ### User Statistics Chart
 
@@ -106,32 +110,37 @@ Displays user-related data with three time dimensions:
 
 **Today's Data** - Pie Chart:
 - **Register**: Today's new registered users
-- **New Purchase**: Today's first-time buyers, excluding redemptions
-- **Repurchase**: Today's renewal users, excluding redemptions
+- **New Purchase**: Today's first-time buyers, excluding recharges and redemptions
+- **Repurchase**: Today's renewal users, excluding recharges and redemptions
+- **Recharge**: Distinct users with paid balance recharge orders today
 - **Redemption**: Distinct users who redeemed a subscription code today
-- **Center Number**: Sum of today's category counts (register + new purchase + repurchase + redemption)
+- **Center Number**: Sum of today's category counts (register + new purchase + repurchase + recharge + redemption)
+
+Multiple recharge orders by one user count once per period. A user who both recharges and purchases or renews counts in each applicable category.
 
 Redemptions have a separate category in today's, monthly, and lifetime summaries and daily/monthly trends. Multiple redemptions by the same user count once per period; users who both purchase and redeem count in each applicable category. Historical redemption orders are classified by order type regardless of their original first-purchase flag. Redemption does not consume eligibility for a subsequent first paid purchase. Free redemptions contribute zero revenue; the plan's list price is not added to revenue.
 
 **Month Data** - Bar Chart:
 - X-axis: Daily dates
 - Y-axis: User count
-- Four category series:
+- Five category series:
   - Registered users
   - New purchase users
   - Renewal users
+  - Recharge users
   - Redemption users
 
 **Total Data** - Area Chart:
 - **Registered Users**: Cumulative registration trend
 - **New Purchase Users**: Cumulative new purchase trend
 - **Renewal Users**: Cumulative renewal trend
+- **Recharge Users**: Cumulative recharge trend
 - **Redemption Users**: Cumulative redemption trend
-- Four area curves showing long-term changes
+- Five area curves showing long-term changes
 
 **Bottom Summary**:
-- Today and Month: registered, new purchase, renewal, and redemption user counts
-- Total: registered and redemption user totals
+- Today and Month: registered, new purchase, renewal, recharge, and redemption user counts
+- Total: registered, recharge, and redemption user totals
 
 ### Traffic Ranking Chart
 

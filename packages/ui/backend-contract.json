@@ -5874,6 +5874,11 @@
         "tag": "json:\"renewal_order_amount\""
       },
       {
+        "name": "RechargeOrderAmount",
+        "type": "int64",
+        "tag": "json:\"recharge_order_amount\""
+      },
+      {
         "name": "RedemptionOrderAmount",
         "type": "int64",
         "tag": "json:\"redemption_order_amount\""
@@ -11035,6 +11040,11 @@
         "tag": "json:\"renewal_order_users\""
       },
       {
+        "name": "RechargeOrderUsers",
+        "type": "int64",
+        "tag": "json:\"recharge_order_users\""
+      },
+      {
         "name": "RedemptionOrderUsers",
         "type": "int64",
         "tag": "json:\"redemption_order_users\""
@@ -13721,6 +13731,6 @@
       "path": "/v2/server/:server_id"
     }
   ],
-  "backendCommit": "5611a4eb0bcc7227c01963ced308fdfd10c50ad8",
-  "backendDirty": false
+  "backendCommit": "8a84176afffff1308256e1e69a552391b0dd0fbc",
+  "backendDirty": true
 }

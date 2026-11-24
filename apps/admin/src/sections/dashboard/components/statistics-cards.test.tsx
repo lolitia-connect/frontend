@@ -38,7 +38,12 @@ vi.mock("@workspace/ui/components/chart", () => ({
     <div data-testid="statistics-chart">
       {JSON.stringify({
         config,
-        data: children.props.data,
+        data:
+          children.props.data ??
+          Children.toArray(children.props.children)
+            .filter(isValidElement)
+            .map((child) => (child.props as { data?: unknown }).data)
+            .find(Boolean),
         series: Children.toArray(children.props.children)
           .filter(isValidElement)
           .map((child) => (child.props as { dataKey?: string }).dataKey)
@@ -84,14 +89,17 @@ const cards = [
     empty: {
       new_order_amount: 0,
       renewal_order_amount: 0,
+      recharge_order_amount: 0,
       redemption_order_amount: 0,
       amount_total: 0,
     },
     series: [
       "new_order_amount",
       "renewal_order_amount",
+      "recharge_order_amount",
       "redemption_order_amount",
     ],
+    rechargeKey: "recharge_order_amount",
     redemptionKey: "redemption_order_amount",
   },
   {
@@ -102,14 +110,17 @@ const cards = [
       register: 0,
       new_order_users: 0,
       renewal_order_users: 0,
+      recharge_order_users: 0,
       redemption_order_users: 0,
     },
     series: [
       "register",
       "new_order_users",
       "renewal_order_users",
+      "recharge_order_users",
       "redemption_order_users",
     ],
+    rechargeKey: "recharge_order_users",
     redemptionKey: "redemption_order_users",
   },
 ];
@@ -119,6 +130,7 @@ describe.each(cards)("$name empty state", ({
   queryKey,
   empty,
   series,
+  rechargeKey,
   redemptionKey,
 }) => {
   type Metric = Partial<typeof empty> & { date?: string };
@@ -211,6 +223,50 @@ describe.each(cards)("$name empty state", ({
         expect(chart.data[0].redemption).toBe(expectedValue);
         expect(chart.data[0].new_purchase).toBe(0);
         expect(chart.data[0].repurchase).toBe(0);
+      }
+    }
+  });
+
+  it("shows recharge separately in summaries and charts for every period", async () => {
+    const metrics = { ...empty, [rechargeKey]: 300 };
+    const expectedValue = rechargeKey === "recharge_order_amount" ? 3 : 300;
+    const expectedSummary =
+      rechargeKey === "recharge_order_amount" ? "$3.00" : "300";
+    renderCard(
+      { ...metrics, list: [{ ...metrics, date: "2026-11-19" }] },
+      metrics
+    );
+
+    for (const tab of ["Today", "Month", "Total"]) {
+      await selectTab(tab);
+      const panel = within(screen.getByRole("tabpanel", { name: tab }));
+      const summary = panel.getByText("Recharge").parentElement;
+      expect(summary?.textContent).toBe(`Recharge${expectedSummary}`);
+      const chart = JSON.parse(
+        panel.getByTestId("statistics-chart").textContent ?? "{}"
+      );
+      expect(chart.config.recharge.label).toBe("Recharge");
+      if (tab === "Today") {
+        expect(
+          chart.data.find((item: { type: string }) => item.type === "recharge")
+            .value
+        ).toBe(expectedValue);
+        expect(
+          chart.data.find(
+            (item: { type: string }) => item.type === "repurchase"
+          ).value
+        ).toBe(0);
+        expect(
+          chart.data.find(
+            (item: { type: string }) => item.type === "new_purchase"
+          ).value
+        ).toBe(0);
+      } else {
+        expect(chart.series).toContain("recharge");
+        expect(chart.data[0].recharge).toBe(expectedValue);
+        expect(chart.data[0].new_purchase).toBe(0);
+        expect(chart.data[0].repurchase).toBe(0);
+        expect(chart.data[0].redemption).toBe(0);
       }
     }
   });

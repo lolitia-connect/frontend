@@ -2468,6 +2468,7 @@ declare namespace BackendAPI {
     amount_total: number;
     new_order_amount: number;
     renewal_order_amount: number;
+    recharge_order_amount: number;
     redemption_order_amount: number;
     list?: OrdersStatistics[];
   };
@@ -4073,6 +4074,7 @@ declare namespace BackendAPI {
     register: number;
     new_order_users: number;
     renewal_order_users: number;
+    recharge_order_users: number;
     redemption_order_users: number;
     list?: UserStatistics[];
   };

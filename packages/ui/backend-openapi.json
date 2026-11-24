@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Lolitia local backend",
-    "version": "5611a4eb0bcc7227c01963ced308fdfd10c50ad8"
+    "version": "8a84176afffff1308256e1e69a552391b0dd0fbc"
   },
   "paths": {
     "/v1/admin/ads/": {
@@ -13848,6 +13848,7 @@
           "amount_total": { "type": "integer", "format": "int64" },
           "new_order_amount": { "type": "integer", "format": "int64" },
           "renewal_order_amount": { "type": "integer", "format": "int64" },
+          "recharge_order_amount": { "type": "integer", "format": "int64" },
           "redemption_order_amount": { "type": "integer", "format": "int64" },
           "list": {
             "type": "array",
@@ -13858,6 +13859,7 @@
           "amount_total",
           "new_order_amount",
           "renewal_order_amount",
+          "recharge_order_amount",
           "redemption_order_amount"
         ]
       },
@@ -16669,6 +16671,7 @@
           "register": { "type": "integer", "format": "int64" },
           "new_order_users": { "type": "integer", "format": "int64" },
           "renewal_order_users": { "type": "integer", "format": "int64" },
+          "recharge_order_users": { "type": "integer", "format": "int64" },
           "redemption_order_users": { "type": "integer", "format": "int64" },
           "list": {
             "type": "array",
@@ -16679,6 +16682,7 @@
           "register",
           "new_order_users",
           "renewal_order_users",
+          "recharge_order_users",
           "redemption_order_users"
         ]
       },

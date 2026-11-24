@@ -253,13 +253,21 @@ for (const { title, endpoint, metrics } of [
     metrics: {
       new_order_amount: 12_000,
       renewal_order_amount: 3000,
-      amount_total: 15_000,
+      recharge_order_amount: 5000,
+      redemption_order_amount: 0,
+      amount_total: 20_000,
     },
   },
   {
     title: "User Statistics",
     endpoint: "user",
-    metrics: { register: 12, new_order_users: 6, renewal_order_users: 3 },
+    metrics: {
+      register: 12,
+      new_order_users: 6,
+      renewal_order_users: 3,
+      recharge_order_users: 5,
+      redemption_order_users: 0,
+    },
   },
 ]) {
   test(`dashboard ${title} charts render across tabs and viewport sizes`, async ({
@@ -315,6 +323,14 @@ for (const { title, endpoint, metrics } of [
         await expect(chart.locator("svg.recharts-surface")).toBeVisible();
         await expect(chart.locator(shape).first()).toBeVisible();
         await expect(chart.locator(".recharts-legend-wrapper")).toBeVisible();
+        await expect(
+          chart.locator(".recharts-legend-wrapper").getByText("Recharge", {
+            exact: true,
+          })
+        ).toBeVisible();
+        await expect(
+          panel.locator(".card__footer").getByText("Recharge", { exact: true })
+        ).toBeVisible();
         await expect(async () => {
           const chartBounds = await chart.boundingBox();
           const contentBounds = await panel

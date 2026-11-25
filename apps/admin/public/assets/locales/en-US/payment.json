@@ -2,6 +2,7 @@
   "applyForPayment": "Apply for Payment",
   "batchDelete": "Batch Delete",
   "cancel": "Cancel",
+  "combinedFee": "Percentage + Fixed Amount",
   "configPlaceholder": "Please fill in the provided {{field}} configuration",
   "confirm": "Confirm",
   "confirmDelete": "Confirm Delete",

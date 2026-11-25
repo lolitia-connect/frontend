@@ -70,6 +70,18 @@ describe("payment methods", () => {
     await waitFor(() => expect(onChange).toHaveBeenCalledWith("-1"));
   });
 
+  it("shows both parts of a combined fee", async () => {
+    mocks.methods.mockResolvedValueOnce({
+      data: {
+        data: { list: [{ ...methods[1], fee_mode: 3, fee_amount: 30 }] },
+      },
+    });
+    renderMethods(vi.fn());
+
+    expect(await screen.findByText("6%")).toBeTruthy();
+    expect(screen.getByText(/^\+.*0\.30$/)).toBeTruthy();
+  });
+
   it("renders percentage fee chips with warning styling", async () => {
     renderMethods(vi.fn(), "card");
 

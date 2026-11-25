@@ -111,6 +111,15 @@ describe("RechargeScreen (HeroUI)", () => {
     }
   });
 
+  it("shows both parts of a combined fee", () => {
+    renderScreen({
+      methods: [{ ...methods[0]!, fee_mode: 3, fee_amount: 0.3 }],
+    });
+
+    expect(screen.getByText("3%")).toBeTruthy();
+    expect(screen.getByText("+$0.30")).toBeTruthy();
+  });
+
   it("calls onMethodSelect when a payment tile is clicked", () => {
     const props = renderScreen();
 

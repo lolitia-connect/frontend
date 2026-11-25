@@ -108,8 +108,8 @@ export default function PaymentForm({
     icon: z.string().optional(),
     domain: z.string().optional(),
     config: z.any(),
-    fee_mode: z.number().min(0).max(2),
-    fee_percent: z.number().optional(),
+    fee_mode: z.number().int().min(0).max(3),
+    fee_percent: z.number().int().optional(),
     fee_amount: z.number().optional(),
     description: z.string().optional(),
     sort: z.number().optional(),
@@ -322,6 +322,23 @@ export default function PaymentForm({
                                   {t("fixedFee", "Fixed Amount")}
                                 </FormLabel>
                               </FormItem>
+                              <FormItem className="flex items-center space-x-2">
+                                <FormControl>
+                                  <RadioGroupItem
+                                    aria-label={t(
+                                      "combinedFee",
+                                      "Percentage + Fixed Amount"
+                                    )}
+                                    value="3"
+                                  />
+                                </FormControl>
+                                <FormLabel className="!mt-0 cursor-pointer">
+                                  {t(
+                                    "combinedFee",
+                                    "Percentage + Fixed Amount"
+                                  )}
+                                </FormLabel>
+                              </FormItem>
                             </RadioGroup>
                           </FormControl>
                           <FormMessage />
@@ -329,7 +346,7 @@ export default function PaymentForm({
                       )}
                     />
 
-                    {feeMode === 1 && (
+                    {(feeMode === 1 || feeMode === 3) && (
                       <div className="grid grid-cols-1 sm:w-1/2">
                         <FormField
                           control={form.control}
@@ -341,8 +358,10 @@ export default function PaymentForm({
                               </FormLabel>
                               <FormControl>
                                 <EnhancedInput
-                                  onValueChange={field.onChange}
-                                  step="0.01"
+                                  onValueChange={(value) =>
+                                    field.onChange(Number(value))
+                                  }
+                                  step={1}
                                   suffix="%"
                                   type="number"
                                   value={field.value}
@@ -355,7 +374,7 @@ export default function PaymentForm({
                       </div>
                     )}
 
-                    {feeMode === 2 && (
+                    {(feeMode === 2 || feeMode === 3) && (
                       <div className="grid grid-cols-1 sm:w-1/2">
                         <FormField
                           control={form.control}

@@ -200,26 +200,32 @@ export function RechargeScreen({
                       <Label className="wrap-anywhere min-w-0 flex-1">
                         {method.name}
                       </Label>
-                      {method.fee_mode === 1 && method.fee_percent > 0 && (
-                        <Chip
-                          className="text-foreground"
-                          color="warning"
-                          size="sm"
-                          variant="soft"
-                        >
-                          {method.fee_percent}%
-                        </Chip>
-                      )}
-                      {method.fee_mode === 2 && method.fee_amount > 0 && (
-                        <Chip
-                          className="text-foreground"
-                          color="warning"
-                          size="sm"
-                          variant="soft"
-                        >
-                          +<Display type="currency" value={method.fee_amount} />
-                        </Chip>
-                      )}
+                      {(method.fee_mode === 1 || method.fee_mode === 3) &&
+                        method.fee_percent > 0 && (
+                          <Chip
+                            className="text-foreground"
+                            color="warning"
+                            size="sm"
+                            variant="soft"
+                          >
+                            {method.fee_percent}%
+                          </Chip>
+                        )}
+                      {(method.fee_mode === 2 || method.fee_mode === 3) &&
+                        method.fee_amount > 0 && (
+                          <Chip
+                            className="text-foreground"
+                            color="warning"
+                            size="sm"
+                            variant="soft"
+                          >
+                            +
+                            <Display
+                              type="currency"
+                              value={method.fee_amount}
+                            />
+                          </Chip>
+                        )}
                     </Radio.Content>
                   </Radio>
                 ))}

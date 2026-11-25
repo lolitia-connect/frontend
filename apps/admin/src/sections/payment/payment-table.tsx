@@ -206,18 +206,19 @@ export default function PaymentTable() {
           accessorKey: "fee",
           header: t("handlingFee", "Handling Fee"),
           cell: ({ row }) => {
-            const feeMode = row.original.fee_mode;
-            if (feeMode === 1) {
-              return <Badge>{row.original.fee_percent}%</Badge>;
-            }
-            if (feeMode === 2) {
-              return (
-                <Badge>
-                  <Display type="currency" value={row.original.fee_amount} />
-                </Badge>
-              );
-            }
-            return "--";
+            const {
+              fee_mode: mode,
+              fee_percent: percent,
+              fee_amount: amount,
+            } = row.original;
+            if (mode < 1 || mode > 3) return "--";
+            return (
+              <Badge>
+                {mode !== 2 && `${percent ?? 0}%`}
+                {mode === 3 && " + "}
+                {mode !== 1 && <Display type="currency" value={amount} />}
+              </Badge>
+            );
           },
         },
         {

@@ -43,12 +43,17 @@ it("reopens an edited channel with the saved config while its list refresh is pe
     name: "Original channel",
     platform: "EPay",
     config: { pid: "1001" },
-    fee_mode: 0,
+    fee_mode: 1,
+    fee_percent: 5,
+    fee_amount: 0,
   };
   const saved = {
     ...original,
     name: "Renamed channel",
     config: { pid: "2002" },
+    fee_mode: 3,
+    fee_percent: 7,
+    fee_amount: 30,
   };
   const refreshed = { ...saved, name: "Refreshed channel" };
   const list = (row: typeof original) => ({
@@ -87,6 +92,15 @@ it("reopens an edited channel with the saved config while its list refresh is pe
     return screen.findByPlaceholderText<HTMLInputElement>("namePlaceholder");
   };
   fireEvent.change(await openEditor(), { target: { value: saved.name } });
+  fireEvent.click(screen.getByRole("radio", { name: "combinedFee" }));
+  const percentage = screen.getByRole<HTMLInputElement>("spinbutton", {
+    name: "feePercent",
+  });
+  expect(percentage.value).toBe("5");
+  fireEvent.change(percentage, { target: { value: "7" } });
+  fireEvent.change(screen.getByRole("spinbutton", { name: "feeAmount" }), {
+    target: { value: "0.30" },
+  });
   fireEvent.change(await screen.findByDisplayValue(original.config.pid), {
     target: { value: "02002" },
   });
@@ -97,12 +111,26 @@ it("reopens an edited channel with the saved config while its list refresh is pe
       id: original.id,
       name: saved.name,
       config: { pid: "02002" },
+      fee_mode: 3,
+      fee_percent: 7,
+      fee_amount: 30,
     })
   );
 
   const name = await openEditor();
   expect(name.value).toBe(saved.name);
   expect(screen.getByDisplayValue(saved.config.pid)).toBeTruthy();
+  expect(
+    screen.getByRole<HTMLInputElement>("radio", { name: "combinedFee" }).checked
+  ).toBe(true);
+  expect(
+    screen.getByRole<HTMLInputElement>("spinbutton", { name: "feePercent" })
+      .value
+  ).toBe("7");
+  expect(
+    screen.getByRole<HTMLInputElement>("spinbutton", { name: "feeAmount" })
+      .value
+  ).toBe("0.3");
   fireEvent.change(name, { target: { value: "Unsubmitted draft" } });
   await act(async () => finishRefresh());
   expect(name.value).toBe("Unsubmitted draft");

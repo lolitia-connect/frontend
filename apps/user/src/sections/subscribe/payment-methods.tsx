@@ -6,6 +6,7 @@ import { getAvailablePaymentMethods } from "@workspace/ui/services/user/portal";
 import type React from "react";
 import { memo, useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { Display } from "@/components/display";
 
 interface PaymentMethodsProps {
   balance?: boolean;
@@ -83,16 +84,18 @@ const PaymentMethods: React.FC<PaymentMethodsProps> = ({
                 <Label className="wrap-anywhere min-w-0 flex-1">
                   {item.name}
                 </Label>
-                {item.fee_mode === 1 && item.fee_percent > 0 && (
-                  <Chip color="warning" size="sm" variant="soft">
-                    {item.fee_percent}%
-                  </Chip>
-                )}
-                {item.fee_mode === 2 && item.fee_amount > 0 && (
-                  <Chip color="warning" size="sm" variant="soft">
-                    +{item.fee_amount}
-                  </Chip>
-                )}
+                {(item.fee_mode === 1 || item.fee_mode === 3) &&
+                  item.fee_percent > 0 && (
+                    <Chip color="warning" size="sm" variant="soft">
+                      {item.fee_percent}%
+                    </Chip>
+                  )}
+                {(item.fee_mode === 2 || item.fee_mode === 3) &&
+                  item.fee_amount > 0 && (
+                    <Chip color="warning" size="sm" variant="soft">
+                      +<Display type="currency" value={item.fee_amount} />
+                    </Chip>
+                  )}
               </Radio.Content>
             </Radio>
           ))}

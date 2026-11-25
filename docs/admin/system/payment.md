@@ -104,8 +104,10 @@ Different payment methods require different configs:
 ### Transaction Settings
 - Minimum payment amount
 - Maximum payment amount
-- Transaction fee rate
+- Handling fee mode
 - Payment timeout
+
+Choose no fee, a percentage, a fixed amount, or **Percentage + Fixed Amount**. Enter a whole percentage and a fixed amount for the combined mode. For a positive fee base, the system applies the percentage, discards any fraction of a minor currency unit, and then adds the fixed amount. For a $100 fee base, 3% plus $0.30 gives a $3.30 fee.
 
 ## Usage Scenarios
 
@@ -120,7 +122,7 @@ Different payment methods require different configs:
 - Callback URL: https://myvpn.com/callback/alipay
 - Min Amount: ¥1
 - Max Amount: ¥10000
-- Fee Rate: 0.6%
+- A fee rate of 1%
 - Status: Enabled
 
 ### Scenario 2: Configure Stripe
@@ -134,7 +136,7 @@ Different payment methods require different configs:
 - Webhook endpoint URL from the payment method in Admin, for example `https://myvpn.com/v1/notify/Stripe/<payment-token>` (including the `/api` prefix when configured)
 - Min Amount: $1
 - Max Amount: $1000
-- Fee Rate: 2.9% + $0.30
+- **Percentage + Fixed Amount** fee mode, for example 3% + $0.30
 - Status: Enabled
 
 ### Stripe payment confirmation and recovery

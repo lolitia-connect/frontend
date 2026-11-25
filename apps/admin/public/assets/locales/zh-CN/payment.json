@@ -2,6 +2,7 @@
   "applyForPayment": "申请支付",
   "batchDelete": "批量删除",
   "cancel": "取消",
+  "combinedFee": "百分比 + 固定金额",
   "configPlaceholder": "请填写提供的 {{field}} 配置",
   "confirm": "确认",
   "confirmDelete": "确认删除",

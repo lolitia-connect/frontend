@@ -13,6 +13,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   completeNavigationProgress,
   getNavigationProgress,
+  startLanguageProgress,
+  startNavigationProgress,
 } from "./navigation-progress";
 
 // This repo's vitest setups do not register testing-library's automatic cleanup,
@@ -204,6 +206,25 @@ describe("router-compat: navigation progress", () => {
       </RouterContext.Provider>
     );
   }
+
+  it("keeps the bar visible after navigation commits while translations load", () => {
+    const view = render(<NavigationProgress />);
+    let finish: (() => void) | undefined;
+    act(() => {
+      finish = startLanguageProgress();
+      startNavigationProgress("/dashboard/servers");
+    });
+    expect(screen.getAllByRole("progressbar")).toHaveLength(1);
+
+    route.pathname = "/dashboard/servers";
+    route.search = "";
+    view.rerender(<NavigationProgress />);
+    expect(getNavigationProgress()?.pending).toBe(false);
+    expect(progressBar()).not.toBeNull();
+
+    act(() => finish?.());
+    expect(progressBar()).toBeNull();
+  });
 
   it("starts on a sidebar link click and stays pending until the route commits", () => {
     vi.useFakeTimers();

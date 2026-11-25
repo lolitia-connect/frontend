@@ -21,6 +21,11 @@ import { supportedLngs } from "@/config/i18n";
 import { fallbackNamespaces } from "@/config/locale-resources";
 
 type I18nModule = typeof import("@workspace/ui/lib/i18n");
+type ReadTranslation = (
+  language: string,
+  namespace: string,
+  callback: (err: unknown, data: unknown) => void
+) => void;
 
 function setNavigatorLanguage(
   language: string,
@@ -49,7 +54,11 @@ function setNavigatorLanguage(
  * not depend on other files in the run.
  */
 async function freshI18n(
-  config: Parameters<I18nModule["initializeI18n"]>[0] = { fallbackLng: "en-US" }
+  config: Parameters<I18nModule["initializeI18n"]>[0] = {
+    fallbackLng: "en-US",
+  },
+  read: ReadTranslation = (_language, _namespace, callback) =>
+    callback(null, false)
 ) {
   vi.resetModules();
 
@@ -70,11 +79,7 @@ async function freshI18n(
     default: {
       type: "backend",
       init: () => undefined,
-      read: (
-        _language: string,
-        _namespace: string,
-        callback: (err: unknown, data: unknown) => void
-      ) => callback(null, false),
+      read,
       save: () => undefined,
     },
   }));
@@ -312,6 +317,48 @@ describe("default detection (nothing stored)", () => {
     expect(mod.applyDetectedLanguage()).toBe("ja-JP");
     await flush();
     expect(window.localStorage.getItem("language")).toBe("ja-JP");
+  });
+});
+
+describe("language switch loading", () => {
+  it.each([
+    "explicit choice",
+    "follow system",
+  ])("shows progress during an uncached %s and clears it when loading settles", async (mode) => {
+    const { promise, resolve: finish } = Promise.withResolvers<Error | null>();
+    const { i18n, mod } = await freshI18n(
+      {
+        fallbackLng: "en-US",
+        ns: ["components"],
+        resources: { "en-US": { components: { hello: "Hello" } } },
+      },
+      (_language, _namespace, callback) => {
+        promise.then((error) =>
+          callback(error, error ? false : { hello: "你好" })
+        );
+      }
+    );
+    const { isLanguageProgressPending } = await import(
+      "@workspace/ui/lib/navigation-progress"
+    );
+    await waitForInit(i18n);
+    setNavigatorLanguage("zh-CN");
+
+    const change =
+      mode === "explicit choice"
+        ? mod.setLanguagePreference("zh-CN")
+        : mod.followSystemLanguage();
+    expect(isLanguageProgressPending()).toBe(true);
+    finish(
+      mode === "follow system" ? new Error("Translation request failed") : null
+    );
+    await change;
+    await flush();
+    expect(isLanguageProgressPending()).toBe(false);
+
+    const cachedChange = mod.setLanguagePreference("en-US");
+    expect(isLanguageProgressPending()).toBe(false);
+    await cachedChange;
   });
 });
 

@@ -7,6 +7,7 @@ interface NavigationProgressState {
 }
 
 let state: NavigationProgressState | null = null;
+let pendingLanguageLoads = 0;
 let timeout: ReturnType<typeof setTimeout> | undefined;
 const listeners = new Set<() => void>();
 
@@ -16,6 +17,19 @@ function notify() {
 
 export function getNavigationProgress() {
   return state;
+}
+
+export function isLanguageProgressPending() {
+  return pendingLanguageLoads > 0;
+}
+
+export function startLanguageProgress() {
+  pendingLanguageLoads += 1;
+  notify();
+  return () => {
+    pendingLanguageLoads -= 1;
+    notify();
+  };
 }
 
 export function subscribeNavigationProgress(listener: () => void) {

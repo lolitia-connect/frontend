@@ -6,6 +6,7 @@ import { useEffect, useSyncExternalStore } from "react";
 import {
   completeNavigationProgress,
   getNavigationProgress,
+  isLanguageProgressPending,
   subscribeNavigationProgress,
 } from "../lib/navigation-progress";
 
@@ -18,9 +19,14 @@ export function NavigationProgress() {
     getNavigationProgress,
     () => null
   );
+  const languagePending = useSyncExternalStore(
+    subscribeNavigationProgress,
+    isLanguageProgressPending,
+    () => false
+  );
   const routeKey = `${pathname}?${searchParams.toString()}`;
 
-  const pending = navigation?.pending && navigation.from === routeKey;
+  const routePending = navigation?.pending && navigation.from === routeKey;
 
   useEffect(() => {
     if (navigation?.pending && navigation.from !== routeKey) {
@@ -28,7 +34,7 @@ export function NavigationProgress() {
     }
   }, [navigation, routeKey]);
 
-  if (!pending) return null;
+  if (!(routePending || languagePending)) return null;
 
   return <LoadingBar className="fixed inset-x-0 top-0 z-[9999]" />;
 }

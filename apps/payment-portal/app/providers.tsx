@@ -1,10 +1,12 @@
 "use client";
 
 import { Toast } from "@heroui/react";
+import { NavigationProgress } from "@workspace/ui/composed/navigation-progress";
 import { SkipLink } from "@workspace/ui/composed/skip-link";
 import { LanguageProvider } from "@workspace/ui/integrations/language";
 import { ThemeProvider } from "@workspace/ui/integrations/theme";
 import { initializeI18n } from "@workspace/ui/lib/i18n";
+import { Suspense } from "react";
 import { fallbackLng, supportedLngs } from "@/config";
 import { fallbackResources } from "@/config/locale-resources";
 import { clearAuthorization } from "@/lib/auth";
@@ -45,6 +47,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <LanguageProvider supportedLanguages={supportedLngs}>
       <ThemeProvider>
         <SkipLink />
+        <Suspense fallback={null}>
+          <NavigationProgress />
+        </Suspense>
         {children}
         <Toast.Provider placement="top end" />
       </ThemeProvider>

@@ -4,6 +4,7 @@ import i18n from "i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 import Backend from "i18next-http-backend";
 import { initReactI18next } from "react-i18next";
+import { startLanguageProgress } from "./navigation-progress";
 import { matchSupportedLanguage as canonical } from "./request-language";
 
 const DEFAULT_LANGUAGE = "en-US";
@@ -318,6 +319,15 @@ export function createI18nInstance(config: InitOptions) {
   return instance;
 }
 
+function changeLanguageWithProgress(lng: string) {
+  let settled = false;
+  const change = i18n.changeLanguage(lng, () => {
+    settled = true;
+  });
+  // Bundled and previously loaded translations complete synchronously.
+  return settled ? change : change.finally(startLanguageProgress());
+}
+
 /**
  * Run `changeLanguage` without letting the persistence listener record it.
  *
@@ -333,10 +343,15 @@ export function createI18nInstance(config: InitOptions) {
  * no-op), which would otherwise leak the suppression onto the next — genuine —
  * user-driven change.
  */
-async function changeLanguageWithoutPersist(lng: string): Promise<void> {
+async function changeLanguageWithoutPersist(
+  lng: string,
+  showProgress?: boolean
+): Promise<void> {
   suppressNextPersist = true;
   try {
-    await i18n.changeLanguage(lng);
+    await (showProgress
+      ? changeLanguageWithProgress(lng)
+      : i18n.changeLanguage(lng));
   } finally {
     suppressNextPersist = false;
   }
@@ -348,6 +363,8 @@ async function changeLanguageWithoutPersist(lng: string): Promise<void> {
 export interface ApplyDetectedLanguageOptions {
   /** Skip the stored preference and read the browser only (used by "follow system"). */
   ignoreStored?: boolean;
+  /** Show the top progress bar if translation files need to load. */
+  showProgress?: boolean;
 }
 
 /**
@@ -382,7 +399,7 @@ export function applyDetectedLanguage(
   if (detected === current) return;
 
   // Fire and forget: callers are render effects or event handlers.
-  changeLanguageWithoutPersist(detected);
+  changeLanguageWithoutPersist(detected, options?.showProgress);
   return detected;
 }
 
@@ -401,7 +418,7 @@ export function followSystemLanguage(): string | undefined {
   if (typeof window === "undefined") return;
 
   clearStoredLanguage();
-  return applyDetectedLanguage({ ignoreStored: true });
+  return applyDetectedLanguage({ ignoreStored: true, showProgress: true });
 }
 
 /**
@@ -411,7 +428,7 @@ export function followSystemLanguage(): string | undefined {
  * choice survive a reload and makes it distinguishable from "follow system".
  */
 export async function setLanguagePreference(lng: string): Promise<void> {
-  await i18n.changeLanguage(lng);
+  await changeLanguageWithProgress(lng);
   // `changeLanguage` emits `languageChanged`, which the listener persists. Write
   // explicitly as well so the choice is still recorded if the event was skipped
   // (e.g. an identical language with no emission).

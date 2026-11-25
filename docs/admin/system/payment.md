@@ -107,7 +107,7 @@ Different payment methods require different configs:
 - Handling fee mode
 - Payment timeout
 
-Choose no fee, a percentage, a fixed amount, or **Percentage + Fixed Amount**. Enter a whole percentage and a fixed amount for the combined mode. For a positive fee base, the system applies the percentage, discards any fraction of a minor currency unit, and then adds the fixed amount. For a $100 fee base, 3% plus $0.30 gives a $3.30 fee.
+Choose no fee, a percentage, a fixed amount, or **Percentage + Fixed Amount**. The fee applies to the amount due through the payment channel after discounts, coupons, and available gift credit. When that amount is zero, the fee is zero. For the combined mode, enter a whole percentage and a fixed amount. The system calculates the percentage fee, discards any fraction of a minor currency unit, and then adds the fixed amount. If gift credit covers $40 of a $100 discounted order, a fee of 3% plus $0.30 adds $2.10 to the remaining $60, for a total payment of $62.10.
 
 ## Usage Scenarios
 

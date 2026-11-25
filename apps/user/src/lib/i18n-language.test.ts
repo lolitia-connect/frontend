@@ -325,7 +325,10 @@ describe("language switch loading", () => {
     "explicit choice",
     "follow system",
   ])("shows progress during an uncached %s and clears it when loading settles", async (mode) => {
-    const { promise, resolve: finish } = Promise.withResolvers<Error | null>();
+    let finish!: (error: Error | null) => void;
+    const promise = new Promise<Error | null>((resolve) => {
+      finish = resolve;
+    });
     const { i18n, mod } = await freshI18n(
       {
         fallbackLng: "en-US",
@@ -333,7 +336,7 @@ describe("language switch loading", () => {
         resources: { "en-US": { components: { hello: "Hello" } } },
       },
       (_language, _namespace, callback) => {
-        promise.then((error) =>
+        promise.then((error: Error | null) =>
           callback(error, error ? false : { hello: "你好" })
         );
       }

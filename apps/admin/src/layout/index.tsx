@@ -33,7 +33,10 @@ export default function DashboardLayout({
       <SidebarLeft />
       <SidebarInset className="relative flex-grow overflow-hidden">
         <Header />
-        <div className="h-[calc(100vh-56px)] flex-grow gap-4 overflow-auto p-4">
+        <div
+          className="h-[calc(100vh-56px)] flex-grow gap-4 overflow-auto p-4"
+          data-dashboard-scroll
+        >
           <h1 className="sr-only">{pageTitle}</h1>
           {children}
         </div>

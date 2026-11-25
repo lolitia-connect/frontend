@@ -19,9 +19,10 @@ import {
 } from "@workspace/ui/components/chart";
 import { Separator } from "@workspace/ui/components/separator";
 import Empty from "@workspace/ui/composed/empty";
+import { cn } from "@workspace/ui/lib/utils";
 import { formatBytes } from "@workspace/ui/utils/formatting";
 import dynamic from "next/dynamic";
-import { useMemo } from "react";
+import { type ComponentProps, useLayoutEffect, useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Bar,
@@ -40,6 +41,91 @@ const UserSubscribeDetail = dynamic(() =>
     (module) => module.UserSubscribeDetail
   )
 );
+
+function TrafficTooltipContent({
+  className,
+  coordinate,
+  ...props
+}: ComponentProps<typeof ChartTooltipContent>) {
+  const tooltipRef = useRef<HTMLDivElement>(null);
+  const x = coordinate?.x;
+  const y = coordinate?.y;
+  const visible = props.active && Boolean(props.payload?.length);
+
+  useLayoutEffect(() => {
+    const tooltip = tooltipRef.current;
+    // The Recharts wrapper is pinned to the chart origin for coordinate conversion.
+    const origin = tooltip?.parentElement;
+    if (!(tooltip && origin) || x === undefined || y === undefined) return;
+
+    const scrollport = origin.closest<HTMLElement>("[data-dashboard-scroll]");
+    const inset = 8;
+    const offset = 10;
+
+    const positionTooltip = () => {
+      const viewport = document.documentElement;
+      const bounds = scrollport?.getBoundingClientRect();
+      const scrollRight =
+        bounds && scrollport
+          ? bounds.left + scrollport.clientWidth
+          : viewport.clientWidth;
+      const scrollBottom =
+        bounds && scrollport
+          ? bounds.top + scrollport.clientHeight
+          : viewport.clientHeight;
+      const left = Math.max(0, bounds?.left ?? 0) + inset;
+      const top = Math.max(0, bounds?.top ?? 0) + inset;
+      const right = Math.min(viewport.clientWidth, scrollRight) - inset;
+      const bottom = Math.min(viewport.clientHeight, scrollBottom) - inset;
+
+      tooltip.style.maxWidth = `${Math.max(0, right - left)}px`;
+      tooltip.style.maxHeight = `${Math.max(0, bottom - top)}px`;
+      const { width, height } = tooltip.getBoundingClientRect();
+      const originBounds = origin.getBoundingClientRect();
+      const anchorX = originBounds.left + x;
+      const anchorY = originBounds.top + y;
+      const preferredX =
+        anchorX + offset + width <= right
+          ? anchorX + offset
+          : anchorX - offset - width;
+      const preferredY =
+        anchorY + offset + height <= bottom
+          ? anchorY + offset
+          : anchorY - offset - height;
+      const clampedX = Math.max(left, Math.min(preferredX, right - width));
+      const clampedY = Math.max(top, Math.min(preferredY, bottom - height));
+      tooltip.style.left = `${clampedX - originBounds.left}px`;
+      tooltip.style.top = `${clampedY - originBounds.top}px`;
+    };
+
+    positionTooltip();
+    const observer = new ResizeObserver(positionTooltip);
+    observer.observe(tooltip);
+    if (scrollport) observer.observe(scrollport);
+    window.addEventListener("resize", positionTooltip);
+    window.addEventListener("scroll", positionTooltip, true);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", positionTooltip);
+      window.removeEventListener("scroll", positionTooltip, true);
+    };
+  }, [visible, x, y]);
+
+  if (!visible) return null;
+
+  return (
+    <div
+      className={cn("absolute w-max overflow-auto rounded-lg", className)}
+      ref={tooltipRef}
+      role="tooltip"
+    >
+      <ChartTooltipContent
+        className="min-w-0 [overflow-wrap:anywhere]"
+        {...props}
+      />
+    </div>
+  );
+}
 
 export type TrafficTimeFrame = "today" | "yesterday";
 
@@ -149,7 +235,8 @@ export default function TrafficRankCard({
                   />
                   <ChartTooltip
                     content={
-                      <ChartTooltipContent
+                      <TrafficTooltipContent
+                        className={type === "users" ? "w-80" : undefined}
                         formatter={(value) => formatBytes(Number(value) || 0)}
                         label={true}
                         labelFormatter={(label, [payload]) =>
@@ -159,18 +246,14 @@ export default function TrafficRankCard({
                             <>
                               {payload?.payload.uid ? (
                                 <>
-                                  <div className="w-80">
-                                    <UserDetail id={payload.payload.uid} />
-                                  </div>
+                                  <UserDetail id={payload.payload.uid} />
                                   <Separator className="my-2" />
                                 </>
                               ) : null}
-                              <div className="w-80">
-                                <UserSubscribeDetail
-                                  enabled={true}
-                                  id={payload?.payload.name}
-                                />
-                              </div>
+                              <UserSubscribeDetail
+                                enabled={true}
+                                id={payload?.payload.name}
+                              />
                               <Separator className="my-2" />
                               <div>{`${t("users", "Users")}: ${label}`}</div>
                             </>
@@ -178,7 +261,9 @@ export default function TrafficRankCard({
                         }
                       />
                     }
+                    isAnimationActive={false}
                     trigger="hover"
+                    wrapperStyle={{ transform: "none", zIndex: 10 }}
                   />
                   <Bar
                     dataKey="traffic"

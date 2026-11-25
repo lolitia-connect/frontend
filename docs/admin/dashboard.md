@@ -161,7 +161,7 @@ Displays node or user traffic usage ranking:
 - Bar Labels: Shows node name or user ID
 
 **Interactions**:
-- Hover: Display detailed traffic data
+- Hover over a bar to see detailed traffic data. Near the edge of the screen, the tooltip moves to stay in view.
 - Node Mode: Shows node name and traffic
 - User Mode: Shows user subscription details (ID, package, expiry, etc.)
 

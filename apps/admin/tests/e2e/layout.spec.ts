@@ -189,6 +189,97 @@ test("server addresses sit below location and reveal ellipsized text on hover or
   await expect(tooltip).toHaveCount(0);
 });
 
+test("traffic tooltips stay within the visible dashboard near the bottom edge", async ({
+  page,
+  baseURL,
+}) => {
+  const nodeName = "Edge node ".repeat(12).trim();
+  const subscriptionName = "Fixture subscription";
+  await mockLayoutApi(page);
+  await signInFixture(page, baseURL!);
+  await page.route("**/v1/admin/console/server", (route) =>
+    route.fulfill({
+      json: {
+        code: 200,
+        data: {
+          server_traffic_ranking_today: [
+            { name: nodeName, download: 1024, upload: 1024 },
+          ],
+          user_traffic_ranking_today: [
+            { sid: "201", download: 1024, upload: 0 },
+          ],
+        },
+      },
+    })
+  );
+  await page.route(/\/v1\/admin\/user\/subscribe\/detail\?/, (route) =>
+    route.fulfill({
+      json: {
+        code: 200,
+        data: {
+          id: "201",
+          subscribe: { name: subscriptionName },
+          token: "fixture-token-".repeat(5),
+          upload: 1024,
+          download: 2048,
+          traffic: 4096,
+          user: { balance: 0 },
+        },
+      },
+    })
+  );
+  await page.setViewportSize({ width: 320, height: 600 });
+  await page.goto("/dashboard", { waitUntil: "domcontentloaded" });
+  await page.locator("main .grid.gap-3").last().scrollIntoViewIfNeeded();
+  const tooltip = page.getByRole("tooltip");
+
+  for (const { title, detail, width } of [
+    { title: "Node Traffic", detail: nodeName, width: 1280 },
+    { title: "User Traffic", detail: subscriptionName, width: 320 },
+  ]) {
+    await page.setViewportSize({ width, height: 600 });
+    const card = page.locator(".card").filter({
+      has: page.getByRole("heading", { name: title, exact: true }),
+    });
+    const chart = card.locator(".recharts-wrapper");
+    await chart.scrollIntoViewIfNeeded();
+    const position = await chart.evaluate((element) => {
+      const scrollport = element.closest<HTMLElement>(
+        "[data-dashboard-scroll]"
+      )!;
+      const bounds = element.getBoundingClientRect();
+      scrollport.scrollTop +=
+        bounds.bottom - scrollport.getBoundingClientRect().bottom + 24;
+      return { x: bounds.width - 20, y: Math.round(bounds.height / 2) };
+    });
+    await chart.hover({ force: true, position });
+    await expect(tooltip).toContainText(detail);
+    await expect
+      .poll(
+        () =>
+          tooltip.evaluate((element) => {
+            const box = element.getBoundingClientRect();
+            const scrollport = element.closest<HTMLElement>(
+              "[data-dashboard-scroll]"
+            )!;
+            const bounds = scrollport.getBoundingClientRect();
+            return Math.max(
+              bounds.left - box.left,
+              box.right - bounds.left - scrollport.clientWidth,
+              bounds.top - box.top,
+              box.bottom - bounds.top - scrollport.clientHeight,
+              element.scrollWidth - element.clientWidth,
+              element.scrollHeight - element.clientHeight
+            );
+          }),
+        { message: `${title} tooltip overflows` }
+      )
+      .toBeLessThanOrEqual(0);
+    await page.keyboard.press("Escape");
+    await expect(tooltip).toBeHidden();
+  }
+});
+
 test("dashboard summary cards have consistent heights across grid rows", async ({
   page,
   baseURL,
